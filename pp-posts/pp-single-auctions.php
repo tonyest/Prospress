@@ -19,7 +19,9 @@ Template Name: Single Prospress Post
 			<h2 class="pp-title entry-title"><?php the_title();?></h2>
 
 			<?php the_bid_form(); ?>
-
+			
+			<?php do_action( 'pp_single_content' ); ?>
+			
 			<div class="pp-content">
 				<?php the_content(); ?>
 			</div>
