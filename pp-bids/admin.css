@@ -1,0 +1,25 @@
+#icon-bids{
+	background: transparent url(../images/icons32.png) no-repeat scroll;
+}
+
+#icon-bids:hover;{
+	background: transparent url(../images/icons32.png) no-repeat scroll;
+}
+
+/*
+#toplevel_page_bids img{
+	display: none;
+}
+
+#toplevel_page_bids .wp-menu-image {
+	background: transparent url(../images/menu.png) no-repeat scroll;
+	/*margin: 6px 0 0 2px;
+	padding: 1px 5px 3px;
+}
+
+#toplevel_page_bids .wp-menu-image:hover{
+	background: transparent url(../images/menu.png) no-repeat scroll -30px 0px;
+	/*margin: 6px 0 0 2px;
+	padding: 1px 5px 3px;
+}
+*/
