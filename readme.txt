@@ -1,11 +1,11 @@
 === Plugin Name ===
 Contributors: Brent Shepherd
-Tags: marketplace, prospress, wordpress, auction
-Requires at least: WordPress MU 2.8.1
-Tested up to: 2.8.1
+Tags: marketplace, prospress, auction
+Requires at least: WordPress 3.0
+Tested up to: 3.0
 Stable tag: 1.0.3
 
-Create your own online marketplace. Prospress extends WordPress with the functionality required for creating an online auction, reverse auction or fixed price marketplace.
+Prosper, with Wordpress - create your own online marketplace.
 
 == Description ==
 
