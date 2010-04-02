@@ -66,6 +66,6 @@ The documentation codex can be found here: http://codex.prospress.org/
 
 Bugs can be reported here: http://trac.prospress.org/newticket
 
-= Where can checkout the latest bleeding edge? =
+= Where can I checkout the bleeding edge? =
 
-Prospress subversion trunk can be found at: http://svn.prospress.org/trunk/
+Prospress git repository can be found at: git@github.com:thenbrent/Prospress.git
