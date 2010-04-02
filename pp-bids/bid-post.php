@@ -32,7 +32,7 @@ if ( !is_user_logged_in() ){ //if bidder is not logged in
 
 global $bid_system;
 
-$bid_status = $bid_system->form_submission();
+$bid_status = $bid_system->bid_form_submit();
 
 // Redirect user back to post
 if ( !empty( $_GET[ 'bid_redirect' ] ) )

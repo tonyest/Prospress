@@ -293,14 +293,6 @@ function pp_bids_add_admin_pages() {
 	    add_submenu_page($base_page, $winning_bids_title, $winning_bids_title, 1, $base_page, 'pp_bids_winning');
 	    add_submenu_page($base_page, $bid_history_title, $bid_history_title, 1, 'bid-history', 'pp_bids_history_admin');
 	}
-
-	/*
-	if ( function_exists( 'add_settings_section' ) ){
-		add_settings_section( 'bid_system', 'Bid System', 'bid_system_settings_section', 'general' );
-	} else {
-		$bid_settings_page = add_submenu_page( 'options-general.php', 'Bid System', 'Bid System', 58, 'bid_system', 'bid_system_settings_section' );
-	}
-	*/
 }
 add_action( 'admin_menu', 'pp_bids_add_admin_pages' );
 
@@ -365,7 +357,7 @@ function get_bid_systems() {
 	
 	$all_classes = get_declared_classes();
 	foreach ( $all_classes as $a_class ){
-		if ( is_subclass_of( $a_class, 'PP_Bid_System' ) ) {
+		if ( is_subclass_of( $a_class, 'PP_Market_System' ) ) {
 			$bid_sys = new $a_class;
 			$bid_sys_available[ $a_class ] = array( 'name' => $bid_sys->name, 
 														'description' => $bid_sys->description, 

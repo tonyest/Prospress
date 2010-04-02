@@ -1,25 +1,25 @@
 <?php
 /**
- * Holds Most of the Prospress Bid classes, including the base bid system class.
+ * Holds the base market system class.
  *
  * @package Prospress
  */
 
 /**
- * Bid system base class.
+ * Market system base class.
  *
  * This class forms the basis for all bid systems. It provides a framework for creating new bid systems
  * and is extended to implement the core auction and reverse auction formats that ship with Prospress.
  * 
- * Extend this class to create a new bid system. PP_Bid_System::form_fields(), 
- * PP_Bid_System::form_submission(), PP_Bid_System::form_validation(), PP_Bid_System::view_details(),
- * PP_Bid_System::view_list() and PP_Bid_System::post_fields() must be over-ridden.
+ * Extend this class to create a new bid system. PP_Market_System::bid_form_fields(), 
+ * PP_Market_System::bid_form_submit(), PP_Market_System::bid_form_validate(), PP_Market_System::view_details(),
+ * PP_Market_System::view_list() and PP_Market_System::post_fields() must be over-ridden.
  *
  * @package Prospress
  * @since 0.1
  */
 /** @TODO Make abstract class when PHP4.x is no longer supported */
-class PP_Bid_System {
+class PP_Market_System {
 
 	//Requirements:
 	//Bid Form: for a user to enter a bid and featuring a range of fields that will vary depending on the marketplace format.
@@ -60,7 +60,7 @@ class PP_Bid_System {
 	/**
 	 * PHP4 constructor
 	 */
-	function PP_Bid_System( $name, $bid_form_title = __("Make a bid"), $bid_button_value = __("Bid now!") ) {
+	function PP_Market_System( $name, $bid_form_title = __("Make a bid"), $bid_button_value = __("Bid now!") ) {
 		$this->__construct( $name, $bid_form_title, $bid_button_value );
 	}
 
@@ -88,8 +88,8 @@ class PP_Bid_System {
 	 * Subclasses must override this function to generate the bid form for their bid system. It is also
 	 * recommended that bid forms include a bid bar so that users can customise the form with bid widgets.
 	 */
-	function form_fields() {
-		die('function PP_Bid_System::form_fields() must be over-ridden in a sub-class.');
+	function bid_form_fields() {
+		die('function PP_Market_System::bid_form_fields() must be over-ridden in a sub-class.');
 	}
 
 	/** 
@@ -100,8 +100,8 @@ class PP_Bid_System {
 	 * Subclasses must override this function to generate the bid form for their bid system.
 	 *
 	 */
-	function form_submission(){
-		die('function PP_Bid_System::form_submission() must be over-ridden in a sub-class.');
+	function bid_form_submit(){
+		die('function PP_Market_System::bid_form_submit() must be over-ridden in a sub-class.');
 	}
 	
 	/**
@@ -113,8 +113,8 @@ class PP_Bid_System {
 	 *
 	 * @return false Returns false if no form validation bids appear
 	 */
-	function form_validation(){
-		die('function PP_Bid_System::form_validation() must be over-ridden in a sub-class.');
+	function bid_form_validate(){
+		die('function PP_Market_System::bid_form_validate() must be over-ridden in a sub-class.');
 	}
 	
 	/** 
@@ -150,16 +150,16 @@ class PP_Bid_System {
 	 * The bid form is presented to users so they can make a bid on a post. This function brings together 
 	 * all the bid form elements, including:
 	 * - the form header and footer templates;
-	 * - the custom fields you implemented with form_fields(); and
+	 * - the custom fields you implemented with bid_form_fields(); and
 	 * - the bid bar, a side bar for the bid form which allows a marketplace administrator to use
 	 *   'bid widgets' to customise the bid form. 
 	 * 
 	 */
-	function form() {
+	function bid_form() {
 		$this->form_header();
-		$this->form_fields();
+		$this->bid_form_fields();
 		//Something to get bid bar
-		/** @TODO Implement bid bar in PP_Bid_System::form()*/
+		/** @TODO Implement bid bar in PP_Market_System::bid_form()*/
 		$this->form_footer();
 	}
 

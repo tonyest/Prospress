@@ -10,9 +10,9 @@
  * @package Prospress
  * @since 0.1
  */
-require_once ( PP_BIDS_DIR . '/bid-system.class.php' ); // Base class
+require_once ( PP_BIDS_DIR . '/market-system.class.php' ); // Base class
 
-class PP_Auction_Bid_System extends PP_Bid_System {
+class PP_Auction_Bid_System extends PP_Market_System {
 	
 	// Constructors
 
@@ -29,35 +29,35 @@ class PP_Auction_Bid_System extends PP_Bid_System {
 		parent::__construct( __('auction'), __('Auction Bid'), __('Bid!'), array( 'post_fields' ) );
 	}
 
-	function form_fields( $post_id = NULL ) { 
+	function bid_form_fields( $post_id = NULL ) { 
 		global $post_ID, $currency_symbol;
 
 		$post_id = ( $post_id === NULL ) ? $post_ID : $post_id;
 		$bid_count = $this->get_bid_count( $post_id );
-		$bid_form_fields = '';
+		$bid_bid_form_fields = '';
 		$dont_echo = false;
 
 		if( $bid_count == 0 ){
-			$bid_form_fields .= '<div id="current_bid_val">' . __("Starting Bid: ") . pp_money_format( get_post_meta( $post_id, 'start_price', true ) ) . '</div></p>';
+			$bid_bid_form_fields .= '<div id="current_bid_val">' . __("Starting Bid: ") . pp_money_format( get_post_meta( $post_id, 'start_price', true ) ) . '</div></p>';
 		} else {
-			$bid_form_fields .= '<div id="current_bid_num">' . __("Number of Bids: ") . $this->the_bid_count( $post_id, $dont_echo ) . '</div>';
-			$bid_form_fields .= '<div id="winning_bidder">' . __("Winning Bidder: ") . $this->the_winning_bidder( $post_id, $dont_echo ) . '</div>';
-			$bid_form_fields .= '<div id="current_bid_val">' . __("Current Bid: ") . $this->the_winning_bid_value( $post_id, $dont_echo ) . '</div>';
+			$bid_bid_form_fields .= '<div id="current_bid_num">' . __("Number of Bids: ") . $this->the_bid_count( $post_id, $dont_echo ) . '</div>';
+			$bid_bid_form_fields .= '<div id="winning_bidder">' . __("Winning Bidder: ") . $this->the_winning_bidder( $post_id, $dont_echo ) . '</div>';
+			$bid_bid_form_fields .= '<div id="current_bid_val">' . __("Current Bid: ") . $this->the_winning_bid_value( $post_id, $dont_echo ) . '</div>';
 		}
 		
-		$bid_form_fields .= '<label for="bid_value" class="bid-label">' . __( 'Enter max bid: ' ) . $currency_symbol . '</label>';
-		$bid_form_fields .= '<input type="text" aria-required="true" tabindex="1" size="22" value="" id="bid_value" name="bid_value"/>';
+		$bid_bid_form_fields .= '<label for="bid_value" class="bid-label">' . __( 'Enter max bid: ' ) . $currency_symbol . '</label>';
+		$bid_bid_form_fields .= '<input type="text" aria-required="true" tabindex="1" size="22" value="" id="bid_value" name="bid_value"/>';
 		
-		return $bid_form_fields;
+		return $bid_bid_form_fields;
 	}
 
-	function form_submission( $post_id = NULL, $bid_value = NULL, $bidder_id = NULL ){
+	function bid_form_submit( $post_id = NULL, $bid_value = NULL, $bidder_id = NULL ){
 		global $user_ID, $wpdb;
 		nocache_headers();
 
-		error_log('in form_submission _REQUEST = ' . print_r($_REQUEST, true));
-		//error_log('in form_submission _GET = ' . print_r($_GET, true));
-		//error_log('in form_submission _POST = ' . print_r($_POST, true));
+		error_log('in bid_form_submit _REQUEST = ' . print_r($_REQUEST, true));
+		//error_log('in bid_form_submit _GET = ' . print_r($_GET, true));
+		//error_log('in bid_form_submit _POST = ' . print_r($_POST, true));
 
 		//Get Bid details
 		//$post_id 		= ( isset( $_GET[ 'post_ID' ] ) ) ? intval( $_GET[ 'post_ID' ] ) : $post_id;
@@ -69,11 +69,11 @@ class PP_Auction_Bid_System extends PP_Bid_System {
 		$bid_date_gmt 	= current_time( 'mysql', 1 );
 
 		global $blog_id;
-		error_log( "in Auction form_submission bidder_id = $bidder_id, blog_id = $blog_id, post_id = $post_id, user_ID = $user_ID");
+		error_log( "in Auction bid_form_submit bidder_id = $bidder_id, blog_id = $blog_id, post_id = $post_id, user_ID = $user_ID");
 		do_action( 'get_auction_bid', $post_id, $bid_value, $bidder_id, $_GET );
 
 		$post_status	= $this->verify_post_status( $post_id );
-		$bid_ms			= $this->form_validation( $post_id, $bid_value, $bidder_id );
+		$bid_ms			= $this->bid_form_validate( $post_id, $bid_value, $bidder_id );
 		//error_log("*** bid_ms  = " . print_r($bid_ms, true));
 
 		//if ( $bid_ms[ 'bid_msg' ] < 5 && $bid_ms[ 'bid_msg' ] != 3 ) {
@@ -92,7 +92,7 @@ class PP_Auction_Bid_System extends PP_Bid_System {
 		return $bid_ms[ 'bid_msg' ];
 	}
 
-	function form_validation( $post_id, $bid_value, $bidder_id ){
+	function bid_form_validate( $post_id, $bid_value, $bidder_id ){
 		$post_max_bid		= $this->get_max_bid( $post_id );
 		$bidders_max_bid	= $this->get_users_max_bid( $bidder_id, $post_id );
 
@@ -205,7 +205,6 @@ class PP_Auction_Bid_System extends PP_Bid_System {
 		return $new_winning_bid_value;
 	}
 
-
 	function post_fields(){
 		global $post_ID, $currency_symbol;
 		$start_price = get_post_meta( $post_ID, 'start_price', true );
@@ -272,10 +271,10 @@ function auction_test(){
 	$bid_date 		= current_time( 'mysql' );
 	$bid_date_gmt 	= current_time( 'mysql', 1 );
 
-	if ( true ) { // test form_submission
+	if ( true ) { // test bid_form_submit
 		// Create first bid
 		error_log( "******************* Create first bid *********************" );
-		$bid_status = $bid_system_test->form_submission( $post_id, $bid_value, $bidder_id );
+		$bid_status = $bid_system_test->bid_form_submit( $post_id, $bid_value, $bidder_id );
 		error_log( "bid_status = $bid_status (should be 1)" );
 		$winning_bid = $bid_system_test->get_winning_bid_value( $post_id );
 		//error_log( "winning_bid = ". $winning_bid->get_value() . " (should be 11.23 * " . BID_INCREMENT . ")" );
@@ -285,7 +284,7 @@ function auction_test(){
 		// Have bidder one try to decrease max bid
 		error_log( "****************************************" );
 		$bid_value	= 2;
-		$bid_status = $bid_system_test->form_submission( $post_id, $bid_value, $bidder_id );
+		$bid_status = $bid_system_test->bid_form_submit( $post_id, $bid_value, $bidder_id );
 		error_log( "bid_status = $bid_status (should be 5)" );
 		$winning_bid = $bid_system_test->get_winning_bid_value( $post_id );
 		error_log( "winning_bid = ". $winning_bid . " (should be 11.23 * " . BID_INCREMENT . ")" );
@@ -294,7 +293,7 @@ function auction_test(){
 		// Have bidder one increase max bid
 		error_log( "****************************************" );
 		$bid_value	= 20;
-		$bid_status = $bid_system_test->form_submission( $post_id, $bid_value, $bidder_id );
+		$bid_status = $bid_system_test->bid_form_submit( $post_id, $bid_value, $bidder_id );
 		error_log( "bid_status = $bid_status (should be 4)" );
 		$winning_bid = $bid_system_test->get_winning_bid_value( $post_id );
 		error_log( "winning_bid = ". $winning_bid . " (should be 11.23 * " . BID_INCREMENT . ")" );
@@ -306,7 +305,7 @@ function auction_test(){
 		// Have bidder two bid below winning bid value
 		error_log( "****************************************" );
 		$bid_value	= 0.1;
-		$bid_status = $bid_system_test->form_submission( $post_id, $bid_value, $bidder_id );
+		$bid_status = $bid_system_test->bid_form_submit( $post_id, $bid_value, $bidder_id );
 		error_log( "bid_status = $bid_status (should be 3)" );
 		$winning_bid = $bid_system_test->get_winning_bid_value( $post_id );
 		error_log( "winning_bid = ". $winning_bid . " (should be 11.23 * " . BID_INCREMENT . ")" );
@@ -315,7 +314,7 @@ function auction_test(){
 		// Have bidder two bid above winning bid value, but below previous bidder's max bid
 		error_log( "****************************************" );
 		$bid_value	= 10;
-		$bid_status = $bid_system_test->form_submission( $post_id, $bid_value, $bidder_id );
+		$bid_status = $bid_system_test->bid_form_submit( $post_id, $bid_value, $bidder_id );
 		error_log( "bid_status = $bid_status (should be 2)" );
 		$winning_bid = $bid_system_test->get_winning_bid_value( $post_id );
 		error_log( "winning_bid = ". $winning_bid . " (should be $bid_value * " . BID_INCREMENT . ")" );
@@ -324,7 +323,7 @@ function auction_test(){
 		// Have bidder two bid exactly the same as bidder one's max bid
 		error_log( "****************************************" );
 		$bid_value	= 20;
-		$bid_status = $bid_system_test->form_submission( $post_id, $bid_value, $bidder_id );
+		$bid_status = $bid_system_test->bid_form_submit( $post_id, $bid_value, $bidder_id );
 		error_log( "bid_status = $bid_status (should be 2)" );
 		$winning_bid = $bid_system_test->get_winning_bid_value( $post_id );
 		error_log( "winning_bid = ". $winning_bid . " (should be $bid_value)" );
@@ -333,7 +332,7 @@ function auction_test(){
 		// Have bidder two bid above bidder one's winning bid value but below winning bid * (1 + bid increment)
 		error_log( "****************************************" );
 		$bid_value	= 20.9;
-		$bid_status = $bid_system_test->form_submission( $post_id, $bid_value, $bidder_id );
+		$bid_status = $bid_system_test->bid_form_submit( $post_id, $bid_value, $bidder_id );
 		error_log( "bid_status = $bid_status (should be 1)" );
 		$winning_bid = $bid_system_test->get_winning_bid_value( $post_id );
 		error_log( "winning_bid = ". $winning_bid . " (should be $bid_value)" );
@@ -342,7 +341,7 @@ function auction_test(){
 		// Have bidder two bid above own winning bid value and above winning bid * (1 + bid increment)
 		error_log( "****************************************" );
 		$bid_value	= 25;
-		$bid_status = $bid_system_test->form_submission( $post_id, $bid_value, $bidder_id );
+		$bid_status = $bid_system_test->bid_form_submit( $post_id, $bid_value, $bidder_id );
 		error_log( "bid_status = $bid_status (should be 4)" );
 		$winning_bid = $bid_system_test->get_winning_bid_value( $post_id );
 		error_log( "winning_bid = ". $winning_bid . " (should be $bid_value * " . BID_INCREMENT . ")" );
@@ -350,14 +349,14 @@ function auction_test(){
 
 		// Have bidder two bid equal to his current max bid
 		error_log( "****************************************" );
-		$bid_status = $bid_system_test->form_submission( $post_id, $bid_value, $bidder_id );
+		$bid_status = $bid_system_test->bid_form_submit( $post_id, $bid_value, $bidder_id );
 		error_log( "bid_status = $bid_status (should be 6)" );
 		$winning_bid = $bid_system_test->get_winning_bid_value( $post_id );
 		error_log( "winning_bid = ". $winning_bid . " (should be $bid_value * " . BID_INCREMENT . ")" );
 		error_log( "winning_bidder = " . $bid_system_test->get_winning_bid( $post_id )->bidder_id );
 	}
 
-	if ( false ) { // test form_validation
+	if ( false ) { // test bid_form_validate
 		// Control entry in bids table and post meta table, on mythical post id with mythical bidder
 		$winning_bid = $bid_system_test->update_winning_bid( 1, $post_id, $bid_value, $bidder_id );
 		error_log( "winning_bid = $winning_bid (should be 11.23 * " . BID_INCREMENT . ")" );
@@ -367,23 +366,23 @@ function auction_test(){
 
 		$wpdb->insert( $wpdb->bids, array( 'post_id' => $post_id, 'bidder_id' => $bidder_id, 'bid_value' => $bid_value, 'bid_date' => $bid_date, 'bid_date_gmt' => $bid_date_gmt ) );
 
-		//$bid_system_test->form_validation( $post_id, $bid_value, $bidder_id );
+		//$bid_system_test->bid_form_validate( $post_id, $bid_value, $bidder_id );
 
-		$bid_status = $bid_system_test->form_validation( $post_id, $bid_value, $bidder_id );
+		$bid_status = $bid_system_test->bid_form_validate( $post_id, $bid_value, $bidder_id );
 		error_log( "bid_status = $bid_status (should be 6)" );
 		$winning_bid = $bid_system_test->update_winning_bid( $bid_status, $post_id, $bid_value, $bidder_id );
 		error_log( "winning_bid = $winning_bid (should be 11.23 * " . BID_INCREMENT . ")" );
 		error_log( "winning_bidder = " . $bid_system_test->get_winning_bid( $post_id )->bidder_id );
 
 		$bid_value	= 2;
-		$bid_status = $bid_system_test->form_validation( $post_id, $bid_value, $bidder_id );
+		$bid_status = $bid_system_test->bid_form_validate( $post_id, $bid_value, $bidder_id );
 		error_log( "bid_status = $bid_status (should be 5)" );
 		$winning_bid = $bid_system_test->update_winning_bid( $bid_status, $post_id, $bid_value, $bidder_id );
 		error_log( "winning_bid = $winning_bid (should be 11.23 * " . BID_INCREMENT . ")" );
 		error_log( "winning_bidder = " . $bid_system_test->get_winning_bid( $post_id )->bidder_id );
 
 		$bid_value	= 20;
-		$bid_status = $bid_system_test->form_validation( $post_id, $bid_value, $bidder_id );
+		$bid_status = $bid_system_test->bid_form_validate( $post_id, $bid_value, $bidder_id );
 		error_log( "bid_status = $bid_status (should be 4)" );
 		$winning_bid = $bid_system_test->update_winning_bid( $bid_status, $post_id, $bid_value, $bidder_id );
 		error_log( "winning_bid = $winning_bid (should be 11.23 * " . BID_INCREMENT . ")" );
@@ -394,34 +393,34 @@ function auction_test(){
 		$bidder_id	= 111;
 
 		$bid_value	= 0.1;
-		$bid_status = $bid_system_test->form_validation( $post_id, $bid_value, $bidder_id );
+		$bid_status = $bid_system_test->bid_form_validate( $post_id, $bid_value, $bidder_id );
 		error_log( "bid_status = $bid_status (should be 3)" );
 		$winning_bid = $bid_system_test->update_winning_bid( $bid_status, $post_id, $bid_value, $bidder_id );
 		error_log( "winning_bid = $winning_bid (should be 11.23 * " . BID_INCREMENT . ")" );
 		error_log( "winning_bidder = " . $bid_system_test->get_winning_bid( $post_id )->bidder_id );
 
 		$bid_value	= 10;
-		$bid_status = $bid_system_test->form_validation( $post_id, $bid_value, $bidder_id );
+		$bid_status = $bid_system_test->bid_form_validate( $post_id, $bid_value, $bidder_id );
 		error_log( "bid_status = $bid_status (should be 2)" );
 		$winning_bid = $bid_system_test->update_winning_bid( $bid_status, $post_id, $bid_value, $bidder_id );
 		error_log( "winning_bid = $winning_bid (should be $bid_value * " . BID_INCREMENT . ")" );
 		error_log( "winning_bidder = " . $bid_system_test->get_winning_bid( $post_id )->bidder_id );
 
 		$bid_value	= 20;
-		$bid_status = $bid_system_test->form_validation( $post_id, $bid_value, $bidder_id );
+		$bid_status = $bid_system_test->bid_form_validate( $post_id, $bid_value, $bidder_id );
 		error_log( "bid_status = $bid_status (should be 2)" );
 		$winning_bid = $bid_system_test->update_winning_bid( $bid_status, $post_id, $bid_value, $bidder_id );
 		error_log( "winning_bidder = " . $bid_system_test->get_winning_bid( $post_id )->bidder_id );
 
 		$bid_value	= 20.9;
-		$bid_status = $bid_system_test->form_validation( $post_id, $bid_value, $bidder_id );
+		$bid_status = $bid_system_test->bid_form_validate( $post_id, $bid_value, $bidder_id );
 		error_log( "bid_status = $bid_status (should be 1)" );
 		$winning_bid = $bid_system_test->update_winning_bid( $bid_status, $post_id, $bid_value, $bidder_id );
 		error_log( "winning_bid = $winning_bid (should be $bid_value * " . BID_INCREMENT . ")" );
 		error_log( "winning_bidder = " . $bid_system_test->get_winning_bid( $post_id )->bidder_id );
 
 		$bid_value	= 25;
-		$bid_status = $bid_system_test->form_validation( $post_id, $bid_value, $bidder_id );
+		$bid_status = $bid_system_test->bid_form_validate( $post_id, $bid_value, $bidder_id );
 		error_log( "bid_status = $bid_status (should be 4)" );
 		$winning_bid = $bid_system_test->update_winning_bid( $bid_status, $post_id, $bid_value, $bidder_id );
 		error_log( "winning_bid = $winning_bid (should be $bid_value * " . BID_INCREMENT . ")" );

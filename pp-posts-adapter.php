@@ -61,6 +61,7 @@ function pp_post_custom_meta_boxes() {
 		remove_meta_box('postexcerpt', 'post', 'normal');
 		remove_meta_box('revisionsdiv', 'post', 'normal');
 	}
+
 	if( function_exists( 'add_meta_box' )) {
 		//Moved to bids system class
 		add_meta_box('pp-post-details', __('Post Details'), 'pp_post_details', 'post', 'normal', 'high' );
@@ -252,6 +253,14 @@ add_action( 'deleted_post', 'pp_unschedule_post_end' );
  */
 function pp_post_submit_meta_box() {
 	global $action, $wpdb, $post;
+	
+	if( strstr( $_SERVER[ 'REQUEST_URI' ], 'post_type' ) ){
+		error_log( "** On add new page for custom post type. Post type is " . get_post_type( $_GET[ 'post' ] ) . " ** " );
+		return;
+	} elseif ( isset( $_GET[ 'post' ] ) && get_post_type( $_GET[ 'post' ] ) != 'post' ){
+		error_log( "** On page of custom post type. Post type is " . get_post_type( $_GET[ 'post' ] ) . " ** " );
+		return;
+	}
 
 	// translators: Publish box end date format, see http://php.net/date
 	$datef = __( 'M j, Y @ G:i' );
@@ -281,12 +290,9 @@ function pp_post_submit_meta_box() {
 		<a href="#edit_endtimestamp" class="edit-endtimestamp hide-if-no-js" tabindex='4'><?php ('ended' != $post->post_status) ? _e('Edit') : _e('Extend'); ?></a>
 		<div id="endtimestampdiv" class="hide-if-js">
 			<?php touch_end_time(($action == 'edit'),5); ?>
-			<?php //touch_time(($action == 'edit'),1,5); ?>
 		</div>
 	</div><?php
 }
-//Moved this function to centralized "add_meta_boxes" function, needs to be called on "admin_menu" hook
-//add_meta_box('submitdiv', __('Publish'), 'pp_post_submit_meta_box', 'post', 'side', 'core');
 add_action('post_submitbox_misc_actions', 'pp_post_submit_meta_box');
 
 /**

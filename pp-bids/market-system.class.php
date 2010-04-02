@@ -1,6 +1,6 @@
 <?php
 
-class PP_Bid_System {
+class PP_Market_System {
 
 	var $name;					// Public name of the bid system e.g. "Auction".
 	//var $description;			// Location of class file on server
@@ -12,7 +12,7 @@ class PP_Bid_System {
 	var $bid_table_headings;	// Array of name/value pairs to be used as column headings when printing table of bids. e.g. 'bid_id' => 'Bid ID', 'post_id' => 'Post', 'bid_value' => 'Amount', 'bid_date' => 'Date'
 
 	// Constructors
-	function PP_Bid_System( $name, $bid_form_title = "", $bid_button_value = "", $post_fields = array(), $post_table_columns = array(), $bid_table_headings = array() ) {
+	function PP_Market_System( $name, $bid_form_title = "", $bid_button_value = "", $post_fields = array(), $post_table_columns = array(), $bid_table_headings = array() ) {
 		$this->__construct( $name, $bid_form_title, $bid_button_value, $post_fields, $post_table_columns, $bid_table_headings );
 	}
 
@@ -70,6 +70,7 @@ class PP_Bid_System {
 		
 		// For adding Ajax & other scripts
 		add_action('wp_print_scripts', array( &$this, 'enqueue_bid_scripts' ) );
+		
 	}
 
 	// Member functions that you must override.
@@ -77,74 +78,32 @@ class PP_Bid_System {
 	// The fields that make up the bid form.
 	// The <form> tag and a bid form header and footer are automatically generated for the class.
 	// You only need to enter the tags to capture information required by your bid system.
-	function form_fields( $post_id = NULL ) {
-		die('function PP_Bid_System::form_fields() must be over-ridden in a sub-class.');
+	function bid_form_fields( $post_id = NULL ) {
+		die('function PP_Market_System::bid_form_fields() must be over-ridden in a sub-class.');
 	}
 
-	// Process the bid form on submission.
-	function form_submission( $post_id = NULL, $bid_value = NULL, $bidder_id = NULL ){
-		die('function PP_Bid_System::form_submission() must be over-ridden in a sub-class.');
+	// Process the bid form fields upon submission.
+	function bid_form_submit( $post_id = NULL, $bid_value = NULL, $bidder_id = NULL ){
+		die('function PP_Market_System::bid_form_submit() must be over-ridden in a sub-class.');
 	}
 
-	// Validates a bid when a bid form is submitted.
-	function form_validation(){
-		die('function PP_Bid_System::form_validation() must be over-ridden in a sub-class.');
+	// Validate a bid when the bid form.
+	function bid_form_validate(){
+		die('function PP_Market_System::bid_form_validate() must be over-ridden in a sub-class.');
 	}
 
-	// Print the details of a specified bid on a specified post.
-	function view_details( $bid_id, $post_id ){
-		echo '<p class="no-bid-details">' . __('No details available for this bid.') . '</p>';
-		return 'no_details_view';
-	}
-	
-	// Print a list of all bids on a post specified with $post_id.
-	function view_list( $post_id ){
-		return 'no_list_view';
-	}
-
-	// Functions that you may wish to override.
-
-	// Header template for the bid form.
-	function _form_header() {
-
-		$bid_head = '<div id="bid">';
-		$bid_head .= '<h3>' . $this->bid_form_title . '</h3>';
-		//$bid_head .= '<div class="bid-updated" id="bid_msg">';
-		//$bid_head .= '<p>' . $this->get_bid_message() . '</p>';
-		//$bid_head .= '</div>';
-		$bid_head .= $this->get_bid_message();
-		//$bid_head .= '<form id="bid_form" method="get" action="">';
-		$bid_head .= '<form id="bid_form" method="post" action="">';
-		
-		return $bid_head;
-	}
-
-	// Footer template for the bid form.
-	function _form_footer( $post_id = NULL ) {
-		global $post;
-
-		$post_id = ( $post_id === NULL ) ? $post->ID : $post_id;
-
-		do_action( 'bid_form_hidden_fields' );
-
-		$bid_foot = wp_nonce_field( __FILE__, 'bid_nonce', false, false );
-		$bid_foot .= '<input type="hidden" name="post_ID" value="' . $post_id . '" id="post_ID" />';
-		$bid_foot .= '<input name="bid_submit" type="submit" id="bid_submit" value="' . $this->bid_button_value .'" />';
-		$bid_foot .= '</form></div>';
-
-		return $bid_foot;
-	}
+	// Functions that you may override, but do not need changes to make a new market system.
 
 	// The function that brings all the bid form elements together.
-	function form( $post_id = NULL ) {
+	function bid_form( $post_id = NULL ) {
 		global $post;
 
 		$post_id = ( $post_id === NULL ) ? $post->ID : $post_id;
 		$the_post = ( empty ( $post ) ) ? get_post( $post_id) : $post;
 
-		//error_log('in bid system form(), post = ' . print_r($post,true));
-		//error_log('in bid system form(), post_id = ' . print_r($post_id,true));
-		
+		//error_log('in bid system bid_form(), post = ' . print_r($post,true));
+		//error_log('in bid system bid_form(), post_id = ' . print_r($post_id,true));
+
 		$form = '<div id="bid">';
 		$form .= '<h3>' . $this->bid_form_title . '</h3>';
 
@@ -153,10 +112,10 @@ class PP_Bid_System {
 			$form .= $this->get_bid_message();
 			$form .= '<form id="bid_form" method="post" action="">';
 
-			$form .= ( $post->post_status != 'ended' ) ? $this->form_fields( $post_id ) : '<p>' . __( 'This post has ended. Bidding is closed.' ) . '</p>';
+			$form .= ( $post->post_status != 'ended' ) ? $this->bid_form_fields( $post_id ) : '<p>' . __( 'This post has ended. Bidding is closed.' ) . '</p>';
 			
-			/** @TODO Implement bid bar in PP_Bid_System::form()*/
-			
+			/** @TODO Implement bid bar in PP_Market_System::bid_form()*/
+
 			//$form .= $this->form_footer();
 			apply_filters( 'bid_form_hidden_fields', $form );
 
@@ -175,23 +134,21 @@ class PP_Bid_System {
 		return $form;		
 	}
 
-	// Applied to "the_content" filter to add the bid form to content, but only when printed on it's own page.
+	// Applied to "the_content" filter to add the bid form to the content of a page when viewed on single.
+	// You may wish to override this funtion to show the bid form on other, or all pages.
+	// Adding the form to the content via filter means all the beautiful WP themes that exist can be used with Prospress, without customisation.
 	function form_filter( $content ) {
 
 		//error_log("**in form_filter after unset & session destory pp_bid_status = " . print_r($pp_bid_status,true));
 		//error_log('** in form_filter, $_REQUEST = ' . print_r( $_REQUEST, true ) );
 
-		//$uri_sans_param = preg_replace( '/(#\?).*$/', '', $_SERVER[ 'REQUEST_URI' ] );
-		//if( preg_match( '/(' . preg_quote( $uri_sans_param, '/' ) . ')$/', get_permalink() ) )
 		if( is_single() )
-			$content .= $this->form();
-			//$content .= $this->form_header() . $this->form_fields() . $this->form_footer();
-			//$content = $this->form_header() . $this->form_fields() . $this->form_footer() . $content;
+			$content .= $this->bid_form();
 
 		return $content;
 	}
 
-	// Fields for taking input from the post edit and add new post forms.
+	// Fields for taking input from the edit and add new post forms.
 	function post_fields(){
 		error_log( 'post_fields method' );
 	}
@@ -201,6 +158,8 @@ class PP_Bid_System {
 		error_log( 'no_post_submit method' );
 	}
 
+	// Adds the meta box with post fields to the edit and add new post forms. 
+	// This function is hooked in the constructor and is only called if post fields is defined. 
 	function post_fields_meta_box(){
 		if( function_exists( 'add_meta_box' )) {
 			add_meta_box('pp-bidding-options', __('Bidding Options'), array(&$this, 'post_fields'), 'post', 'normal', 'core');
@@ -525,12 +484,13 @@ class PP_Bid_System {
 		}
 	}
 	
+
 	// *******************************************************************************************************************
 	// Private Functions. Don't worry about these, unless you want to get really tricky
-
+	// *******************************************************************************************************************
 
 	// Returns bid column headings for bid system. Used with the add headings to the built in print_column_headers function.
-	public function get_column_headings(){
+	function get_column_headings(){
 		return $this->bid_table_headings;
 	}
 
@@ -540,27 +500,12 @@ class PP_Bid_System {
 
 		get_currentuserinfo(); //get's user ID of currently logged in user and puts into global $user_id
 
-/*		//$bids_for_all = array();
-		$markets = $wpdb->get_results( $wpdb->prepare("SELECT blog_id FROM $wpdb->blogs WHERE site_id = %d AND archived = '0' AND spam = '0' AND deleted = '0' ORDER BY registered ASC", $wpdb->siteid), ARRAY_A );
-
-		$table_name = $wpdb->base_prefix . 'bids';
-		$bids_for_all[] = $wpdb->get_results($wpdb->prepare("SELECT * FROM $table_name WHERE bidder_id = %d", $user_ID), ARRAY_A);
-
-		error_log('$bids_for_all pre loop = ' . print_r($bids_for_all, true));
-
-		foreach($markets as $market){
-			$table_name = $wpdb->base_prefix . $market['blog_id'] . '_bids';
-			$bids_for_all[ $market['blog_id'] ] = $wpdb->get_results($wpdb->prepare("SELECT * FROM $table_name WHERE bidder_id = %d", $user_ID), ARRAY_A);
-		}
-
-		error_log('$bids_for_all = ' . print_r($bids_for_all, true));
-*/
 		$bids = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->bids WHERE bidder_id = %d", $user_ID), ARRAY_A);
 
 		$bids = apply_filters( 'admin_history_bids', $bids );
-		error_log('$bids = ' . print_r($bids, true));
+		//error_log('$bids = ' . print_r($bids, true));
 
-		$this->print_bids_table( $bids, __('Bid History') );
+		$this->print_admin_bids_table( $bids, __('Bid History') );
 	}
 
 	function winning_history() {
@@ -570,21 +515,75 @@ class PP_Bid_System {
 
 		$bids = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $wpdb->bids WHERE bidder_id = %d AND bid_status = 'winning'", $user_ID ), ARRAY_A );
 
-		$bids = apply_filters( 'admin_history_bids', $bids );
-		error_log('$bids = ' . print_r($bids, true));
+		$bids = apply_filters( 'winning_history_bids', $bids );
+		//error_log('$bids = ' . print_r($bids, true));
 
-		$this->print_bids_table( $bids, __('Winning Bids') );
+		$this->print_admin_bids_table( $bids, __('Winning Bids') );
 	}
 
-	function print_bids_table( $bids, $title ){
-		global $wpdb, $user_ID;
+	function print_admin_bids_table( $bids, $title ){
+		global $wpdb, $user_ID, $wp_locale;
 
 		$title = ( empty( $title ) ) ? 'Bids' : $title;
+
+		if( empty( $bids ) && !is_array( $bids ) )
+			$bids = array();
 		
+		$bid_status = 'winning';
+
 		?>
 		<div class="wrap feedback-history">
 			<?php screen_icon(); ?>
 			<h2><?php echo $title; ?></h2>
+
+			<form id="bids-filter" action="<?php echo admin_url('admin.php?page=bids'); ?>" method="get" >
+				<div class="tablenav clearfix">
+
+				<div class="alignleft">
+				<ul class="subsubsub" style="margin:0;">
+					<li><?php _e('Bids on:' ); ?></li>
+					<li><a href='#' class="" id="">All</a> |</li>
+					<li><a href='#' class="paid" id="">Published Posts</a> |</li>
+					<li><a href='#' class="sent" id="">Ended Posts</a></li>
+				</ul>
+			</div>
+			<br class="clear" />
+			<div class="alignleft">
+				<?php
+				$arc_query = $wpdb->prepare("SELECT DISTINCT YEAR(bid_date) AS yyear, MONTH(bid_date) AS mmonth FROM $wpdb->bids WHERE bid_status = %s ORDER BY bid_date DESC", $bid_status);
+				$arc_result = $wpdb->get_results( $arc_query );
+				$month_count = count($arc_result);
+
+				if ( $month_count && !( 1 == $month_count && 0 == $arc_result[0]->mmonth ) ) {
+					$m = isset($_GET['m']) ? (int)$_GET['m'] : 0;
+				?>
+				<select name='m'>
+				<option<?php selected( $m, 0 ); ?> value='0'><?php _e('Show all dates'); ?></option>
+				<?php
+				foreach ($arc_result as $arc_row) {
+					if ( $arc_row->yyear == 0 )
+						continue;
+					$arc_row->mmonth = zeroise( $arc_row->mmonth, 2 );
+
+					if ( $arc_row->yyear . $arc_row->mmonth == $m )
+						$default = ' selected="selected"';
+					else
+						$default = '';
+
+					echo "<option$default value='" . esc_attr("$arc_row->yyear$arc_row->mmonth") . "'>";
+					echo $wp_locale->get_month($arc_row->mmonth) . " $arc_row->yyear";
+					echo "</option>\n";
+				}
+				?>
+				</select>
+				<?php } ?>
+
+				<input type="submit" value="Filter" id="submit_bulk_action" class="button-secondary action" />
+				</div>
+
+				<div class="alignright">
+				</div>
+				</div>
 
 			<table class="widefat fixed" cellspacing="0">
 				<thead>
@@ -642,7 +641,7 @@ class PP_Bid_System {
 			$this->$function( $post_id );
 		}
 	}
-	
+
 	function enqueue_bid_scripts(){
   		wp_enqueue_script( 'bid-form-ajax', PP_BIDS_URL . '/bid-form-ajax.js', array( 'jquery' ) );
 		wp_localize_script( 'bid-form-ajax', 'pppostL10n', array(
@@ -655,9 +654,10 @@ class PP_Bid_System {
 
 	}
 
-	// Called with init hook to determine if a bid has been submitted. If it has, form_submission is called.
+	// Called with init hook to determine if a bid has been submitted. If it has, bid_form_submit is called.
+	// Takes care of the logic of the class, determining if and when to call a function.
 	function bid_controller(){
-		//global $pp_bid_status;
+		global $pp_bid_status;
 
 		//Is user trying to submit bid
 		if( isset( $_REQUEST[ 'bid_submit' ] ) ){ //|| isset( $_REQUEST[ 'ajax_bid' ] ) ){
@@ -699,11 +699,11 @@ class PP_Bid_System {
 					error_log('$_REQUEST[ bid_nonce ] not valid' );
 				$bid_status = 8;
 			} elseif ( isset( $_GET[ 'bid_redirect' ] ) ) {
-				error_log('in bid_controller, using _GET for form_submission' );
-				$bid_status = $this->form_submission( $_GET[ 'post_ID' ], $_GET[ 'bid_value' ] );
+				error_log('in bid_controller, using _GET for bid_form_submit' );
+				$bid_status = $this->bid_form_submit( $_GET[ 'post_ID' ], $_GET[ 'bid_value' ] );
 			} else {
-				error_log('in bid_controller, using _POST for form_submission' );
-				$bid_status = $this->form_submission( $_POST[ 'post_ID' ], $_POST[ 'bid_value' ] );
+				error_log('in bid_controller, using _POST for bid_form_submit' );
+				$bid_status = $this->bid_form_submit( $_POST[ 'post_ID' ], $_POST[ 'bid_value' ] );
 			}
 
 			// Redirect user back to post
@@ -722,7 +722,6 @@ class PP_Bid_System {
 			}
 
 			//wp_safe_redirect( $location );
-			global $pp_bid_status;
 			error_log("** setting global pp_bid_status var = $bid_status");
 			$pp_bid_status = $bid_status;
 
@@ -730,7 +729,7 @@ class PP_Bid_System {
 			//if ( isset( $_POST[ 'ajax_bid' ] ) ){
 			if( $_POST[ 'bid_submit' ] == 'ajax' ){
 				error_log("*********** AJAX BID SET ****************");
-				echo $this->form( $_POST[ 'post_ID' ] );
+				echo $this->bid_form( $_POST[ 'post_ID' ] );
 				die();
 			}
 		}

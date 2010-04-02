@@ -8,7 +8,7 @@
 /*
 Plugin Name: Prospress Payment
 Plugin URI: http://prospress.com
-Description: You can't have a marketplace without payment! This plugin extends WordPress to include the Prospress Payment system so buyers can pay sellers for items.  
+Description: Money - the great enabler of trade. This plugin extends WordPress to provide a payment system for Prospress posts.
 Author: Brent Shepherd
 Version: 0.1
 Author URI: http://brentshepherd.com/
