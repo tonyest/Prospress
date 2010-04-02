@@ -1,8 +1,0 @@
-Added:
-
-Modified:
-
-Removed:
-- feedback tables for all sites, return to one feedback table to rule them all. 
-
-Bug Fixes:
