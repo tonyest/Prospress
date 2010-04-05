@@ -513,30 +513,4 @@ function pp_remove_classes() {
 }
 add_action( 'admin_head', 'pp_remove_classes' );
 
-
-//**************************************************************************************************//
-// ADD DASHBOARD WIDGET FOR WATCHED POSTS
-//**************************************************************************************************//
-/** @TODO this should probably be moved elsewhere, perhaps a "watchlist" component */
-
-/**
- * Outputs the contents of Prospress Watchlist Dashboard Widget
- * 
- * @uses 
- **/
-function pp_watchlist_dashboard_widget() {
-	echo '<span style="color: red">Insert Prospress Watchlist Here.';
-}
-
-/**
- * Creates the Widget function to use in the dashboard set-up action hook if current user has required privileges
- * 
- * @uses wp_add_dashboard_widget
- **/
-function pp_watchlist_add_dashboard_widgets() {
-	wp_add_dashboard_widget('watchlist_dashboard_widget', __('Watchlist'), 'pp_watchlist_dashboard_widget');
-}
-// Hook into the 'wp_dashboard_setup' action to register our other functions
-add_action('wp_dashboard_setup', 'pp_watchlist_add_dashboard_widgets' );
-
 ?>
