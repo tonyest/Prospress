@@ -56,7 +56,7 @@ if ( !defined( "PP_POST_OPTIONS"))
 function pp_post_custom_meta_boxes() {
 	if( function_exists( 'remove_meta_box' )) {
 		//remove_meta_box('submitdiv', 'post', 'normal');
-		remove_meta_box('postcustom', 'post', 'normal');
+		//remove_meta_box('postcustom', 'post', 'normal');
 		remove_meta_box('trackbacksdiv', 'post', 'normal');
 		remove_meta_box('postexcerpt', 'post', 'normal');
 		remove_meta_box('revisionsdiv', 'post', 'normal');
