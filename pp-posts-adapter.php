@@ -238,8 +238,32 @@ add_action( 'deleted_post', 'pp_unschedule_post_end' );
 
 
 //**************************************************************************************************//
-// ADD CUSTOM POST STATUS AND END DATE TO POST SUBMIT META BOX
+// CREATE CUSTOM POST STATUS AND ADD END DATE TO POST SUBMIT META BOX
 //**************************************************************************************************//
+
+/**
+ * Create an "ended" status to designate to posts upon their completion. 
+ *
+ * @uses pp_register_ended_status functiion
+ * @param object $post
+ */
+function pp_register_ended_status() {
+
+	register_post_status(
+	       'ended',
+	       array('label' => _x('Ended Posts', 'post'),
+				'label_count' => _n_noop('Ended <span class="count">(%s)</span>', 'Ended <span class="count">(%s)</span>'),
+				'show_in_admin_all' => false,
+				'show_in_admin_all_list' => false,
+				'show_in_admin_status_list' => true,
+				'public' => false,
+				//'private' => true,
+				'publicly_queryable' => false,
+				'exclude_from_search' => true,
+	       )
+	);
+}
+add_action('init', 'pp_register_ended_status');
 
 /**
  * Display custom Prospress post submit form fields, mainly the 'end date' box.

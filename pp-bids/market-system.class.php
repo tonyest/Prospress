@@ -422,12 +422,6 @@ class PP_Market_System {
 	 */
 	function get_bid_message(){
 
-		//foreach ( debug_backtrace() as $key => $value ) {
-			//error_log( "** " . $key . ". " . $value['function'] . "( " . str_replace( array("\n","\t",' ','(',')'), '', print_r( $value['args'], true ) ) . " )" );
-		//	error_log( "** " . $key . ". " . $value['function'] . "( " . $value['args'][0] . " )" );
-		//	error_log( "  ** " . $value['file'] . ":" . $value['line'] );
-		//}
-
 		if ( !is_user_logged_in() ) //|| !isset( $pp_bid_status ) )//|| !isset( $_GET[ 'bid_msg' ] ) )
 			return;
 
