@@ -37,10 +37,12 @@ if ( !defined( 'PP_FEEDBACK_URL'))
 
 if ( file_exists( PP_FEEDBACK_DIR . '/feedback-functions.php' ) )
 	require_once ( PP_FEEDBACK_DIR . '/feedback-functions.php' );
+/*
 if ( file_exists( PP_FEEDBACK_DIR . '/feedback-widget.class.php' ) )
 	require_once ( PP_FEEDBACK_DIR . '/feedback-widget.class.php' );
 if ( file_exists( PP_FEEDBACK_DIR . '/feedback-widgets.php' ) )
 	require_once ( PP_FEEDBACK_DIR . '/feedback-widgets.php' );
+*/
 
 // For testing
 //include_once ( PP_FEEDBACK_DIR . '/feedback-tests.php' );

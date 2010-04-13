@@ -53,6 +53,12 @@ require_once ( PP_BIDS_DIR . '/pp-bids-templatetags.php' );
 //do_action( 'include_bid_systems' );
 
 /**
+ * Include Sort functions
+ */
+include( PP_BIDS_DIR . '/bids-sort.php');
+
+
+/**
  * This is where the bid/marketplace system is created. It's a standard class creation: require class file; 
  * create instance of class and store this instance in a global variable to be used elsewhere.
  *
@@ -285,8 +291,8 @@ function pp_bids_add_admin_pages() {
 		add_menu_page( $bids_title, $bids_title, 1, $base_page, '', WP_PLUGIN_URL . '/prospress/images/menu.png' );
 	}
 
-	$winning_bids_title = apply_filters( '', __('Winning Bids') );
-	$bid_history_title = apply_filters( '', __('Bid History') );
+	$winning_bids_title = apply_filters( 'winning_bids_title', __('Winning Bids') );
+	$bid_history_title = apply_filters( 'bid_history_title', __('Bid History') );
 
     // Add submenu items to the bids top-level menu
 	if (function_exists('add_submenu_page')){

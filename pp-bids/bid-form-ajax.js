@@ -30,9 +30,9 @@ jQuery(document).ready(function($) {
 
 	function fadeBidMsg(){
 		$("#bid_msg").fadeTo(300,0.5);
-		$("#bid_msg").fadeTo(300,1);
-		$("#bid_msg").fadeTo(300,0.5);
-		$("#bid_msg").fadeTo(300,1);
+		$("#bid_msg").fadeTo(400,0.9);
+		$("#bid_msg").fadeTo(500,0.5);
+		$("#bid_msg").fadeTo(600,1);
 		return false;
 	}
 	fadeBidMsg();

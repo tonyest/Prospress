@@ -3,9 +3,9 @@
 Plugin Name: Custom Taxonomy UI
 Plugin URI: http://webdevstudios.com/support/wordpress-plugins/
 Description: Admin panel for creating custom taxonomies
-Author: WebDevStudios
+Author: Leonard's Ego
 Version: 0.3.1
-Author URI: http://webdevstudios.com/
+Author URI: http://leonardsego.com/
 */
 
 // Define current version constant
@@ -28,35 +28,11 @@ function cpt_plugin_menu() {
 // create custom plugin settings menu
 add_action('admin_menu', 'cpt_plugin_menu');
 
-//register custom post types
-$cpt_post_types = get_option('cpt_custom_post_types');
-
-//check if option value is an Array before proceeding
-if (is_array($cpt_post_types)) {
-	foreach ($cpt_post_types as $cpt_post_type) {
-
-		if (!$cpt_post_type[1]) {
-			$cpt_label = esc_html($cpt_post_type[0]);
-		}else{
-			$cpt_label = esc_html($cpt_post_type[1]);
-		}
-
-		register_post_type( $cpt_post_type[0], array(	'label' => __($cpt_label),
-			'public' => $cpt_post_type[2],
-			'show_ui' => $cpt_post_type[3],
-			'_edit_link' => $cpt_post_type[4],
-			'capability_type' => $cpt_post_type[5],
-			'hierarchical' => $cpt_post_type[6],
-			'rewrite' => false,
-			'query_var' => $cpt_post_type[8],
-			'supports' => $cpt_post_type[9]
-		) );
-	}	
-}
-
 function cpt_create_custom_taxonomies() {
 	//register custom taxonomies
 	$cpt_tax_types = get_option('cpt_custom_tax_types');
+
+	//error_log("cpt_create_custom_taxonomies, cpt_tax_types = " . print_r($cpt_tax_types, true));
 	
 	//check if option value is an Array before proceeding
 	if (is_array($cpt_tax_types)) {
@@ -74,7 +50,7 @@ function cpt_create_custom_taxonomies() {
 			}else{
 				$cpt_singular_label = esc_html($cpt_tax_type[2]);
 			}
-			
+
 			//register our custom taxonomies
 			register_taxonomy( $cpt_tax_type[0], 
 				$cpt_tax_type[3], 
@@ -163,13 +139,13 @@ function cpt_register_settings() {
 
 		//retrieve new custom taxonomy values
 		$cpt_form_fields = $_POST['cpt_custom_tax'];
-		error_log('*** $_POST = ' . print_r($_POST, true));
+		//error_log('*** $_POST = ' . print_r($_POST, true));
 		$cpt_form_fields[3] = 'post'; 	// Object type
 		$cpt_form_fields[4] = true; 	// Hierarchical
 		$cpt_form_fields[5] = true; 	// Show UI
 		$cpt_form_fields[6] = $cpt_form_fields[0]; 	// Query Var
 		$cpt_form_fields[7] = $cpt_form_fields[0]; 	// Rewrite
-		error_log('*** $cpt_form_fields = ' . print_r($cpt_form_fields, true));
+		//error_log('*** $cpt_form_fields = ' . print_r($cpt_form_fields, true));
 
 		//verify required fields are filled out
 		if ( empty( $cpt_form_fields[0] ) ) {

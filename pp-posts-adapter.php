@@ -48,6 +48,11 @@ if ( !defined( "PP_POST_OPTIONS"))
 	define("PP_POST_OPTIONS", PP_POSTS_DIR . "/pp-post-options.php");
 
 /**
+ * Include Sort functions
+ */
+include( PP_POSTS_DIR . '/pp-sort.php');
+
+/**
  * Adds meta boxes for capturing required marketplace metadata on the new/edit post page.
  * 
  * @uses add_meta_box to add meta boxes on the post page
@@ -56,15 +61,18 @@ if ( !defined( "PP_POST_OPTIONS"))
 function pp_post_custom_meta_boxes() {
 	if( function_exists( 'remove_meta_box' )) {
 		//remove_meta_box('submitdiv', 'post', 'normal');
-		//remove_meta_box('postcustom', 'post', 'normal');
+		remove_meta_box('postcustom', 'post', 'normal');
 		remove_meta_box('trackbacksdiv', 'post', 'normal');
 		remove_meta_box('postexcerpt', 'post', 'normal');
 		remove_meta_box('revisionsdiv', 'post', 'normal');
 	}
 
 	if( function_exists( 'add_meta_box' )) {
+
+		//Custom Taxonomies takes care of this.
+		//add_meta_box('pp-post-details', __('Post Details'), 'pp_post_details', 'post', 'normal', 'high' );
+
 		//Moved to bids system class
-		add_meta_box('pp-post-details', __('Post Details'), 'pp_post_details', 'post', 'normal', 'high' );
 		//add_meta_box('pp-post-payment-options', __('Payment Options'), 'pp_post_payment_options', 'post', 'normal', 'core' );
 		//add_meta_box('pp-post-shipping-options', __('Shipping Options'), 'pp_post_shipping_options', 'post', 'normal', 'core' );
 	} else { // For Wordpress prior to 2.5
