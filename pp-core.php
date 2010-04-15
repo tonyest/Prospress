@@ -104,6 +104,15 @@ $currency = get_option( 'currency_type' );
 
 $currency_symbol = $currencies[ $currency ][ 'symbol' ];
 
+function pp_maybe_install(){
+	error_log('*** in pp_maybe_install ***');
+	if( !get_option( 'currency_type' ) )
+		update_option( 'currency_type', 'USD' );
+	if( !get_option( 'currency_sign_location' ) )
+		update_option( 'currency_sign_location', '1' );
+}
+
+
 // Administration functions for choosing default currency (may be set by locale in future, like number format is already)
 function pp_add_currency_admin(){
 	if ( function_exists( 'add_settings_section' ) ){

@@ -38,7 +38,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		$dont_echo = false;
 
 		if( $bid_count == 0 ){
-			$bid_bid_form_fields .= '<div id="current_bid_val">' . __("Starting Bid: ") . pp_money_format( get_post_meta( $post_id, 'start_price', true ) ) . '</div></p>';
+			$bid_bid_form_fields .= '<div id="current_bid_val">' . __("Starting Price: ") . pp_money_format( get_post_meta( $post_id, 'start_price', true ) ) . '</div></p>';
 		} else {
 			$bid_bid_form_fields .= '<div id="current_bid_num">' . __("Number of Bids: ") . $this->the_bid_count( $post_id, $dont_echo ) . '</div>';
 			$bid_bid_form_fields .= '<div id="winning_bidder">' . __("Winning Bidder: ") . $this->the_winning_bidder( $post_id, $dont_echo ) . '</div>';
@@ -82,7 +82,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 			$bid[ 'bid_status' ] = $bid_ms[ 'bid_status' ];
 			$bid = apply_filters('bid_pre_db_insert', $bid);
 			//$this->update_winning_bid( $bid_ms, $post_id, $bid_value, $bidder_id );
-			$this->update_bid( $bid, $bid_ms );
+			$this->update_bid( $bid, $bid_ms, $post_id );
 			error_log("*** Winning Bid updated ***");
 			//$wpdb->insert( $wpdb->bids, $bid );
 			error_log("*** Bid inserted ***");
@@ -104,7 +104,8 @@ class PP_Auction_Bid_System extends PP_Market_System {
 			error_log("Bidder is different to winning bidder: bidder_id = $bidder_id & this->get_winning_bid( $post_id )->bidder_id  = " . $this->get_winning_bid( $post_id )->bidder_id );
 			$current_winning_bid_value = $this->get_winning_bid_value( $post_id );
 			if ( $this->get_bid_count( $post_id ) == 0 ) {
-				$start_price = get_post_meta( $post_ID, 'start_price', true );
+				$start_price = get_post_meta( $post_id, 'start_price', true );
+				error_log("** In bid_form_validate, start_price = $start_price ");
 				if ( $bid_value < $start_price ){
 					error_log("INVALID: Bid value ($bid_value) is first bid, but must bid higher than starting price");
 					$bid_msg = 9;
@@ -143,7 +144,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		return compact( 'bid_status', 'bid_msg' );
 	}
 
-	function update_bid( $bid, $bid_ms ){
+	function update_bid( $bid, $bid_ms, $post_id ){
 		global $wpdb;
 		error_log("** update_winning_bid called **");
 
@@ -161,7 +162,14 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		//if( $posts_max_bid->bid_value === false || $posts_max_bid->bid_value == 0 ) { //if first bid
 		if( $bid_ms[ 'bid_msg' ] == 0 ) { //if first bid
 			error_log("** First bid.");
-			$new_winning_bid_value = ( $bid[ 'bid_value' ] * BID_INCREMENT );
+			$start_price = get_post_meta( $post_id, 'start_price', true );
+			if( $start_price ){ // If start price is great than 0
+				error_log("** Start price is greater than zero with value of $start_price");
+				$new_winning_bid_value = $start_price;
+			} else {
+				error_log("** Start price NOT greater than zero with value of $start_price");
+				$new_winning_bid_value = ( $bid[ 'bid_value' ] * BID_INCREMENT );
+			}
 		} elseif ( $bid_ms[ 'bid_msg' ] == 1 ) { //Bid value is over max bid & bidder different to current winning bidder
 			error_log("** Bid value is over max bid & bidder different to current winning bidder");
 			if ( $bid[ 'bid_value' ] > ( $posts_max_bid->bid_value * ( BID_INCREMENT + 1 ) ) ) {
@@ -261,7 +269,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 // Runs a suite of tests on the auction bid system.
 function auction_test(){
 	//global $bid_system, $wpdb;
-	
+
 	$bid_system_test = new PP_Auction_Bid_System();
 
 	$post_id		= 333333;

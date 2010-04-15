@@ -33,6 +33,8 @@ if ( !defined( 'PP_VERSION'))
  */
 
 require_once( WP_PLUGIN_DIR . '/prospress/pp-core.php' );
+register_activation_hook( __FILE__, 'pp_maybe_install' );
+
 //$deactivated = apply_filters( 'pp_deactivated_components', get_site_option( 'pp-deactivated-components' ) );
 
 //require_once( WP_PLUGIN_DIR . '/prospress/pp-bids.php' );
