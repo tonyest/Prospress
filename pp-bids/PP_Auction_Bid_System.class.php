@@ -13,7 +13,7 @@
 require_once ( PP_BIDS_DIR . '/market-system.class.php' ); // Base class
 
 class PP_Auction_Bid_System extends PP_Market_System {
-	
+
 	// Constructors
 
 	// PHP4 constructor

@@ -19,7 +19,7 @@ function set_pp_sort_flag( $query ) {
 }
 
 add_filter('posts_join','pp_join_filter');
-function pp_join_filter($arg) {
+function pp_join_filter( $arg ) {
 	global $wpdb, $wp_query, $pp_sort;
 
 	if( !isset( $pp_sort['orderby'] ) )
@@ -36,7 +36,7 @@ function pp_join_filter($arg) {
 }
 
 add_filter('posts_orderby','pp_orderby_filter');
-function pp_orderby_filter($arg) {
+function pp_orderby_filter( $arg ) {
 	global $wpdb, $wp_query, $pp_sort;
 
 	error_log('* in start of pp_orderby_filter, arg = ' . $arg);
@@ -49,13 +49,13 @@ function pp_orderby_filter($arg) {
 	else
 		$arg = apply_filters('pp_posts_orderby', $arg);
 
-	error_log('in pp_orderby_filter, arg = ' . $arg);
+	error_log('** in pp_orderby_filter, arg = ' . $arg);
 
 	return $arg;
 }
 
 add_filter('posts_where','pp_where_filter');
-function pp_where_filter($arg) {
+function pp_where_filter( $arg ) {
 	global $wpdb, $wp_query, $pp_sort;
 
 	if( !isset( $pp_sort['orderby'] ) )
@@ -79,6 +79,8 @@ function pp_insert_rewrite_query_vars( $vars ) {
 	return $vars;
 }
 
+
+
 /**************************************************************************************
  *************************************** WIDGET ***************************************
  **************************************************************************************/
@@ -96,12 +98,16 @@ class PP_Sort_Widget extends WP_Widget {
 
 	function widget($args, $instance) {
 		extract( $args );
+		
+		//Don't want to print on single posts or pages
+		if( is_single() || is_page() ){
+			error_log('in widget, is single true');
+			return;
+		}
 
-		/* User-selected settings. */
 		$end_date = isset( $instance['end_date'] ) ? $instance['end_date'] : false;
 		$price = isset( $instance['price'] ) ? $instance['price'] : false;
 
-		/* Before widget (defined by themes). */
 		echo $before_widget;
 
 		echo $before_title;
@@ -122,7 +128,6 @@ class PP_Sort_Widget extends WP_Widget {
 		
 		echo $after_widget;
 
-		/* After widget (defined by themes). */
 		echo $after_widget;
 	}
 
@@ -165,6 +170,7 @@ add_action('wp_head', 'pp_print_query');
 function pp_print_query(){
 	global $wp_query;
 	error_log('in pp_print_query, $wp_query request = ' . print_r($wp_query->request, true));
+	//error_log('in pp_print_query, $wp_query request = ' . print_r($wp_query, true));
 }
 
 /*

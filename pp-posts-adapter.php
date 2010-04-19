@@ -50,7 +50,12 @@ if ( !defined( "PP_POST_OPTIONS"))
 /**
  * Include Sort functions
  */
-include( PP_POSTS_DIR . '/pp-sort.php');
+//include( PP_POSTS_DIR . '/pp-sort.php');
+
+/**
+ * Include Template Tags
+ */
+include( PP_POSTS_DIR . '/pp-posts-templatetags.php');
 
 /**
  * Adds meta boxes for capturing required marketplace metadata on the new/edit post page.
@@ -134,7 +139,7 @@ function pp_post_save_postdata( $post_id, $post ) {
 	$post_end_date = sprintf( "%04d-%02d-%02d %02d:%02d:%02d", $yye, $mme, $dde, $hhe, $mne, $sse );
 	//Take a breath
 
-	//error_log('$post_end_date = ' . $post_end_date);
+	error_log( '$post_end_date = ' . $post_end_date );
 
 	//And do it all over again for original end date
 	$original_yye = $_POST['hidden_yye'];
@@ -152,48 +157,38 @@ function pp_post_save_postdata( $post_id, $post ) {
 	$original_sse = ($original_sse > 59 ) ? $original_sse -60 : $original_sse;
 	$original_post_end_date = sprintf( "%04d-%02d-%02d %02d:%02d:%02d", $original_yye, $original_mme, $original_dde, $original_hhe, $original_mne, $original_sse );
 
-	error_log('$original_post_end_date = ' . $original_post_end_date);
-	
-	$now = current_time('mysql');
-	$post_end_date_gmt = get_gmt_from_date($post_end_date);
-	$original_post_end_date_gmt = get_gmt_from_date($original_post_end_date);
-	if( !get_post_meta($post_id, 'post_end_date') || $post_end_date != $original_post_end_date ){
-		error_log(' * post_end_date updated * ' );
+	error_log( '$original_post_end_date = ' . $original_post_end_date );
+
+	//$now = current_time('mysql');
+	//$now = time();
+	$now = current_time( 'mysql', true ); // get current GMT
+	$post_end_date_gmt = get_gmt_from_date( $post_end_date );
+	$original_post_end_date_gmt = get_gmt_from_date( $original_post_end_date );
+
+	//if( !get_post_meta($post_id, 'post_end_date') || $post_end_date != $original_post_end_date ){ // this is using user's time zone, better to use gmt
+	if( !get_post_meta( $post_id, 'post_end_date' ) || $post_end_date_gmt != $original_post_end_date_gmt ){
+		error_log(' * post_end_date updating with: ' );
 		update_post_meta($post_id, 'post_end_date', $post_end_date);
+		error_log(' * post_end_date = ' . $post_end_date );
 		update_post_meta($post_id, 'post_end_date_gmt', $post_end_date_gmt);		
+		error_log(' * post_end_date_gmt = ' . $post_end_date_gmt );
+		error_log(' * post_end_date updated * ' );
 	}
 
-	error_log('$post_end_date = ' . $post_end_date);
 	error_log('$now = ' . $now);
 
 	// An extension of the post.php code to set the correct post status to ended, publish, future, draft, pending or private.
-	if( $post_end_date <= $now && $_POST['save'] != 'Save Draft'){
+	if( $post_end_date_gmt <= $now && $_POST['save'] != 'Save Draft'){
 		wp_unschedule_event( strtotime( $original_post_end_date_gmt ), 'schedule_end_post', array( 'ID' => $post_id ) );
 		pp_end_post( $post_id );
 		error_log("end date test set post $post_id should have been unscheduled");
-	} else { /*
-		if($_POST['save'] == 'Save Draft'){
-			$post_status = 'draft';
-		} else if($_POST['post_status'] == 'pending'){
-			$post_status = 'pending';
-		} else if ( isset($_POST['visibility']) && $_POST['visibility'] == 'private' ) { //If private
-			$post_status = 'private';
-		} else if ( mysql2date('U', $post->post_date_gmt, false) > mysql2date('U', $now, false) ){
-			$post_status = 'future';
-		} else {
-			$post_status = 'publish';
-		}
-		error_log("post_status set to $post_status");
-
-		if($post_status != $post->post_status)
-			$wpdb->update( $wpdb->posts, array('post_status' => $post_status), array('ID' => $post_id) );
-		*/
+	} else {
 		wp_unschedule_event( strtotime($original_post_end_date_gmt ), 'schedule_end_post', array('ID' => $post_id ) );
 
 		if($post_status != 'draft')
 			pp_schedule_end_post( $post_id,  strtotime( $post_end_date_gmt ) );
 
-		do_action('post_end_date_changed', $post_status, $post_end_date);
+		do_action( 'publish_end_date_change', $post_status, $post_end_date );
 	}
 	error_log( '*** In pp_post_save_postdata: get_post( $post_id )->post_status = ' . get_post( $post_id )->post_status );
 }
@@ -202,11 +197,12 @@ add_action( 'save_post', 'pp_post_save_postdata', 10, 2 );
 /**
  * Schedules a post to end at a given post end time. 
  *
- * @uses $post_id for identifing the post
+ * @param post_id for identifing the post
+ * @param post_end_time_gmt a unix time stamp of the gmt date/time the post should end
  * @uses global $wpdb object for update function
  */
-function pp_schedule_end_post($post_id, $post_end_time) {
-	wp_schedule_single_event( $post_end_time, 'schedule_end_post', array('ID' => $post_id) );
+function pp_schedule_end_post( $post_id, $post_end_time_gmt ) {
+	wp_schedule_single_event( $post_end_time_gmt, 'schedule_end_post', array('ID' => $post_id) );
 }
 
 /**

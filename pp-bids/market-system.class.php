@@ -2,14 +2,15 @@
 
 class PP_Market_System {
 
-	var $name;					// Public name of the bid system e.g. "Auction".
-	//var $description;			// Location of class file on server
-	//var $file;					// Location of class file on server
+	var $name;					// Public name of the market system e.g. "Auction".
 	var $bid_form_title;		// Title for the bid form.
 	var $bid_button_value;		// Text used on the submit button of the bid form.
-	var $post_fields;			// Array of flags representing the fields which the bid system implements e.g. array( 'post_fields' )
-	var $post_table_columns;	// Array of arrays, each array is used to create a column in the post tables. By default it adds two columns, one for number of bids on the post and the other for the current winning bid on the post e.g. 'current_bid' => array( 'title' => 'Winning Bid', 'function' => 'get_winning_bid'), 'bid_count' => array( 'title => 'Number of Bids', 'function' => 'get_bid_count')
-	var $bid_table_headings;	// Array of name/value pairs to be used as column headings when printing table of bids. e.g. 'bid_id' => 'Bid ID', 'post_id' => 'Post', 'bid_value' => 'Amount', 'bid_date' => 'Date'
+	var $post_fields;			// Array of flags representing the fields which the market system implements e.g. array( 'post_fields' )
+	var $post_table_columns;	// Array of arrays, each array is used to create a column in the post tables. By default it adds two columns, 
+								// one for number of bids on the post and the other for the current winning bid on the post 
+								// e.g. 'current_bid' => array( 'title' => 'Winning Bid', 'function' => 'get_winning_bid'), 'bid_count' => array( 'title => 'Number of Bids', 'function' => 'get_bid_count')
+	var $bid_table_headings;	// Array of name/value pairs to be used as column headings when printing table of bids. 
+								// e.g. 'bid_id' => 'Bid ID', 'post_id' => 'Post', 'bid_value' => 'Amount', 'bid_date' => 'Date'
 
 	// Constructors
 	function PP_Market_System( $name, $bid_form_title = "", $bid_button_value = "", $post_fields = array(), $post_table_columns = array(), $bid_table_headings = array() ) {
@@ -17,18 +18,10 @@ class PP_Market_System {
 	}
 
 	function __construct( $name, $bid_form_title = "", $bid_button_value = "", $post_fields = array(), $post_table_columns = array(), $bid_table_headings = array() ) {
+
 		$this->name = (string)$name;
-		//$this->description = (string)$description;
-		//$this->file = (string)$file;
 		$this->bid_form_title = empty( $bid_form_title ) ? __("Make a bid") : $bid_form_title;
 		$this->bid_button_value = empty( $bid_button_value ) ? __("Bid now!") : $bid_button_value;
-		//$this->post_fields = $post_fields;
-
-		if( !is_array( $post_fields ) ){
-			$this->post_fields = array();
-		} else {
-			$this->post_fields = $post_fields;
-		}
 
 		if( empty( $post_table_columns ) || !is_array( $post_table_columns ) ){
 			$this->post_table_columns = array (	'current_bid' => array( 'title' => 'Winning Bid', 'function' => 'the_winning_bid_value' ),
@@ -49,6 +42,12 @@ class PP_Market_System {
 			$this->bid_table_headings = $bid_table_headings;
 		}
 
+		if( !is_array( $post_fields ) ){
+			$this->post_fields = array();
+		} else {
+			$this->post_fields = $post_fields;
+		}
+
 		if( !empty( $this->post_fields ) && in_array( 'post_fields', $this->post_fields ) ){
 			add_action( 'admin_menu', array( &$this, 'post_fields_meta_box' ) );
 			add_action( 'save_post', array( &$this, 'post_fields_submit' ), 10, 2 );
@@ -66,18 +65,21 @@ class PP_Market_System {
 		add_filter( 'the_content', array( &$this, 'form_filter' ) );
 
 		// Adds columns for printing bid history table
+		add_action( 'admin_menu', array( &$this, 'add_admin_pages' ) );
+
+		// Adds columns for printing bid history table
 		add_filter( 'manage_' . $this->name . '_columns', array( &$this, 'get_column_headings' ) );
-		
+
 		// For adding Ajax & other scripts
-		add_action('wp_print_scripts', array( &$this, 'enqueue_bid_scripts' ) );
-		
+		add_action('wp_print_scripts', array( &$this, 'enqueue_bid_form_scripts' ) );
+		add_action('admin_menu', array( &$this, 'enqueue_bid_admin_scripts' ) );		
 	}
 
 	// Member functions that you must override.
 
 	// The fields that make up the bid form.
 	// The <form> tag and a bid form header and footer are automatically generated for the class.
-	// You only need to enter the tags to capture information required by your bid system.
+	// You only need to enter the tags to capture information required by your market system.
 	function bid_form_fields( $post_id = NULL ) {
 		die('function PP_Market_System::bid_form_fields() must be over-ridden in a sub-class.');
 	}
@@ -92,6 +94,7 @@ class PP_Market_System {
 		die('function PP_Market_System::bid_form_validate() must be over-ridden in a sub-class.');
 	}
 
+
 	// Functions that you may override, but do not need changes to make a new market system.
 
 	// The function that brings all the bid form elements together.
@@ -101,13 +104,12 @@ class PP_Market_System {
 		$post_id = ( $post_id === NULL ) ? $post->ID : $post_id;
 		$the_post = ( empty ( $post ) ) ? get_post( $post_id) : $post;
 
-		//error_log('in bid system bid_form(), post = ' . print_r($post,true));
-		//error_log('in bid system bid_form(), post_id = ' . print_r($post_id,true));
-
 		$form = '<div id="bid">';
 		$form .= '<h3>' . $this->bid_form_title . '</h3>';
 
-		if ( $the_post->post_status != 'ended' ) {
+		if ( $the_post->post_status == 'ended' ) {
+			$form .= '<p>' . __( 'This post has ended. Bidding is closed.' ) . '</p>';
+		} else {
 			//$form .= $this->form_header();
 			$form .= $this->get_bid_message();
 			$form .= '<form id="bid_form" method="post" action="">';
@@ -125,8 +127,6 @@ class PP_Market_System {
 			$form .= '</form>';
 
 			$form = apply_filters( 'bid_form', $form );
-		} else {
-			$form .= '<p>' . __( 'This post has ended. Bidding is closed.' ) . '</p>';
 		}
 
 		$form .= '</div>';
@@ -136,19 +136,19 @@ class PP_Market_System {
 
 	// Applied to "the_content" filter to add the bid form to the content of a page when viewed on single.
 	// You may wish to override this funtion to show the bid form on other, or all pages.
-	// Adding the form to the content via filter means all the beautiful WP themes that exist can be used with Prospress, without customisation.
+	// Automatically adding the bid form to posts via this filter means all the beautiful WP themes that 
+	// exist can be used with Prospress, without customisation.
 	function form_filter( $content ) {
 
 		//error_log("**in form_filter after unset & session destory pp_bid_status = " . print_r($pp_bid_status,true));
 		//error_log('** in form_filter, $_REQUEST = ' . print_r( $_REQUEST, true ) );
-
 		if( is_single() )
 			$content .= $this->bid_form();
 
 		return $content;
 	}
 
-	// Fields for taking input from the edit and add new post forms.
+	// Form fields to taking input from the edit and add new post forms.
 	function post_fields(){
 		error_log( 'post_fields method' );
 	}
@@ -174,7 +174,7 @@ class PP_Market_System {
 		
 		if( empty( $post_id ))
 			$post_id = $post->ID;
-		
+
 		$post_status = $wpdb->get_var( $wpdb->prepare( "SELECT post_status FROM $wpdb->posts WHERE ID = %d", $post_id ) );
 
 		/** @TODO Have a more graceful failure on varied post status */
@@ -198,7 +198,7 @@ class PP_Market_System {
 
 	// Calculates the value of the new winning bid and updates it in the DB if necessary
 	// Returns the value of the winning bid (either new or existing)
-	//function update_winning_bid( $bid_ms, $post_id, $bid_value, $bidder_id ){
+	// function update_winning_bid( $bid_ms, $post_id, $bid_value, $bidder_id ){
 	function update_bid( $bid, $bid_ms ){
 		global $wpdb;
 
@@ -212,7 +212,7 @@ class PP_Market_System {
 
 
 	/**
-	 * Get's the max bid for a post, optionally specified with $post_id.
+	 * Get's all the details of the highest bid on a post, optionally specified with $post_id.
 	 *
 	 * If no post id is specified, the global $post var is used. 
 	 */
@@ -228,7 +228,7 @@ class PP_Market_System {
 	}
 
 	/**
-	 * Prints the max bid for a post, optionally specified with $post_id.
+	 * Prints the max bid value for a post, optionally specified with $post_id. Optional also to just return the value. 
 	 */
 	function the_max_bid_value( $post_id = '', $echo = true ) {
 		$max_bid = ( empty( $post_id ) ) ? $this->get_max_bid() : $this->get_max_bid( $post_id );
@@ -242,6 +242,14 @@ class PP_Market_System {
 			return $max_bid;
 	}
 
+	/**
+	 * Get's all the details of the winning bid on a post, optionally specified with $post_id.
+	 *
+	 * At first glance, it may seem to be redundant having functions for both "max" and "winning" bid. 
+	 * However, in some market systems, the winning bid is no determined by the "max" bid. 
+	 * 
+	 * If no post id is specified, the global $post var is used. 
+	 */
 	function get_winning_bid( $post_id = '' ) {
 		global $post, $wpdb;
 
@@ -250,65 +258,15 @@ class PP_Market_System {
 			$post_id = $post->ID;
 		}
 
-		//error_log("selecting from " . $wpdb->bids . " WHERE post_id = $post_id AND bid_status = winning");
 		$winning_bid = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $wpdb->bids WHERE post_id = %d AND bid_status = %s", $post_id, 'winning' ) );
-
-		//error_log('$winning_bid = ' . print_r($winning_bid, true));
 		
 		return $winning_bid;
-		//return get_post_meta( $post_id, 'winning_bidder_id', true );
-		//return $this->get_max_bid( $post_id )->bidder_id;
-	}
-
-	/**
-	 * Prints the display name of the winning bidder for a post, optionally specified with $post_id.
-	 */
-	function the_winning_bidder( $post_id = '', $echo = true ) {
-		global $user_ID, $display_name;
-
-		get_currentuserinfo(); // to set global $display_name
-
-		$winning_bidder = $this->get_winning_bid( $post_id )->bidder_id;
-
-		if ( !empty( $winning_bidder ) ){
-			
-			$winning_bidder = ( $winning_bidder == $user_ID) ? __( 'You.' ) : get_userdata( $winning_bidder )->display_name;
-
-			//( $echo ) ? echo $winning_bidder : return $winning_bidder;
-			if ( $echo ) 
-				echo $winning_bidder;
-			else 
-				return $winning_bidder;
-		}
-	}
-
-	/**
-	 * Function to test if a given user is classified as a winning bidder for a given post. 
-	 * 
-	 * As some bid systems may have multiple winners, it is important to use this function 
-	 * instead of testing a user id against a user id provided with get_winning_bid.
-	 */
-	function is_winning_bidder( $user_id = '', $post_id = '' ) {
-		global $user_ID, $post;
-
-		//error_log("is_winning_bidder called with user_id $user_id and post_id $post_id");
-
-		if ( empty( $post_id ) )
-			$post_id = $post->ID;
-		
-		if ( $user_id == '' )
-			$user_id = $user_ID;
-		
-		$winner = $this->get_winning_bid( $post_id )->bidder_id;
-		//error_log("winning bidder = $winner");
-
-		return ( $user_id == $this->get_winning_bid( $post_id )->bidder_id ) ? true : false;
 	}
 
 	/**
 	 * Gets the value of the current winning bid for a post, optionally specified with $post_id.
 	 *
-	 * The value of the winning bid is not necessarily equal to the maximum bid. The winning bid
+	 * The value of the winning bid is not necessarily equal to the bid's value. The winning bid
 	 * value is calculated with the bid increment over the current second highest bid. It is then
 	 * stored in the bidsmeta table. This function pulls the value from this table. 
 	 * 
@@ -324,7 +282,7 @@ class PP_Market_System {
 		$winning_bid = $this->get_winning_bid( $post_id );
 
 		$winning_bid_value = $wpdb->get_var( $wpdb->prepare( "SELECT meta_value FROM $wpdb->bidsmeta WHERE bid_id = %d AND meta_key = %s", $winning_bid->bid_id, 'winning_bid_value' ) );
-		
+
 		// If no winning bid value in meta table, default to max value of winning bid.
 		if( empty( $winning_bid_value ) )
 			$winning_bid_value = $winning_bid->bid_value;
@@ -349,6 +307,49 @@ class PP_Market_System {
 			return $winning_bid;
 	}
 
+	/**
+	 * Prints the display name of the winning bidder for a post, optionally specified with $post_id.
+	 */
+	function the_winning_bidder( $post_id = '', $echo = true ) {
+		global $user_ID, $display_name;
+
+		get_currentuserinfo(); // to set global $display_name
+
+		$winning_bidder = $this->get_winning_bid( $post_id )->bidder_id;
+
+		if ( !empty( $winning_bidder ) ){
+			
+			$winning_bidder = ( $winning_bidder == $user_ID) ? __( 'You.' ) : get_userdata( $winning_bidder )->display_name;
+
+			if ( $echo ) 
+				echo $winning_bidder;
+			else 
+				return $winning_bidder;
+		}
+	}
+
+	/**
+	 * Function to test if a given user is classified as a winning bidder for a given post. 
+	 * 
+	 * As some market systems may have multiple winners, it is important to use this function 
+	 * instead of testing a user id directly against a user id provided with get_winning_bid.
+	 * 
+	 * Optionally takes $user_id and $post_id, if not specified, using the ID of the currently
+	 * logged in user and post in the loop.
+	 */
+	function is_winning_bidder( $user_id = '', $post_id = '' ) {
+		global $user_ID, $post;
+
+		if ( empty( $post_id ) )
+			$post_id = $post->ID;
+		
+		if ( $user_id == '' )
+			$user_id = $user_ID;
+		
+		$winner = $this->get_winning_bid( $post_id )->bidder_id;
+
+		return ( $user_id == $this->get_winning_bid( $post_id )->bidder_id ) ? true : false;
+	}
 
 	/**
 	 * Get's the max bid for a post and user, optionally specified with $post_id and $user_id.
@@ -367,9 +368,6 @@ class PP_Market_System {
 			
 		$users_max_bid = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $wpdb->bids WHERE post_id = %d AND bidder_id = %d AND bid_value = (SELECT MAX(bid_value) FROM $wpdb->bids WHERE post_id = %d AND bidder_id = %d)", $post_id, $user_id, $post_id, $user_id));
 
-		//if ( empty($users_max_bid->bid_value))
-		//	$users_max_bid->bid_value = 0;
-
 		return $users_max_bid;
 	}
 
@@ -379,7 +377,6 @@ class PP_Market_System {
 
 		$users_max_bid = ( $users_max_bid->bid_value ) ? $users_max_bid->bid_value : __('No Bids.');
 
-		//( $echo ) ? echo $users_max_bid : return $users_max_bid;
 		if ( $echo ) 
 			echo $users_max_bid;
 		else 
@@ -399,7 +396,7 @@ class PP_Market_System {
 	}
 
 	/**
-	 * Prints the max bid for a post, optionally specified with $post_id.
+	 * Prints the number of bids on a post, optionally specified with $post_id.
 	 */
 	function the_bid_count( $post_id = '', $echo = true ) {
 		$bid_count = ( empty( $post_id ) ) ? $this->get_bid_count() : $this->get_bid_count( $post_id );
@@ -483,9 +480,35 @@ class PP_Market_System {
 	// Private Functions. Don't worry about these, unless you want to get really tricky
 	// *******************************************************************************************************************
 
-	// Returns bid column headings for bid system. Used with the add headings to the built in print_column_headers function.
-	function get_column_headings(){
-		return $this->bid_table_headings;
+	/**
+	 * 	Adds bid pages to admin menu
+	 * 
+	 * @uses add_object_page to add "Bids" top level menu
+	 * @uses add_menu_page if add object page is not available to add "Bids" menu
+	 * @uses add_submenu_page to add "Bids" and "Bid History" submenus to "Bids"
+	 * @uses add_options_page to add administration pages for bid settings
+	 * @return false if logged in user is not the site admin
+	 **/
+	function add_admin_pages() {
+
+		$base_page = "bids";
+
+		$bids_title = apply_filters( 'bids_admin_title', __('Bids') );
+
+		if ( function_exists( 'add_object_page' ) ) {
+			add_object_page( $bids_title, $bids_title, 1, $base_page, '', WP_PLUGIN_URL . '/prospress/images/menu.png' );
+		} elseif ( function_exists( 'add_menu_page' ) ) {
+			add_menu_page( $bids_title, $bids_title, 1, $base_page, '', WP_PLUGIN_URL . '/prospress/images/menu.png' );
+		}
+
+		$winning_bids_title = apply_filters( 'winning_bids_title', __('Winning Bids') );
+		$bid_history_title = apply_filters( 'bid_history_title', __('Bid History') );
+
+	    // Add submenu items to the bids top-level menu
+		if (function_exists('add_submenu_page')){
+		    add_submenu_page($base_page, $winning_bids_title, $winning_bids_title, 1, $base_page, array( &$this, 'winning_history' ) );
+		    add_submenu_page($base_page, $bid_history_title, $bid_history_title, 1, 'bid-history', array( &$this, 'admin_history' ) );
+		}
 	}
 
 	// Print the feedback history for a user
@@ -497,7 +520,6 @@ class PP_Market_System {
 		$bids = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->bids WHERE bidder_id = %d", $user_ID), ARRAY_A);
 
 		$bids = apply_filters( 'admin_history_bids', $bids );
-		//error_log('$bids = ' . print_r($bids, true));
 
 		$this->print_admin_bids_table( $bids, __('Bid History') );
 	}
@@ -606,7 +628,7 @@ class PP_Market_System {
 							$style = ( 'alternate' == $style ) ? '' : 'alternate';
 						}
 					} else {
-						echo '<tr><td colspan="5">You have no bidding history.</td></tr>';
+						echo '<tr><td colspan="5">' . __('No bids to show.') . '</td></tr>';
 					}
 				?>
 				</tbody>
@@ -620,7 +642,13 @@ class PP_Market_System {
 		<?php
 	}
 
-	// Add bid system columns to tables of posts
+
+	// Returns bid column headings for market system. Used with the built in print_column_headers function.
+	function get_column_headings(){
+		return $this->bid_table_headings;
+	}
+
+	// Add market system columns to tables of posts
 	function add_post_column_headings( $column_headings ) {
 
 		foreach( $this->post_table_columns as $key => $column )
@@ -636,7 +664,7 @@ class PP_Market_System {
 		}
 	}
 
-	function enqueue_bid_scripts(){
+	function enqueue_bid_form_scripts(){
   		wp_enqueue_script( 'bid-form-ajax', PP_BIDS_URL . '/bid-form-ajax.js', array( 'jquery' ) );
 		wp_localize_script( 'bid-form-ajax', 'pppostL10n', array(
 			'endedOn' => __('Ended on:'),
@@ -645,7 +673,10 @@ class PP_Market_System {
 			'update' => __('Update'),
 			'repost' => __('Repost'),
 			));
+	}
 
+	function enqueue_bid_admin_scripts(){
+		wp_enqueue_style( 'bids', PP_BIDS_URL . '/admin.css' );
 	}
 
 	// Called with init hook to determine if a bid has been submitted. If it has, bid_form_submit is called.

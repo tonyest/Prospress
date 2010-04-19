@@ -16,7 +16,7 @@ function pp_orderby_bids($arg) {
 	global $wpdb, $wp_query, $pp_sort;
 
 	if( $pp_sort['orderby'] == 'price' )
-		$arg = str_replace("$wpdb->posts.post_date",$wpdb->bids . ".bid_value ",$arg);
+		$arg = str_replace("$wpdb->posts.post_date", "(" . $wpdb->bids . ".bid_value+0) ",$arg);
 //		$arg = $wpdb->bids . ".bid_value " . $pp_sort[ 'order' ];
 
 	return $arg;

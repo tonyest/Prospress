@@ -21,15 +21,13 @@ Concentrated power is not rendered harmless by the good intentions of those who 
 An idealist is a person who helps other people to be prosperous. - <b>Henry Ford</b>
 I am not a Marxist. - <b>Karl Marx</b>
 Is the 'invisible hand' attached to a clothed arm? - <b>John McMillan</b>
-The propensity to truck, barter and exchange one thing for another is common to all men, and to be found in no other race of animals. - <b>Adam Smith</b>
 The Internet is turning economics inside-out. - <b>Uri Geller</b>
 Life is full of chances and changes, and the most prosperous of men may...meet with great misfortunes. - <b>Aristotle</b>
-We want to make sure that prosperity is spread across the spectrum of regions and occupations and genders and races. - <b>Barack Obama</b>
-It is because our dreamers dreamed that we have emerged from each challenge more united, more prosperous, and more admired than before. - <b>Barack Obama</b>
 Unleash prosperity for everybody. - <b>Barack Obama</b>
 No people ever yet benefited by riches if their prosperity corrupted their virtue - <b>Theodore Roosevelt<b>
 Being free and prosperous in a world at peace. That's our ultimate goal. - <b>Ronald Reagan<b>
-Only when people are given a personal stake in determining their own destiny and benefiting from their own risks, do societies become prosperous, progressive, dynamic, and free.  - <b>Ronald Reagan<b>";
+All money is a matter of belief. - <b>Adam Smith</b>
+Freedom granted only when it is known beforehand that its effects will be beneficial is not freedom. - <b>Friedrich August von Hayek</b>";
 
 	// Here we split it into lines
 	$quotes = explode("\n", $quotes);
@@ -41,7 +39,7 @@ Only when people are given a personal stake in determining their own destiny and
 // This just echoes the chosen line, we'll position it later
 function capital_quotes() {
 	$chosen = get_capital_quote();
-	echo "<div id='capital-container'><p id='capital'>$chosen<p></div>";
+	echo "<div id='capital-container'><blockquote id='capital'>$chosen</blockquote></div>";
 }
 
 // Now we set that function up to execute when the admin_footer action is called
@@ -54,17 +52,16 @@ function capital_css() {
 	#capital-container {
 		position: absolute;
 		top: 0.5em;
-		left: 18em;
-		right: 33em;
+		left: 28em;
+		right: 25em;
 		margin: 0;
 	}
 
 	#capital {
 		margin: 0;
-		padding: 3px;
 		font-weight: normal;
-		color: #ccc;
-		line-height: 1.2em;
+		color: #acacac;
+		line-height: 1.5em;
 		text-align: center;
 	}
 	</style>
