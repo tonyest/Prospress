@@ -1,5 +1,30 @@
 <?php
 /**
+ * Get's the end time for a post and returns it as unix timestamp.
+ *
+ * @uses $post
+ * @uses $wpdb
+ *
+ * @param int $post_id Optional, default 0. The post id for which you want the max bid. 
+ * @return object Returns the row in the bids 
+ */
+function get_post_end_time( $post_id, $type = 'timestamp', $gmt = true ) {
+
+	$time = wp_next_scheduled( 'schedule_end_post', array( "ID" => $post_id ) );
+	//get_post_meta( $post_id, 'post_end_date', true );
+	//get_post_meta( $post_id, 'post_end_date_gmt', true );
+
+	if( $gmt == false ){
+		//$time = get_gmt_from_date(  );
+	//}elseif(){
+		
+	}
+
+	return $time;
+}
+add_filter( 'get_the_date', 'get_post_end_date' );
+
+/**
  * Get's the end time for a post.
  *
  * @uses $post
@@ -11,7 +36,8 @@
 function get_post_end_date( $date ) {
 	global $post;
 		
-	$date = $date . ' ending in ' . time_until( wp_next_scheduled( 'schedule_end_post', array( "ID" => $post->ID ) ) );
+	//$date = $date . ' ending ' . verbose_interval( wp_next_scheduled( 'schedule_end_post', array( "ID" => $post->ID ) ) - time() );
+	$date = $date . ' ending ' . human_time_diff( time(), wp_next_scheduled( 'schedule_end_post', array( "ID" => $post->ID ) ) );
 
 	return $date;
 }
@@ -28,27 +54,11 @@ function the_post_end_time( $post_id = 0) {
  * Print's the date and time a post is scheduled to end.
  *
  */
-function the_post_end_date( $title, $id ) {
+function the_post_end_date( $date, $id ) {
 
-	//$title = 'The Title Is: ' . $title;
-	
-	$title = $title . ' ending in ' . time_until( wp_next_scheduled( 'schedule_end_post', array( "ID" => $id ) ) );
-	
-	return $title;
 }
 //add_filter( 'the_title', 'the_post_end_date', 10, 2 );
 
-/**
- * Pretty-prints the time between now and another date.
- *
- * @param time $older_date
- * @param time $newer_date
- * @return string The pretty time_until value
- * @link http://binarybonsai.com/code/timesince.txt
- */
-function time_until( $date ) {
-    return verbose_interval( $date - time() );
-}
 
 /** 
  * Takes a period of time as a unix time stamp and returns a string 
@@ -56,7 +66,7 @@ function time_until( $date ) {
  * 
  * Based on WP_Crontrol's Interval function
  **/
-function verbose_interval( $time_period ) {
+function verbose_interval( $time_period, $units = 3 ) {
     // array of time period chunks
 	$chunks = array(
     	array(60 * 60 * 24 * 365 , _n_noop('%s year', '%s years')),
@@ -92,7 +102,7 @@ function verbose_interval( $time_period ) {
 	error_log( "$i ** In verbose_interval, output = $output, count = $count, seconds = $seconds  " );
 
 	// step two: the second chunk, if it's not seconds
-	if ( $i + 1 <= $j ) {
+	if ( $i + 1 <= $j && $units >= 2 ) {
 		$seconds2 = $chunks[$i + 1][0];
 		$name2 = $chunks[$i + 1][1];
 
@@ -105,7 +115,7 @@ function verbose_interval( $time_period ) {
 	error_log( "$i ** In verbose_interval, output = $output, count2 = $count2, seconds2 = $seconds2  " );
 	// step three: the third chunk
 	//if ( $name2 != $chunks[0] &&  $name2 != $chunks[0] ) {
-	if ( $i + 2 <= $j ) {
+	if ( $i + 2 <= $j && $units >= 3 ) {
 		$seconds3 = $chunks[$i + 2 ][0];
 		$name3 = $chunks[$i + 2 ][1];
 

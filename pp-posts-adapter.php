@@ -445,12 +445,14 @@ add_filter( 'manage_posts_columns', 'pp_post_columns' );
 function pp_post_columns_custom( $column_name, $post_id ) {
 	global $wpdb;
 	
-	// Need to manually populate $post var. Global $post, for an indeterminable reason, creates a bug, specifically, it contains post_status of "publish"...
+	// Need to manually populate $post var. Global $post contains post_status of "publish"...
 	$post = $wpdb->get_row( "SELECT post_status FROM $wpdb->posts WHERE ID = $post_id" );
 
 	if( $column_name == 'end_date' ) {
 		$end_date = get_post_meta( $post_id, 'post_end_date', true );
+		//$end_date = get_post_end_time( $post_id, 'mysql', false );
 		$end_date_gmt = get_post_meta( $post_id, 'post_end_date_gmt', true );
+		//$end_date_gmt = get_post_end_time( $post_id, 'mysql' );
 
 		if ( '0000-00-00 00:00:00' == $end_date || empty($end_date) ) {
 			$t_time = $h_time = __('Not set.');
@@ -467,10 +469,10 @@ function pp_post_columns_custom( $column_name, $post_id ) {
 			else
 				$h_time = mysql2date( __( 'g:ia d M Y' ), $m_time );
 		}
-		echo '<abbr title="' . $t_time . '">' . apply_filters('post_end_date_column_time', $h_time, $post, $column_name) . '</abbr>';
+		echo '<abbr title="' . $t_time . '">';
+		echo verbose_interval( $time - time(), 4 ) . ' <br/>';
+		echo apply_filters('post_end_date_column_time', $h_time, $post, $column_name) . '</abbr>';
 		echo '<br />';
-	} else {
-		echo '';
 	}
 
 	if( $column_name == 'post_actions' ) {
