@@ -265,33 +265,6 @@ function pp_register_ended_status() {
 add_action('init', 'pp_register_ended_status');
 
 /**
- * Add settings for writing marketplace posts.
- *
- */
-function pp_posts_settings_section(){?>
-	<table class='form-table'>
-		<tr>
-			<th scope="row"><?php echo _e('Allow published posts to be modified: ');?>:</th>
-			<td>
-				<?php
-				$edit_allowed = get_option( 'pp_post_edit_allowed' );
-				error_log('$edit_allowed = ' . $edit_allowed);
-				?>
-				<input type='checkbox' value='true' name='pp_post_edit_allowed' id='pp_post_edit_allowed' <?php checked( (boolean)$edit_allowed ); ?> /> 
-			</td>
-		</tr>
-	</table>
-<?php
-}
-
-function pp_posts_writing_option( $whitelist_options ) {
-	$whitelist_options['writing'][] = 'pp_post_edit_allowed';
-
-	return $whitelist_options;
-}
-add_filter( 'whitelist_options', 'pp_posts_writing_option' );
-
-/**
  * Display custom Prospress post submit form fields, mainly the 'end date' box.
  *
  * This code is sourced from the edit-form-advanced.php file. Additional code is added for 
@@ -523,9 +496,6 @@ function pp_posts_add_admin_pages() {
 
 	if ( strpos( $_SERVER['REQUEST_URI'], 'ended' ) !== false ){
 		wp_enqueue_script( 'inline-edit-post' );
-	}
-	if ( function_exists( 'add_settings_section' ) ){
-		add_settings_section( 'allow-edit', 'Editing Published Posts', 'pp_posts_settings_section', 'writing' );
 	}
 }
 add_action( 'admin_menu', 'pp_posts_add_admin_pages' );
