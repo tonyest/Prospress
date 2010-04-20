@@ -90,7 +90,6 @@ function human_interval( $time_period, $units = 3 ) {
     	array(60 , _n_noop('%s minute', '%s minutes')),
     	array( 1 , _n_noop('%s second', '%s seconds')),
 	);
-	error_log("$i ** In human_interval, chunks " . print_r( $chunks, true));
 
 	if( $time_period <= 0 ) {
 	    return __('now');
@@ -101,7 +100,7 @@ function human_interval( $time_period, $units = 3 ) {
 
 		$seconds = $chunks[$i][0];
 		$name = $chunks[$i][1];
-		error_log("$i ** In human_interval, $seconds seconds in " . print_r($name, true));
+		//error_log("$i ** In human_interval, $seconds seconds in " . print_r($name, true));
 
 		// finding the biggest chunk (if the chunk fits, break)
 		if ( ( $count = floor( $time_period / $seconds ) ) != 0 ) {
@@ -124,7 +123,6 @@ function human_interval( $time_period, $units = 3 ) {
 			// add to output var
 			$output .= ' '.sprintf(_n($name2[0], $name2[1], $count2), $count2);
 		}
-	error_log( "$i ** In human_interval, output = $output, count2 = $count2, seconds2 = $seconds2  " );
 	}
 
 	// step three: the third chunk
@@ -132,12 +130,10 @@ function human_interval( $time_period, $units = 3 ) {
 		$seconds3 = $chunks[$i + 2 ][0];
 		$name3 = $chunks[$i + 2 ][1];
 
-		error_log( "$i ** In human_interval, name3 = " . print_r( $name3, true ) );
 		if ( ( $count3 = floor( ( $time_period - ( $seconds * $count ) - ( $seconds2 * $count2 ) ) / $seconds3 ) ) != 0 ) {
 			// add to output var
 			$output .= ' '.sprintf( _n( $name3[0], $name3[1], $count3 ), $count3 );
 		}
-	error_log( "$i ** In human_interval, output = $output, count3 = $count3, seconds3 = $seconds3  " );
 	}
 
 	return $output;

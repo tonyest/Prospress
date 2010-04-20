@@ -137,45 +137,11 @@ function pp_currency_settings_section() {
 				$currency_type = get_option( 'currency_type' );
 				foreach( $currencies as $code => $currency ) {
 				?>
-					<option value='<?php echo $code; ?>' <?php echo ($currency_type == $code) ? 'selected="selected"': ''; ?> >
+					<option value='<?php echo $code; ?>' <?php selected( $currency_type, $code ); ?> >
 						<?php echo $currency[ 'currency' ]; ?> (<?php echo $code . ', ' . $currency['symbol']; ?>)
 					</option>
 		<?php	} ?>
 				</select>
-			</td>
-		</tr>
-		<tr>
-			<th scope="row"><?php echo _e('Symbol Location');?>:</th>
-			<td>
-				<?php
-				$currency_sign_location = get_option('currency_sign_location');
-				switch( $currency_sign_location ) {
-					case 1:
-						$csl1 = "checked ='checked'";
-						break;
-					case 2:
-						$csl2 = "checked ='checked'";
-						break;
-					case 3:
-						$csl3 = "checked ='checked'";
-						break;
-					case 4:
-						$csl4 = "checked ='checked'";
-						break;
-					default:
-						$csl1 = 'checked ="checked"';
-						break;
-				}
-				$currency_sign = $currencies[$currency_type]['symbol'];
-				?>
-				<input type='radio' value='1' name='currency_sign_location' id='csl1' <?php echo $csl1; ?> /> 
-				<label for='csl1'><?php echo $currency_sign; ?>100</label>
-				<input type='radio' value='2' name='currency_sign_location' id='csl2' <?php echo $csl2; ?> /> 
-				<label for='csl2'><?php echo $currency_sign; ?>&nbsp;100</label>
-				<input type='radio' value='3' name='currency_sign_location' id='csl3' <?php echo $csl3; ?> /> 
-				<label for='csl3'>100<?php echo $currency_sign; ?></label>
-				<input type='radio' value='4' name='currency_sign_location' id='csl4' <?php echo $csl4; ?> /> 
-				<label for='csl4'>100&nbsp;<?php echo $currency_sign; ?></label>
 			</td>
 		</tr>
 	</table>
@@ -184,7 +150,6 @@ function pp_currency_settings_section() {
 
 function currency_admin_option( $whitelist_options ) {
 	$whitelist_options['general'][] = 'currency_type';
-	$whitelist_options['general'][] = 'currency_sign_location';
 	return $whitelist_options;
 }
 add_filter( 'whitelist_options', 'currency_admin_option' );
