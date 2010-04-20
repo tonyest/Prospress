@@ -15,23 +15,17 @@ function get_post_end_time( $post_id, $type = 'timestamp', $gmt = true ) {
 	if( empty( $time ) )
 		$time = strtotime( get_post_meta( $post_id, 'post_end_date_gmt', true ) );
 
-	//error_log('--** in get_post_end_time start, time = ' . $time);
-
 	if( $time == false )
 	 	return false;
 
 	if( $gmt == false ){
 		$time = date( 'Y-m-d H:i:s', $time );
-	//	error_log('--** in get_post_end_time, gmt == false, after date function, time = ' . $time);
 		$time = get_date_from_gmt( $time );
-	//	error_log('--** in get_post_end_time, gmt time = ' . $time);
 		if( $type == 'timestamp' ){
 			$time = strtotime( $time );
-	//		error_log('--** in get_post_end_time, gmt == false, type == timestamp, time = ' . $time);
 		}
 	}elseif( $type == 'mysql' ){
 		$time = date( 'H:i Y/m/d', $time );
-	//	error_log('--** in get_post_end_time, gmt == true, type == mysql, time = ' . $time);
 	}
 
 	return $time;
@@ -56,23 +50,6 @@ function get_post_end_countdown( $date ) {
 }
 add_filter( 'get_the_date', 'get_post_end_countdown' );
 
-/**
- * Print's the end time for a post.
- *
- */
-function the_post_end_time( $post_id = 0) {
-}
-
-/**
- * Print's the date and time a post is scheduled to end.
- *
- */
-function the_post_end_date( $date, $id ) {
-
-}
-//add_filter( 'the_title', 'the_post_end_date', 10, 2 );
-
-
 /** 
  * Takes a period of time as a unix time stamp and returns a string 
  * describing how long the period of time is, eg. 2 weeks 1 day.
@@ -95,7 +72,7 @@ function human_interval( $time_period, $units = 3 ) {
 	    return __('now');
 	}
 
-	// step one: the first chunk
+	// 1st chunk
 	for ($i = 0, $j = count($chunks); $i < $j; $i++) {
 
 		$seconds = $chunks[$i][0];
@@ -112,9 +89,7 @@ function human_interval( $time_period, $units = 3 ) {
 	// set output var
 	$output = sprintf(_n($name[0], $name[1], $count), $count);
 
-	error_log( "$i ** In human_interval, output = $output, count = $count, seconds = $seconds  " );
-
-	// step two: the second chunk, if it's not seconds
+	// 2nd chunk
 	if ( $i + 1 < $j && $units >= 2 ) {
 		$seconds2 = $chunks[$i + 1][0];
 		$name2 = $chunks[$i + 1][1];
@@ -125,7 +100,7 @@ function human_interval( $time_period, $units = 3 ) {
 		}
 	}
 
-	// step three: the third chunk
+	// 3rd chunk (as long as it's not seconds or minutes)
 	if ( $i + 2 < $j - 1 && $units >= 3 ) {
 		$seconds3 = $chunks[$i + 2 ][0];
 		$name3 = $chunks[$i + 2 ][1];

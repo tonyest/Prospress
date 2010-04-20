@@ -108,15 +108,11 @@ function pp_post_save_postdata( $post_id, $post ) {
 	if( wp_is_post_revision( $post_id ) )
 		$post_id = wp_is_post_revision( $post_id );
 
-	error_log('*** In pp_post_save_postdata ***');
-
 	if ( empty( $_POST ) || 'page' == $_POST['post_type'] ) {
-		error_log( 'returning from pp_post_save_postdata' );
 		return $post_id;
 	} else if ( !current_user_can( 'edit_post', $post_id )) {
 		return $post_id;
 	} else if ( !isset( $_POST['yye'] ) ){ // Make sure an end date is submitted (not submitted with quick edits etc.)
-		error_log( 'returning from pp_post_save_postdata as no yye' );
 		return $post_id;
 	}
 
@@ -134,58 +130,27 @@ function pp_post_save_postdata( $post_id, $post ) {
 	$mne = ($mne > 59 ) ? $mne -60 : $mne;
 	$sse = ($sse > 59 ) ? $sse -60 : $sse;
 	$post_end_date = sprintf( "%04d-%02d-%02d %02d:%02d:%02d", $yye, $mme, $dde, $hhe, $mne, $sse );
-	//Take a breath
-
-	error_log( '$post_end_date = ' . $post_end_date );
-
-	//And do it all over again for original end date
-	$original_yye = $_POST['hidden_yye'];
-	$original_mme = $_POST['hidden_mme'];
-	$original_dde = $_POST['hidden_dde'];
-	$original_hhe = $_POST['hidden_hhe'];
-	$original_mne = $_POST['hidden_mne'];
-	$original_sse = $_POST['hidden_sse'];
-	$original_yye = ($original_yye <= 0 ) ? date('Y') : $original_yye;
-	$original_mme = ($original_mme <= 0 ) ? date('n') : $original_mme;
-	$original_dde = ($original_dde > 31 ) ? 31 : $original_dde;
-	$original_dde = ($original_dde <= 0 ) ? date('j') : $original_dde;
-	$original_hhe = ($original_hhe > 23 ) ? $original_hhe -24 : $original_hhe;
-	$original_mne = ($original_mne > 59 ) ? $original_mne -60 : $original_mne;
-	$original_sse = ($original_sse > 59 ) ? $original_sse -60 : $original_sse;
-	$original_post_end_date = sprintf( "%04d-%02d-%02d %02d:%02d:%02d", $original_yye, $original_mme, $original_dde, $original_hhe, $original_mne, $original_sse );
-
-	error_log( '$original_post_end_date = ' . $original_post_end_date );
 
 	$now_gmt = current_time( 'mysql', true ); // get current GMT
 	$post_end_date_gmt = get_gmt_from_date( $post_end_date );
-	$original_post_end_date_gmt = get_gmt_from_date( $original_post_end_date );
+	$original_post_end_date_gmt = get_post_end_time( $post_id, 'mysql' );
 
-	//if( !get_post_meta($post_id, 'post_end_date') || $post_end_date != $original_post_end_date ){ // this is using user's time zone, better to use gmt
-	if( !get_post_end_time( $post_id ) || $post_end_date_gmt != $original_post_end_date_gmt ){
-		error_log(' * post_end_date updating with: ' );
+	if( !$original_post_end_date_gmt || $post_end_date_gmt != $original_post_end_date_gmt ){
 		update_post_meta( $post_id, 'post_end_date', $post_end_date );
-		error_log(' * post_end_date = ' . $post_end_date );
 		update_post_meta($post_id, 'post_end_date_gmt', $post_end_date_gmt);		
-		error_log(' * post_end_date_gmt = ' . $post_end_date_gmt );
-		error_log(' * post_end_date updated * ' );
 	}
-
-	error_log('$now_gmt = ' . $now_gmt);
 
 	if( $post_end_date_gmt <= $now_gmt && $_POST['save'] != 'Save Draft'){
 		wp_unschedule_event( strtotime( $original_post_end_date_gmt ), 'schedule_end_post', array( 'ID' => $post_id ) );
 		pp_end_post( $post_id );
-		error_log("end date test set post $post_id should have been unscheduled");
 	} else {
 		wp_unschedule_event( strtotime( $original_post_end_date_gmt ), 'schedule_end_post', array( 'ID' => $post_id ) );
 
 		if($post_status != 'draft'){
 			pp_schedule_end_post( $post_id, strtotime( $post_end_date_gmt ) );
-			error_log( ' * pp_schedule_end_post = with post id = ' . $post_id . ' and time = ' . strtotime( $post_end_date_gmt ) );
 			do_action( 'publish_end_date_change', $post_status, $post_end_date );
 		}
 	}
-	error_log( '*** In pp_post_save_postdata: get_post( $post_id )->post_status = ' . get_post( $post_id )->post_status );
 }
 add_action( 'save_post', 'pp_post_save_postdata', 10, 2 );
 
@@ -215,7 +180,6 @@ function pp_end_post( $post_id ) {
 	$post_status = apply_filters( 'post_end_status', 'ended' );
 
 	$wpdb->update( $wpdb->posts, array( 'post_status' => $post_status ), array( 'ID' => $post_id ) );
-	error_log( "pp_end_post function called with Arg: $post_id" );
 	do_action( 'post_ended' );
 }
 add_action('schedule_end_post', 'pp_end_post');
@@ -229,11 +193,9 @@ add_action('schedule_end_post', 'pp_end_post');
 function pp_unschedule_post_end( $post_id ) {
 	$next = wp_next_scheduled( 'schedule_end_post', array('ID' => $post_id) );
 	wp_unschedule_event( $next, 'schedule_end_post', array('ID' => $post_id) );
-	error_log("pp_unschedule_post_end successfully called for post $post_id");
 }
 // Unschedule end of a post when a post is deleted. 
 add_action( 'deleted_post', 'pp_unschedule_post_end' );
-
 
 
 //**************************************************************************************************//
@@ -278,10 +240,8 @@ function pp_post_submit_meta_box() {
 	global $action, $wpdb, $post;
 
 	if( strstr( $_SERVER[ 'REQUEST_URI' ], 'post_type' ) ){
-		error_log( "** On add new page for custom post type. Post type is " . get_post_type( $_GET[ 'post' ] ) . " ** " );
 		return;
 	} elseif ( isset( $_GET[ 'post' ] ) && get_post_type( $_GET[ 'post' ] ) != 'post' ){
-		error_log( "** On page of custom post type. Post type is " . get_post_type( $_GET[ 'post' ] ) . " ** " );
 		return;
 	}
 
@@ -333,12 +293,9 @@ add_action('post_submitbox_misc_actions', 'pp_post_submit_meta_box');
 function touch_end_time( $edit = 1, $tab_index = 0, $multi = 0 ) {
 	global $wp_locale, $post, $comment;
 
-	//$post_end_date_gmt = get_post_meta($post->ID, 'post_end_date_gmt', true);
 	$post_end_date_gmt = get_post_end_time( $post->ID, 'mysql' );
-	error_log("** In touch_end_time post end date gmt = $post_end_date_gmt");
 
 	$edit = ( in_array($post->post_status, array('draft', 'pending') ) && (!$post_end_date_gmt || '0000-00-00 00:00:00' == $post_end_date_gmt ) ) ? false : true;
-	error_log(($edit) ? 'true' : 'false');
 
 	$tab_index_attribute = '';
 	if ( (int) $tab_index > 0 )
@@ -346,12 +303,10 @@ function touch_end_time( $edit = 1, $tab_index = 0, $multi = 0 ) {
 
 	$time_adj = time() + ( get_option( 'gmt_offset' ) * 3600 );
 	$time_adj_end = time() + 604800 + ( get_option( 'gmt_offset' ) * 3600 );
-	//$post_end_date = get_post_meta($post->ID, 'post_end_date', true);
+
 	$post_end_date = get_post_end_time( $post->ID, 'mysql', false );
 	if(empty($post_end_date))
 		$post_end_date = gmdate( 'Y-m-d H:i:s', ( time() + 604800 + ( get_option( 'gmt_offset' ) * 3600 ) ) );
-		//$post_end_date = current_time('mysql');
-	error_log("** In touch_end_time post_end_date = $post_end_date");
 
 	$dde = ($edit) ? mysql2date( 'd', $post_end_date, false ) : gmdate( 'd', $time_adj_end );
 	$mme = ($edit) ? mysql2date( 'm', $post_end_date, false ) : gmdate( 'm', $time_adj_end );
@@ -359,8 +314,6 @@ function touch_end_time( $edit = 1, $tab_index = 0, $multi = 0 ) {
 	$hhe = ($edit) ? mysql2date( 'H', $post_end_date, false ) : gmdate( 'H', $time_adj_end );
 	$mne = ($edit) ? mysql2date( 'i', $post_end_date, false ) : gmdate( 'i', $time_adj_end );
 	$sse = ($edit) ? mysql2date( 's', $post_end_date, false ) : gmdate( 's', $time_adj_end );
-
-	//error_log("** In touch_end_time dde = $dde mme = $mme yye = $yye hhe = $hhe");
 
 	$cur_dde = gmdate( 'd', $time_adj );
 	$cur_mme = gmdate( 'm', $time_adj );
@@ -428,7 +381,6 @@ add_action('admin_menu', 'pp_posts_admin_head');
 //**************************************************************************************************//
 function pp_post_columns( $column_headings ) {
 
-	//error_log('column_headings = ' . print_r( $column_headings, true ) );
 	unset( $column_headings[ 'tags' ] );
 
 	if( strpos( $_SERVER['REQUEST_URI'], 'ended' ) !== false ) {
