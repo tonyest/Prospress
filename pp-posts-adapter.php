@@ -137,7 +137,7 @@ function pp_post_save_postdata( $post_id, $post ) {
 
 	if( !$original_post_end_date_gmt || $post_end_date_gmt != $original_post_end_date_gmt ){
 		update_post_meta( $post_id, 'post_end_date', $post_end_date );
-		update_post_meta($post_id, 'post_end_date_gmt', $post_end_date_gmt);		
+		update_post_meta( $post_id, 'post_end_date_gmt', $post_end_date_gmt);		
 	}
 
 	if( $post_end_date_gmt <= $now_gmt && $_POST['save'] != 'Save Draft'){
@@ -166,7 +166,8 @@ function pp_schedule_end_post( $post_id, $post_end_time_gmt ) {
 }
 
 /**
- * Changes the status of a given post to 'ended'.
+ * Changes the status of a given post to 'completed'. This function is added to the
+ * schedule_end_post hook.
  *
  * @uses $post_id for identifing the post
  * @uses global $wpdb object for update function
@@ -177,10 +178,10 @@ function pp_end_post( $post_id ) {
 	if( wp_is_post_revision( $post_id ) )
 		$post_id = wp_is_post_revision( $post_id );
 
-	$post_status = apply_filters( 'post_end_status', 'ended' );
+	$post_status = apply_filters( 'post_end_status', 'completed' );
 
 	$wpdb->update( $wpdb->posts, array( 'post_status' => $post_status ), array( 'ID' => $post_id ) );
-	do_action( 'post_ended' );
+	do_action( 'post_completed' );
 }
 add_action('schedule_end_post', 'pp_end_post');
 
@@ -203,17 +204,17 @@ add_action( 'deleted_post', 'pp_unschedule_post_end' );
 //**************************************************************************************************//
 
 /**
- * Create an "ended" status to designate to posts upon their completion. 
+ * Create a "completed" status to designate to posts upon their completion. 
  *
- * @uses pp_register_ended_status functiion
+ * @uses pp_register_completed_status functiion
  * @param object $post
  */
-function pp_register_ended_status() {
+function pp_register_completed_status() {
 
 	register_post_status(
-	       'ended',
-	       array('label' => _x('Ended Posts', 'post'),
-				'label_count' => _n_noop('Ended <span class="count">(%s)</span>', 'Ended <span class="count">(%s)</span>'),
+	       'completed',
+	       array('label' => _x('Completed Posts', 'post'),
+				'label_count' => _n_noop('Completed <span class="count">(%s)</span>', 'Completed <span class="count">(%s)</span>'),
 				'show_in_admin_all' => false,
 				'show_in_admin_all_list' => false,
 				'show_in_admin_status_list' => true,
@@ -224,13 +225,13 @@ function pp_register_ended_status() {
 	       )
 	);
 }
-add_action('init', 'pp_register_ended_status');
+add_action('init', 'pp_register_completed_status');
 
 /**
  * Display custom Prospress post submit form fields, mainly the 'end date' box.
  *
  * This code is sourced from the edit-form-advanced.php file. Additional code is added for 
- * dealing with 'ended' post status. The HTML has also split from the php code for more
+ * dealing with 'completed' post status. The HTML has also split from the php code for more
  * readable poetry.
  *
  * @uses global $wpdb to get post meta, including post end time
@@ -249,14 +250,13 @@ function pp_post_submit_meta_box() {
 	$datef = __( 'M j, Y @ G:i' );
 
 	//Set up post end date label
-	if ( 'ended' == $post->post_status ) // already finished
+	if ( 'completed' == $post->post_status ) // already finished
 		$end_stamp = __('Ended: <b>%1$s</b>');
 	else
 		$end_stamp = __('End on: <b>%1$s</b>');
 
 	//Set up post end date and time variables
 	if ( 0 != $post->ID ) {
-		//$post_end = get_post_meta( $post->ID, 'post_end_date', true );
 		$post_end = get_post_end_time( $post->ID, 'mysql', false );
 
 		if ( !empty( $post_end ) && '0000-00-00 00:00:00' != $post_end )
@@ -272,7 +272,7 @@ function pp_post_submit_meta_box() {
 	<div class="misc-pub-section curtime misc-pub-section-last">
 		<span id="endtimestamp">
 		<?php printf($end_stamp, $end_date); ?></span>
-		<a href="#edit_endtimestamp" class="edit-endtimestamp hide-if-no-js" tabindex='4'><?php ('ended' != $post->post_status) ? _e('Edit') : _e('Extend'); ?></a>
+		<a href="#edit_endtimestamp" class="edit-endtimestamp hide-if-no-js" tabindex='4'><?php ('completed' != $post->post_status) ? _e('Edit') : _e('Extend'); ?></a>
 		<div id="endtimestampdiv" class="hide-if-js">
 			<?php touch_end_time(($action == 'edit'),5); ?>
 		</div>
@@ -370,8 +370,8 @@ function pp_posts_admin_head() {
 			));
 	}
 
-	if( strpos( $_SERVER['REQUEST_URI'], 'ended' ) !== false ) {
-		wp_enqueue_style( 'post-adapter',  PP_POSTS_URL . '/post-ended.css' );
+	if( strpos( $_SERVER['REQUEST_URI'], 'completed' ) !== false ) {
+		wp_enqueue_style( 'post-adapter',  PP_POSTS_URL . '/post-completed.css' );
 	}
 }
 add_action('admin_menu', 'pp_posts_admin_head');
@@ -383,7 +383,7 @@ function pp_post_columns( $column_headings ) {
 
 	unset( $column_headings[ 'tags' ] );
 
-	if( strpos( $_SERVER['REQUEST_URI'], 'ended' ) !== false ) {
+	if( strpos( $_SERVER['REQUEST_URI'], 'completed' ) !== false ) {
 		$column_headings[ 'end_date' ] = __( 'Ended' );
 		$column_headings[ 'post_actions' ] = __( 'Action' );
 		unset( $column_headings[ 'date' ] );
@@ -398,17 +398,13 @@ add_filter( 'manage_posts_columns', 'pp_post_columns' );
 
 function pp_post_columns_custom( $column_name, $post_id ) {
 	global $wpdb;
-	
+
 	// Need to manually populate $post var. Global $post contains post_status of "publish"...
 	$post = $wpdb->get_row( "SELECT post_status FROM $wpdb->posts WHERE ID = $post_id" );
 
 	if( $column_name == 'end_date' ) {
-		//$end_date = get_post_meta( $post_id, 'post_end_date', true );
-		//$end_date = get_post_end_time( $post_id, 'mysql', false );
-		//$end_date_gmt = get_post_meta( $post_id, 'post_end_date_gmt', true );
 		$end_time_gmt = get_post_end_time( $post_id );
 
-		//if ( '0000-00-00 00:00:00' == $end_date || empty($end_date) ) {
 		if ( $end_time_gmt == false || empty( $end_time_gmt ) ) {
 			$m_time = $human_time = __('Not set.');
 			$time_diff = 0;
@@ -418,18 +414,17 @@ function pp_post_columns_custom( $column_name, $post_id ) {
 		}
 		echo '<abbr title="' . $m_time . '">';
 		echo apply_filters('post_end_date_column', $human_time, $post_id, $column_name) . '</abbr>';
-		//echo '<br />';
 	}
 
 	if( $column_name == 'post_actions' ) {
-		$actions = apply_filters( 'ended_post_actions', array(), $post_id );
+		$actions = apply_filters( 'completed_post_actions', array(), $post_id );
 		if( is_array( $actions ) && !empty( $actions ) ){
 		?>
-			<ul id="ended_actions">
+			<ul id="completed_actions">
 				<li class="base"><?php _e( 'Take action:' ) ?></li>
 			<?php foreach( $actions as $action => $attributes )
 				//$url = add_query_arg ( 'post', $post_id, $attributes['url'] );
-				echo "<li class='ended-action'><a href='" . add_query_arg ( array( 'action' => $action, 'post' => $post_id ) , $attributes['url'] ) . "'>" . $attributes['label'] . "</a></li>";
+				echo "<li class='completed_action'><a href='" . add_query_arg ( array( 'action' => $action, 'post' => $post_id ) , $attributes['url'] ) . "'>" . $attributes['label'] . "</a></li>";
 			 ?>
 			</ul>
 		<?php
@@ -444,9 +439,7 @@ add_action( 'manage_posts_custom_column', 'pp_post_columns_custom', 10, 2 );
 // ADD ADMIN MENU FOR POSTS THAT HAVE ENDED
 //**************************************************************************************************//
 function pp_posts_add_admin_pages() {
-	//$page = add_posts_page( __( 'Posts That Have Ended' ), __( 'Ended' ), 1, 'ended', 'pp_posts_ended_admin' );
-
-	if ( strpos( $_SERVER['REQUEST_URI'], 'ended' ) !== false ){
+	if ( strpos( $_SERVER['REQUEST_URI'], 'completed' ) !== false ){
 		wp_enqueue_script( 'inline-edit-post' );
 	}
 }
@@ -454,7 +447,7 @@ add_action( 'admin_menu', 'pp_posts_add_admin_pages' );
 
 // @TODO clean up this quick and dirty hack: find a server side way to better style these tables.
 function pp_remove_classes() {
-	if ( strpos( $_SERVER['REQUEST_URI'], 'edit.php' ) !== false ||  strpos( $_SERVER['REQUEST_URI'], 'ended' ) !== false ) {
+	if ( strpos( $_SERVER['REQUEST_URI'], 'edit.php' ) !== false ||  strpos( $_SERVER['REQUEST_URI'], 'completed' ) !== false ) {
 		echo '<script type="text/javascript">';
 		echo 'jQuery(document).ready( function($) {';
 		echo '$("#author").removeClass("column-author");';

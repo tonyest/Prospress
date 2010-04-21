@@ -166,31 +166,13 @@ function pp_money_format( $number, $decimals = 2, $currency = '' ){
 	global $currencies, $currency_symbol;
 
 	$currency = strtoupper( $currency );
-	
-	if( empty( $currency ) || !array_key_exists( $currency, $currencies ) ) //$currency_sym = $currencies[ get_option( 'currency_type' ) ][ 'symbol' ];
+
+	if( empty( $currency ) || !array_key_exists( $currency, $currencies ) )
 		$currency_sym = $currency_symbol;
 	else
 		$currency_sym = $currencies[ $currency ][ 'symbol' ];
 
-	switch ( get_option( 'currency_sign_location' ) ) {
-		case 1:
-			$money = $currency_sym . number_format_i18n( $number, $decimals );
-			break;
-		case 2:
-			$money = $currency_sym . ' ' . number_format_i18n( $number, $decimals );
-			break;
-		case 3:
-			$money = number_format_i18n( $number, $decimals ) . $currency_sym;
-			break;
-		case 4:
-			$money = number_format_i18n( $number, $decimals ) . ' ' . $currency_sym;
-			break;
-		default:
-			$money = $currency_sym . number_format_i18n( $number, $decimals );
-			break;
-	}
-	
-	return $money;
+	return $currency_sym . ' ' . number_format_i18n( $number, $decimals );
 }
 
 

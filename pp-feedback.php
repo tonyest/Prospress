@@ -420,7 +420,7 @@ function pp_feedback_action( $actions, $post_id ) {
 	}
 	return $actions;
 }
-add_filter( 'ended_post_actions', 'pp_feedback_action', 10, 2 );
+add_filter( 'completed_post_actions', 'pp_feedback_action', 10, 2 );
 
 
 //**************************************************************************************************//
