@@ -7,7 +7,6 @@
  */
 global $wpdb;
 
-//$link_url = esc_url( remove_query_arg( array( 'post', 'filter' ), $_SERVER['REQUEST_URI'] ) );
 $link_url = esc_url_raw( remove_query_arg( array( 'post', 'filter' ), $_SERVER['REQUEST_URI'] ) );
 ?>
 

@@ -32,10 +32,11 @@ class PP_Market_System {
 
 		if( empty( $bid_table_headings ) || !is_array( $bid_table_headings ) ){
 			$this->bid_table_headings = array( 
-										'bid_value' => 'Amount', 
-										'bid_date' => 'Bid Date',
+										'bid_value' => 'Amount',
 										'post_id' => 'Post', 
 										'post_status' => 'Post Status', 
+										'bid_status' => 'Bid Status', 
+										'bid_date' => 'Bid Date',
 										'post_end' => 'Post End Date'
 										);
 		} else {
@@ -517,11 +518,15 @@ class PP_Market_System {
 
 		get_currentuserinfo(); //get's user ID of currently logged in user and puts into global $user_id
 
-		$bids = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->bids WHERE bidder_id = %d", $user_ID), ARRAY_A);
+		$order_by = 'bid_date_gmt';
+		$query = $this->create_bid_page_query();
+
+		//$bids = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->bids WHERE bidder_id = %d ORDER BY $order_by DESC", $user_ID, $order_by), ARRAY_A);
+		$bids = $wpdb->get_results( $query, ARRAY_A );
 
 		$bids = apply_filters( 'admin_history_bids', $bids );
 
-		$this->print_admin_bids_table( $bids, __('Bid History') );
+		$this->print_admin_bids_table( $bids, __('Bid History'), 'bid-history' );
 	}
 
 	function winning_history() {
@@ -529,15 +534,70 @@ class PP_Market_System {
 
 		get_currentuserinfo(); //get's user ID of currently logged in user and puts into global $user_id
 
-		$bids = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $wpdb->bids WHERE bidder_id = %d AND bid_status = 'winning'", $user_ID ), ARRAY_A );
+		$query = $this->create_bid_page_query( 'winning' );
+		//$bids = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $wpdb->bids WHERE bidder_id = %d AND bid_status = 'winning' ORDER BY bid_date_gmt DESC" , $user_ID ), ARRAY_A );
+		$bids = $wpdb->get_results( $query, ARRAY_A );
+
+		error_log('$bids = ' . print_r($bids, true));
 
 		$bids = apply_filters( 'winning_history_bids', $bids );
-		//error_log('$bids = ' . print_r($bids, true));
 
-		$this->print_admin_bids_table( $bids, __('Winning Bids') );
+		$this->print_admin_bids_table( $bids, __('Winning Bids'), 'bids' );
 	}
 
-	function print_admin_bids_table( $bids, $title ){
+	function create_bid_page_query( $bid_status = '' ){
+		global $wpdb, $user_ID;
+		
+		$query = $wpdb->prepare( "SELECT * FROM $wpdb->bids WHERE bidder_id = %d", $user_ID );
+
+		if( !empty( $bid_status ) )
+			$query .= $wpdb->prepare( ' AND bid_status = %s', $bid_status );
+
+		if( isset( $_GET[ 'm' ] ) && $_GET[ 'm' ] != 0 ){
+			$month	= substr( $_GET[ 'm' ], -2 );
+			$year	= substr( $_GET[ 'm' ], 0, 4 );
+			error_log("month = $month, year = $year");
+			$query .= $wpdb->prepare( ' AND MONTH(bid_date) = %d AND YEAR(bid_date) = %d ', $month, $year );
+		}
+
+		if( isset( $_GET[ 'bs' ] ) && $_GET[ 'bs' ] != 0 ){
+			$query .= ' AND ';
+			switch( $_GET[ 'bs' ] ){
+				case 1:
+					$query .= 'outbid';
+					break;
+				case 2:
+					$query .= 'winning';
+					break;
+				default:
+					break;
+				}
+		}
+
+		if( isset( $_GET[ 'sort' ] ) ){
+			$query .= ' ORDER BY ';
+			switch( $_GET[ 'sort' ] ){
+				case 1:
+					$query .= 'bid_value';
+					break;
+				case 2:
+					$query .= 'post_id';
+					break;
+				case 3:
+					$query .= 'bid_status';
+					break;
+				case 4:
+					$query .= 'bid_date_gmt';
+					break;
+				default:
+					$query .= apply_filters( 'sort_bids_by', 'bid_date_gmt' );
+				}
+		}
+		error_log("** end of create_bid_page_query, query = $query");
+		return $query;
+	}
+
+	function print_admin_bids_table( $bids, $title, $page ){
 		global $wpdb, $user_ID, $wp_locale;
 
 		$title = ( empty( $title ) ) ? 'Bids' : $title;
@@ -545,60 +605,71 @@ class PP_Market_System {
 		if( empty( $bids ) && !is_array( $bids ) )
 			$bids = array();
 		
-		$bid_status = 'winning';
+		//error_log('bids = ' . print_r($bids, true));
+
+		//usort( $bids, create_function() );
+		//$bid_status = 'winning';
+		$sort = isset( $_GET[ 'sort' ] ) ? (int)$_GET[ 'sort' ] : 0;
+		$bid_status = isset( $_GET[ 'bs' ] ) ? (int)$_GET[ 'bs' ] : 0;
 
 		?>
 		<div class="wrap feedback-history">
 			<?php screen_icon(); ?>
 			<h2><?php echo $title; ?></h2>
 
-			<form id="bids-filter" action="<?php echo admin_url('admin.php?page=bids'); ?>" method="get" >
+			<form id="bids-filter" action="" method="get" >
+				<input type="hidden" id="page" name="page" value="<?php echo $page; ?>">
 				<div class="tablenav clearfix">
+					<div class="alignleft">
+						<select name='bs'>
+							<option<?php selected( $bid_status, 0 ); ?> value='0'><?php _e( 'Any bid status' ); ?></option>
+							<option<?php selected( $bid_status, 1 ); ?> value='1'><?php _e( 'Outbid' ); ?></option>
+							<option<?php selected( $bid_status, 2 ); ?> value='2'><?php _e( 'Winning' ); ?></option>
+						</select>
+						<?php
+						if( strpos( $title, 'Winning' ) !== false )
+							$arc_query = $wpdb->prepare("SELECT DISTINCT YEAR(bid_date) AS yyear, MONTH(bid_date) AS mmonth FROM $wpdb->bids WHERE bidder_id = %d AND bid_status = 'winning' ORDER BY bid_date DESC", $user_ID );
+						else 
+							$arc_query = $wpdb->prepare("SELECT DISTINCT YEAR(bid_date) AS yyear, MONTH(bid_date) AS mmonth FROM $wpdb->bids WHERE bidder_id = %d ORDER BY bid_date DESC", $user_ID );
+						error_log( "title = $title and arc_query = $arc_query" );
+						$arc_result = $wpdb->get_results( $arc_query );
+						$month_count = count($arc_result);
 
-				<div class="alignleft">
-				<ul class="subsubsub" style="margin:0;">
-					<li><?php _e('Bids on:' ); ?></li>
-					<li><a href='#' class="" id="">All</a> |</li>
-					<li><a href='#' class="paid" id="">Published Posts</a> |</li>
-					<li><a href='#' class="sent" id="">Ended Posts</a></li>
-				</ul>
-			</div>
-			<br class="clear" />
-			<div class="alignleft">
-				<?php
-				$arc_query = $wpdb->prepare("SELECT DISTINCT YEAR(bid_date) AS yyear, MONTH(bid_date) AS mmonth FROM $wpdb->bids WHERE bid_status = %s ORDER BY bid_date DESC", $bid_status);
-				$arc_result = $wpdb->get_results( $arc_query );
-				$month_count = count($arc_result);
+						if ( $month_count && !( 1 == $month_count && 0 == $arc_result[0]->mmonth ) ) {
+							$m = isset($_GET['m']) ? (int)$_GET['m'] : 0;
+						?>
+						<select name='m'>
+						<option<?php selected( $m, 0 ); ?> value='0'><?php _e('Show all dates'); ?></option>
+						<?php
+						foreach ($arc_result as $arc_row) {
+							if ( $arc_row->yyear == 0 )
+								continue;
+							$arc_row->mmonth = zeroise( $arc_row->mmonth, 2 );
 
-				if ( $month_count && !( 1 == $month_count && 0 == $arc_result[0]->mmonth ) ) {
-					$m = isset($_GET['m']) ? (int)$_GET['m'] : 0;
-				?>
-				<select name='m'>
-				<option<?php selected( $m, 0 ); ?> value='0'><?php _e('Show all dates'); ?></option>
-				<?php
-				foreach ($arc_result as $arc_row) {
-					if ( $arc_row->yyear == 0 )
-						continue;
-					$arc_row->mmonth = zeroise( $arc_row->mmonth, 2 );
+							if ( $arc_row->yyear . $arc_row->mmonth == $m )
+								$default = ' selected="selected"';
+							else
+								$default = '';
 
-					if ( $arc_row->yyear . $arc_row->mmonth == $m )
-						$default = ' selected="selected"';
-					else
-						$default = '';
+							echo "<option$default value='" . esc_attr("$arc_row->yyear$arc_row->mmonth") . "'>";
+							echo $wp_locale->get_month($arc_row->mmonth) . " $arc_row->yyear";
+							echo "</option>\n";
+						}
+						?>
+						</select>
+						<?php } ?>
+						<input type="submit" value="Filter" id="filter_action" class="button-secondary action" />
 
-					echo "<option$default value='" . esc_attr("$arc_row->yyear$arc_row->mmonth") . "'>";
-					echo $wp_locale->get_month($arc_row->mmonth) . " $arc_row->yyear";
-					echo "</option>\n";
-				}
-				?>
-				</select>
-				<?php } ?>
-
-				<input type="submit" value="Filter" id="submit_bulk_action" class="button-secondary action" />
-				</div>
-
-				<div class="alignright">
-				</div>
+						<select name='sort'>
+							<option<?php selected( $sort, 0 ); ?> value='0'><?php _e('Sort by'); ?></option>
+							<option<?php selected( $sort, 1 ); ?> value='1'><?php _e('Bid Value'); ?></option>
+							<option<?php selected( $sort, 2 ); ?> value='2'><?php _e('Post'); ?></option>
+							<option<?php selected( $sort, 3 ); ?> value='3'><?php _e('Bid Status'); ?></option>
+							<option<?php selected( $sort, 4 ); ?> value='5'><?php _e('Bid Date'); ?></option>
+						</select>
+						<input type="submit" value="Sort" id="sort_action" class="button-secondary action" />
+					</div>
+					<br class="clear" />
 				</div>
 
 			<table class="widefat fixed" cellspacing="0">
@@ -611,17 +682,19 @@ class PP_Market_System {
 				<?php
 					if( !empty( $bids ) ){
 						$style = '';
-						foreach ( $bids as $bid ) { 
+						foreach ( $bids as $bid ) {
 							$post = get_post( $bid[ 'post_id' ] );
 							$post_end_date = get_post_meta( $bid[ 'post_id' ], 'post_end_date', true );
+							$post_status = ( $post->post_status == 'publish' ) ? 'Active' : $post->post_status;
 							?>
 							<tr class='<?php echo $style; ?>'>
 								<td><?php echo pp_money_format( $bid[ 'bid_value' ] );//$bid_money; ?></td>
-								<td><?php echo mysql2date( __( 'g:ia d M Y' ), $bid[ 'bid_date' ] ); ?></td>
 								<td><a href='<?php echo get_permalink( $bid[ 'post_id' ] ); ?>'>
 									<?php echo $post->post_title; ?>
 								</a></td>
-								<td><?php echo ucfirst( $post->post_status ); ?></td>
+								<td><?php echo ucfirst( $post_status ); ?></td>
+								<td><?php echo ucfirst( $bid[ 'bid_status' ] ); ?></td>
+								<td><?php echo mysql2date( __( 'g:ia d M Y' ), $bid[ 'bid_date' ] ); ?></td>
 								<td><?php echo mysql2date( __( 'g:ia d M Y' ), $post_end_date ); ?></td>
 							<tr>
 							<?php
@@ -685,81 +758,81 @@ class PP_Market_System {
 		global $pp_bid_status;
 
 		//Is user trying to submit bid
-		if( isset( $_REQUEST[ 'bid_submit' ] ) ){ //|| isset( $_REQUEST[ 'ajax_bid' ] ) ){
-			error_log('********************************** $_REQUEST[ bid_submit ] set **********************************');
-			error_log('in bid_controller _GET = ' . print_r($_GET, true));
-			error_log('in bid_controller _POST = ' . print_r($_POST, true));
+		if( !isset( $_REQUEST[ 'bid_submit' ] ) )
+			return;
+		error_log('********************************** $_REQUEST[ bid_submit ] set **********************************');
+		error_log('in bid_controller _GET = ' . print_r($_GET, true));
+		error_log('in bid_controller _POST = ' . print_r($_POST, true));
 
-			// If bidder is not logged in, redirect to login page
-			if ( !is_user_logged_in() ){ 
-				do_action('bidder_not_logged_in');
+		// If bidder is not logged in, redirect to login page
+		if ( !is_user_logged_in() ){ 
+			do_action('bidder_not_logged_in');
 
-				//$redirect = is_ssl() ? "https://" : "http://";
-				//$redirect .= $_SERVER['HTTP_HOST'] . esc_url( $_SERVER['PHP_SELF'] );
-				$redirect = wp_get_referer();
-				$redirect = add_query_arg( urlencode_deep( $_POST ), $redirect );
-				$redirect = add_query_arg('bid_redirect', wp_get_referer(), $redirect );
-				$redirect = wp_login_url( $redirect );
-				$redirect = apply_filters( 'bid_login_redirect', $redirect );
+			//$redirect = is_ssl() ? "https://" : "http://";
+			//$redirect .= $_SERVER['HTTP_HOST'] . esc_url( $_SERVER['PHP_SELF'] );
+			$redirect = wp_get_referer();
+			$redirect = add_query_arg( urlencode_deep( $_POST ), $redirect );
+			$redirect = add_query_arg('bid_redirect', wp_get_referer(), $redirect );
+			$redirect = wp_login_url( $redirect );
+			$redirect = apply_filters( 'bid_login_redirect', $redirect );
 
-				error_log('!is_user_logged_in(), $redirect = ' . $redirect);
-				//if( isset( $_REQUEST[ 'ajax_bid' ] ) ){
-				if( $_REQUEST[ 'bid_submit' ] == 'ajax' ){
-					error_log("*** AJAX BID: returning $redirect ***");
-					echo '{"redirect":"' . $redirect . '"}';
-					die();
-				} else {
-					error_log("*** NON AJAX BID: redirecting ***");
-					wp_safe_redirect( $redirect );
-					exit();
-				}
-				error_log('in !is_user_logged_in() even after exit');
-			}
-
-			// Verify bid nonce if bid is not coming from a login redirect (deteremined by bid_redirect)
-			if ( !isset( $_REQUEST[ 'bid_redirect' ] ) && ( !isset( $_REQUEST[ 'bid_nonce' ] ) || !wp_verify_nonce( $_REQUEST['bid_nonce'], __FILE__) ) ) {
-				if ( !isset( $_REQUEST[ 'bid_nonce' ] ))
-					error_log('$_REQUEST[ bid_nonce ] not set' );
-				if ( !wp_verify_nonce( $_REQUEST['bid_nonce'], __FILE__) )
-					error_log('$_REQUEST[ bid_nonce ] not valid' );
-				$bid_status = 8;
-			} elseif ( isset( $_GET[ 'bid_redirect' ] ) ) {
-				error_log('in bid_controller, using _GET for bid_form_submit' );
-				$bid_status = $this->bid_form_submit( $_GET[ 'post_ID' ], $_GET[ 'bid_value' ] );
+			error_log('!is_user_logged_in(), $redirect = ' . $redirect);
+			//if( isset( $_REQUEST[ 'ajax_bid' ] ) ){
+			if( $_REQUEST[ 'bid_submit' ] == 'ajax' ){
+				error_log("*** AJAX BID: returning $redirect ***");
+				echo '{"redirect":"' . $redirect . '"}';
+				die();
 			} else {
-				error_log('in bid_controller, using _POST for bid_form_submit' );
-				$bid_status = $this->bid_form_submit( $_POST[ 'post_ID' ], $_POST[ 'bid_value' ] );
-			}
-
-			// Redirect user back to post
-			if ( !empty( $_REQUEST[ 'bid_redirect' ] ) ){
-				//$location = wp_get_referer();
-				error_log("** REDIRECT USER BACK TO POST **");
-				$location = $_REQUEST[ 'bid_redirect' ];
-				error_log('location equalling _REQUEST[ \'bid_redirect\' ] = ' . $location );
-				$location = add_query_arg( 'bid_msg', $bid_status, $location );
-				error_log("location after adding bid_msg = $location");
-				$location = add_query_arg( 'bid_nonce', wp_create_nonce( __FILE__ ), $location );
-				error_log("location after adding bid_nonce = $location");
-				error_log("location = $location");
-				wp_safe_redirect( $location );
+				error_log("*** NON AJAX BID: redirecting ***");
+				wp_safe_redirect( $redirect );
 				exit();
 			}
-
-			//wp_safe_redirect( $location );
-			error_log("** setting global pp_bid_status var = $bid_status");
-			$pp_bid_status = $bid_status;
-
-			// If bid was submitted using Ajax
-			//if ( isset( $_POST[ 'ajax_bid' ] ) ){
-			if( $_POST[ 'bid_submit' ] == 'ajax' ){
-				error_log("*********** AJAX BID SET ****************");
-				echo $this->bid_form( $_POST[ 'post_ID' ] );
-				die();
-			}
+			error_log('in !is_user_logged_in() even after exit');
 		}
 
-		// If a user is entering a URL with a bid_msg set but that user didn't make the bid
+		// Verify bid nonce if bid is not coming from a login redirect (deteremined by bid_redirect)
+		if ( !isset( $_REQUEST[ 'bid_redirect' ] ) && ( !isset( $_REQUEST[ 'bid_nonce' ] ) || !wp_verify_nonce( $_REQUEST['bid_nonce'], __FILE__) ) ) {
+			if ( !isset( $_REQUEST[ 'bid_nonce' ] ))
+				error_log('$_REQUEST[ bid_nonce ] not set' );
+			if ( !wp_verify_nonce( $_REQUEST['bid_nonce'], __FILE__) )
+				error_log('$_REQUEST[ bid_nonce ] not valid' );
+			$bid_status = 8;
+		} elseif ( isset( $_GET[ 'bid_redirect' ] ) ) {
+			error_log('in bid_controller, using _GET for bid_form_submit' );
+			$bid_status = $this->bid_form_submit( $_GET[ 'post_ID' ], $_GET[ 'bid_value' ] );
+		} else {
+			error_log('in bid_controller, using _POST for bid_form_submit' );
+			$bid_status = $this->bid_form_submit( $_POST[ 'post_ID' ], $_POST[ 'bid_value' ] );
+		}
+
+		// Redirect user back to post
+		if ( !empty( $_REQUEST[ 'bid_redirect' ] ) ){
+			//$location = wp_get_referer();
+			error_log("** REDIRECT USER BACK TO POST **");
+			$location = $_REQUEST[ 'bid_redirect' ];
+			error_log('location equalling _REQUEST[ \'bid_redirect\' ] = ' . $location );
+			$location = add_query_arg( 'bid_msg', $bid_status, $location );
+			error_log("location after adding bid_msg = $location");
+			$location = add_query_arg( 'bid_nonce', wp_create_nonce( __FILE__ ), $location );
+			error_log("location after adding bid_nonce = $location");
+			error_log("location = $location");
+			wp_safe_redirect( $location );
+			exit();
+		}
+
+		//wp_safe_redirect( $location );
+		error_log("** setting global pp_bid_status var = $bid_status");
+		$pp_bid_status = $bid_status;
+
+		// If bid was submitted using Ajax
+		//if ( isset( $_POST[ 'ajax_bid' ] ) ){
+		if( $_POST[ 'bid_submit' ] == 'ajax' ){
+			error_log("*********** AJAX BID SET ****************");
+			echo $this->bid_form( $_POST[ 'post_ID' ] );
+			die();
+		}
+
+		// If someone enters a URL with a bid_msg but they didn't make that bid
 		if( isset( $_GET[ 'bid_msg' ] ) && isset( $_GET[ 'bid_nonce' ] ) && !wp_verify_nonce( $_GET[ 'bid_nonce' ], __FILE__ ) ){
 			error_log( '********* USER ENTERING A URL WITH BS FOR A BID THEY DIDNT MAKE *********' );
 			if ( !isset( $_GET[ 'bid_nonce' ] ))
@@ -773,8 +846,6 @@ class PP_Market_System {
 			wp_safe_redirect( $redirect );
 			exit();
 		}
-
-	
 	}
 
 }

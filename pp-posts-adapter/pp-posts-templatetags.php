@@ -1,28 +1,36 @@
 <?php
 /**
- * Get's the end time for a post and returns it as unix timestamp.
- *
- * @uses $post
- * @uses $wpdb
+ * Get's the end time for a post. Can return it in GMT or user's timezone (specified by UTC offset). 
+ * Can also return as either mysql date format or a unix timestamp.
  *
  * @param int $post_id Optional, default 0. The post id for which you want the max bid. 
- * @return object Returns the row in the bids 
+ * @return returns false if post has no end time, or a string representing the time stamp or sql
  */
 function get_post_end_time( $post_id, $type = 'timestamp', $gmt = true ) {
 
 	$time = wp_next_scheduled( 'schedule_end_post', array( "ID" => $post_id ) );
-	//get_post_meta( $post_id, 'post_end_date', true );
-	//get_post_meta( $post_id, 'post_end_date_gmt', true );
+
+	// If a post has not yet ended, use it's actual scheduled end time, if that doesn't exist, probably becasue the post has ended
+	// get the post end time from the post_meta table
+	if( empty( $time ) )
+		$time = strtotime( get_post_meta( $post_id, 'post_end_date_gmt', true ) );
+
+	if( $time == false )
+	 	return false;
 
 	if( $gmt == false ){
-		//$time = get_gmt_from_date(  );
-	//}elseif(){
-		
+		$time = date( 'Y-m-d H:i:s', $time );
+		$time = get_date_from_gmt( $time );
+		if( $type == 'timestamp' ){
+			$time = strtotime( $time );
+		}
+	}elseif( $type == 'mysql' ){
+		$time = date( 'H:i Y/m/d', $time );
 	}
 
 	return $time;
 }
-add_filter( 'get_the_date', 'get_post_end_date' );
+add_filter( 'get_the_date', 'get_post_end_time' );
 
 /**
  * Get's the end time for a post.
@@ -33,32 +41,14 @@ add_filter( 'get_the_date', 'get_post_end_date' );
  * @param int $post_id Optional, default 0. The post id for which you want the max bid. 
  * @return object Returns the row in the bids 
  */
-function get_post_end_date( $date ) {
+function get_post_end_countdown( $date ) {
 	global $post;
-		
-	//$date = $date . ' ending ' . verbose_interval( wp_next_scheduled( 'schedule_end_post', array( "ID" => $post->ID ) ) - time() );
-	$date = $date . ' ending ' . human_time_diff( time(), wp_next_scheduled( 'schedule_end_post', array( "ID" => $post->ID ) ) );
+
+	$date = $date . ' ending ' . human_interval( wp_next_scheduled( 'schedule_end_post', array( "ID" => $post->ID ) ) - time() );
 
 	return $date;
 }
-add_filter( 'get_the_date', 'get_post_end_date' );
-
-/**
- * Print's the end time for a post.
- *
- */
-function the_post_end_time( $post_id = 0) {
-}
-
-/**
- * Print's the date and time a post is scheduled to end.
- *
- */
-function the_post_end_date( $date, $id ) {
-
-}
-//add_filter( 'the_title', 'the_post_end_date', 10, 2 );
-
+add_filter( 'get_the_date', 'get_post_end_countdown' );
 
 /** 
  * Takes a period of time as a unix time stamp and returns a string 
@@ -66,7 +56,7 @@ function the_post_end_date( $date, $id ) {
  * 
  * Based on WP_Crontrol's Interval function
  **/
-function verbose_interval( $time_period, $units = 3 ) {
+function human_interval( $time_period, $units = 3 ) {
     // array of time period chunks
 	$chunks = array(
     	array(60 * 60 * 24 * 365 , _n_noop('%s year', '%s years')),
@@ -82,12 +72,12 @@ function verbose_interval( $time_period, $units = 3 ) {
 	    return __('now');
 	}
 
-	// step one: the first chunk
+	// 1st chunk
 	for ($i = 0, $j = count($chunks); $i < $j; $i++) {
 
 		$seconds = $chunks[$i][0];
 		$name = $chunks[$i][1];
-		error_log("$i ** In verbose_interval, $seconds seconds in " . print_r($name, true));
+		//error_log("$i ** In human_interval, $seconds seconds in " . print_r($name, true));
 
 		// finding the biggest chunk (if the chunk fits, break)
 		if ( ( $count = floor( $time_period / $seconds ) ) != 0 ) {
@@ -99,10 +89,8 @@ function verbose_interval( $time_period, $units = 3 ) {
 	// set output var
 	$output = sprintf(_n($name[0], $name[1], $count), $count);
 
-	error_log( "$i ** In verbose_interval, output = $output, count = $count, seconds = $seconds  " );
-
-	// step two: the second chunk, if it's not seconds
-	if ( $i + 1 <= $j && $units >= 2 ) {
+	// 2nd chunk
+	if ( $i + 1 < $j && $units >= 2 ) {
 		$seconds2 = $chunks[$i + 1][0];
 		$name2 = $chunks[$i + 1][1];
 
@@ -112,16 +100,14 @@ function verbose_interval( $time_period, $units = 3 ) {
 		}
 	}
 
-	error_log( "$i ** In verbose_interval, output = $output, count2 = $count2, seconds2 = $seconds2  " );
-	// step three: the third chunk
-	//if ( $name2 != $chunks[0] &&  $name2 != $chunks[0] ) {
-	if ( $i + 2 <= $j && $units >= 3 ) {
+	// 3rd chunk (as long as it's not seconds or minutes)
+	if ( $i + 2 < $j - 1 && $units >= 3 ) {
 		$seconds3 = $chunks[$i + 2 ][0];
 		$name3 = $chunks[$i + 2 ][1];
 
 		if ( ( $count3 = floor( ( $time_period - ( $seconds * $count ) - ( $seconds2 * $count2 ) ) / $seconds3 ) ) != 0 ) {
 			// add to output var
-			$output .= ' '.sprintf(_n($name3[0], $name3[1], $count3), $count3);
+			$output .= ' '.sprintf( _n( $name3[0], $name3[1], $count3 ), $count3 );
 		}
 	}
 

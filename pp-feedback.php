@@ -420,7 +420,7 @@ function pp_feedback_action( $actions, $post_id ) {
 	}
 	return $actions;
 }
-add_filter( 'ended_post_actions', 'pp_feedback_action', 10, 2 );
+add_filter( 'completed_post_actions', 'pp_feedback_action', 10, 2 );
 
 
 //**************************************************************************************************//
@@ -556,21 +556,10 @@ function pp_feedback_settings_section() { ?>
 			<td>
 				<?php
 				$edit_feedback = get_option( 'edit_feedback' );
+				//$edit_feedback = true;
 				error_log('$edit_feedback = ' . $edit_feedback);
-				switch( $edit_feedback ) {
-					case 'false':
-						$fe2 = "checked ='checked'";
-						break;
-					case 'true':
-					default:
-						$fe1 = 'checked ="checked"';
-						break;
-				}
 				?>
-				<input type='radio' value='true' name='edit_feedback' id='fe1' <?php echo $fe1; ?> /> 
-				<label for='fe1'><?php _e( 'Yes' ); ?></label>
-				<input type='radio' value='false' name='edit_feedback' id='fe2' <?php echo $fe2; ?> /> 
-				<label for='fe2'><?php _e( 'No' ); ?></label>
+				<input type='checkbox' value='true' name='edit_feedback' id='ef1' <?php checked( (boolean)$edit_feedback ); ?> />
 			</td>
 		</tr>
 	</table>
