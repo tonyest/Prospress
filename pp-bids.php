@@ -11,7 +11,6 @@ Plugin URI: http://prospress.com
 Description: Allow your traders to bid on listings in your Prospress marketplace.
 Author: Brent Shepherd
 Version: 0.1
-Site Wide Only: true
 Author URI: http://brentshepherd.com/
 
 Copyright (C) 2010 Leonard's Ego.
@@ -56,7 +55,6 @@ require_once ( PP_BIDS_DIR . '/pp-bids-templatetags.php' );
  * Include Sort functions
  */
 //include( PP_BIDS_DIR . '/bids-sort.php');
-
 
 /**
  * This is where the marketplace system is created. It's a standard class creation: require class file; 
@@ -181,13 +179,10 @@ function pp_bids_install_site_wide() {
 	if ( !empty($wpdb->charset) )
 		$charset_collate = "DEFAULT CHARACTER SET $wpdb->charset";
 
-	//$markets = get_blog_list(0, 'all'); 	//only works for safe and public markets
-	//$markets = get_blog_count(); 			//only gives number of markets, need to get ID afterwards
-	//error_log("there are $markets markets");
-	$markets = $wpdb->get_results( $wpdb->prepare("SELECT blog_id FROM $wpdb->blogs WHERE site_id = %d AND archived = '0' AND spam = '0' AND deleted = '0' ORDER BY registered ASC", $wpdb->siteid), ARRAY_A );
+	$blogs = $wpdb->get_results( $wpdb->prepare("SELECT blog_id FROM $wpdb->blogs WHERE site_id = %d AND archived = '0' AND spam = '0' AND deleted = '0' ORDER BY registered ASC", $wpdb->siteid), ARRAY_A );
 
-	foreach($markets as $market){
-		if( $market['blog_id'] == 1 )
+	foreach($blogs as $blog){
+		if( $blog['blog_id'] == 1 )
 			$tablename = $wpdb->base_prefix . 'bids';
 		else
 			$tablename = $wpdb->base_prefix . $market['blog_id'] . '_bids';
@@ -267,7 +262,6 @@ function pp_bids_install_new_market($blog_id){
 	restore_current_blog( );
 }
 //add_action('wpmu_new_blog','pp_bids_install_new_market', 10, 1);
-
 
 // This is called when switch to blog and restore blog functions are called. 
 // It makes the correct bid table names available in the $wpdb global.

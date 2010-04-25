@@ -90,9 +90,9 @@ function pp_get_feedback_user( $user_id = '', $filters = '' ){
 }
 
 //Returns a count of all the feedback for a user, optionally returns only given or as specified by filters array received by a user
-function pp_users_feedback_count( $user_id, $filter = '' ){
+function pp_users_feedback_count( $user_id, $filter = 'received' ){
 	global $wpdb;
-	
+
 	if( $filter == 'given'  )
 		return $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(feedback_id) FROM $wpdb->feedback WHERE feedback_status = 'publish' AND from_user_id = %d", $user_id ) );
 	else if( $filter == 'received' )
