@@ -2,10 +2,7 @@
 /**
  * Auction bid system class.
  * 
- * This class extends the base Bid System class to create an auction bid system. User's can
- * submit a bid 
- * forms the basis for all bid systems. It provides a framework for creating new bid systems
- * and is extended to implement the core auction and reverse auction formats that ship with Prospress.
+ * This class extends the base Market System class to create a standard auction system.
  *
  * @package Prospress
  * @since 0.1
@@ -52,12 +49,10 @@ class PP_Auction_Bid_System extends PP_Market_System {
 	}
 
 	function bid_form_submit( $post_id = NULL, $bid_value = NULL, $bidder_id = NULL ){
-		global $user_ID, $wpdb;
+		global $user_ID, $wpdb, $blog_id;
 		nocache_headers();
 
 		error_log('in bid_form_submit _REQUEST = ' . print_r($_REQUEST, true));
-		//error_log('in bid_form_submit _GET = ' . print_r($_GET, true));
-		//error_log('in bid_form_submit _POST = ' . print_r($_POST, true));
 
 		//Get Bid details
 		//$post_id 		= ( isset( $_GET[ 'post_ID' ] ) ) ? intval( $_GET[ 'post_ID' ] ) : $post_id;
@@ -68,7 +63,6 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		$bid_date 		= current_time( 'mysql' );
 		$bid_date_gmt 	= current_time( 'mysql', 1 );
 
-		global $blog_id;
 		error_log( "in Auction bid_form_submit bidder_id = $bidder_id, blog_id = $blog_id, post_id = $post_id, user_ID = $user_ID");
 		do_action( 'get_auction_bid', $post_id, $bid_value, $bidder_id, $_GET );
 
@@ -76,19 +70,14 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		$bid_ms			= $this->bid_form_validate( $post_id, $bid_value, $bidder_id );
 		//error_log("*** bid_ms  = " . print_r($bid_ms, true));
 
-		//if ( $bid_ms[ 'bid_msg' ] < 5 && $bid_ms[ 'bid_msg' ] != 3 ) {
 		if ( $bid_ms[ 'bid_status' ] != 'invalid' ) {
 			$bid = compact("post_id", "bidder_id", "bid_value", "bid_date", "bid_date_gmt" );
 			$bid[ 'bid_status' ] = $bid_ms[ 'bid_status' ];
-			$bid = apply_filters('bid_pre_db_insert', $bid);
-			//$this->update_winning_bid( $bid_ms, $post_id, $bid_value, $bidder_id );
+			$bid = apply_filters( 'bid_pre_db_insert', $bid );
+			error_log("*** Bid  = " . print_r($bid, true));
 			$this->update_bid( $bid, $bid_ms, $post_id );
 			error_log("*** Winning Bid updated ***");
-			//$wpdb->insert( $wpdb->bids, $bid );
-			error_log("*** Bid inserted ***");
-			error_log("*** Bid  = " . print_r($bid, true));
 		}
-
 		return $bid_ms[ 'bid_msg' ];
 	}
 
@@ -111,7 +100,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 					$bid_msg = 9;
 					$bid_status = 'invalid';
 				} else {
-					error_log("WINNING: Bid value ($bid_value) is first bid, setting bid status to 0");
+					error_log("WINNING: Bid value ($bid_value) is first bid over start price, setting bid msg to 0 & status to winning");
 					$bid_msg = 0;
 					$bid_status = 'winning';
 				}
@@ -152,18 +141,16 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		error_log('$current_winning_bid_value = ' . print_r($current_winning_bid_value, true));
 
 		// No need to update winning bid for invalid bids, bids too low
-		//if ( $bid_ms[ 'bid_msg' ] > 2 )
 		if ( $bid_ms[ 'bid_status' ] == 'invalid' ) // nothing to update
 			return $current_winning_bid_value;
 
-		$posts_max_bid				= $this->get_max_bid( $bid[ 'post_id' ] );
-		$current_winning_bid_id		= $this->get_winning_bid( $bid[ 'post_id' ] )->bid_id;
+		$posts_max_bid			= $this->get_max_bid( $bid[ 'post_id' ] );
+		$current_winning_bid_id	= $this->get_winning_bid( $bid[ 'post_id' ] )->bid_id;
 
-		//if( $posts_max_bid->bid_value === false || $posts_max_bid->bid_value == 0 ) { //if first bid
 		if( $bid_ms[ 'bid_msg' ] == 0 ) { //if first bid
 			error_log("** First bid.");
 			$start_price = get_post_meta( $post_id, 'start_price', true );
-			if( $start_price ){ // If start price is great than 0
+			if( $start_price ){ // If start price is greater than 0
 				error_log("** Start price is greater than zero with value of $start_price");
 				$new_winning_bid_value = $start_price;
 			} else {
@@ -179,7 +166,6 @@ class PP_Auction_Bid_System extends PP_Market_System {
 				error_log("** Bid value (bid[ 'bid_value' ]) is less than current max ($posts_max_bid->bid_value) + bid increment (" . BID_INCREMENT . ") * current max ($posts_max_bid->bid_value)");
 				$new_winning_bid_value = $bid[ 'bid_value' ];
 			}
-			//update_post_meta( $bid[ 'post_id' ], 'winning_bidder_id', $bidder_id );
 		} elseif ( $bid_ms[ 'bid_msg'] == 2 ) {
 			error_log('** bid less than max but more than winning');
 			$bid_value_incremented = $bid[ 'bid_value' ] * ( 1 + BID_INCREMENT );
@@ -195,15 +181,15 @@ class PP_Auction_Bid_System extends PP_Market_System {
 
 		$wpdb->insert( $wpdb->bids, $bid );
 
-		if( $bid_ms[ 'bid_msg'] != 2 ){
+		if( $bid_ms[ 'bid_msg'] != 2 ){ // valid bid, over existing max, change winning bid id and bid value in bids meta table
 			$wpdb->update( $wpdb->bids, array( 'bid_status' => 'outbid' ), array( 'bid_id' => $current_winning_bid_id ) );
 			$wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->bidsmeta WHERE bid_id = %d AND meta_key = 'winning_bid_value'", $current_winning_bid_id ) );
 			$new_winning_bid_id = $this->get_winning_bid( $bid[ 'post_id' ] )->bid_id;
 			$wpdb->insert( $wpdb->bidsmeta, array( 'bid_id' => $new_winning_bid_id, 'meta_key' => 'winning_bid_value', 'meta_value' => $new_winning_bid_value ) );
 			error_log("** insert bidsmeta with new_winning_bid = $new_winning_bid_value and new_winning_bid_id = $new_winning_bid_id");
-		} else {
-			$wpdb->update( $wpdb->bidsmeta, array( 'meta_value' => $new_winning_bid_value ), array( 'bid_id' => $current_winning_bid_id, 'meta_key' => 'winning_bid_value' ) );
+		} else { // current winning bid is still winning bid, just need to update winning bid value
 			error_log("** update bidsmeta with new_winning_bid = $new_winning_bid_value and current_winning_bid_id = $current_winning_bid_id");
+			$wpdb->update( $wpdb->bidsmeta, array( 'meta_value' => $new_winning_bid_value ), array( 'bid_id' => $current_winning_bid_id, 'meta_key' => 'winning_bid_value' ) );
 		}
 		error_log("** winning_bid value calculated as = $new_winning_bid_value");
 		//update_post_meta( $bid[ 'post_id' ], 'winning_bid_value', $new_winning_bid_value );

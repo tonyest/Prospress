@@ -521,10 +521,15 @@ class PP_Market_System {
 		$order_by = 'bid_date_gmt';
 		$query = $this->create_bid_page_query();
 
-		//$bids = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->bids WHERE bidder_id = %d ORDER BY $order_by DESC", $user_ID, $order_by), ARRAY_A);
+		error_log('In admin_history, post create query');
+
 		$bids = $wpdb->get_results( $query, ARRAY_A );
 
+		error_log('In admin_history, post get results');
+
 		$bids = apply_filters( 'admin_history_bids', $bids );
+		
+		error_log('In admin_history');
 
 		$this->print_admin_bids_table( $bids, __('Bid History'), 'bid-history' );
 	}
@@ -561,13 +566,13 @@ class PP_Market_System {
 		}
 
 		if( isset( $_GET[ 'bs' ] ) && $_GET[ 'bs' ] != 0 ){
-			$query .= ' AND ';
+			$query .= ' AND bid_status = ';
 			switch( $_GET[ 'bs' ] ){
 				case 1:
-					$query .= 'outbid';
+					$query .= "'outbid'";
 					break;
 				case 2:
-					$query .= 'winning';
+					$query .= "'winning'";
 					break;
 				default:
 					break;
@@ -593,7 +598,7 @@ class PP_Market_System {
 					$query .= apply_filters( 'sort_bids_by', 'bid_date_gmt' );
 				}
 		}
-		error_log("** end of create_bid_page_query, query = $query");
+
 		return $query;
 	}
 
@@ -607,8 +612,6 @@ class PP_Market_System {
 		
 		//error_log('bids = ' . print_r($bids, true));
 
-		//usort( $bids, create_function() );
-		//$bid_status = 'winning';
 		$sort = isset( $_GET[ 'sort' ] ) ? (int)$_GET[ 'sort' ] : 0;
 		$bid_status = isset( $_GET[ 'bs' ] ) ? (int)$_GET[ 'bs' ] : 0;
 
@@ -719,7 +722,7 @@ class PP_Market_System {
 							$style = ( 'alternate' == $style ) ? '' : 'alternate';
 						}
 					} else {
-						echo '<tr><td colspan="5">' . __('No bids to show.') . '</td></tr>';
+						echo '<tr><td colspan="5">' . __('No bids.') . '</td></tr>';
 					}
 				?>
 				</tbody>
