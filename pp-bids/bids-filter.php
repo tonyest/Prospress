@@ -3,7 +3,6 @@
 // Plugin Name: Bids Filter
 // Version: 1.0a
 
-
 class Bid_Filter_Widget extends WP_Widget {
 
 	function Bid_Filter_Widget() {
@@ -13,6 +12,11 @@ class Bid_Filter_Widget extends WP_Widget {
 
 	function widget( $args, $instance ) {
 		extract($args);
+
+		if( is_single() || is_page() ){
+			error_log('in widget, is single true');
+			return;
+		}
 
 		$title = apply_filters('widget_title', $instance['title'], $instance, $this->id_base);
 

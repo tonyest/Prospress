@@ -41,6 +41,7 @@ require_once ( PP_BIDS_DIR . '/pp-bids-templatetags.php' );
  */
 //include( PP_BIDS_DIR . '/bids-sort.php');
 include( PP_BIDS_DIR . '/bids-filter.php');
+//include( PP_BIDS_DIR . '/bids-filter-v2.php');
 
 /**
  * This is where the marketplace system is created. It's a standard class creation: require class file; 

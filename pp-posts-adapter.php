@@ -35,7 +35,7 @@ if ( !defined( "PP_POST_OPTIONS"))
 /**
  * Include Sort functions
  */
-//include( PP_POSTS_DIR . '/pp-sort.php');
+include( PP_POSTS_DIR . '/pp-sort.php');
 
 /**
  * Include Template Tags

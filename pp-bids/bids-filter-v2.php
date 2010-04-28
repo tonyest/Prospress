@@ -4,14 +4,15 @@
 // Version: 0.2a
 
 
-class Bid_Filter_Widget extends WP_Widget {
+class PP_Sort_Filter_Widget extends WP_Widget {
 
-	function Bid_Filter_Widget() {
-		$widget_ops = array('description' => __('A bid filtering widget', 'your-textdomain') );
-		$this->WP_Widget('bid-filter', __('Bids Filter', 'your-textdomain'), $widget_ops);
+	function PP_Sort_Filter_Widget() {
+		$widget_ops = array('description' => __('Sort and filter posts.') );
+		$this->WP_Widget('bid-filter', __('Sort and Filter'), $widget_ops);
 	}
 
 	function widget( $args, $instance ) {
+		global $currency_symbol;
 		extract($args);
 
 		$title = apply_filters('widget_title', $instance['title'], $instance, $this->id_base);
@@ -32,31 +33,31 @@ class Bid_Filter_Widget extends WP_Widget {
 			$max = '';
 
 		echo '<div id="bid-filter">';
-		echo __('$', 'your-textdomain') . ' ';
+		echo $currency_symbol;
 		echo '<input type="text" id="bid-min" name="bid-min" size="7" value="' . esc_attr($min) . '"> ';
-		echo __('to', 'your-textdomain') . ' ';
+		echo __( 'to' ) . ' ';
 		echo '<input type="text" id="bid-max" name="bid-max" size="7" value="' . esc_attr($max) . '"> ';
+		echo '<p><input type="submit" id="bid-filter-submit" name="bid-filter-submit" value="' . __( 'Filter' ) . '"></p>';
 		echo '</div>';
 
 		// Sort
 		$sort = get_bid_sort_arg();
 
 		$sorting_options = array(
-			'price-asc' => __('Bid Price Ascending', 'your-textdomain'),
-			'price-desc'=> __('Bid Price Descending', 'your-textdomain'),
-			'end-asc'	=> __('Post End Ascending', 'your-textdomain'),
-			'end-desc'	=> __('Post End Descending', 'your-textdomain'),
+			'price-asc' => __('Price: low to high'),
+			'price-desc'=> __('Price: high to low'),
+			'end-asc'	=> __('Time: Ending soon'),
+			'end-desc'	=> __('Time: Newly posted'),
 		);
 
 		echo '<div id="bid-sort">';
 		echo '<select id="bid-sort" name="bid-sort">';
+		echo '<option value="0">' . __('-- sort by --') . '</option>';
 		foreach ( $sorting_options as $value => $title )
 			echo '<option value="' . esc_attr($value) . '"' . selected($value, $sort). '>' . $title . '</option>';
 		echo '</select>';
+		echo '<p><input type="submit" id="bid-filter-submit" name="bid-filter-submit" value="' . __('Sort') . '"></p>';
 		echo '</div>';
-
-		echo '<p><input type="submit" id="bid-filter-submit" name="bid-filter-submit" value="' . __('Submit', 'your-textdomain') . '"></p>';
-
 		echo '</form>';
 
 		echo $after_widget;
@@ -65,9 +66,9 @@ class Bid_Filter_Widget extends WP_Widget {
 	function form( $instance ) {
 		$instance = wp_parse_args( (array) $instance, array( 'title' => '') );
 		$title = $instance['title'];
-?>
+	?>
 		<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?> <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" /></label></p>
-<?php
+	<?php
 	}
 
 	function update( $new_instance, $old_instance ) {
@@ -78,21 +79,20 @@ class Bid_Filter_Widget extends WP_Widget {
 	}
 }
 
-function bid_filter_widget_init() {
-	register_widget('Bid_Filter_Widget');
+function pp_sort_filter_widget_init() {
+	register_widget('PP_Sort_Filter_Widget');
 }
-add_action('widgets_init', 'bid_filter_widget_init');
+add_action('widgets_init', 'pp_sort_filter_widget_init');
 
-
-class Bid_Filter_Query {
+class PP_Sort_Filter_Query {
 	const BID_WINNING = 'winning_bid_value';
 	const POST_END = 'post_end_date_gmt';
 
 	static function init() {
-		add_action('pre_get_posts', array(__CLASS__, 'add_filters'));
+		add_action( 'pre_get_posts', array( __CLASS__, 'add_filters' ) );
 	}
 
-	static function add_filters($obj) {
+	static function add_filters( $obj ) {
 		// Operate only on the main query
 		if ( $GLOBALS['wp_query'] != $obj )
 			return;
@@ -104,7 +104,7 @@ class Bid_Filter_Query {
 		add_filter('posts_orderby', array(__CLASS__, 'posts_orderby'));
 	}
 
-	static function posts_where($where) {
+	static function posts_where( $where ) {
 		remove_filter(current_filter(), array(__CLASS__, __FUNCTION__));
 
 		global $wpdb;
@@ -135,7 +135,7 @@ class Bid_Filter_Query {
 		)";
 	}
 
-	static function posts_orderby($sql) {
+	static function posts_orderby( $sql ) {
 		remove_filter(current_filter(), array(__CLASS__, __FUNCTION__));
 
 		global $wpdb;
@@ -175,7 +175,7 @@ class Bid_Filter_Query {
 		return $sql;
 	}
 }
-Bid_Filter_Query::init();
+PP_Sort_Filter_Query::init();
 
 
 function get_bid_filter_args() {

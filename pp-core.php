@@ -177,35 +177,4 @@ function pp_money_format( $number, $decimals = 2, $currency = '' ){
 
 
 
-/************************************************************************************************************************/
-/**** ALLOW FOR A THEME TO CUSTOMISE THE APPEARANCE OF ADMIN AND LOGIN PAGES ****/
-/************************************************************************************************************************/
-//Overload admin CSS to allow themes to customize admin area
-function pp_admin_css() {
-	echo "<link rel='stylesheet' type='text/css' href='" . get_bloginfo('stylesheet_directory') . "/admin.css' />\n";
-}
-add_filter('admin_head', 'pp_admin_css');
-
-//Overload login CSS to allow themes to customize login screen
-function pp_login_css() {
-	echo "<link rel='stylesheet' type='text/css' href='" . get_bloginfo('stylesheet_directory') . "/login.css' />\n";
-}
-add_action('login_head', 'pp_login_css');
-
-//Overload login URL
-function pp_login_url() {
-	echo "http://www.prospress.com";
-}
-add_filter('login_headerurl', 'pp_login_url' ); 
-
-//Overload login image
-function pp_login_alt() {
-	//echo get_option('mm_login_alt');
-}
-add_filter('login_headertitle', 'pp_login_alt' );
-
-
-//Add Marketplace Logo upload box to General Settings page, like on wordpress.com, 
-//this can be used on the prospress.com home page and top left of admin pages
-
 ?>

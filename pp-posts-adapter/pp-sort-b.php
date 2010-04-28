@@ -79,6 +79,8 @@ function pp_insert_rewrite_query_vars( $vars ) {
 	return $vars;
 }
 
+
+
 /**************************************************************************************
  *************************************** WIDGET ***************************************
  **************************************************************************************/
@@ -94,41 +96,29 @@ class PP_Sort_Widget extends WP_Widget {
 		$this->WP_Widget( 'pp_sort', 'Prospress Sort', $widget_ops, $control_ops );
 	}
 
-	function widget( $args, $instance ) {
-		global $pp_sort_options;
-		
-		$pp_sort_options = array( 'price-asc' => __('Price: low to high'),
-								 'price-desc'=> __('Price: high to low'),
-								 'end-asc'	=> __('Time: Ending soon'),
-								 'end-desc'	=> __('Time: Newly posted') );
-
-		error_log( "in widget, pp_sort_options = " . print_r($pp_sort_options, true) );
-		error_log( "in widget, args = " . print_r($args, true) );
-		error_log( "in widget, instance = " . print_r($instance, true) );
-
+	function widget($args, $instance) {
 		extract( $args );
-
+		
 		//Don't want to print on single posts or pages
 		if( is_single() || is_page() ){
 			error_log('in widget, is single true');
 			return;
 		}
 
-		$end_date = ( $instance['end_date'] == 'on' ) ? $instance['end_date'] : false;
-		$price = ( $instance['price'] == 'on' ) ? $instance['price'] : false;
-		$sorted_by = trim( @$_GET[ 'pp_sort' ] );
+		$end_date = isset( $instance['end_date'] ) ? $instance['end_date'] : false;
+		$price = isset( $instance['price'] ) ? $instance['price'] : false;
 
 		echo $before_widget;
 
 		echo $before_title;
-		echo ( $instance['title'] ) ? $instance['title'] : __( 'Sort By:' );
+		echo ( $instance['title'] ) ? $instance['title'] : __('Sort By:');
 		echo $after_title;
 
-		echo '<form id="pp_sort" method="get" action="' . esc_url_raw( remove_query_arg( 'pp_sort', $_SERVER['REQUEST_URI'] ) ) . '">';
+		$saved_options = array( 'end_date' => "End Time", 'price' => "Price" );
+
+		echo '<form id="pp_sort" method="get" action="">';
 		echo '<select name="pp_sort" >';
-		foreach ( $pp_sort_options as $key => $label ) {
-			if( $instance[ $key ] != 'on' )
-				continue;
+		foreach ( $saved_options as $key => $label ) {
 			echo "<option value='".$key."-ASC'>".$label." ". __('Ascending')."</option>";
 			echo "<option value='".$key."-DESC'>".$label." ". __('Descending')."</option>";
 		}
@@ -141,54 +131,40 @@ class PP_Sort_Widget extends WP_Widget {
 		echo $after_widget;
 	}
 
-	function form( $instance ) {
-		global $pp_sort_options;
-		$pp_sort_options = array( 'price-asc' => __('Price: low to high'),
-								 'price-desc'=> __('Price: high to low'),
-								 'end-asc'	=> __('Time: Ending soon'),
-								 'end-desc'	=> __('Time: Newly posted') );
+	function form($instance) {
 
 		/* Set up some default widget settings. */
-		//$defaults = array( 'title' => 'Sort By:', 'end_date' => true, 'price' => true );
-		$instance = wp_parse_args( (array) $instance, $defaults );
-		error_log('in form, $instance = ' . print_r($instance, true));
-		?>
+		$defaults = array( 'title' => 'Sort By:', 'end_date' => true, 'price' => true );
+		$instance = wp_parse_args( (array) $instance, $defaults ); 
+		error_log('in form, $instance = ' . print_r($instance, true));?>
 		<p>
 			<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php __('Title') ?></label>
 			<input id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" value="<?php echo $instance['title']; ?>" />
 		</p>
+		<p>
+			<input class="checkbox" type="checkbox" <?php checked( $instance['end_date'], 'on' ); ?> id="<?php echo $this->get_field_id( 'end_date' ); ?>" name="<?php echo $this->get_field_name( 'end_date' ); ?>" />
+			<label for="<?php echo $this->get_field_id( 'end_date' ); ?>"><?php _e('Sort by end date') ?></label>
+		</p>
+		<p>
+			<input class="checkbox" type="checkbox" <?php checked( $instance['price'], 'on' ); ?> id="<?php echo $this->get_field_id( 'price' ); ?>" name="<?php echo $this->get_field_name( 'price' ); ?>" />
+			<label for="<?php echo $this->get_field_id( 'price' ); ?>"><?php _e('Sort by price') ?></label>
+		</p>
 		<?php
-		foreach( $pp_sort_options as $key => $label ){
-			$field_id = $this->get_field_id( $key );
-			echo "<p><input class='checkbox' type='checkbox'" . checked( $instance[ $key ], 'on' ) . "id='$field_id' name='$field_id' />";
-			echo "<label for='$field_id'> " . __('Sort by' ) . " $label</label></p>";
-		}
 	}
 
-	function update( $new_instance, $old_instance ) {
-		global $pp_sort_options;
-		$pp_sort_options = array( 'price-asc' => __('Price: low to high'),
-								 'price-desc'=> __('Price: high to low'),
-								 'end-asc'	=> __('Time: Ending soon'),
-								 'end-desc'	=> __('Time: Newly posted') );
-
+	function update($new_instance, $old_instance) {
 		$instance = $old_instance;
 
 		/* Strip tags (if needed) and update the widget settings. */
-		$instance['title'] = strip_tags( $new_instance['title'] );		
-		//$instance['end_date'] = $new_instance['end_date'];
-		//$instance['price'] = $new_instance['price'];
-		error_log('in update, $instance = ' . print_r($instance, true));
-		error_log('in update, $new_instance = ' . print_r($new_instance, true));
-		foreach( $pp_sort_options as $key => $label )
-			$instance[ $key ] = $new_instance[ $key ];
+		$instance['title'] = strip_tags( $new_instance['title'] );
+		$instance['end_date'] = $new_instance['end_date'];
+		$instance['price'] = $new_instance['price'];
 
-		error_log('** in update, $instance = ' . print_r($instance, true));
-		error_log('** in update, $new_instance = ' . print_r($new_instance, true));
 		return $instance;
 	}
 }
 add_action('widgets_init', create_function('', 'return register_widget("PP_Sort_Widget");'));
+
 
 add_action('wp_head', 'pp_print_query');
 function pp_print_query(){
@@ -196,5 +172,17 @@ function pp_print_query(){
 	error_log('in pp_print_query, $wp_query request = ' . print_r($wp_query->request, true));
 	//error_log('in pp_print_query, $wp_query request = ' . print_r($wp_query, true));
 }
+
+/*
+add_filter('posts_fields','pp_select_filter');
+function pp_select_filter($arg) {
+	global $wpdb;
+
+	//$arg .= str_replace("$wpdb->posts.post_date","$wpdb->bids.bid_value",$arg);
+	//$arg .= ' ' . $wpdb->bids . ".*";
+	error_log('in pp_select_filter, arg = ' . $arg);
+	return $arg;
+}
+*/
 
 ?>
