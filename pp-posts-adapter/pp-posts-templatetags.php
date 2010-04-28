@@ -10,8 +10,8 @@ function get_post_end_time( $post_id, $type = 'timestamp', $gmt = true ) {
 
 	$time = wp_next_scheduled( 'schedule_end_post', array( "ID" => $post_id ) );
 
-	// If a post has not yet ended, use it's actual scheduled end time, if that doesn't exist, probably becasue the post has ended
-	// get the post end time from the post_meta table
+	// If a post has not yet ended, use it's actual scheduled end time, if that doesn't exist, 
+	// probably becasue the post has ended, get the post end time from the post_meta table.
 	if( empty( $time ) )
 		$time = strtotime( get_post_meta( $post_id, 'post_end_date_gmt', true ) );
 
@@ -30,7 +30,24 @@ function get_post_end_time( $post_id, $type = 'timestamp', $gmt = true ) {
 
 	return $time;
 }
-add_filter( 'get_the_date', 'get_post_end_time' );
+
+function post_end_time_filter( $date ){
+	global $post;
+
+	$end_time = wp_next_scheduled( 'schedule_end_post', array( "ID" => $post->ID ) );
+
+	if( empty( $end_time ) )
+		$end_time = strtotime( get_post_meta( $post->ID, 'post_end_date_gmt', true ) );
+
+	if( $end_time == false )
+	 	return $date;
+	
+	$date .= __(' ending on ') . date( 'F, j Y, G:i e', $end_time );
+	//$date .= ' ending on ' . date( 'r', $end_time );
+
+	return $date;
+}
+add_filter( 'get_the_date', 'post_end_time_filter' );
 
 /**
  * Get's the end time for a post.
@@ -44,7 +61,7 @@ add_filter( 'get_the_date', 'get_post_end_time' );
 function get_post_end_countdown( $date ) {
 	global $post;
 
-	$date = $date . ' ending ' . human_interval( wp_next_scheduled( 'schedule_end_post', array( "ID" => $post->ID ) ) - time() );
+	$date .= __(' ending ') . human_interval( wp_next_scheduled( 'schedule_end_post', array( "ID" => $post->ID ) ) - time() );
 
 	return $date;
 }
@@ -54,7 +71,7 @@ add_filter( 'get_the_date', 'get_post_end_countdown' );
  * Takes a period of time as a unix time stamp and returns a string 
  * describing how long the period of time is, eg. 2 weeks 1 day.
  * 
- * Based on WP_Crontrol's Interval function
+ * Based on WP Crontrol's Interval function
  **/
 function human_interval( $time_period, $units = 3 ) {
     // array of time period chunks
