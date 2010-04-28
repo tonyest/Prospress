@@ -11,21 +11,6 @@ Description: Leave feedback for other users on your prospress marketplace.
 Author: Brent Shepherd
 Version: 0.2
 Author URI: http://brentshepherd.com/
-Site Wide Only: true
-Copyright (C) 2009 Prospress Pty. Ltd.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 if ( !defined( 'PP_FEEDBACK_DB_VERSION'))
@@ -86,7 +71,7 @@ function pp_feedback_deactivate() {
 	if ( !current_user_can('edit_plugins') || !function_exists( 'delete_site_option') )
 		return false;
 
-	error_log('pp_feedback_deactivate called');
+	error_log('pp_feedback_deactivate called, deleting pp_feedback_db_version');
 
 	delete_site_option( 'pp_feedback_db_version' );
 }
@@ -106,18 +91,13 @@ function pp_feedback_install() {
 	if ( !empty($wpdb->charset) )
 		$charset_collate = "DEFAULT CHARACTER SET $wpdb->charset";
 
-	//$table_name = ($blog_id == 1) ? $wpdb->prefix . 'feedback' : $wpdb->base_prefix . $blog_id . '_feedback';
-	$table_name = $wpdb->base_prefix . 'feedback';
-	//$table_name = $wpdb->feedback;
-	//error_log("pp_feedback_install called, table_name = $table_name");
-	error_log("pp_feedback_install called, table_name = $wpdb->feedback");
+	$wpdb->feedback = $wpdb->base_prefix . 'feedback';
 
-	//	$sql[] = "CREATE TABLE {$table_name} (
 	$sql[] = "CREATE TABLE {$wpdb->feedback} (
 		  		feedback_id bigint(20) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
 		  		for_user_id bigint(20) unsigned NOT NULL,
 		  		from_user_id bigint(20) unsigned NOT NULL,
-	  			role tinyint(1) NOT NULL,
+	  			role varchar(20) NOT NULL,
 			  	feedback_score tinyint(1) NOT NULL,
 			  	feedback_comment varchar(255) NOT NULL,
 		  		feedback_status varchar(20) NOT NULL,
@@ -130,11 +110,8 @@ function pp_feedback_install() {
 			    KEY post_id (post_id)
 			   ) {$charset_collate};";
 
-	$table_name = $wpdb->base_prefix . 'feedbackmeta';
-	//error_log("pp_feedback_install called, table_name = $table_name");
-	error_log("pp_feedback_install called, table_name = $wpdb->feedbackmeta");
+	$wpdb->feedbackmeta = $wpdb->base_prefix . 'feedbackmeta';
 
-//	$sql[] = "CREATE TABLE {$table_name} (
 	$sql[] = "CREATE TABLE {$wpdb->feedbackmeta} (
 				meta_id bigint(20) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
 				feedback_id bigint(20) unsigned NOT NULL,
@@ -149,17 +126,12 @@ function pp_feedback_install() {
 	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 	dbDelta( $sql );
 
-	if ( function_exists( 'update_site_option' ) ) {
-		update_site_option( 'pp_feedback_db_version', PP_FEEDBACK_DB_VERSION );
-		error_log('update_site_option exists');
-	}
+	update_site_option( 'pp_feedback_db_version', PP_FEEDBACK_DB_VERSION );
 }
-
 
 //**************************************************************************************************//
 // FEEDBACK FUNCTIONS
 //**************************************************************************************************//
-
 
 /**
  * Feedback controller: determines what functions are called and ultimately 
@@ -191,10 +163,6 @@ function pp_feedback_controller() {
 		return;
 	} elseif ( $_GET[ 'action' ] == 'view-feedback' ){
 		error_log('View Feedback');
-		//$feedback = $wpdb->get_row($wpdb->prepare("SELECT * FROM $wpdb->feedback WHERE post_id = %d AND feedback_status = 'publish' AND from_user_id = %d", $_GET[ 'post' ] , $user_ID ), ARRAY_A);
-		//extract( pp_get_feedback_item( $_GET[ 'post' ], $user_ID ) );
-		//$title = __( 'Feedback' );
-		//include_once( PP_FEEDBACK_DIR . '/feedback-form-view.php'  );
 		pp_feedback_history_admin( $user_ID );
 		return;
 	} else {
@@ -211,7 +179,8 @@ function pp_edit_feedback( $post_id, $blog_ID = '' ) {
 	$post_id = (int)$post_id;
 	$blog_ID = ( empty( $blog_ID ) ) ? $blog_id : (int)$blog_ID;
 
-	switch_to_blog( $blog_ID );
+	if( function_exists( 'switch_to_blog' ) ) //if multisite
+		switch_to_blog( $blog_ID );
 
 	error_log( "*** After switch_to_blog( $blog_ID ), wpdb->bids = " . print_r($wpdb->bids, true));
 
@@ -224,14 +193,15 @@ function pp_edit_feedback( $post_id, $blog_ID = '' ) {
 
 	if( empty( $bidder_id ) )
 		wp_die( __("Error: could not determine winning bidder.") );
-	elseif ( $post->post_author == $user_ID && $is_winning_bidder )
-		wp_die( __("You can not leave feedback on your own post. Even if you were the winning bidder.") );
 
 	$is_winning_bidder = $bid_system->is_winning_bidder( $from_user_id, $post_id );
 
-	if ( ( !$is_winning_bidder && $from_user_id != $post->post_author ) || NULL == $post->post_status || 'ended' != $post->post_status ) {
+	if ( ( !$is_winning_bidder && $from_user_id != $post->post_author ) || NULL == $post->post_status || 'completed' != $post->post_status ) {
+		error_log( "*** is_winning_bidder = " . print_r($is_winning_bidder, true));
+		error_log( "*** from_user_id = $from_user_id and post->post_author = " . $post->post_author);
+		error_log( "*** post->post_status = " . $post->post_status);
 		wp_die( __('You can not leave feedback on this post.') );
-	} elseif ( pp_has_feedback( $post_id, $from_user_id ) ) { //user already left feedback for post but not allowed to edit feedback
+	} elseif ( pp_has_feedback( $post_id, $from_user_id ) ) { //user already left feedback for post
 		$feedback = pp_get_feedback_item( $post_id, $from_user_id );
 		if( get_option( 'edit_feedback' ) != 'true' ){
 			$feedback[ 'disabled' ] = __( 'disabled="disabled"' );
@@ -240,24 +210,24 @@ function pp_edit_feedback( $post_id, $blog_ID = '' ) {
 			$feedback[ 'title' ] = __( 'Edit Feedback' );
 			$disabled = '';
 		}
-		//return $feedback;
 	} else {
 		if ( $post->post_author == $user_ID && !$is_winning_bidder ){
-			$role = 1;
-			//$for_user_id = $is_winning_bidder;
+			$role = 'post author';
 			error_log('in pp_edit_feedback $wpdb->bids = ' . $wpdb->bids);
 			$for_user_id = $bidder_id;
 		} else { // bidder
-			$role = 2;
+			$role = 'bidder';
 			$for_user_id = $post->post_author;
 		}
 		$title = __( 'Give Feedback' );
 		$disabled = '';
-		//return compact( 'post_id', 'from_user_id', 'for_user_id', 'role', 'disabled', 'title' );
 		$feedback = compact( 'post_id', 'from_user_id', 'for_user_id', 'role', 'disabled', 'title' );
 	}
 	$feedback[ 'blog_id' ] = $blog_ID;
-	restore_current_blog();
+
+	if( function_exists( 'restore_current_blog' ) )
+		restore_current_blog();
+
 	error_log( "*** In pp_edit_feedback, feedback = " . print_r( $feedback, true ) );
 	return $feedback;
 }
@@ -272,20 +242,21 @@ function pp_feedback_form_submit( $feedback ) {
 
 	$feedback = pp_feedback_sanitize( $feedback );
 	
-	switch_to_blog( $feedback_details[ 'blog_id' ] );
+	if( function_exists( 'switch_to_blog' ) ) //if multisite
+		switch_to_blog( $feedback_details[ 'blog_id' ] );
 
 	error_log('** In pp_feedback_form_submit, after switch_to_blog, sanitized feedback = ' . print_r($feedback, true));
 	$post = get_post( $feedback[ 'post_id' ] );
 	$is_winning_bidder = $bid_system->is_winning_bidder( $feedback[ 'from_user_id' ], $feedback[ 'post_id' ] );
 
-	if ( ( !$is_winning_bidder && $feedback[ 'from_user_id' ] != $post->post_author ) || NULL == $post->post_status || 'ended' != $post->post_status ) {
-		if(!$is_winning_bidder)
-			error_log('!$is_winning_bidder');
-		if($feedback[ 'from_user_id' ] != $post->post_author)
-			error_log('$feedback[ from_user_id ] != $post->post_author');
-		if(NULL == $post->post_status)
-			error_log('NULL == $post->post_status');
-		if('ended' != $post->post_status)
+	if ( ( !$is_winning_bidder && $feedback[ 'from_user_id' ] != $post->post_author ) || NULL == $post->post_status || 'completed' != $post->post_status ) {
+		if( !$is_winning_bidder )
+			error_log( '!$is_winning_bidder' );
+		if( $feedback[ 'from_user_id' ] != $post->post_author)
+			error_log( '$feedback[ from_user_id ] != $post->post_author');
+		if( NULL == $post->post_status )
+			error_log( 'NULL == $post->post_status');
+		if( 'completed' != $post->post_status )
 			error_log('ended != $post->post_status');
 		wp_die( __('You can not leave feedback on this post.') );
 	}
@@ -310,6 +281,10 @@ function pp_feedback_form_submit( $feedback ) {
 	pp_update_feedback( $feedback );
 
 	$feedback[ 'feedback_msg' ] = __('Feedback Submitted');
+
+	if( function_exists( 'restore_current_blog' ) )
+		restore_current_blog();
+
 	return $feedback;
 }
 
@@ -318,7 +293,7 @@ function pp_feedback_sanitize( $feedback_details ){
 
 	$feedback_details[ 'for_user_id' ] 		= (int)$feedback_details[ 'for_user_id' ];
 	$feedback_details[ 'from_user_id' ] 	= (int)$feedback_details[ 'from_user_id' ];
-	$feedback_details[ 'role' ] 			= (int)$feedback_details[ 'role' ];
+	$feedback_details[ 'role' ] 			= $feedback_details[ 'role' ];
 	$feedback_details[ 'feedback_score' ] 	= (int)$feedback_details[ 'feedback_score' ];
 	$feedback_details[ 'feedback_comment' ] = esc_attr( $feedback_details[ 'feedback_comment' ] );
 	$feedback_details[ 'feedback_status' ] 	= ( !empty( $feedback_details[ 'feedback_status' ] ) ) ? esc_attr( $feedback_details[ 'feedback_comment' ] ) : apply_filters( 'new_feedback_status', 'publish' );
@@ -329,7 +304,6 @@ function pp_feedback_sanitize( $feedback_details ){
 
 	$feedback_details = apply_filters( 'validated_feedback', $feedback_details );
 
-	//return compact( 'for_user_id', 'from_user_id', 'post_id', 'role', 'feedback_score', 'feedback_comment' );
 	return $feedback_details;
 }
 
@@ -511,7 +485,8 @@ function pp_feedback_rows($feedback = ''){
 	if( !empty( $feedback ) ){
 		$style = '';
 		foreach ( $feedback as $feedback_item ) {
-			switch_to_blog( $feedback_item[ 'blog_id' ] );
+			if( function_exists( 'switch_to_blog' ) )
+				switch_to_blog( $feedback_item[ 'blog_id' ] );
 
 			extract( $feedback_item );
 			echo "<tr $style >";
@@ -520,7 +495,7 @@ function pp_feedback_rows($feedback = ''){
 				echo "<td>" . ( ( $user_ID == $from_user_id ) ? 'You' : get_userdata( $from_user_id )->user_nicename ) . pp_users_feedback_link( $from_user_id ) . "</td>";
 			else
 				echo "<td>" . ( ( $user_ID == $for_user_id ) ? 'You' : get_userdata( $for_user_id )->user_nicename ) . pp_users_feedback_link( $for_user_id ) . "</td>";
-			echo "<td>" . (($role == 1) ? __("Seller") : __("Buyer") ) . "</td>";
+			echo "<td>" . ucfirst( $role ) . "</td>";
 			echo "<td>" . (($feedback_score == 2) ? __("Positive") : (($feedback_score == 1) ? __("Neutral") : __("Negative"))) . "</td>";
 			echo "<td>$feedback_comment</td>";
 			echo "<td>" . mysql2date( __('d M Y'), $feedback_date ) . "</td>";
@@ -530,7 +505,8 @@ function pp_feedback_rows($feedback = ''){
 			echo "</tr>";
 			$style = ( ' class="alternate"' == $style ) ? '' : ' class="alternate"';
 
-			restore_current_blog();
+			if( function_exists( 'restore_current_blog' ) )
+				restore_current_blog();
 		}
 	} else {
 		echo '<tr><td colspan="5">You have no feedback.</td>';
@@ -656,7 +632,7 @@ function pp_feedback_dashboard_widget() {
 		// Negative Feedback Received
 		$negative = pp_users_negative_feedback( $user_ID, 'received' );
 		$num = '<span class="total-count">' . number_format_i18n( $negative ) . '</span>';
-		$text = __( 'Neutral Feedback Received' );
+		$text = __( 'Negative Feedback Received' );
 		if ( $negative > 0 ) {
 			$given_url = add_query_arg( array( 'filter' => 'received' ), 'users.php?page=feedback' );
 			$num = "<a href='$given_url'>$num</a>";
@@ -670,7 +646,7 @@ function pp_feedback_dashboard_widget() {
 		// Positive Feedback Given
 		$positive = pp_users_positive_feedback( $user_ID, 'given' );
 		$num = number_format_i18n( $positive );
-		$text = __( 'Positive Feedback Received' );
+		$text = __( 'Positive Feedback Given' );
 		if ( $positive > 0 ) {
 			$received_url = add_query_arg( array( 'filter' => 'given' ), 'users.php?page=feedback' );
 			$num = "<a href='$feedback_url'>$num</a>";
@@ -682,7 +658,7 @@ function pp_feedback_dashboard_widget() {
 		// Neutral Feedback Given
 		$neutral = pp_users_neutral_feedback( $user_ID, 'given' );
 		$num = '<span class="total-count">' . number_format_i18n( $neutral ) . '</span>';
-		$text = __( 'Neutral Feedback Received' );
+		$text = __( 'Neutral Feedback Given' );
 		if ( $neutral > 0 ) {
 			$received_url = add_query_arg( array( 'filter' => 'given' ), 'users.php?page=feedback' );
 			$num = "<a href='$received_url'>$num</a>";
@@ -694,7 +670,7 @@ function pp_feedback_dashboard_widget() {
 		// Negative Feedback Given
 		$negative = pp_users_negative_feedback( $user_ID, 'given' );
 		$num = '<span class="total-count">' . number_format_i18n( $negative ) . '</span>';
-		$text = __( 'Neutral Feedback Received' );
+		$text = __( 'Negative Feedback Given' );
 		if ( $negative > 0 ) {
 			$given_url = add_query_arg( array( 'filter' => 'given' ), 'users.php?page=feedback' );
 			$num = "<a href='$given_url'>$num</a>";

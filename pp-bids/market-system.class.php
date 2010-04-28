@@ -521,10 +521,15 @@ class PP_Market_System {
 		$order_by = 'bid_date_gmt';
 		$query = $this->create_bid_page_query();
 
-		//$bids = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->bids WHERE bidder_id = %d ORDER BY $order_by DESC", $user_ID, $order_by), ARRAY_A);
+		error_log('In admin_history, post create query');
+
 		$bids = $wpdb->get_results( $query, ARRAY_A );
 
+		error_log('In admin_history, post get results');
+
 		$bids = apply_filters( 'admin_history_bids', $bids );
+		
+		error_log('In admin_history');
 
 		$this->print_admin_bids_table( $bids, __('Bid History'), 'bid-history' );
 	}
@@ -561,13 +566,13 @@ class PP_Market_System {
 		}
 
 		if( isset( $_GET[ 'bs' ] ) && $_GET[ 'bs' ] != 0 ){
-			$query .= ' AND ';
+			$query .= ' AND bid_status = ';
 			switch( $_GET[ 'bs' ] ){
 				case 1:
-					$query .= 'outbid';
+					$query .= "'outbid'";
 					break;
 				case 2:
-					$query .= 'winning';
+					$query .= "'winning'";
 					break;
 				default:
 					break;
@@ -593,7 +598,7 @@ class PP_Market_System {
 					$query .= apply_filters( 'sort_bids_by', 'bid_date_gmt' );
 				}
 		}
-		error_log("** end of create_bid_page_query, query = $query");
+
 		return $query;
 	}
 
@@ -607,8 +612,6 @@ class PP_Market_System {
 		
 		//error_log('bids = ' . print_r($bids, true));
 
-		//usort( $bids, create_function() );
-		//$bid_status = 'winning';
 		$sort = isset( $_GET[ 'sort' ] ) ? (int)$_GET[ 'sort' ] : 0;
 		$bid_status = isset( $_GET[ 'bs' ] ) ? (int)$_GET[ 'bs' ] : 0;
 
@@ -696,12 +699,30 @@ class PP_Market_System {
 								<td><?php echo ucfirst( $bid[ 'bid_status' ] ); ?></td>
 								<td><?php echo mysql2date( __( 'g:ia d M Y' ), $bid[ 'bid_date' ] ); ?></td>
 								<td><?php echo mysql2date( __( 'g:ia d M Y' ), $post_end_date ); ?></td>
+								<?php if( strpos( $_SERVER['REQUEST_URI'], 'bids' ) !== false ){
+									$actions = apply_filters( 'winning_bid_actions', array(), $post_id );
+									echo '<td>';
+									if( is_array( $actions ) && !empty( $actions ) ){
+									?>
+										<ul id="completed_actions">
+											<li class="base"><?php _e( 'Take action:' ) ?></li>
+										<?php foreach( $actions as $action => $attributes )
+											//$url = add_query_arg ( 'post', $post_id, $attributes['url'] );
+											echo "<li class='completed_action'><a href='" . add_query_arg ( array( 'action' => $action, 'post' => $post_id ) , $attributes['url'] ) . "'>" . $attributes['label'] . "</a></li>";
+										 ?>
+										</ul>
+									<?php
+									} else {
+										_e('No action can be taken.');
+									}
+									echo '</td>';
+								}?>
 							<tr>
 							<?php
 							$style = ( 'alternate' == $style ) ? '' : 'alternate';
 						}
 					} else {
-						echo '<tr><td colspan="5">' . __('No bids to show.') . '</td></tr>';
+						echo '<tr><td colspan="5">' . __('No bids.') . '</td></tr>';
 					}
 				?>
 				</tbody>
@@ -718,7 +739,12 @@ class PP_Market_System {
 
 	// Returns bid column headings for market system. Used with the built in print_column_headers function.
 	function get_column_headings(){
-		return $this->bid_table_headings;
+		$column_headings = $this->bid_table_headings;
+		
+		if( strpos( $_SERVER['REQUEST_URI'], 'bids' ) !== false )
+			$column_headings[ 'bid_actions' ] = __( 'Action' );
+
+		return $column_headings;
 	}
 
 	// Add market system columns to tables of posts
@@ -730,6 +756,9 @@ class PP_Market_System {
 		return $column_headings;
 	}
 
+	/**
+	 * 
+	 **/
 	function add_post_column_contents( $column_name, $post_id ) {
 		if( array_key_exists( $column_name, $this->post_table_columns ) ) {
 			$function = $this->post_table_columns[ $column_name ][ 'function' ];
