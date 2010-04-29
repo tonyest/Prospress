@@ -110,11 +110,6 @@ class PP_Sort_Widget extends WP_Widget {
 		}
 		echo '</select>';
 		echo '<input type="submit" value="' . __("Sort") . '">';
-//		foreach( $_GET as $name => $value ){
-//			do_action('pp_sort_widget');
-//			if( $name != 'bid-min' && $name != 'bid-max' ) continue;
-//			echo "<input type='hidden' name ='$name' value='" . floatval( @$value ) . "'>";
-//		}
 		foreach( $_GET as $name => $value ){
 			if( $name == 'pp-sort' ) continue;
 			echo '<input type="hidden" name="' . esc_html( $name ) . '" value="' . esc_html( $value ) . '">';
@@ -166,12 +161,5 @@ class PP_Sort_Widget extends WP_Widget {
 	}
 }
 add_action('widgets_init', create_function('', 'return register_widget("PP_Sort_Widget");'));
-
-add_action('wp_head', 'pp_print_query');
-function pp_print_query(){
-	global $wp_query;
-	//error_log('in pp_print_query, $wp_query request = ' . print_r($wp_query->request, true));
-	//error_log('in pp_print_query, $wp_query request = ' . print_r($wp_query, true));
-}
 
 ?>

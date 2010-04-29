@@ -32,8 +32,6 @@ class Bid_Filter_Widget extends WP_Widget {
 		if ( !$max )
 			$max = '';
 
-		//echo '<form action="' . get_bloginfo('url') . '" method="get">';
-		//echo '<form action="' . esc_url_raw( remove_query_arg( array( 'bid-min', 'bid-max' ), $_SERVER['REQUEST_URI'] ) ) . '" method="get">';
 		echo '<form action="" method="get">';
 		echo __('$', 'your-textdomain') . ' ';
 		echo '<input type="text" id="bid-min" name="bid-min" size="5" value="' . esc_attr($min) . '"> ';
