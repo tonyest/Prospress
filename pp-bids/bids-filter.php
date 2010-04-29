@@ -32,12 +32,18 @@ class Bid_Filter_Widget extends WP_Widget {
 		if ( !$max )
 			$max = '';
 
-		echo '<form action="' . get_bloginfo('url') . '" method="get">';
+		//echo '<form action="' . get_bloginfo('url') . '" method="get">';
+		//echo '<form action="' . esc_url_raw( remove_query_arg( array( 'bid-min', 'bid-max' ), $_SERVER['REQUEST_URI'] ) ) . '" method="get">';
+		echo '<form action="" method="get">';
 		echo __('$', 'your-textdomain') . ' ';
 		echo '<input type="text" id="bid-min" name="bid-min" size="5" value="' . esc_attr($min) . '"> ';
 		echo __('to', 'your-textdomain') . ' ';
 		echo '<input type="text" id="bid-max" name="bid-max" size="5" value="' . esc_attr($max) . '"> ';
-		echo '<input type="submit" id="bid-filter-submit" name="bid-filter-submit" value="' . __('Filter', 'your-textdomain') . '">';
+		echo '<input type="submit" id="bid-filter" name="bid-filter" value="' . __('Filter', 'your-textdomain') . '">';
+		foreach( $_GET as $name => $value ){
+			if( $name == 'bid-min' || $name == 'bid-max' || $name == 'bid-filter' ) continue;
+			echo '<input type="hidden" name="' . esc_html( $name ) . '" value="' . esc_html( $value ) . '">';
+		}
 		echo '</form>';
 
 		echo $after_widget;
@@ -89,28 +95,36 @@ class Bid_Filter_Query {
 
 		extract(get_bid_filter_args());
 
-		$meta_value = "CAST($wpdb->bidsmeta.meta_value AS decimal)";
-
-		if ( $min && $max )
-			$clause = "$meta_value >= $min AND $meta_value <= $max";
-		elseif ( $min )
-			$clause = "$meta_value >= $min";
-		elseif ( $max )
-			$clause = "$meta_value <= $max";
-		else
+		if ( !$min && !$max )
 			return $where;
 
-		return $where . " AND $wpdb->posts.ID IN (
-			SELECT post_id
-			FROM $wpdb->bids
-			WHERE bid_id
-			IN (
-				SELECT bid_id
-				FROM $wpdb->bidsmeta
-				WHERE $wpdb->bidsmeta.meta_key = 'winning_bid_value'
-				AND $clause
-			)
-		)";
+		$bidsmeta_value = "CAST($wpdb->bidsmeta.meta_value AS decimal)";
+
+		if ( $min && $max )
+			$clause = "$bidsmeta_value >= $min AND $bidsmeta_value <= $max";
+		elseif ( $min )
+			$clause = "$bidsmeta_value >= $min";
+		elseif ( $max )
+			$clause = "$bidsmeta_value <= $max";
+
+		$where .= " AND ( $wpdb->posts.ID IN ( SELECT post_id FROM $wpdb->bids WHERE bid_id IN ( SELECT bid_id FROM $wpdb->bidsmeta WHERE $wpdb->bidsmeta.meta_key = 'winning_bid_value' AND $clause ) )";
+
+		if( $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->postmeta WHERE meta_key = 'start_price' AND meta_value > 0" ) ){
+			$postmeta_value = "CAST($wpdb->postmeta.meta_value AS decimal)";
+
+			if ( $min && $max )
+				$clause_sp = "$postmeta_value >= $min AND $postmeta_value <= $max";
+			elseif ( $min )
+				$clause_sp = "$postmeta_value >= $min";
+			elseif ( $max )
+				$clause_sp = "$postmeta_value <= $max";
+
+			$where .= " OR $wpdb->posts.ID IN ( SELECT post_id FROM $wpdb->postmeta WHERE $wpdb->postmeta.meta_key = 'start_price' AND $clause_sp AND post_id NOT IN ( SELECT DISTINCT post_id FROM $wpdb->bids ) )";
+		}
+		
+		$where .= ")";
+
+		return $where;
 	}
 }
 Bid_Filter_Query::init();
@@ -118,8 +132,8 @@ Bid_Filter_Query::init();
 
 function get_bid_filter_args() {
 	return array(
-		'min' => intval(@$_GET['bid-min']),
-		'max' => intval(@$_GET['bid-max']),
+		'min' => floatval(@$_GET['bid-min']),
+		'max' => floatval(@$_GET['bid-max']),
 	);
 }
 
