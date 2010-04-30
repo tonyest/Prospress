@@ -27,7 +27,7 @@ Unleash prosperity for everybody. - <b>Barack Obama</b>
 No people ever yet benefited by riches if their prosperity corrupted their virtue - <b>Theodore Roosevelt<b>
 Being free and prosperous in a world at peace. That's our ultimate goal. - <b>Ronald Reagan<b>
 All money is a matter of belief. - <b>Adam Smith</b>
-Freedom granted only when it is known beforehand that its effects will be beneficial is not freedom. - <b>Friedrich August von Hayek</b>";
+Freedom granted only when it is known beforehand that its effects will be beneficial is not freedom. - <b>Friedrich von Hayek</b>";
 
 	// Here we split it into lines
 	$quotes = explode("\n", $quotes);

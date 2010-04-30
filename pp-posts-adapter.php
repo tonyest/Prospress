@@ -442,4 +442,14 @@ function pp_remove_classes() {
 }
 add_action( 'admin_head', 'pp_remove_classes' );
 
-?>
+function pp_quick_edit_end( $column_name, $type ){
+
+	if(  $column_name != 'end_date' || $type != 'post' )
+		return;
+
+	echo '<fieldset class="inline-edit-col-right">';
+	echo '<label><span class="title">' . __( 'End Date' ) . '</span></label>';
+	touch_end_time( 1, 0, 1 );
+	echo '</fieldset>';
+}
+add_action( 'quick_edit_custom_box', 'pp_quick_edit_end', 10, 2 );
