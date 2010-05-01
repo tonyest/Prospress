@@ -6,11 +6,12 @@
 class Bid_Filter_Widget extends WP_Widget {
 
 	function Bid_Filter_Widget() {
-		$widget_ops = array('description' => __('A search form for your blog', 'your-textdomain') );
-		$this->WP_Widget('bid-filter', __('Bids Filter', 'your-textdomain'), $widget_ops);
+		$widget_ops = array('description' => __('A search form for your blog') );
+		$this->WP_Widget('bid-filter', __('Bids Filter'), $widget_ops);
 	}
 
 	function widget( $args, $instance ) {
+		global $currency_symbol;
 		extract($args);
 
 		if( is_single() || is_page() ){
@@ -24,7 +25,8 @@ class Bid_Filter_Widget extends WP_Widget {
 		if ( $title )
 			echo $before_title . $title . $after_title;
 
-		extract(get_bid_filter_args());
+		$min = floatval(@$_GET['p-min']);
+		$max = floatval(@$_GET['p-max']);
 
 		if ( !$min )
 			$min = '';
@@ -33,13 +35,13 @@ class Bid_Filter_Widget extends WP_Widget {
 			$max = '';
 
 		echo '<form action="" method="get">';
-		echo __('$', 'your-textdomain') . ' ';
-		echo '<input type="text" id="bid-min" name="bid-min" size="5" value="' . esc_attr($min) . '"> ';
-		echo __('to', 'your-textdomain') . ' ';
-		echo '<input type="text" id="bid-max" name="bid-max" size="5" value="' . esc_attr($max) . '"> ';
-		echo '<input type="submit" id="bid-filter" name="bid-filter" value="' . __('Filter', 'your-textdomain') . '">';
+		echo $currency_symbol . ' ';
+		echo '<input type="text" id="p-min" name="p-min" size="5" value="' . esc_attr($min) . '"> ';
+		echo __('to') . ' ';
+		echo '<input type="text" id="p-max" name="p-max" size="5" value="' . esc_attr($max) . '"> ';
+		echo '<input type="submit" id="bid-filter" value="' . __('Filter') . '">';
 		foreach( $_GET as $name => $value ){
-			if( $name == 'bid-min' || $name == 'bid-max' || $name == 'bid-filter' ) continue;
+			if( $name == 'p-min' || $name == 'p-max' ) continue;
 			echo '<input type="hidden" name="' . esc_html( $name ) . '" value="' . esc_html( $value ) . '">';
 		}
 		echo '</form>';
@@ -91,7 +93,8 @@ class Bid_Filter_Query {
 
 		global $wpdb;
 
-		extract(get_bid_filter_args());
+		$min = floatval(@$_GET['p-min']);
+		$max = floatval(@$_GET['p-max']);
 
 		if ( !$min && !$max )
 			return $where;
@@ -126,12 +129,3 @@ class Bid_Filter_Query {
 	}
 }
 Bid_Filter_Query::init();
-
-
-function get_bid_filter_args() {
-	return array(
-		'min' => floatval(@$_GET['bid-min']),
-		'max' => floatval(@$_GET['bid-max']),
-	);
-}
-

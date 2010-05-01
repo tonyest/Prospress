@@ -453,3 +453,4 @@ function pp_quick_edit_end( $column_name, $type ){
 	echo '</fieldset>';
 }
 add_action( 'quick_edit_custom_box', 'pp_quick_edit_end', 10, 2 );
+

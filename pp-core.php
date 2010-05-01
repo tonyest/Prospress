@@ -114,14 +114,19 @@ function pp_maybe_install(){
 
 
 // Administration functions for choosing default currency (may be set by locale in future, like number format is already)
-function pp_add_currency_admin(){
+function pp_add_admin_pages(){
 	if ( function_exists( 'add_settings_section' ) ){
 		add_settings_section( 'currency', 'Currency', 'pp_currency_settings_section', 'general' );
 	} else {
 		$bid_settings_page = add_submenu_page( 'options-general.php', 'Currency', 'Currency', 58, 'currency', 'pp_currency_settings_section' );
 	}
+	//add_theme_page( page_title, menu_title, capability, handle, [function]);
+	$theme_adapter_page = add_theme_page( __( 'Prospress Theme Tailor' ), __( 'Prospress Tailor' ), 'edit_themes', 'theme-tailor', 'pp_theme_tailor_page' );
+	add_action('admin_print_styles-' . $theme_adapter_page, create_function( '', 'wp_enqueue_style( "theme-install" );' ) );
+
 }
-add_action( 'admin_menu', 'pp_add_currency_admin' );
+add_action( 'admin_menu', 'pp_add_admin_pages' );
+
 
 // Displays the fields for handling currency default options
 function pp_currency_settings_section() {
@@ -175,6 +180,106 @@ function pp_money_format( $number, $decimals = 2, $currency = '' ){
 	return $currency_sym . ' ' . number_format_i18n( $number, $decimals );
 }
 
+function pp_theme_tailor_page(){
+	
+	$pp_template_tags = array(	'end_date' => array( 'label' => __( 'End Date:' ), 
+										'supported_filters' =>array( 'the_title' => 'The Title', 
+																	'single_post_title' => 'Single Post Title', 
+																	'the_tags' => 'Tag List', 
+																	'the_category' => 'Category List', 
+																	'the_date' => 'The Date',
+																	'the_time' => 'The Time'
+																	)
+										),
+								'countdown'=> array( 'label' => __( 'Count down:' ),
+										'supported_filters' =>array( 'the_title' => 'The Title', 
+																	'single_post_title' => 'Single Post Title', 
+																	'the_tags' => 'Tag List', 
+																	'the_category' => 'Category List', 
+																	'the_date' => 'The Date',
+																	'the_time' => 'The Time'
+																	)
+										),
+								'bid_count'=> array( 'label' => __( 'Bid Count:' ),
+										'supported_filters' =>array( 'the_title' => 'The Title', 
+																	'single_post_title' => 'Single Post Title', 
+																	'the_tags' => 'Tag List', 
+																	'the_category' => 'Category List', 
+																	'the_date' => 'The Date',
+																	'the_time' => 'The Time'
+																	)
+										),
+								'current_bid' => array( 'label' => __( 'Current Bid:' ),
+													'supported_filters' =>array( 'the_title' => 'The Title', 
+																				'single_post_title' => 'Single Post Title', 
+																				'the_tags' => 'Tag List', 
+																				'the_category' => 'Category List', 
+																				'the_date' => 'The Date',
+																				'the_time' => 'The Time'
+																				)
+													),
+								'bid_form' => array( 'label' => __( 'Bid Form:' ),
+													'supported_filters' =>array( 'the_title' => 'The Title', 
+																				'single_post_title' => 'Single Post Title', 
+																				'the_tags' => 'Tag List', 
+																				'the_category' => 'Category List', 
+																				'the_date' => 'The Date',
+																				'the_time' => 'The Time'
+																				)
+													)
+								);
+	//apply_filters( 'pp_template_tags', $pp_template_tags );
+	$applied_filters = get_option( 'pp_theme_filters' );
+	error_log('$applied_filters = ' . print_r($applied_filters, true));
+	?>
+	<div class="wrap feedback-history">
+	<?php screen_icon(); ?>
+	<h2><?php _e( 'Prospress Theme Adapter' ); ?></h2>
+	<p><?php _e( 'You can use your existing theme to create a Prospress marketplace.' ); ?></p>
+	<p><?php _e( 'Choose where you want to show marketplace details below.' ); ?></p>
+	<form action="" method="post">
+	<div class="feature-filter">
+		<?php foreach( $pp_template_tags as $key => $value ){ ?>
+			<div class="feature-name"><?php echo $value['label']; ?></div>
+			<ol class="feature-group">
+			<?php foreach( $value['supported_filters'] as $filter => $label ){ ?>
+				<li>
+					<input type="checkbox" name="<?php echo $key; ?>[ ]" value="<?php echo $filter; ?>" id="<?php echo $key . '-' . $filter; ?>" <?php checked( in_array( $filter, $applied_filters[$key] ), true ); ?>>
+					<label for="" ><?php echo $label; ?></label>
+				</li>
+			<?php } ?>
+			</ol>
+			<br class="clear">
+		<?php } ?>
+	</div>
+	<p><input type="submit" class="button" name="theme-tailer" value="Save"></p>
+	<input type="hidden" name="page" value="theme-tailor">
+	</form>
+	</div>
+	<?php
+}
 
+if( isset( $_POST[ 'theme-tailer' ] ) )
+	pp_theme_tailor_save();
 
-?>
+function pp_theme_tailor_save(){
+	
+	$theme_filters = $_POST;
+	$theme_filters['end_date'] = array( '<p>the_title</p>', '<a>the_date</a>');
+	error_log( "Before strip_tags, theme_filters = " . print_r( $theme_filters, true )  );
+	unset( $theme_filters[ 'page' ] );
+	unset( $theme_filters[ 'theme-tailer' ] );
+	foreach( $theme_filters as $key => &$filters ){
+		foreach( $filters as &$filter ){
+			error_log("Filter was $filter.");
+			$filter = strip_tags( $filter );
+			error_log("Filter now $filter.");
+		}
+		unset($filter);
+			//$theme_filters[ $key ][] = strip_tags( $filter );
+	}
+	error_log( "After strip_tags, theme_filters = " . print_r( $theme_filters, true )  );
+	//update_option( $option_name, $newvalue );
+	update_option( 'pp_theme_filters', $theme_filters );
+}
+
