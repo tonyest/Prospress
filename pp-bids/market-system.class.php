@@ -63,7 +63,8 @@ class PP_Market_System {
 		add_action( 'init', array( &$this, 'bid_controller' ) );
 
 		// Attaches the bid from to content, so when the_content() function is called, it includes the bid form.
-		add_filter( 'the_content', array( &$this, 'form_filter' ) );
+		//add_filter( 'the_content', array( &$this, 'form_filter' ) );
+		add_filter( 'pp_template_tags', array( &$this, 'add_form_filter' ) );
 
 		// Adds columns for printing bid history table
 		add_action( 'admin_menu', array( &$this, 'add_admin_pages' ) );
@@ -135,6 +136,16 @@ class PP_Market_System {
 		return $form;		
 	}
 
+	function add_form_filter( $pp_template_tags ) {
+
+		//error_log('array(&$this, form_filter) = ' . print_r( array(&$this, 'form_filter'), true ) );
+		//error_log('$this->form_filter = ' . print_r( $this->form_filter, true ) );
+		//$pp_template_tags[ array(&$this, 'form_filter') ] = array( 'label' => __( 'The Bid Form:' ),
+		$pp_template_tags[ 'the_bid_form' ] = array( 'label' => __( 'The Bid Form:' ),
+										'supported_filters' =>array( 'the_content' => 'The Content', 'get_the_excerpt' => 'The Except' ));
+		return $pp_template_tags;
+	}
+
 	// Applied to "the_content" filter to add the bid form to the content of a page when viewed on single.
 	// You may wish to override this funtion to show the bid form on other, or all pages.
 	// Automatically adding the bid form to posts via this filter means all the beautiful WP themes that 
@@ -195,7 +206,6 @@ class PP_Market_System {
 
 		return $post_status;
 	}
-
 
 	// Calculates the value of the new winning bid and updates it in the DB if necessary
 	// Returns the value of the winning bid (either new or existing)

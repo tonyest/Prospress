@@ -14,7 +14,7 @@
  * @param string $file Optional, default '/bid-form.php'. The file containing the template for making a bid.
  * @return null Returns null if no bids appear
  */
-function _the_bid_form() {
+function the_bid_form() {
 	global $bid_system;
 	
 	echo $bid_system->bid_form();
