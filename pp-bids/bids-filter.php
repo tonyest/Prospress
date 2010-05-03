@@ -14,10 +14,8 @@ class Bid_Filter_Widget extends WP_Widget {
 		global $currency_symbol;
 		extract($args);
 
-		if( is_single() || is_page() ){
-			error_log('in widget, is single true');
+		if( is_single() || is_page() )
 			return;
-		}
 
 		$title = apply_filters('widget_title', $instance['title'], $instance, $this->id_base);
 

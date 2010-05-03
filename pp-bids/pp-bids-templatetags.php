@@ -16,9 +16,14 @@
  */
 function the_bid_form() {
 	global $bid_system;
-	
+
 	echo $bid_system->bid_form();
 }
+
+
+
+
+
 
 /** MOVED TO BID CLASS
  */

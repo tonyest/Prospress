@@ -2,6 +2,7 @@
 
 class PP_Sort_Query {
 	const BID_WINNING = 'winning_bid_value';
+	const START_PRICE = 'start_price';
 	const POST_END = 'post_end_date_gmt';
 
 	static function init() {
@@ -35,6 +36,7 @@ class PP_Sort_Query {
 			$order = 'DESC';
 
 		$meta_value = "CAST($wpdb->bidsmeta.meta_value AS decimal)";
+		$price_meta_value = "CAST($wpdb->postmeta.meta_value AS decimal)";
 
 		if ( 'price' == $orderby ) {
 			$sql = "(
@@ -44,7 +46,12 @@ class PP_Sort_Query {
 					ON $wpdb->bids.bid_id = $wpdb->bidsmeta.bid_id
 				WHERE $wpdb->bids.post_id = $wpdb->posts.ID
 				AND $wpdb->bidsmeta.meta_key = '" . self::BID_WINNING . "'
-			) $order";
+			), (
+				SELECT $price_meta_value
+				FROM $wpdb->postmeta
+				WHERE $wpdb->postmeta.post_id = $wpdb->posts.ID
+				AND $wpdb->postmeta.meta_key = '" . self::START_PRICE . "'
+				) $order";
 		}
 
 		if ( 'end' == $orderby ) {
@@ -56,6 +63,7 @@ class PP_Sort_Query {
 			) $order";
 		}
 
+		error_log('in orderby, sql = ' . $sql);
 		return $sql;
 	}
 }

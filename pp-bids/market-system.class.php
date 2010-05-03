@@ -97,7 +97,7 @@ class PP_Market_System {
 	}
 
 
-	// Functions that you may override, but do not need changes to make a new market system.
+	// Functions that you may override, but you don't need changes to make a new market system, unless you're doing something really tricky.
 
 	// The function that brings all the bid form elements together.
 	function bid_form( $post_id = NULL ) {
