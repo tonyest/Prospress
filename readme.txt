@@ -5,7 +5,7 @@ Requires at least: WordPress 3.0
 Tested up to: 3.0
 Stable tag: 1.0.3
 
-Prosper, with Wordpress - create your own online marketplace.
+Prosper with Wordpress - create an online marketplace.
 
 == Description ==
 
