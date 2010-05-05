@@ -63,7 +63,6 @@ class PP_Sort_Query {
 			) $order";
 		}
 
-		error_log('in orderby, sql = ' . $sql);
 		return $sql;
 	}
 }

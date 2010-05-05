@@ -14,11 +14,13 @@
  * @param string $file Optional, default '/bid-form.php'. The file containing the template for making a bid.
  * @return null Returns null if no bids appear
  */
-function the_bid_form() {
+function the_bid_form( $content ) {
 	global $bid_system;
 
-	//if( is_single() )
-		echo $bid_system->bid_form();
+	if( is_single() )
+		$content .= $bid_system->bid_form();
+		//echo $bid_system->bid_form();
+	return $content;
 }
 
 
