@@ -64,7 +64,7 @@ class PP_Market_System {
 
 		// Attaches the bid from to content, so when the_content() function is called, it includes the bid form.
 		//add_filter( 'the_content', array( &$this, 'form_filter' ) );
-		add_filter( 'pp_template_tags', array( &$this, 'add_form_filter' ) );
+		add_filter( 'pp_template_tags', array( &$this, 'add_theme_filters' ) );
 
 		// Adds columns for printing bid history table
 		add_action( 'admin_menu', array( &$this, 'add_admin_pages' ) );
@@ -136,7 +136,7 @@ class PP_Market_System {
 		return $form;		
 	}
 
-	function add_form_filter( $pp_template_tags ) {
+	function add_theme_filters( $pp_template_tags ) {
 
 		//error_log('array(&$this, form_filter) = ' . print_r( array(&$this, 'form_filter'), true ) );
 		//error_log('$this->form_filter = ' . print_r( $this->form_filter, true ) );

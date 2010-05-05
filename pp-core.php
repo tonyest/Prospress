@@ -236,7 +236,7 @@ if( isset( $_POST[ 'theme-tailer' ] ) )
 	pp_theme_tailor_save();
 
 function pp_theme_tailor_save(){
-	
+
 	$theme_filters = $_POST;
 	unset( $theme_filters[ 'page' ] );
 	unset( $theme_filters[ 'theme-tailer' ] );
