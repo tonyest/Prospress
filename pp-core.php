@@ -250,7 +250,9 @@ function pp_theme_tailor_save(){
 }
 
 function pp_add_filters(){
-	$applied_filters = get_option( 'pp_theme_filters' );
+
+	if( !$applied_filters = get_option( 'pp_theme_filters' ) )
+		return;
 
 	//error_log('$applied_filters = ' . print_r($applied_filters, true));
 	foreach( $applied_filters as $function => $filters ){
@@ -261,6 +263,5 @@ function pp_add_filters(){
 			add_filter( $filter, $function );
 		}
 	}
-
 }
 add_action( 'init', 'pp_add_filters' );
