@@ -19,11 +19,13 @@ function cpt_plugin_menu() {
 	//$base_page = __FILE__;
 	$base_page = "custom_taxonomy";
 	//create custom post type menu
-	add_menu_page( $base_title, $base_title, 'administrator', $base_page, '' );
+	//add_menu_page( $base_title, $base_title, 'administrator', $base_page, '' );
 
 	//create submenu items
-	add_submenu_page($base_page, 'Add New', 'Add New', 'administrator', $base_page, 'cpt_add_new');
-	add_submenu_page($base_page, 'Manage Taxonomies', 'Manage Taxonomies', 'administrator', $base_page.'_manage', 'cpt_manage_taxonomies');
+	//add_submenu_page($base_page, 'Add New', 'Add New', 'administrator', $base_page, 'cpt_add_new');
+	add_submenu_page( 'hidden', 'Add New', 'Add New', 'administrator', $base_page, 'cpt_add_new');
+	//add_submenu_page( $base_page, 'Manage Taxonomies', 'Manage Taxonomies', 'administrator', $base_page.'_manage', 'cpt_manage_taxonomies');
+	add_options_page( 'Custom Taxonomies', 'Custom Taxonomies', 'administrator', $base_page.'_manage', 'cpt_manage_taxonomies');
 }
 // create custom plugin settings menu
 add_action('admin_menu', 'cpt_plugin_menu');
@@ -71,7 +73,7 @@ add_action( 'init', 'cpt_create_custom_taxonomies', 0 );
 //delete custom post type or custom taxonomy
 function cpt_delete_post_type() {
 	global $CPT_URL;
-	
+
 	//check if we are deleting a custom taxonomy
 	if(isset($_GET['deltax'])) {
 		check_admin_referer('cpt_delete_tax');
@@ -196,53 +198,57 @@ if (isset($_GET['cpt_msg']) && $_GET['cpt_msg']=='del') { ?>
     </div>
     <?php
 }
+screen_icon();
 ?>
-<h2><?php _e('Manage Custom Taxonomies', 'cpt-plugin') ?></h2>
+<h2><?php _e('Custom Taxonomies', 'cpt-plugin') ?><a href="admin.php?page=custom_taxonomy" class="button add-new-h2">Add New</a></h2>
+<p><?php _e('Deleting custom taxonomies does <strong>NOT</strong> delete any content added to those taxonomies.  You can easily recreate your taxonomies and the content will still exist.', 'cpt-plugin') ?></p>
 <p><?php _e('Deleting custom taxonomies does <strong>NOT</strong> delete any content added to those taxonomies.  You can easily recreate your taxonomies and the content will still exist.', 'cpt-plugin') ?></p>
 <?php
 	$cpt_tax_types = get_option('cpt_custom_tax_types');
 
 	if (is_array($cpt_tax_types)) {
 		?>
-        <table width="100%">
-        	<tr>
-            	<td><strong><?php _e('Action', 'cpt-plugin');?></strong></td>
-            	<td><strong><?php _e('Name', 'cpt-plugin');?></strong></td>
-                <td><strong><?php _e('Label', 'cpt-plugin');?></strong></td>
-                <td><strong><?php _e('Singular Label', 'cpt-plugin');?></strong></td>
-                <td><strong><?php _e('Post Type Name', 'cpt-plugin');?></strong></td>
-                <td><strong><?php _e('Hierarchical', 'cpt-plugin');?></strong></td>
-                <td><strong><?php _e('Show UI', 'cpt-plugin');?></strong></td>
-                <td><strong><?php _e('Query Var', 'cpt-plugin');?></strong></td>
-                <td><strong><?php _e('Rewrite', 'cpt-plugin');?></strong></td>
-            </tr>
+        <table width="100%" class="widefat post fixed">
+			<thead>
+	        	<tr>
+	            	<th><strong><?php _e('Name', 'cpt-plugin');?></strong></th>
+	                <th><strong><?php _e('Label', 'cpt-plugin');?></strong></th>
+	                <th><strong><?php _e('Singular Label', 'cpt-plugin');?></strong></th>
+	            	<th><strong><?php _e('Action', 'cpt-plugin');?></strong></th>
+	            </tr>
+			</thead>
+			<tfoot>
+	        	<tr>
+	            	<th><strong><?php _e('Name', 'cpt-plugin');?></strong></th>
+	                <th><strong><?php _e('Label', 'cpt-plugin');?></strong></th>
+	                <th><strong><?php _e('Singular Label', 'cpt-plugin');?></strong></th>
+	            	<th><strong><?php _e('Action', 'cpt-plugin');?></strong></th>
+	            </tr>
+			</tfoot>
+			<tbody>
         <?php
 		$thecounter=0;
 		foreach ($cpt_tax_types as $cpt_tax_type) {
 			$del_url = $CPT_URL .'&deltax=' .$thecounter .'&return=tax';
+			$del_url = admin_url('admin.php?page=custom_taxonomy');
 			$del_url = ( function_exists('wp_nonce_url') ) ? wp_nonce_url($del_url, 'cpt_delete_tax') : $del_url;
 
-			$edit_url = $MANAGE_URL .'&edittax=' .$thecounter .'&return=tax';
+			//$edit_url = $MANAGE_URL .'&edittax=' .$thecounter .'&return=tax';
+			$edit_url = admin_url('admin.php?page=custom_taxonomy' .'&edittax=' .$thecounter .'&return=tax');
 			$edit_url = ( function_exists('wp_nonce_url') ) ? wp_nonce_url($edit_url, 'cpt_edit_tax') : $edit_url;
 		?>
-        	<tr>
-            	<td valign="top"><a href="<?php echo $del_url; ?>">Delete</a> / <a href="<?php echo $edit_url; ?>">Edit</a></td>
-            	<td valign="top"><?php echo stripslashes($cpt_tax_type[0]); ?></td>
-                <td valign="top"><?php echo stripslashes($cpt_tax_type[1]); ?></td>
-                <td valign="top"><?php echo stripslashes($cpt_tax_type[2]); ?></td>
-                <td valign="top"><?php echo stripslashes($cpt_tax_type[3]); ?></td>
-                <td valign="top"><?php echo disp_boolean($cpt_tax_type[4]); ?></td>
-                <td valign="top"><?php echo disp_boolean($cpt_tax_type[5]); ?></td>
-                <td valign="top"><?php echo disp_boolean($cpt_tax_type[6]); ?></td>
-                <td valign="top"><?php echo disp_boolean($cpt_tax_type[7]); ?></td>
-            </tr>
-            <tr>
-            	<td colspan="11"><hr /></td>
-            </tr>
+	        	<tr>
+	            	<td valign="top"><?php echo stripslashes($cpt_tax_type[0]); ?></td>
+	                <td valign="top"><?php echo stripslashes($cpt_tax_type[1]); ?></td>
+	                <td valign="top"><?php echo stripslashes($cpt_tax_type[2]); ?></td>
+	            	<td valign="top"><a href="<?php echo $del_url; ?>">Delete</a> / <a href="<?php echo $edit_url; ?>">Edit</a></td>
+	            </tr>
 		<?php
 		$thecounter++;
 		}
-		?></table>
+		?>
+			</tbody>
+		</table>
 		</div>
 		<?php
 	}
@@ -354,14 +360,13 @@ function disp_boolean($booText) {
 }
 
 function curPageURL() {
- $pageURL = 'http';
- if (!empty($_SERVER['HTTPS'])) {$pageURL .= "s";}  
- $pageURL .= "://";
- if ($_SERVER["SERVER_PORT"] != "80") {
-  $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
- } else {
-  $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
- }
- return $pageURL;
+	$pageURL = 'http';
+	if (!empty($_SERVER['HTTPS'])) {$pageURL .= "s";}  
+ 	$pageURL .= "://";
+	if ($_SERVER["SERVER_PORT"] != "80") {
+  		$pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
+ 	} else {
+  		$pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+ 	}
+ 	return $pageURL;
 }
-?>
