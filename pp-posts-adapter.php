@@ -277,6 +277,7 @@ add_action('post_submitbox_misc_actions', 'pp_post_submit_meta_box');
 function touch_end_time( $edit = 1, $tab_index = 0, $multi = 0 ) {
 	global $wp_locale, $post, $comment;
 
+	error_log('post = ' . print_r($post,true));
 	$post_end_date_gmt = get_post_end_time( $post->ID, 'mysql' );
 
 	$edit = ( in_array($post->post_status, array('draft', 'pending') ) && (!$post_end_date_gmt || '0000-00-00 00:00:00' == $post_end_date_gmt ) ) ? false : true;
@@ -441,16 +442,3 @@ function pp_remove_classes() {
 	}
 }
 add_action( 'admin_head', 'pp_remove_classes' );
-
-function pp_quick_edit_end( $column_name, $type ){
-
-	if(  $column_name != 'end_date' || $type != 'post' )
-		return;
-
-	echo '<fieldset class="inline-edit-col-right">';
-	echo '<label><span class="title">' . __( 'End Date' ) . '</span></label>';
-	touch_end_time( 1, 0, 1 );
-	echo '</fieldset>';
-}
-add_action( 'quick_edit_custom_box', 'pp_quick_edit_end', 10, 2 );
-
