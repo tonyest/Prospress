@@ -187,7 +187,6 @@ add_action( 'admin_init', 'cpt_register_settings' );
 function cpt_manage_taxonomies() {
 	global $CPT_URL;
 	
-	$MANAGE_URL = esc_url(get_option('siteurl').'/wp-admin/admin.php?page=custom-post-type-ui/custom-post-type-ui.php_cpt_add_new');
 ?>
 <div class="wrap">
 <?php
@@ -233,7 +232,6 @@ screen_icon();
 			$del_url = admin_url('admin.php?page=custom_taxonomy');
 			$del_url = ( function_exists('wp_nonce_url') ) ? wp_nonce_url($del_url, 'cpt_delete_tax') : $del_url;
 
-			//$edit_url = $MANAGE_URL .'&edittax=' .$thecounter .'&return=tax';
 			$edit_url = admin_url('admin.php?page=custom_taxonomy' .'&edittax=' .$thecounter .'&return=tax');
 			$edit_url = ( function_exists('wp_nonce_url') ) ? wp_nonce_url($edit_url, 'cpt_edit_tax') : $edit_url;
 		?>
@@ -304,7 +302,7 @@ function cpt_add_new() {
 	<tr>
         <td valign="top">
 			<h2><?php echo $cpt_tax_submit_name; ?></a></h2>
-        	<p><?php _e('if you are unfamiliar with the options below only fill out the <strong>Taxonomy Name</strong> and <strong>Object Type</strong> fields.  The other settings are set to the most common defaults for custom taxonomies.', 'cpt-plugin');?></p>
+        	<p><?php _e('If you are unfamiliar with the options below only fill out the <strong>Taxonomy Name</strong> and <strong>Object Type</strong> fields.  The other settings are set to the most common defaults for custom taxonomies.', 'cpt-plugin');?></p>
             <form method="post" action="<?php echo $RETURN_URL; ?>">
                 <?php if ( function_exists('wp_nonce_field') )
                     wp_nonce_field('cpt_add_custom_taxonomy'); ?>

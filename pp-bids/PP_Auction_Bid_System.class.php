@@ -23,7 +23,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		if ( !defined( 'BID_INCREMENT' ) )
 			define( 'BID_INCREMENT', '0.05' );
 
-		parent::__construct( __('auction'), __('Auction Bid'), __('Bid!'), array( 'post_fields' ) );
+		parent::__construct( __('auctions'), __('Auction Bid'), __('Bid!'), array( 'post_fields' ) );
 	}
 
 	function bid_form_fields( $post_id = NULL ) { 

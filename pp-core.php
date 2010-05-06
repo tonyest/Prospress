@@ -22,14 +22,17 @@
 //	require( WP_PLUGIN_DIR . '/pp-custom.php' );
 
 
+if( !defined( 'PP_PLUGIN_DIR' ) )
+	define( 'PP_PLUGIN_DIR', WP_PLUGIN_DIR . '/prospress' );
 if( !defined( 'PP_CORE_DIR' ) )
 	define( 'PP_CORE_DIR', WP_PLUGIN_DIR . '/prospress/pp-core' );
+if( !defined( 'PP_CORE_URL' ) )
+	define( 'PP_CORE_URL', WP_PLUGIN_URL . '/prospress/pp-core' );
 
 // Include currency functions, class and global vars
 // ** THIS CLASS CREATED A BAZOOKA FOR KILLING ANTS... A FEW SIMPLER FUNCTIONS HAVE BEEN ADDED TO THIS FILE
 //if ( file_exists( PP_CORE_DIR . '/money.class.php' ) )
 //	require_once( PP_CORE_DIR . '/money.class.php' );
-
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * REMOVING WP DASHBOARD WIDGETS TO MAKE SPACE FOR PROSPRESS WIDGETS - WHICH ARE ADDED IN EACH COMPONENT
@@ -254,14 +257,27 @@ function pp_add_filters(){
 	if( !$applied_filters = get_option( 'pp_theme_filters' ) )
 		return;
 
-	//error_log('$applied_filters = ' . print_r($applied_filters, true));
 	foreach( $applied_filters as $function => $filters ){
-	//	error_log('$function = ' . print_r($function, true));
-	//	error_log('$filters = ' . print_r($filters, true));
 		foreach( $filters as $filter ){
-	//		error_log('$filter = ' . print_r($filter, true));
 			add_filter( $filter, $function );
 		}
 	}
 }
 add_action( 'init', 'pp_add_filters' );
+
+
+function pp_template_redirects() {
+	global $post, $bid_system;
+	
+	error_log( 'post = ' . print_r($post, true) );
+	if( $post->post_name == $bid_system->name ){
+		include( PP_CORE_DIR . '/index-prospress.php');
+		exit;
+	//} elseif ( $post->post_name == $bid_system->name ) {
+	} elseif ( $post->post_type == 'movie' ) {
+		error_log( '$post->post_name == movie' );
+		//include( PP_CORE_DIR . '/single-prospress.php');
+		//exit;
+	}
+}
+add_action( 'template_redirect', 'pp_template_redirects' );
