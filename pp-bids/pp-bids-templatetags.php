@@ -28,6 +28,8 @@ function the_bid_form( $content ) {
 
 
 
+
+
 /** MOVED TO BID CLASS
  */
 function _get_max_bid( $post_id = 0 ) {

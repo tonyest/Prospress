@@ -264,20 +264,3 @@ function pp_add_filters(){
 	}
 }
 add_action( 'init', 'pp_add_filters' );
-
-
-function pp_template_redirects() {
-	global $post, $bid_system;
-	
-	error_log( 'post = ' . print_r($post, true) );
-	if( $post->post_name == $bid_system->name ){
-		include( PP_CORE_DIR . '/index-prospress.php');
-		exit;
-	//} elseif ( $post->post_name == $bid_system->name ) {
-	} elseif ( $post->post_type == 'movie' ) {
-		error_log( '$post->post_name == movie' );
-		//include( PP_CORE_DIR . '/single-prospress.php');
-		//exit;
-	}
-}
-add_action( 'template_redirect', 'pp_template_redirects' );

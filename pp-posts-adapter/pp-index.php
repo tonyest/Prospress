@@ -10,15 +10,14 @@ Template Name: Auctions Index
  * @since 0.7
  */
 global $bid_system;
-//require_once();
 ?>
 <link rel="stylesheet" type="text/css" media="all" href="<?php echo PP_CORE_URL . '/prospress.css'; ?>">
 <?php get_header(); ?>
 	<div id="container">
 		<div id="content">
 			<h1>Auctions Index Page Template</h1>
-			<?php //$loop = new WP_Query( array( 'post_type' => $bid_system, 'posts_per_page' => 10 ) ); ?>
-			<?php $loop = new WP_Query( array( 'post_type' => 'post', 'posts_per_page' => 10 ) ); ?>
+			<?php $loop = new WP_Query( array( 'post_type' => $bid_system->name ) ); ?>
+			<?php //$loop = new WP_Query( array( 'post_type' => 'post', 'posts_per_page' => 10 ) ); ?>
 			<?php if ( $loop->have_posts() ) : while ( $loop->have_posts() ) : $loop->the_post(); ?>
 
 			<h2 class="pp-title"><a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h2>
@@ -40,5 +39,12 @@ global $bid_system;
 			<?php endif; ?>
 		</div>
 	</div>
-<?php get_sidebar(); ?>
+
+	<div id="primary" class="widget-area">
+		<ul class="xoxo">
+			<?php dynamic_sidebar( 'prospress-index-sidebar' ); ?>
+		</ul>
+	</div>
+
+<?php //get_sidebar(); ?>
 <?php get_footer(); ?>

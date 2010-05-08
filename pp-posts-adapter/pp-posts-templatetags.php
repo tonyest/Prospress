@@ -146,5 +146,3 @@ function human_interval( $time_period, $units = 3 ) {
 	return $output;
 }
 
-
-?>
