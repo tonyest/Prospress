@@ -6,16 +6,16 @@
 class Bid_Filter_Widget extends WP_Widget {
 
 	function Bid_Filter_Widget() {
-		$widget_ops = array('description' => __('A search form for your blog') );
-		$this->WP_Widget('bid-filter', __('Bids Filter'), $widget_ops);
+		$widget_ops = array('description' => __('Filter Prospress Posts by high & low price.') );
+		$this->WP_Widget('bid-filter', __('Bid Price Filter'), $widget_ops);
 	}
 
 	function widget( $args, $instance ) {
 		global $currency_symbol;
 		extract($args);
 
-		if( is_single() || is_page() )
-			return;
+		//if( is_single() || is_page() )
+		//	return;
 
 		$title = apply_filters('widget_title', $instance['title'], $instance, $this->id_base);
 

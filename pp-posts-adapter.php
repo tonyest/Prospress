@@ -33,6 +33,11 @@ if ( !defined( "PP_POST_OPTIONS"))
 	define("PP_POST_OPTIONS", PP_POSTS_DIR . "/pp-post-options.php");
 
 /**
+ * Include Custom Post Type
+ */
+include( PP_POSTS_DIR . '/pp-custom-post-type.php');
+
+/**
  * Include Sort functions
  */
 include( PP_POSTS_DIR . '/pp-sort.php');
@@ -41,6 +46,11 @@ include( PP_POSTS_DIR . '/pp-sort.php');
  * Include Template Tags
  */
 include( PP_POSTS_DIR . '/pp-posts-templatetags.php');
+
+/**
+ * Include Custom Taxonomy Component
+ */
+include( PP_POSTS_DIR . '/pp-custom-taxonomy.php');
 
 /**
  * Adds meta boxes for capturing required marketplace metadata on the new/edit post page.
@@ -222,13 +232,10 @@ add_action('init', 'pp_register_completed_status');
  * @param object $post
  */
 function pp_post_submit_meta_box() {
-	global $action, $wpdb, $post;
+	global $action, $wpdb, $post, $bid_system;
 
-	if( strstr( $_SERVER[ 'REQUEST_URI' ], 'post_type' ) ){
+	if( !( $_GET[ 'post_type' ] == $bid_system->name || ( isset( $_GET[ 'post' ] ) && is_post_type( $bid_system->name, $_GET[ 'post' ] ) ) ) )
 		return;
-	} elseif ( isset( $_GET[ 'post' ] ) && get_post_type( $_GET[ 'post' ] ) != 'post' ){
-		return;
-	}
 
 	// translators: Publish box end date format, see http://php.net/date
 	$datef = __( 'M j, Y @ G:i' );
@@ -277,6 +284,7 @@ add_action('post_submitbox_misc_actions', 'pp_post_submit_meta_box');
 function touch_end_time( $edit = 1, $tab_index = 0, $multi = 0 ) {
 	global $wp_locale, $post, $comment;
 
+	error_log('post = ' . print_r($post,true));
 	$post_end_date_gmt = get_post_end_time( $post->ID, 'mysql' );
 
 	$edit = ( in_array($post->post_status, array('draft', 'pending') ) && (!$post_end_date_gmt || '0000-00-00 00:00:00' == $post_end_date_gmt ) ) ? false : true;
@@ -442,17 +450,39 @@ function pp_remove_classes() {
 }
 add_action( 'admin_head', 'pp_remove_classes' );
 
-function pp_quick_edit_end( $column_name, $type ){
+//**************************************************************************************************//
+// CUSTOM POST TYPE & TEMPLATE REDIRECTS
+//**************************************************************************************************//
 
-	if(  $column_name != 'end_date' || $type != 'post' )
-		return;
+function pp_template_redirects() {
+	global $post, $bid_system;
 
-	echo '<fieldset class="inline-edit-col-right">';
-	echo '<label><span class="title">' . __( 'End Date' ) . '</span></label>';
-	touch_end_time( 1, 0, 1 );
-	echo '</fieldset>';
+	//error_log( 'post = ' . print_r($post, true) );
+	if( $post->post_name == $bid_system->name ){
+		do_action( 'pp_template_index_redirect' );
+		include( PP_POSTS_DIR . '/pp-index.php');
+		exit;
+	} elseif ( $post->post_type == $bid_system->name ) {
+		error_log( '$post->post_name == $bid_system->name' );
+		do_action( 'pp_template_single_redirect' );
+		include( PP_POSTS_DIR . '/pp-single.php');
+		exit;
+	}
 }
-add_action( 'quick_edit_custom_box', 'pp_quick_edit_end', 10, 2 );
+add_action( 'template_redirect', 'pp_template_redirects' );
+
+function pp_add_sidebars(){
+	register_sidebar( array (
+		'name' => __( 'Prospress Index Sidebar' ),
+		'id' => 'prospress-index-sidebar',
+		'description' => __( "The sidebar for the Prospress post index." ),
+		'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
+		'after_widget' => "</li>",
+		'before_title' => '<h3 class="widget-title">',
+		'after_title' => '</h3>',
+	) );
+}
+add_action( 'init', 'pp_add_sidebars' );
 
 //**************************************************************************************************//
 // ADD THEME TAILOR FILTERS

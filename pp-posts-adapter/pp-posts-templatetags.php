@@ -7,7 +7,7 @@
  * @return returns false if post has no end time, or a string representing the time stamp or sql
  */
 function get_post_end_time( $post_id, $type = 'timestamp', $gmt = true ) {
-
+	
 	$time = wp_next_scheduled( 'schedule_end_post', array( "ID" => $post_id ) );
 
 	// If a post has not yet ended, use it's actual scheduled end time, if that doesn't exist, 
@@ -28,10 +28,25 @@ function get_post_end_time( $post_id, $type = 'timestamp', $gmt = true ) {
 		$time = date( 'H:i Y/m/d', $time );
 	}
 
+	error_log("time = $time");
 	return $time;
 }
 
-function post_end_time_filter( $content ){
+function the_post_end_date(){
+	global $post;
+
+	$end_time = wp_next_scheduled( 'schedule_end_post', array( "ID" => $post->ID ) );
+
+	if( empty( $end_time ) )
+		$end_time = strtotime( get_post_meta( $post->ID, 'post_end_date_gmt', true ) );
+
+	if( $end_time == false )
+	 	return $date;
+
+	echo date( 'F, j Y, G:i e', $end_time );
+}
+
+function post_end_time_filter( $date ){
 	global $post;
 
 	if( !in_the_loop() || get_post_type( $post ) != 'post' || is_admin() )
@@ -136,5 +151,3 @@ function human_interval( $time_period, $units = 3 ) {
 	return $output;
 }
 
-
-?>

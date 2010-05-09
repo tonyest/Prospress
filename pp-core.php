@@ -22,14 +22,17 @@
 //	require( WP_PLUGIN_DIR . '/pp-custom.php' );
 
 
+if( !defined( 'PP_PLUGIN_DIR' ) )
+	define( 'PP_PLUGIN_DIR', WP_PLUGIN_DIR . '/prospress' );
 if( !defined( 'PP_CORE_DIR' ) )
 	define( 'PP_CORE_DIR', WP_PLUGIN_DIR . '/prospress/pp-core' );
+if( !defined( 'PP_CORE_URL' ) )
+	define( 'PP_CORE_URL', WP_PLUGIN_URL . '/prospress/pp-core' );
 
 // Include currency functions, class and global vars
 // ** THIS CLASS CREATED A BAZOOKA FOR KILLING ANTS... A FEW SIMPLER FUNCTIONS HAVE BEEN ADDED TO THIS FILE
 //if ( file_exists( PP_CORE_DIR . '/money.class.php' ) )
 //	require_once( PP_CORE_DIR . '/money.class.php' );
-
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * REMOVING WP DASHBOARD WIDGETS TO MAKE SPACE FOR PROSPRESS WIDGETS - WHICH ARE ADDED IN EACH COMPONENT

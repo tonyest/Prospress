@@ -109,18 +109,16 @@ class PP_Market_System {
 		$form = '<div id="bid">';
 		$form .= '<h3>' . $this->bid_form_title . '</h3>';
 
-		if ( $the_post->post_status == 'ended' ) {
+		if ( $the_post->post_status == 'completed' ) {
 			$form .= '<p>' . __( 'This post has ended. Bidding is closed.' ) . '</p>';
 		} else {
-			//$form .= $this->form_header();
 			$form .= $this->get_bid_message();
 			$form .= '<form id="bid_form" method="post" action="">';
 
-			$form .= ( $post->post_status != 'ended' ) ? $this->bid_form_fields( $post_id ) : '<p>' . __( 'This post has ended. Bidding is closed.' ) . '</p>';
-			
+			$form .= ( $post->post_status != 'completed' ) ? $this->bid_form_fields( $post_id ) : '<p>' . __( 'This post has ended. Bidding is closed.' ) . '</p>';
+
 			/** @TODO Implement bid bar in PP_Market_System::bid_form()*/
 
-			//$form .= $this->form_footer();
 			apply_filters( 'bid_form_hidden_fields', $form );
 
 			$form .= wp_nonce_field( __FILE__, 'bid_nonce', false, false );
@@ -134,27 +132,6 @@ class PP_Market_System {
 		$form .= '</div>';
 
 		return $form;		
-	}
-
-	function add_theme_filters( $pp_template_tags ) {
-
-		$pp_template_tags[ 'the_bid_form' ] = array( 'label' => __( 'The Bid Form:' ),
-										'supported_filters' =>array( 'the_content' => 'Content dislay on Single Post page' ) );
-		return $pp_template_tags;
-	}
-
-	// Applied to "the_content" filter to add the bid form to the content of a page when viewed on single.
-	// You may wish to override this funtion to show the bid form on other, or all pages.
-	// Automatically adding the bid form to posts via this filter means all the beautiful WP themes that 
-	// exist can be used with Prospress, without customisation.
-	function form_filter( $content ) {
-
-		//error_log("**in form_filter after unset & session destory pp_bid_status = " . print_r($pp_bid_status,true));
-		//error_log('** in form_filter, $_REQUEST = ' . print_r( $_REQUEST, true ) );
-		if( is_single() )
-			$content .= $this->bid_form();
-
-		return $content;
 	}
 
 	// Form fields to taking input from the edit and add new post forms.
@@ -171,7 +148,7 @@ class PP_Market_System {
 	// This function is hooked in the constructor and is only called if post fields is defined. 
 	function post_fields_meta_box(){
 		if( function_exists( 'add_meta_box' )) {
-			add_meta_box('pp-bidding-options', __('Bidding Options'), array(&$this, 'post_fields'), 'post', 'normal', 'core');
+			add_meta_box('pp-bidding-options', __('Bidding Options'), array(&$this, 'post_fields'), $this->name, 'normal', 'core');
 		}
 	}
 

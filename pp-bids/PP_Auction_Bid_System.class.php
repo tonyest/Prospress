@@ -23,7 +23,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		if ( !defined( 'BID_INCREMENT' ) )
 			define( 'BID_INCREMENT', '0.05' );
 
-		parent::__construct( __('auction'), __('Auction Bid'), __('Bid!'), array( 'post_fields' ) );
+		parent::__construct( __('auctions'), __('Auction Bid'), __('Bid!'), array( 'post_fields' ) );
 	}
 
 	function bid_form_fields( $post_id = NULL ) { 
@@ -35,13 +35,13 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		$dont_echo = false;
 
 		if( $bid_count == 0 ){
-			$bid_bid_form_fields .= '<div id="current_bid_val">' . __("Starting Price: ") . pp_money_format( get_post_meta( $post_id, 'start_price', true ) ) . '</div></p>';
+			$bid_bid_form_fields .= '<div id="current_bid_val">' . __("Starting Price: ") . pp_money_format( get_post_meta( $post_id, 'start_price', true ) ) . '</div>';
 		} else {
 			$bid_bid_form_fields .= '<div id="current_bid_num">' . __("Number of Bids: ") . $this->the_bid_count( $post_id, $dont_echo ) . '</div>';
 			$bid_bid_form_fields .= '<div id="winning_bidder">' . __("Winning Bidder: ") . $this->the_winning_bidder( $post_id, $dont_echo ) . '</div>';
 			$bid_bid_form_fields .= '<div id="current_bid_val">' . __("Current Bid: ") . $this->the_winning_bid_value( $post_id, $dont_echo ) . '</div>';
 		}
-		
+
 		$bid_bid_form_fields .= '<label for="bid_value" class="bid-label">' . __( 'Enter max bid: ' ) . $currency_symbol . '</label>';
 		$bid_bid_form_fields .= '<input type="text" aria-required="true" tabindex="1" size="22" value="" id="bid_value" name="bid_value"/>';
 		
@@ -202,7 +202,6 @@ class PP_Auction_Bid_System extends PP_Market_System {
 	function post_fields(){
 		global $post_ID, $currency_symbol;
 		$start_price = get_post_meta( $post_ID, 'start_price', true );
-		$reserve_price = get_post_meta( $post_ID, 'reserve_price', true );
 
 		wp_nonce_field( __FILE__, 'selling_options_nonce', false ) ?>
 		<table>
@@ -215,14 +214,6 @@ class PP_Auction_Bid_System extends PP_Market_System {
 				 		<input type="text" name="start_price" value="<?php echo number_format_i18n( $start_price, 2 ); ?>" size="20" />
 					</td>
 				</tr>
-				<tr>
-				  <td class="left">
-					<label for="reserve_price"><?php echo __("Reserve Price: " ) . $currency_symbol; ?></label>
-				</td>
-				<td>
-					<input type="text" name="reserve_price" value="<?php echo number_format_i18n( $reserve_price, 2 ); ?>" size="20" />
-				</td>
-			</tr>
 			</tbody>
 		</table>
 		<?php
@@ -241,13 +232,11 @@ class PP_Auction_Bid_System extends PP_Market_System {
 
 		/** @TODO casting start_price as a float and removing ',' and ' ' will cause a bug for international currency formats. */
 		$_POST[ 'start_price' ] = (float)str_replace( array(",", " "), "", $_POST[ 'start_price' ]);
-		$_POST[ 'reserve_price' ] = (float)str_replace( array(",", " "), "", $_POST[ 'reserve_price' ]);
 		// Verify options nonce because save_post can be triggered at other times
 		if ( !isset( $_POST[ 'selling_options_nonce' ] ) || !wp_verify_nonce( $_POST['selling_options_nonce'], __FILE__) ) {
 			return $post_id;
 		} else { //update post options
 			update_post_meta( $post_id, 'start_price', $_POST[ 'start_price' ] );
-			update_post_meta( $post_id, 'reserve_price', $_POST[ 'reserve_price' ] );
 		}
 	}
 }

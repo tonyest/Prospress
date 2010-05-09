@@ -95,9 +95,9 @@ class PP_Sort_Widget extends WP_Widget {
 		extract( $args );
 
 		//Don't want to print on single posts or pages
-		if( is_single() || is_page() ){
-			return;
-		}
+		//if( is_single() || is_page() ){
+		//	return;
+		//}
 
 		$sorted_by = trim( @$_GET[ 'pp-sort' ] );
 
