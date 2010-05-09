@@ -35,10 +35,10 @@ class PP_Sort_Query {
 		else
 			$order = 'DESC';
 
-		$meta_value = "CAST($wpdb->bidsmeta.meta_value AS decimal)";
-		$price_meta_value = "CAST($wpdb->postmeta.meta_value AS decimal)";
-
 		if ( 'price' == $orderby ) {
+			$meta_value = "CAST($wpdb->bidsmeta.meta_value AS decimal)";
+			$price_meta_value = "CAST($wpdb->postmeta.meta_value AS decimal)";
+
 			$sql = "COALESCE((
 						SELECT $meta_value
 						FROM $wpdb->bidsmeta
@@ -63,6 +63,11 @@ class PP_Sort_Query {
 			) $order";
 		}
 
+		if ( 'post' == $orderby ) {
+			$sql = "$wpdb->posts.post_date $order";
+		}
+		
+		error_log("sql = $sql");
 		return $sql;
 	}
 }
@@ -75,7 +80,7 @@ PP_Sort_Query::init();
 class PP_Sort_Widget extends WP_Widget {
 	function PP_Sort_Widget() {
 		/* Widget settings. */
-		$widget_ops = array( 'classname' => 'pp-sort', 'description' => __( 'Sort posts in your Prospress Marketplace.' ) );
+		$widget_ops = array( 'classname' => 'pp-sort', 'description' => __( 'Allow visitors to sort posts in your Prospress Marketplace.' ) );
 
 		/* Widget control settings. */
 		$control_ops = array( 'id_base' => 'pp-sort' );
@@ -86,12 +91,6 @@ class PP_Sort_Widget extends WP_Widget {
 
 	function widget( $args, $instance ) {
 		global $pp_sort_options;
-
-		$pp_sort_options = array('post-desc' => __('Time: Newly posted'),
-								 'end-asc'	 => __('Time: Ending soonest'),
-								 'end-desc'	 => __('Time: Ending latest'), 
-								 'price-asc' => __('Price: low to high'),
-								 'price-desc'=> __('Price: high to low') );
 
 		extract( $args );
 
@@ -130,11 +129,6 @@ class PP_Sort_Widget extends WP_Widget {
 
 	function form( $instance ) {
 		global $pp_sort_options;
-		$pp_sort_options = array('post-desc' => __('Time: Newly posted'),
-								 'end-asc'	 => __('Time: Ending soonest'),
-								 'end-desc'	 => __('Time: Ending latest'), 
-								 'price-asc' => __('Price: low to high'),
-								 'price-desc'=> __('Price: high to low') );
 
 		/* Set up some default widget settings. */
 		error_log('in form, $instance = ' . print_r($instance, true));
@@ -150,11 +144,6 @@ class PP_Sort_Widget extends WP_Widget {
 
 	function update( $new_instance, $old_instance ) {
 		global $pp_sort_options;
-		$pp_sort_options = array('post-desc' => __('Time: Newly posted'),
-								 'end-asc'	 => __('Time: Ending soonest'),
-								 'end-desc'	 => __('Time: Ending latest'), 
-								 'price-asc' => __('Price: low to high'),
-								 'price-desc'=> __('Price: high to low') );
 
 		$instance = $old_instance;
 
@@ -169,4 +158,23 @@ class PP_Sort_Widget extends WP_Widget {
 }
 add_action('widgets_init', create_function('', 'return register_widget("PP_Sort_Widget");'));
 
-?>
+function pp_set_sort_options(){
+	global $pp_sort_options;
+
+	$pp_sort_options = array('post-desc' => __('Time: Newly posted'),
+							 'post-asc' => __('Time: Oldest first'),
+							 'end-asc'	 => __('Time: Ending soonest'),
+							 'end-desc'	 => __('Time: Ending latest'), 
+							 'price-asc' => __('Price: low to high'),
+							 'price-desc'=> __('Price: high to low') );
+	
+	$pp_sort_options = apply_filters( 'pp_sort_options', $pp_sort_options );
+}
+add_action('init', 'pp_set_sort_options');
+
+add_action( 'wp_head', 'pp_print_query' );
+function pp_print_query(){
+	global $wp_query;
+
+	//error_log("query = " . print_r($wp_query, true));
+}

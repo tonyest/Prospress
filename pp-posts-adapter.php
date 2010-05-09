@@ -454,3 +454,32 @@ function pp_quick_edit_end( $column_name, $type ){
 }
 add_action( 'quick_edit_custom_box', 'pp_quick_edit_end', 10, 2 );
 
+//**************************************************************************************************//
+// ADD THEME TAILOR FILTERS
+//**************************************************************************************************//
+
+function add_post_theme_filters( $pp_template_tags ) {
+
+	$pp_template_tags[ 'post_end_time_filter' ] = array( 'label' => __( 'End Date:' ),
+											'supported_filters' =>array( 'the_title' => 'Post Title', 
+																		'get_the_date' => 'The Date',
+																		'get_the_time' => 'The Time',
+																		'the_tags' => 'Tag List', 
+																		'the_category' => 'Category List', 
+																		'get_the_excerpt' => 'The Excerpt',
+																		'the_content' => 'The Content'
+																		) );
+
+	$pp_template_tags[ 'get_post_end_countdown' ] = array( 'label' => __( 'Count down:' ),
+											'supported_filters' =>array( 'the_title' => 'Post Title', 
+																		'single_post_title' => 'Single Post Title', 
+																		'the_tags' => 'Tag List', 
+																		'the_category' => 'Category List', 
+																		'get_the_date' => 'The Date',
+																		'get_the_time' => 'The Time',
+																		'get_the_excerpt' => 'The Excerpt',
+																		'the_content' => 'The Content'
+																		) );
+	return $pp_template_tags;
+}
+add_filter( 'pp_template_tags', 'add_post_theme_filters' );

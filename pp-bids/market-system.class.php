@@ -138,11 +138,8 @@ class PP_Market_System {
 
 	function add_theme_filters( $pp_template_tags ) {
 
-		//error_log('array(&$this, form_filter) = ' . print_r( array(&$this, 'form_filter'), true ) );
-		//error_log('$this->form_filter = ' . print_r( $this->form_filter, true ) );
-		//$pp_template_tags[ array(&$this, 'form_filter') ] = array( 'label' => __( 'The Bid Form:' ),
 		$pp_template_tags[ 'the_bid_form' ] = array( 'label' => __( 'The Bid Form:' ),
-										'supported_filters' =>array( 'the_content' => 'The Content', 'get_the_excerpt' => 'The Except' ));
+										'supported_filters' =>array( 'the_content' => 'Content dislay on Single Post page' ) );
 		return $pp_template_tags;
 	}
 

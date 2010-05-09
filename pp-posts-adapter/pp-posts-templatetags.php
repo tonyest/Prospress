@@ -31,9 +31,12 @@ function get_post_end_time( $post_id, $type = 'timestamp', $gmt = true ) {
 	return $time;
 }
 
-function post_end_time_filter( $date ){
+function post_end_time_filter( $content ){
 	global $post;
 
+	if( !in_the_loop() || get_post_type( $post ) != 'post' || is_admin() )
+		return $content;
+		
 	$end_time = wp_next_scheduled( 'schedule_end_post', array( "ID" => $post->ID ) );
 
 	if( empty( $end_time ) )
@@ -42,10 +45,10 @@ function post_end_time_filter( $date ){
 	if( $end_time == false )
 	 	return $date;
 	
-	$date .= __(' ending on ') . date( 'F, j Y, G:i e', $end_time );
+	$content .= __(' ending on ') . date( 'j F Y, G:i e', $end_time );
 	//$date .= ' ending on ' . date( 'r', $end_time );
 
-	return $date;
+	return $content;
 }
 //add_filter( 'get_the_date', 'post_end_time_filter' );
 
@@ -58,12 +61,14 @@ function post_end_time_filter( $date ){
  * @param int $post_id Optional, default 0. The post id for which you want the max bid. 
  * @return object Returns the row in the bids 
  */
-function get_post_end_countdown( $date ) {
+function get_post_end_countdown( $content ) {
 	global $post;
 
-	$date .= __(' ending ') . human_interval( wp_next_scheduled( 'schedule_end_post', array( "ID" => $post->ID ) ) - time() );
+	if( ( is_home() || is_search() ) && in_the_loop() && get_post_type( $post ) == 'post' && !is_admin() ){
+		$content .= __(' ending in ') . human_interval( wp_next_scheduled( 'schedule_end_post', array( "ID" => $post->ID ) ) - time() );
+	}
 
-	return $date;
+	return $content;
 }
 //add_filter( 'get_the_date', 'get_post_end_countdown' );
 

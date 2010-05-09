@@ -182,25 +182,6 @@ function pp_money_format( $number, $decimals = 2, $currency = '' ){
 
 function pp_theme_tailor_page(){
 	
-	$pp_template_tags = array(	'post_end_time_filter' => array( 'label' => __( 'End Date:' ), 
-										'supported_filters' =>array( 'the_title' => 'The Title', 
-																	'single_post_title' => 'Single Post Title', 
-																	'the_tags' => 'Tag List', 
-																	'the_category' => 'Category List', 
-																	'get_the_date' => 'The Date',
-																	'get_the_time' => 'The Time'
-																	)
-										),
-								'get_post_end_countdown'=> array( 'label' => __( 'Count down:' ),
-										'supported_filters' =>array( 'the_title' => 'The Title', 
-																	'single_post_title' => 'Single Post Title', 
-																	'the_tags' => 'Tag List', 
-																	'the_category' => 'Category List', 
-																	'get_the_date' => 'The Date',
-																	'get_the_time' => 'The Time'
-																	)
-										)
-								);
 	$pp_template_tags = apply_filters( 'pp_template_tags', $pp_template_tags );
 	//error_log('$pp_template_tags = ' . print_r($pp_template_tags, true));
 	$applied_filters = get_option( 'pp_theme_filters' );
@@ -209,7 +190,7 @@ function pp_theme_tailor_page(){
 	<div class="wrap feedback-history">
 	<?php screen_icon(); ?>
 	<h2><?php _e( 'Prospress Theme Tailor' ); ?></h2>
-	<p><?php _e( 'Tailor your existing theme for use as a Prospress marketplace. Simply select which marketplace details you want to display and where.' ); ?></p>
+	<p><?php _e( 'Tailor your existing theme for use as a Prospress marketplace. Select which marketplace details you want to display and where.' ); ?></p>
 	<form action="" method="post">
 	<div class="feature-filter">
 		<?php foreach( $pp_template_tags as $key => $value ){ ?>
@@ -249,19 +230,15 @@ function pp_theme_tailor_save(){
 	update_option( 'pp_theme_filters', $theme_filters );
 }
 
-function pp_add_filters(){
+function pp_add_theme_filters(){
 
 	if( !$applied_filters = get_option( 'pp_theme_filters' ) )
 		return;
 
-	//error_log('$applied_filters = ' . print_r($applied_filters, true));
 	foreach( $applied_filters as $function => $filters ){
-	//	error_log('$function = ' . print_r($function, true));
-	//	error_log('$filters = ' . print_r($filters, true));
 		foreach( $filters as $filter ){
-	//		error_log('$filter = ' . print_r($filter, true));
 			add_filter( $filter, $function );
 		}
 	}
 }
-add_action( 'init', 'pp_add_filters' );
+add_action( 'init', 'pp_add_theme_filters' );
