@@ -52,48 +52,6 @@ include( PP_POSTS_DIR . '/pp-posts-templatetags.php');
  */
 include( PP_POSTS_DIR . '/pp-custom-taxonomy.php');
 
-/**
- * Adds meta boxes for capturing required marketplace metadata on the new/edit post page.
- * 
- * @uses add_meta_box to add meta boxes on the post page
- * 
- */
-function pp_post_custom_meta_boxes() {
-	if( function_exists( 'remove_meta_box' )) {
-		//remove_meta_box('submitdiv', 'post', 'normal');
-		remove_meta_box('postcustom', 'post', 'normal');
-		remove_meta_box('trackbacksdiv', 'post', 'normal');
-		remove_meta_box('postexcerpt', 'post', 'normal');
-		remove_meta_box('revisionsdiv', 'post', 'normal');
-	}
-
-	if( function_exists( 'add_meta_box' )) {
-
-		//Custom Taxonomies takes care of this.
-		//add_meta_box('pp-post-details', __('Post Details'), 'pp_post_details', 'post', 'normal', 'high' );
-
-		//Moved to bids system class
-		//add_meta_box('pp-post-payment-options', __('Payment Options'), 'pp_post_payment_options', 'post', 'normal', 'core' );
-		//add_meta_box('pp-post-shipping-options', __('Shipping Options'), 'pp_post_shipping_options', 'post', 'normal', 'core' );
-	} else { // For Wordpress prior to 2.5
-	  //add_action('dbx_post_advanced', 'myplugin_old_custom_box' );
-	  //add_action('dbx_page_advanced', 'myplugin_old_custom_box' );
-	}
-}
-add_action( 'admin_menu', 'pp_post_custom_meta_boxes' );
-
-/**
- * Prints the template containing additional meta fields
- *
- */
-function pp_post_details(){
-	global $post_ID;
-
-	echo "<p>Add post details.</p>";
-	
-	do_action( 'post_details_box' );
-}
-
 /* When the post is saved, saves our custom data */
 function pp_post_save_postdata( $post_id, $post ) {
 	global $wpdb;
@@ -234,7 +192,7 @@ add_action('init', 'pp_register_completed_status');
 function pp_post_submit_meta_box() {
 	global $action, $wpdb, $post, $bid_system;
 
-	if( !( $_GET[ 'post_type' ] == $bid_system->name || ( isset( $_GET[ 'post' ] ) && is_post_type( $bid_system->name, $_GET[ 'post' ] ) ) ) )
+	if( !( ( $_GET[ 'post_type' ] == $bid_system->name ) || ( get_post_type( $_GET[ 'post' ] ) ==  $bid_system->name ) ) )
 		return;
 
 	$datef = __( 'M j, Y @ G:i' );
@@ -283,7 +241,7 @@ add_action('post_submitbox_misc_actions', 'pp_post_submit_meta_box');
 function touch_end_time( $edit = 1, $tab_index = 0, $multi = 0 ) {
 	global $wp_locale, $post, $comment;
 
-	error_log('post = ' . print_r($post,true));
+	//error_log('post = ' . print_r($post,true));
 	$post_end_date_gmt = get_post_end_time( $post->ID, 'mysql' );
 
 	$edit = ( in_array($post->post_status, array('draft', 'pending') ) && (!$post_end_date_gmt || '0000-00-00 00:00:00' == $post_end_date_gmt ) ) ? false : true;
