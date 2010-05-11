@@ -167,7 +167,7 @@ function pp_set_sort_options(){
 							 'end-desc'	 => __('Time: Ending latest'), 
 							 'price-asc' => __('Price: low to high'),
 							 'price-desc'=> __('Price: high to low') );
-	
+
 	$pp_sort_options = apply_filters( 'pp_sort_options', $pp_sort_options );
 }
 add_action('init', 'pp_set_sort_options');

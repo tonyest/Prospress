@@ -30,5 +30,10 @@ global $bid_system;
 			<?php endwhile; // end of the loop. ?>
 		</div>
 	</div>
-<?php get_sidebar(); ?>
+
+	<div id="pp-sidebar" class="pp-sidebar">
+		<ul class="xoxo">
+			<?php dynamic_sidebar( 'prospress-index-sidebar' ); ?>
+		</ul>
+	</div>
 <?php get_footer(); ?>
