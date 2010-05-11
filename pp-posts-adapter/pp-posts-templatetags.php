@@ -65,7 +65,6 @@ function post_end_time_filter( $date ){
 
 	return $content;
 }
-//add_filter( 'get_the_date', 'post_end_time_filter' );
 
 /**
  * Get's the end time for a post.
@@ -85,7 +84,6 @@ function get_post_end_countdown( $content ) {
 
 	return $content;
 }
-//add_filter( 'get_the_date', 'get_post_end_countdown' );
 
 /** 
  * Takes a period of time as a unix time stamp and returns a string 

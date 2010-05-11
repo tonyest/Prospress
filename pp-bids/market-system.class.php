@@ -62,10 +62,6 @@ class PP_Market_System {
 		// Determine if bid form submission function should be called
 		add_action( 'init', array( &$this, 'bid_controller' ) );
 
-		// Attaches the bid from to content, so when the_content() function is called, it includes the bid form.
-		//add_filter( 'the_content', array( &$this, 'form_filter' ) );
-		add_filter( 'pp_template_tags', array( &$this, 'add_theme_filters' ) );
-
 		// Adds columns for printing bid history table
 		add_action( 'admin_menu', array( &$this, 'add_admin_pages' ) );
 

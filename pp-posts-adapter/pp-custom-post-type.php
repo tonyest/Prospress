@@ -7,7 +7,7 @@
 
 function pp_post_type() {
 	global $bid_system;
-	
+
 	$defaults = array(
 	    'label' => false,
 	    'publicly_queryable' => null,
