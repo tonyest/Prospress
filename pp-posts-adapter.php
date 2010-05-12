@@ -527,3 +527,14 @@ function pp_add_sidebars(){
 	) );
 }
 add_action( 'init', 'pp_add_sidebars' );
+
+function pp_post_sort_options( $pp_sort_options ){
+
+	$pp_sort_options['post-desc'] = __( 'Time: Newly posted' );
+	$pp_sort_options['post-asc'] = __( 'Time: Oldest first' );
+	$pp_sort_options['end-asc'] = __( 'Time: Ending soonest' );
+	$pp_sort_options['end-desc'] = __( 'Time: Ending latest' );
+	
+	return $pp_sort_options;
+}
+add_filter( 'pp_sort_options', 'pp_post_sort_options' );

@@ -161,13 +161,6 @@ add_action('widgets_init', create_function('', 'return register_widget("PP_Sort_
 function pp_set_sort_options(){
 	global $pp_sort_options;
 
-	$pp_sort_options = array('post-desc' => __('Time: Newly posted'),
-							 'post-asc' => __('Time: Oldest first'),
-							 'end-asc'	 => __('Time: Ending soonest'),
-							 'end-desc'	 => __('Time: Ending latest'), 
-							 'price-asc' => __('Price: low to high'),
-							 'price-desc'=> __('Price: high to low') );
-
 	$pp_sort_options = apply_filters( 'pp_sort_options', $pp_sort_options );
 }
 add_action('init', 'pp_set_sort_options');

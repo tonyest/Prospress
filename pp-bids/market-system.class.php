@@ -70,7 +70,10 @@ class PP_Market_System {
 
 		// For adding Ajax & other scripts
 		add_action('wp_print_scripts', array( &$this, 'enqueue_bid_form_scripts' ) );
-		add_action('admin_menu', array( &$this, 'enqueue_bid_admin_scripts' ) );		
+		add_action('admin_menu', array( &$this, 'enqueue_bid_admin_scripts' ) );
+		
+		add_filter( 'pp_sort_options', array( &$this, 'add_sort_options' ) );
+		
 	}
 
 	// Member functions that you must override.
@@ -759,6 +762,13 @@ class PP_Market_System {
 
 	function enqueue_bid_admin_scripts(){
 		wp_enqueue_style( 'bids', PP_BIDS_URL . '/admin.css' );
+	}
+
+	function add_sort_options( $pp_sort_options ){
+		$pp_sort_options['price-asc'] = __( 'Price: low to high' );
+		$pp_sort_options['price-desc'] = __( 'Price: high to low' );
+
+		return $pp_sort_options;
 	}
 
 	// Called with init hook to determine if a bid has been submitted. If it has, bid_form_submit is called.
