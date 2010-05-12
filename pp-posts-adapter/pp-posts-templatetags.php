@@ -28,7 +28,6 @@ function get_post_end_time( $post_id, $type = 'timestamp', $gmt = true ) {
 		$time = date( 'H:i Y/m/d', $time );
 	}
 
-	error_log("time = $time");
 	return $time;
 }
 

@@ -40,9 +40,5 @@ function pp_post_type() {
 	);
 
 	register_post_type( $bid_system->name, $args );
-
-	//register_taxonomy( 'actor', 'movie', array( 'hierarchical' => true, 'label' => __('Category') ) ); 
-
-	//register_taxonomy( 'production', 'movies', array( 'hierarchical' => false,'label' => __('Production'), 'query_var' => 'production', 'rewrite' => array('slug' => 'production' ) ) );
 }
 add_action('init', 'pp_post_type');

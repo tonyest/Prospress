@@ -16,7 +16,6 @@ class PP_Sort_Query {
 		if ( $GLOBALS['wp_query'] == $obj || $obj->query_vars['post_type'] != $bid_system->name )
 			return;
 
-		error_log("PP_Sort_Query add_filter being called with = " . print_r( $obj, true));
 		add_filter('posts_orderby', array(__CLASS__, 'posts_orderby'));
 	}
 
@@ -93,11 +92,6 @@ class PP_Sort_Widget extends WP_Widget {
 		global $pp_sort_options;
 
 		extract( $args );
-
-		//Don't want to print on single posts or pages
-		//if( is_single() || is_page() ){
-		//	return;
-		//}
 
 		$sorted_by = trim( @$_GET[ 'pp-sort' ] );
 

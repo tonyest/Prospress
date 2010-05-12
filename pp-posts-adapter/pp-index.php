@@ -49,6 +49,4 @@ global $bid_system;
 			<?php dynamic_sidebar( $bid_system->name . '-sidebar' ); ?>
 		</ul>
 	</div>
-
-<?php //get_sidebar(); ?>
 <?php get_footer(); ?>

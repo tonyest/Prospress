@@ -216,7 +216,7 @@ add_action('init', 'pp_register_completed_status');
 function pp_post_submit_meta_box() {
 	global $action, $wpdb, $post, $bid_system;
 
-	if( !( ( $_GET[ 'post_type' ] == $bid_system->name ) || ( get_post_type( $_GET[ 'post' ] ) ==  $bid_system->name ) ) )
+	if( !is_pp_admin_page() )
 		return;
 
 	$datef = __( 'M j, Y @ G:i' );
@@ -331,6 +331,10 @@ function touch_end_time( $edit = 1, $tab_index = 0, $multi = 0 ) {
 }
 
 function pp_posts_admin_head() {
+	
+	if( !is_pp_admin_page() )
+		return;
+
 	if( strpos( $_SERVER['REQUEST_URI'], 'post.php' ) !== false || strpos( $_SERVER['REQUEST_URI'], 'post-new.php' ) !== false ) {
 		wp_enqueue_style( 'post-adapter',  PP_POSTS_URL . '/post-adapter.css' );
 		wp_enqueue_script( 'post-adapter', PP_POSTS_URL . '/post-adapter.dev.js', array('jquery') );
@@ -353,6 +357,10 @@ add_action('admin_menu', 'pp_posts_admin_head');
 // Customise columns on table of posts shown on edit.php
 //**************************************************************************************************//
 function pp_post_columns( $column_headings ) {
+	global $bid_system;
+
+	if( !is_pp_admin_page() )
+		return $column_headings;
 
 	unset( $column_headings[ 'tags' ] );
 
@@ -420,6 +428,10 @@ add_action( 'admin_menu', 'pp_posts_add_admin_pages' );
 
 // @TODO clean up this quick and dirty hack: find a server side way to better style these tables.
 function pp_remove_classes() {
+	
+	if( !is_pp_admin_page() )
+		return;
+
 	if ( strpos( $_SERVER['REQUEST_URI'], 'edit.php' ) !== false ||  strpos( $_SERVER['REQUEST_URI'], 'completed' ) !== false ) {
 		echo '<script type="text/javascript">';
 		echo 'jQuery(document).ready( function($) {';
@@ -532,3 +544,12 @@ function pp_post_sort_options( $pp_sort_options ){
 	return $pp_sort_options;
 }
 add_filter( 'pp_sort_options', 'pp_post_sort_options' );
+
+function is_pp_admin_page(){
+	global $bid_system;
+
+	if( !( ( $_GET[ 'post_type' ] == $bid_system->name ) || ( get_post_type( $_GET[ 'post' ] ) ==  $bid_system->name ) ) )
+		return false;
+	else
+		return true;
+}

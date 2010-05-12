@@ -14,9 +14,6 @@ class Bid_Filter_Widget extends WP_Widget {
 		global $currency_symbol;
 		extract($args);
 
-		//if( is_single() || is_page() )
-		//	return;
-
 		$title = apply_filters('widget_title', $instance['title'], $instance, $this->id_base);
 
 		echo $before_widget;
@@ -76,10 +73,10 @@ class Bid_Filter_Query {
 	}
 
 	static function add_filters($obj) {
-		// Operate only on the main query
-		//if ( $GLOBALS['wp_query'] != $obj )
-		// Don't touch the main query
-		if ( $GLOBALS['wp_query'] == $obj )
+		global $bid_system;
+
+		// Don't touch the main query or queries for non-Prospress posts
+		if ( $GLOBALS['wp_query'] == $obj || $obj->query_vars['post_type'] != $bid_system->name )
 			return;
 
 		add_filter('posts_where', array(__CLASS__, 'posts_where'));

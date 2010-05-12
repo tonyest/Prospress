@@ -57,6 +57,8 @@ class PP_Market_System {
 		if( !empty( $this->post_table_columns ) && is_array( $this->post_table_columns ) ){
 			add_filter( 'manage_posts_columns', array( &$this, 'add_post_column_headings' ) );
 			add_action( 'manage_posts_custom_column', array( &$this, 'add_post_column_contents' ), 10, 2 );
+			//add_filter( 'manage_' . $this->name . '_columns', array( &$this, 'add_post_column_headings' ) );
+			//add_action( 'manage_' . $this->name . '_custom_column', array( &$this, 'add_post_column_contents' ), 10, 2 );
 		}
 
 		// Determine if bid form submission function should be called
@@ -732,6 +734,9 @@ class PP_Market_System {
 
 	// Add market system columns to tables of posts
 	function add_post_column_headings( $column_headings ) {
+		
+		if( !( ( $_GET[ 'post_type' ] == $this->name ) || ( get_post_type( $_GET[ 'post' ] ) ==  $this->name ) ) )
+			return $column_headings;
 
 		foreach( $this->post_table_columns as $key => $column )
 			$column_headings[ $key ] = $column[ 'title' ];
