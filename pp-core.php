@@ -29,47 +29,9 @@ if( !defined( 'PP_CORE_DIR' ) )
 if( !defined( 'PP_CORE_URL' ) )
 	define( 'PP_CORE_URL', WP_PLUGIN_URL . '/prospress/pp-core' );
 
-function pp_remove_wp_dashboard_widgets() {
-	global $wp_meta_boxes;
-
-	// Remove the main column widgets
-	//unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_right_now']);
-	//unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_recent_comments']);
-	//unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_incoming_links']);
-	//unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_plugins']);
-
-	// Remove the side column widgets
-	//unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_quick_press']);
-	//unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_recent_drafts']);
-	//unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_primary']);
-	//unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_secondary']);
-
-}
-add_action('wp_dashboard_setup', 'pp_remove_wp_dashboard_widgets' );
-
-/* * * * * * * * * * * * * EXAMPLE CODE TO ADD WIDGETS * * * * * * * * * * * * * * * * * *
-// The function to output the contents of PP Dashboard Widget
-function example_dashboard_widget_function() {
-	// Display whatever it is you want to show
-	echo "Hello World, I'm a great Dashboard Widget";
-}
-
-// Create the function use in the action hook
-function example_add_dashboard_widgets() {
-	wp_add_dashboard_widget('example_dashboard_widget', 'Example Dashboard Widget', 'example_dashboard_widget_function');	
-} 
-
-// Hoook into the 'wp_dashboard_setup' action to register our other functions
-add_action('wp_dashboard_setup', 'example_add_dashboard_widgets' );
-
-
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-
 /************************************************************************************************************************/
 /**** MONEY FORMAT FUNCTIONS ****/
 /************************************************************************************************************************/
-
 /** 
  * Global currencies variable for storing all currencies available in the marketplace.
  * 
