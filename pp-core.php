@@ -29,14 +29,6 @@ if( !defined( 'PP_CORE_DIR' ) )
 if( !defined( 'PP_CORE_URL' ) )
 	define( 'PP_CORE_URL', WP_PLUGIN_URL . '/prospress/pp-core' );
 
-// Include currency functions, class and global vars
-// ** THIS CLASS CREATED A BAZOOKA FOR KILLING ANTS... A FEW SIMPLER FUNCTIONS HAVE BEEN ADDED TO THIS FILE
-//if ( file_exists( PP_CORE_DIR . '/money.class.php' ) )
-//	require_once( PP_CORE_DIR . '/money.class.php' );
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- * REMOVING WP DASHBOARD WIDGETS TO MAKE SPACE FOR PROSPRESS WIDGETS - WHICH ARE ADDED IN EACH COMPONENT
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 function pp_remove_wp_dashboard_widgets() {
 	global $wp_meta_boxes;
 
@@ -44,13 +36,13 @@ function pp_remove_wp_dashboard_widgets() {
 	//unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_right_now']);
 	//unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_recent_comments']);
 	//unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_incoming_links']);
-	unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_plugins']);
+	//unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_plugins']);
 
 	// Remove the side column widgets
-	unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_quick_press']);
+	//unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_quick_press']);
 	//unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_recent_drafts']);
-	unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_primary']);
-	unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_secondary']);
+	//unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_primary']);
+	//unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_secondary']);
 
 }
 add_action('wp_dashboard_setup', 'pp_remove_wp_dashboard_widgets' );
