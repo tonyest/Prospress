@@ -438,7 +438,6 @@ add_action( 'admin_head', 'pp_remove_classes' );
 function pp_template_redirects() {
 	global $post, $bid_system;
 
-	//error_log( 'post = ' . print_r($post, true) );
 	if( $post->post_name == $bid_system->name ){
 		do_action( 'pp_template_index_redirect' );
 		include( PP_POSTS_DIR . '/pp-index.php');
@@ -460,8 +459,6 @@ function pp_add_sidebars_widgets(){
 	if( !isset( $sidebars_widgets[ $bid_system->name . '-sidebar' ] ) )
 		$sidebars_widgets[ $bid_system->name . '-sidebar' ] = array();
 
-	error_log( '$sidebars_widgets = ' . print_r( $sidebars_widgets, true ) );
-
 	$sort_widget = get_option( 'widget_pp-sort' );
 	if( empty( $sort_widget ) ){
 
@@ -478,21 +475,18 @@ function pp_add_sidebars_widgets(){
 		$sort_widget['_multiwidget'] = 1;
 		update_option( 'widget_pp-sort',$sort_widget );
 		array_push( $sidebars_widgets[ $bid_system->name . '-sidebar' ], 'pp-sort-0' );
-		error_log('$sort_widget = ' . print_r($sort_widget, true));
 	}
 
 	//$filter_widget = get_option( 'widget_bid-filter' );
 	$filter_widget = '';
 	error_log( '$filter_widget = ' . print_r( $filter_widget, true ) );
 	if( empty( $filter_widget ) ){
-		error_log( '$filter_widget is empty... ' );
 
 		$filter_widget[] = array( 'title' => __( 'Price:' ) );
 
 		$filter_widget['_multiwidget'] = 1;
 		update_option( 'widget_bid-filter', $filter_widget );
 		array_push( $sidebars_widgets[ $bid_system->name . '-sidebar' ], 'bid-filter-0' );
-		error_log( '$filter_widget = ' . print_r( $filter_widget, true ) );
 	}
 
 	update_option( 'sidebars_widgets', $sidebars_widgets );

@@ -17,11 +17,6 @@
 
 //define('PP_DB_PREFIX', 'pp_');
 
-/* Place your custom code (actions/filters) in a file called /plugins/pp-custom.php and it will be loaded before anything else. */
-//if ( file_exists( WP_PLUGIN_DIR . '/pp-custom.php' ) )
-//	require( WP_PLUGIN_DIR . '/pp-custom.php' );
-
-
 if( !defined( 'PP_PLUGIN_DIR' ) )
 	define( 'PP_PLUGIN_DIR', WP_PLUGIN_DIR . '/prospress' );
 if( !defined( 'PP_CORE_DIR' ) )
