@@ -72,15 +72,14 @@ add_action('widgets_init', 'bid_filter_widget_init');
 class Bid_Filter_Query {
 
 	static function init() {
-		add_action('pre_get_posts', array(__CLASS__, 'add_filters'));
+		add_action( 'pre_get_posts', array( __CLASS__, 'add_filters' )) ;
 	}
 
 	static function add_filters($obj) {
 		// Operate only on the main query
-		if ( $GLOBALS['wp_query'] != $obj )
-			return;
-
-		if ( is_singular() )
+		//if ( $GLOBALS['wp_query'] != $obj )
+		// Don't touch the main query
+		if ( $GLOBALS['wp_query'] == $obj )
 			return;
 
 		add_filter('posts_where', array(__CLASS__, 'posts_where'));

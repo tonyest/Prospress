@@ -1,6 +1,29 @@
 .pp-title a:active, .pp-title a:link, .pp-title a:visited{color:#ff00ff;}
 .pp-title a:hover{color:#ff0000;}
-.pp-price, .pp-end-date{float:right;}
+.pp-dates{
+	width: 100%;
+	display:block;
+	float:left;
+	}
+.pp-publish-date{
+	float:left;
+	}
+.pp-end-date{
+	float:right;
+}
+.pp-price{
+	clear:both;
+	float:left;
+	display:block;
+	width:100%;
+}
+.pp-author{
+	clear:both;
+	float:left;
+	display:block;
+}
+
+
 #bid{border:1px solid #ccc;margin: 1em 0; padding:1em; -webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;}
 
 /* Side bar & Widget Styles */

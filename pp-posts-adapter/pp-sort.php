@@ -10,13 +10,13 @@ class PP_Sort_Query {
 	}
 
 	static function add_filters( $obj ) {
-		// Operate only on the main query
-		if ( $GLOBALS['wp_query'] != $obj )
+		global $bid_system;
+
+		// Don't touch the main query or queries for non-Prospress posts
+		if ( $GLOBALS['wp_query'] == $obj || $obj->query_vars['post_type'] != $bid_system->name )
 			return;
 
-		if ( is_singular() )
-			return;
-
+		error_log("PP_Sort_Query add_filter being called with = " . print_r( $obj, true));
 		add_filter('posts_orderby', array(__CLASS__, 'posts_orderby'));
 	}
 
@@ -66,7 +66,7 @@ class PP_Sort_Query {
 		if ( 'post' == $orderby ) {
 			$sql = "$wpdb->posts.post_date $order";
 		}
-		
+
 		error_log("sql = $sql");
 		return $sql;
 	}

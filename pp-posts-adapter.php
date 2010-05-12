@@ -53,9 +53,12 @@ include( PP_POSTS_DIR . '/pp-posts-templatetags.php');
 include( PP_POSTS_DIR . '/pp-custom-taxonomy.php');
 
 function pp_posts_adapter_install(){
-	global $wpdb, $bid_system;
+	global $wpdb, $bid_system, $wp_rewrite;
+
+	$wp_rewrite->flush_rules(false);
+
 	error_log('activation hook being called.');
-	
+
 	if( !$wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '$bid_system->name'" ) ){
 		$index_page = array();
 		$index_page['post_title'] = ucfirst( $bid_system->name );
@@ -68,7 +71,7 @@ function pp_posts_adapter_install(){
 
 		wp_insert_post( $index_page );
 	}
-	
+
 	pp_add_sidebars_widgets();
 }
 register_activation_hook( __FILE__, 'pp_posts_adapter_install' );
@@ -450,11 +453,14 @@ function pp_template_redirects() {
 add_action( 'template_redirect', 'pp_template_redirects' );
 
 function pp_add_sidebars_widgets(){
-	
+	global $bid_system;
+
 	$sidebars_widgets = get_option( 'sidebars_widgets' );
 
-	if( !isset( $sidebars_widgets[ 'prospress-index-sidebar' ] ) )
-		$sidebars_widgets[ 'prospress-index-sidebar' ] = array();
+	if( !isset( $sidebars_widgets[ $bid_system->name . '-sidebar' ] ) )
+		$sidebars_widgets[ $bid_system->name . '-sidebar' ] = array();
+
+	error_log( '$sidebars_widgets = ' . print_r( $sidebars_widgets, true ) );
 
 	$sort_widget = get_option( 'widget_pp-sort' );
 	if( empty( $sort_widget ) ){
@@ -471,7 +477,7 @@ function pp_add_sidebars_widgets(){
 
 		$sort_widget['_multiwidget'] = 1;
 		update_option( 'widget_pp-sort',$sort_widget );
-		array_push( $sidebars_widgets[ 'prospress-index-sidebar' ], 'pp-sort-0' );
+		array_push( $sidebars_widgets[ $bid_system->name . '-sidebar' ], 'pp-sort-0' );
 		error_log('$sort_widget = ' . print_r($sort_widget, true));
 	}
 
@@ -485,7 +491,7 @@ function pp_add_sidebars_widgets(){
 
 		$filter_widget['_multiwidget'] = 1;
 		update_option( 'widget_bid-filter', $filter_widget );
-		array_push( $sidebars_widgets[ 'prospress-index-sidebar' ], 'bid-filter-0' );
+		array_push( $sidebars_widgets[ $bid_system->name . '-sidebar' ], 'bid-filter-0' );
 		error_log( '$filter_widget = ' . print_r( $filter_widget, true ) );
 	}
 
@@ -493,23 +499,26 @@ function pp_add_sidebars_widgets(){
 }
 
 function pp_posts_adapter_uninstall(){
+	global $bid_system;
 
 	delete_option( 'widget_bid-filter' );
 	delete_option( 'widget_pp-sort' );
 	
 	$sidebars_widgets = get_option( 'sidebars_widgets' );
 
-	if( isset( $sidebars_widgets[ 'prospress-index-sidebar' ] ) ){
-		unset( $sidebars_widgets[ 'prospress-index-sidebar' ] );
+	if( isset( $sidebars_widgets[ $bid_system->name . '-sidebar' ] ) ){
+		unset( $sidebars_widgets[ $bid_system->name . '-sidebar' ] );
 		update_option( 'sidebars_widgets', $sidebars_widgets );
 	}
 }
 register_deactivation_hook( __FILE__, 'pp_posts_adapter_uninstall' );
 
 function pp_add_sidebars(){
+	global $bid_system;
+
 	register_sidebar( array (
-		'name' => __( 'Prospress Index Sidebar' ),
-		'id' => 'prospress-index-sidebar',
+		'name' => ucfirst( $bid_system->name ) . ' ' . __( 'Sidebar' ),
+		'id' => $bid_system->name . '-sidebar',
 		'description' => __( "The sidebar on your Prospress posts." ),
 		'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
 		'after_widget' => "</li>",

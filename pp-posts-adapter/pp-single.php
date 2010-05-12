@@ -33,7 +33,7 @@ global $bid_system;
 
 	<div id="pp-sidebar" class="pp-sidebar">
 		<ul class="xoxo">
-			<?php dynamic_sidebar( 'prospress-index-sidebar' ); ?>
+			<?php dynamic_sidebar( $bid_system->name . '-sidebar' ); ?>
 		</ul>
 	</div>
 <?php get_footer(); ?>

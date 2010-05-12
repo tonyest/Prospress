@@ -29,7 +29,7 @@ function pp_post_type() {
 			'label' => __('Auctions'),
 			'public' => true,
 			'show_ui' => true,
-			'rewrite' => array( 'slug' => 'cool', 'with_front' => false ),
+			'rewrite' => array( 'slug' => $bid_system->name, 'with_front' => false ),
              'supports' => array(
 							'title',
 							'editor',
