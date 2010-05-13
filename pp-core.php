@@ -24,6 +24,20 @@ if( !defined( 'PP_CORE_DIR' ) )
 if( !defined( 'PP_CORE_URL' ) )
 	define( 'PP_CORE_URL', WP_PLUGIN_URL . '/prospress/pp-core' );
 
+
+function pp_remove_wp_dashboard_widgets() {
+	global $wp_meta_boxes;
+
+	if( is_super_admin() ){
+		return;
+	}
+
+	// Remove the side column widgets to make space for Prospress widgets
+	unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_primary']);
+	unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_secondary']);
+}
+add_action('wp_dashboard_setup', 'pp_remove_wp_dashboard_widgets' );
+
 /************************************************************************************************************************/
 /**** MONEY FORMAT FUNCTIONS ****/
 /************************************************************************************************************************/
