@@ -532,8 +532,6 @@ function pp_feedback_settings_section() { ?>
 			<td>
 				<?php
 				$edit_feedback = get_option( 'edit_feedback' );
-				//$edit_feedback = true;
-				error_log('$edit_feedback = ' . $edit_feedback);
 				?>
 				<input type='checkbox' value='true' name='edit_feedback' id='ef1' <?php checked( (boolean)$edit_feedback ); ?> />
 			</td>

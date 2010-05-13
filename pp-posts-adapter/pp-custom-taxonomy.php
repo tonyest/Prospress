@@ -37,8 +37,8 @@ function pp_manage_taxonomies() {
 		screen_icon();
 		?>
 		<h2><?php _e( 'Prospress Taxonomies' ) ?><a href="<?php echo PP_ADD_TAX_URL; ?>" class="button add-new-h2">Add New</a></h2>
-		<p><?php _e( 'Custom taxonomies give traders in your marketplace a way to categorize their posts. This makes it easier to find a needle in your marketplace\'s haystack.') ?></p>
-		<p><?php _e( "For example, to classify art, you could create an \"Artist's Medium\" taxonomy and include \"Acrylic\", \"Watercolor\" or \"Lego\" as the taxonomies types." ) ?></p>
+		<p><?php _e( 'Give traders in your marketplace a way to categorize their posts with a custom taxonomy. These make it easier for visitors to find that needle in your marketplace\'s haystack.') ?></p>
+		<p><?php _e( "For example, to classify art related posts, you could create an \"Artist's Medium\" taxonomy and include \"Acrylic\", \"Watercolor\" or \"Lego\" as the taxonomies types." ) ?></p>
 		<p><?php printf( __( 'After creating the taxonomy here, you can add elements to it under the %s menu.'), ucfirst( $bid_system->name ) ) ?></p>
 		<?php 
 		$pp_tax_types = get_option( 'pp_custom_taxonomies' );
@@ -174,7 +174,6 @@ function pp_create_custom_taxonomies() {
 	foreach( $pp_tax_types as $pp_tax_name => $pp_tax_type ) {
 		$pp_object_type = $pp_tax_type[ 'object_type' ];
 		unset( $pp_tax_type[ 'object_type' ] );
-		//register our custom taxonomies
 		register_taxonomy( $pp_tax_name,
 			$pp_object_type,
 			$pp_tax_type 
@@ -183,7 +182,7 @@ function pp_create_custom_taxonomies() {
 }
 add_action( 'init', 'pp_create_custom_taxonomies', 0 );
 
-//delete custom post type or custom taxonomy
+//delete custom taxonomy
 function pp_delete_taxonomy() {
 
 	if( !isset( $_GET[ 'deltax' ] ) ) 
@@ -209,15 +208,12 @@ function pp_register_settings() {
 
 	if( !isset( $_POST[ 'pp_add_tax' ] ) && !isset( $_POST[ 'pp_edit_tax' ] ) )
 		return;
-	elseif( isset( $_POST[ 'pp_add_tax' ] ) )
-		check_admin_referer('pp_add_custom_taxonomy');
-	elseif( isset( $_POST[ 'pp_edit_tax' ] ) )
+	elseif( isset( $_POST[ 'pp_add_tax' ] ) || isset( $_POST[ 'pp_edit_tax' ] ) )
 		check_admin_referer('pp_add_custom_taxonomy');
 
 	$pp_tax_name = strip_tags( $_POST[ 'pp_custom_tax' ] );
 
 	if ( empty( $pp_tax_name ) ) {
-		
 		wp_redirect( add_query_arg( array( 'pp_error' => 2, 'l' => $_POST[ 'label' ], 'sl' => $_POST[ 'singular_label' ]), PP_ADD_TAX_URL ) );		
 		exit();
 	}

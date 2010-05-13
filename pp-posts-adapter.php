@@ -454,7 +454,7 @@ function pp_template_redirects() {
 		do_action( 'pp_template_index_redirect' );
 		include( PP_POSTS_DIR . '/pp-index.php');
 		exit;
-	} elseif ( $post->post_type == $bid_system->name ) {
+	} elseif ( $post->post_type == $bid_system->name && !isset( $_GET[ 's' ] ) ) {
 		error_log( '$post->post_name == $bid_system->name' );
 		do_action( 'pp_template_single_redirect' );
 		include( PP_POSTS_DIR . '/pp-single.php');
@@ -553,3 +553,14 @@ function is_pp_admin_page(){
 	else
 		return true;
 }
+
+//Removes the Prospress index page from the search results
+function pp_remove_index( $search ){
+	global $wpdb, $bid_system;
+
+	if ( isset( $_GET['s'] ) ) // only remove posts from search results
+		$search .= "AND ID NOT IN (SELECT ID FROM $wpdb->posts WHERE post_name = '$bid_system->name')";
+
+	return $search;
+}
+add_filter( 'posts_search', 'pp_remove_index' );
