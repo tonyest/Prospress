@@ -22,12 +22,6 @@ if ( !defined( 'PP_FEEDBACK_URL'))
 
 if ( file_exists( PP_FEEDBACK_DIR . '/feedback-functions.php' ) )
 	require_once ( PP_FEEDBACK_DIR . '/feedback-functions.php' );
-/*
-if ( file_exists( PP_FEEDBACK_DIR . '/feedback-widget.class.php' ) )
-	require_once ( PP_FEEDBACK_DIR . '/feedback-widget.class.php' );
-if ( file_exists( PP_FEEDBACK_DIR . '/feedback-widgets.php' ) )
-	require_once ( PP_FEEDBACK_DIR . '/feedback-widgets.php' );
-*/
 
 // For testing
 //include_once ( PP_FEEDBACK_DIR . '/feedback-tests.php' );
@@ -53,15 +47,11 @@ if ( !isset( $wpdb->feedbackmeta ) || empty( $wpdb->feedbackmeta ) )
 function pp_feedback_maybe_install() {
 	global $wpdb;
 
-	error_log('pp_feedback_maybe_install called');
-
 	if ( !current_user_can('edit_plugins') )
 		return false;
 
-	if ( !get_site_option('pp_feedback_db_version') || get_site_option('pp_feedback_db_version') < PP_FEEDBACK_DB_VERSION ){
-		error_log('pp_feedback_install to be called');
+	if ( !get_site_option('pp_feedback_db_version') || get_site_option('pp_feedback_db_version') < PP_FEEDBACK_DB_VERSION )
 		pp_feedback_install();
-	}
 }
 register_activation_hook( __FILE__, 'pp_feedback_maybe_install' );
 
@@ -70,8 +60,6 @@ function pp_feedback_deactivate() {
 
 	if ( !current_user_can('edit_plugins') || !function_exists( 'delete_site_option') )
 		return false;
-
-	error_log('pp_feedback_deactivate called, deleting pp_feedback_db_version');
 
 	delete_site_option( 'pp_feedback_db_version' );
 }
@@ -121,8 +109,6 @@ function pp_feedback_install() {
 			    KEY meta_key (meta_key)
 			   ) {$charset_collate};";
 
-	error_log('pp_feedback_install $sql[] = ' . print_r( $sql, true ) );
-
 	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 	dbDelta( $sql );
 
@@ -144,29 +130,22 @@ function pp_feedback_controller() {
 	$title = __( 'Feedback' );
 
 	if( $_POST[ 'feedback_submit' ] ){
-		error_log('Feedback Submitted');
-		error_log( 'in pp_feedback_controller, $_POST[feedback_submit]' );
 		extract( pp_feedback_form_submit( $_POST ) );
 		include_once( PP_FEEDBACK_DIR . '/feedback-form-view.php' );
 		return;
 	} elseif ( $_GET[ 'action' ] == 'give-feedback' ){
-		error_log('Give Feedback');
 		extract( pp_edit_feedback( $_GET[ 'post' ], $_GET[ 'blog' ] ) );
 		include_once( PP_FEEDBACK_DIR . '/feedback-form-view.php'  );
 		return;
 	} elseif ( $_GET[ 'action' ] == 'edit-feedback' ){
-		error_log('Edit Feedback');
 		$feedback = pp_edit_feedback( $_GET[ 'post' ], $_GET[ 'blog' ] );
-		error_log('Edit Feedback ' . print_r($feedback, true));
 		extract( pp_edit_feedback( $_GET[ 'post' ], $_GET[ 'blog' ] ) );
 		include_once( PP_FEEDBACK_DIR . '/feedback-form-view.php'  );
 		return;
 	} elseif ( $_GET[ 'action' ] == 'view-feedback' ){
-		error_log('View Feedback');
 		pp_feedback_history_admin( $user_ID );
 		return;
 	} else {
-		error_log('In pp_feedback_controller, else pp_feedback_history_admin being called.');
 		pp_feedback_history_admin( $user_ID );
 		return;
 	}
@@ -182,8 +161,6 @@ function pp_edit_feedback( $post_id, $blog_ID = '' ) {
 	if( function_exists( 'switch_to_blog' ) ) //if multisite
 		switch_to_blog( $blog_ID );
 
-	error_log( "*** After switch_to_blog( $blog_ID ), wpdb->bids = " . print_r($wpdb->bids, true));
-
 	get_currentuserinfo();
 	$from_user_id = $user_ID;
 
@@ -197,9 +174,6 @@ function pp_edit_feedback( $post_id, $blog_ID = '' ) {
 	$is_winning_bidder = $bid_system->is_winning_bidder( $from_user_id, $post_id );
 
 	if ( ( !$is_winning_bidder && $from_user_id != $post->post_author ) || NULL == $post->post_status || 'completed' != $post->post_status ) {
-		error_log( "*** is_winning_bidder = " . print_r($is_winning_bidder, true));
-		error_log( "*** from_user_id = $from_user_id and post->post_author = " . $post->post_author);
-		error_log( "*** post->post_status = " . $post->post_status);
 		wp_die( __('You can not leave feedback on this post.') );
 	} elseif ( pp_has_feedback( $post_id, $from_user_id ) ) { //user already left feedback for post
 		$feedback = pp_get_feedback_item( $post_id, $from_user_id );
@@ -213,7 +187,6 @@ function pp_edit_feedback( $post_id, $blog_ID = '' ) {
 	} else {
 		if ( $post->post_author == $user_ID && !$is_winning_bidder ){
 			$role = 'post author';
-			error_log('in pp_edit_feedback $wpdb->bids = ' . $wpdb->bids);
 			$for_user_id = $bidder_id;
 		} else { // bidder
 			$role = 'bidder';
@@ -228,7 +201,6 @@ function pp_edit_feedback( $post_id, $blog_ID = '' ) {
 	if( function_exists( 'restore_current_blog' ) )
 		restore_current_blog();
 
-	error_log( "*** In pp_edit_feedback, feedback = " . print_r( $feedback, true ) );
 	return $feedback;
 }
 
@@ -245,19 +217,19 @@ function pp_feedback_form_submit( $feedback ) {
 	if( function_exists( 'switch_to_blog' ) ) //if multisite
 		switch_to_blog( $feedback_details[ 'blog_id' ] );
 
-	error_log('** In pp_feedback_form_submit, after switch_to_blog, sanitized feedback = ' . print_r($feedback, true));
 	$post = get_post( $feedback[ 'post_id' ] );
 	$is_winning_bidder = $bid_system->is_winning_bidder( $feedback[ 'from_user_id' ], $feedback[ 'post_id' ] );
 
 	if ( ( !$is_winning_bidder && $feedback[ 'from_user_id' ] != $post->post_author ) || NULL == $post->post_status || 'completed' != $post->post_status ) {
 		if( !$is_winning_bidder )
-			error_log( '!$is_winning_bidder' );
+			wp_die( __( 'You can not leave feedback on this post. You are not the winning bidder.' ) );
 		if( $feedback[ 'from_user_id' ] != $post->post_author)
-			error_log( '$feedback[ from_user_id ] != $post->post_author');
+			wp_die( __( 'You can not leave feedback on this post. As you are not the post author.' ) );
 		if( NULL == $post->post_status )
-			error_log( 'NULL == $post->post_status');
+			wp_die( __( "You can not leave feedback on this post as it's status is null" ) );
 		if( 'completed' != $post->post_status )
-			error_log('ended != $post->post_status');
+			wp_die( __( "You can not leave feedback on this post as it's status is not set to completed." ) );
+
 		wp_die( __('You can not leave feedback on this post.') );
 	}
 
@@ -346,33 +318,24 @@ add_action( 'admin_menu', 'pp_add_feedback_admin_pages' );
 //the place for enqueuing scripts, styles and other assorted admin head functions
 function pp_feedback_admin_head() {
 
-	/** @TODO Figure out a more efficient way to add this style only to dashboard page (index.php is not visible to all sites on network) */
-	//if( strpos( $_SERVER['REQUEST_URI'], 'index.php' ) !== false ) {
-		wp_enqueue_style( "dashboard-feedback", PP_FEEDBACK_URL . "/dashboard-feedback.css" );
-	//}
-
-	//wp_enqueue_script( "pp-feedback", path_join(WP_PLUGIN_URL, "prospress/pp-feedback/pp-feedback.js"), array( 'jquery' ) );
+	/** @TODO Figure out a more efficient way to add this style only to dashboard page */
+	wp_enqueue_style( "dashboard-feedback", PP_FEEDBACK_URL . "/dashboard-feedback.css" );
 }
 add_action( 'admin_menu', 'pp_feedback_admin_head' );
 
 
 function pp_feedback_action( $actions, $post_id ) {
 	global $user_ID, $bid_system, $blog_id;
-	//error_log( "in pp_feedback_action post_id = $post_id" );
  
 	$post = get_post( $post_id );
-	//error_log( "in pp_feedback_action post = " . print_r($post, true) );
-	//$blog_id = get_current_site()->id;
-	//error_log( "in pp_feedback_action blog_id = " . print_r($blog_id, true) );
+
 	$is_winning_bidder = $bid_system->is_winning_bidder( $user_ID, $post_id );
-	//error_log( "in pp_feedback_action is_winning_bidder = $post_id" );
 
 	$feedback_url = ( is_admin() ) ? 'users.php?page=feedback' : 'profile.php?page=feedback';
 
 	if ( !$is_winning_bidder && $user_ID != $post->post_author ) { // admin viewing all ended posts
-		//error_log( 'in pp_feedback_action !$is_winning_bidder && $user_ID != $post->post_author' );
+
 		if( pp_has_feedback( $post_id ) ){
-			//error_log( 'in pp_feedback_action pp_has_feedback( $post_id )' );
 			$actions[ 'view' ] = array('label' => __( 'View Feedback' ), 
 										'url' => add_query_arg( array( 'post' => $post_id, 'blog' => $blog_id ), $feedback_url ) );
 		}
@@ -409,35 +372,25 @@ function pp_feedback_history_admin( $user_id ) {
 	if( isset( $_GET[ 'uid' ] ) && $_GET[ 'uid' ] != $user_id ){
 		$_GET[ 'uid' ] = (int)$_GET[ 'uid' ];
 		if( isset( $_GET[ 'post' ] ) ){
-			error_log('In pp_feedback_history_admin, isset( $_GET[ post ] ).');
 			$_GET[ 'post' ] = (int)$_GET[ 'post' ];
 			$feedback = pp_get_feedback_user( $_GET[ 'uid' ], array( 'post' => $_GET[ 'post' ] ) );
 			$title = sprintf( __( 'Feedback for %1$s on Post %2$d' ), get_userdata( $_GET[ 'uid' ] )->user_nicename, $_GET[ 'post' ] );
 		} else if( $_GET[ 'filter' ] == 'given' ){
-			error_log('In pp_feedback_history_admin, isset( $_GET[ given ] ).');
 			$feedback = pp_get_feedback_user( $_GET[ 'uid' ], array( 'given' => 'true' ) );
 			$title = sprintf( __( 'Feedback Given by %s' ), get_userdata( $_GET[ 'uid' ] )->user_nicename );
-		} else { // if( $_GET[ 'filter' ] == 'received' ){
-			error_log('In pp_feedback_history_admin, isset( $_GET[ received ] ).');
+		} else {
 			$feedback = pp_get_feedback_user( $_GET[ 'uid' ], array( 'received' => 'true' ) );
 			$title = sprintf( __( 'Feedback Received by %s' ), get_userdata( $_GET[ 'uid' ] )->user_nicename );
-		}/* else {
-			error_log('In pp_feedback_history_admin, else.');
-			$feedback = pp_get_feedback_user( $_GET[ 'uid' ] );
-			$title = sprintf( __( 'All Feedback for %s' ), get_userdata( $_GET[ 'uid' ] )->user_nicename );
-		}*/
+		}
 		$user_id = $_GET[ 'uid' ];
 	} else if( isset( $_GET[ 'post' ] ) ){
-		error_log('In pp_feedback_history_admin, isset( $_GET[ post ] ).');
 		$_GET[ 'post' ] = (int)$_GET[ 'post' ];
 		$feedback = pp_get_feedback_user( $user_id, array( 'post' => $_GET[ 'post' ] ) );
 		$title = __( 'Feedback on Post ' . $_GET[ 'post' ] );
 	} else if( $_GET[ 'filter' ] == 'given' ){
-		error_log('In pp_feedback_history_admin, isset( $_GET[ given ] ).');
 		$feedback = pp_get_feedback_user( $user_id, array( 'given' => 'true' ) );
 		$title = __( "Feedback You've Given" );
 	} else {
-		error_log('In pp_feedback_history_admin, isset( $_GET[ received ] ).');
 		$feedback = pp_get_feedback_user( $user_id, array( 'received' => 'true' ) );
 		$title = __( 'Your Feedback' );
 	}
@@ -453,8 +406,6 @@ function pp_users_feedback_link( $user_id ){
 //Function to add feedback history column headings to the built in print_column_headers function
 function pp_feedback_columns_admin(){
 
-	error_log( '$_SERVER[REQUEST_URI] = ' . print_r($_SERVER['REQUEST_URI'], true ));
-	
 	$feedback_columns = array( 'cb' => '<input type="checkbox" />' );
 	
  	if( strpos( $_SERVER['REQUEST_URI'], 'given' ) !== false ) {
@@ -707,10 +658,7 @@ function pp_feedback_dashboard_widget() {
 function pp_feedback_add_dashboard_widgets() {
 	global $wp_meta_boxes;
 
-	if ( current_user_can('edit_posts') ){
-		// the more robust way to add the widget, but only allows adding to normal area, not side bar
-		// wp_add_dashboard_widget('dashboard_feedback', __('Feedback'), 'pp_feedback_dashboard_widget');
-	
+	if ( current_user_can('read') ){
 		$wp_meta_boxes['dashboard']['side']['core']['dashboard_feedback'] = array(
 											'id' => 'dashboard_feedback',
 											'title' => 'Feedback',
@@ -718,9 +666,6 @@ function pp_feedback_add_dashboard_widgets() {
 											'args' => ''
 		                                );
 	}
-	//error_log( "wp_meta_boxes = " . print_r( $wp_meta_boxes['dashboard'], true ) );
 }
 // Hook into the 'wp_dashboard_setup' action to register our other functions
 add_action('wp_dashboard_setup', 'pp_feedback_add_dashboard_widgets' );
-
-?>
