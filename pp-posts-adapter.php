@@ -452,12 +452,18 @@ function pp_template_redirects() {
 
 	if( $post->post_name == $bid_system->name ){
 		do_action( 'pp_template_index_redirect' );
-		include( PP_POSTS_DIR . '/pp-index.php');
+		if( file_exists( TEMPLATEPATH . '/pp-index.php' ) )
+			include( TEMPLATEPATH . '/pp-index.php');
+		else
+			include( PP_POSTS_DIR . '/pp-index.php');
 		exit;
 	} elseif ( $post->post_type == $bid_system->name && !isset( $_GET[ 's' ] ) ) {
 		error_log( '$post->post_name == $bid_system->name' );
 		do_action( 'pp_template_single_redirect' );
-		include( PP_POSTS_DIR . '/pp-single.php');
+		if( file_exists( TEMPLATEPATH . '/pp-single.php' ) )
+			include( TEMPLATEPATH . '/pp-single.php');
+		else
+			include( PP_POSTS_DIR . '/pp-single.php');
 		exit;
 	}
 }
