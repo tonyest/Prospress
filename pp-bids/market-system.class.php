@@ -482,9 +482,9 @@ class PP_Market_System {
 		$bids_title = apply_filters( 'bids_admin_title', __('Bids') );
 
 		if ( function_exists( 'add_object_page' ) ) {
-			add_object_page( $bids_title, $bids_title, 1, $base_page, '', WP_PLUGIN_URL . '/prospress/images/menu.png' );
+			add_object_page( $bids_title, $bids_title, 'read', $base_page, '', WP_PLUGIN_URL . '/prospress/images/menu.png' );
 		} elseif ( function_exists( 'add_menu_page' ) ) {
-			add_menu_page( $bids_title, $bids_title, 1, $base_page, '', WP_PLUGIN_URL . '/prospress/images/menu.png' );
+			add_menu_page( $bids_title, $bids_title, 'read', $base_page, '', WP_PLUGIN_URL . '/prospress/images/menu.png' );
 		}
 
 		$winning_bids_title = apply_filters( 'winning_bids_title', __('Winning Bids') );
@@ -492,8 +492,8 @@ class PP_Market_System {
 
 	    // Add submenu items to the bids top-level menu
 		if (function_exists('add_submenu_page')){
-		    add_submenu_page($base_page, $winning_bids_title, $winning_bids_title, 1, $base_page, array( &$this, 'winning_history' ) );
-		    add_submenu_page($base_page, $bid_history_title, $bid_history_title, 1, 'bid-history', array( &$this, 'admin_history' ) );
+		    add_submenu_page( $base_page, $winning_bids_title, $winning_bids_title, 'read', $base_page, array( &$this, 'winning_history' ) );
+		    add_submenu_page( $base_page, $bid_history_title, $bid_history_title, 'read', 'bid-history', array( &$this, 'admin_history' ) );
 		}
 	}
 

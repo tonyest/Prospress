@@ -338,7 +338,7 @@ function pp_update_feedback( $feedback ) {
 //**************************************************************************************************//
 function pp_add_feedback_admin_pages() {
 	if ( function_exists('add_submenu_page') ) {
-		$feedback_page = add_submenu_page('users.php', 'Feedback', 'Feedback', 'read', 'feedback', 'pp_feedback_controller');
+		$feedback_page = add_submenu_page( 'users.php', 'Feedback', 'Feedback', 'read', 'feedback', 'pp_feedback_controller' );
 	}
 }
 add_action( 'admin_menu', 'pp_add_feedback_admin_pages' );
