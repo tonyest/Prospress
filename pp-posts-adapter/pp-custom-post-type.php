@@ -36,7 +36,8 @@ function pp_post_type() {
 							'thumbnail',
 							'post-thumbnails',
 							'comments',
-							'revisions')
+							'revisions'),
+			'menu_position' => 20
 	);
 
 	register_post_type( $bid_system->name, $args );
