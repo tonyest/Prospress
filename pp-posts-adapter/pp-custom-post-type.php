@@ -30,7 +30,7 @@ function pp_post_type() {
 			'public' => true,
 			'show_ui' => true,
 			'rewrite' => array( 'slug' => $bid_system->name, 'with_front' => false ),
-             'supports' => array(
+            'supports' => array(
 							'title',
 							'editor',
 							'thumbnail',

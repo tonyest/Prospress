@@ -23,10 +23,35 @@
 	display:block;
 }
 
+#bid{border:1px solid #ccc;margin: 1em 0; padding:1em;background-color:#f6f6f6; -webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;}
 
-#bid{border:1px solid #ccc;margin: 1em 0; padding:1em; -webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;}
+/* Navigation
+-------------------------------------------------------------- */
+.navigation {
+	font-size:  0.8em;
+	line-height: 1.5em;
+	overflow: hidden;
+	color: #888;
+}
+.navigation a:link,
+.navigation a:visited {
+	color: #888;
+	text-decoration: none;
+}
+.navigation a:active,
+.navigation a:hover {
+	color: #FF4B33;
+}
+.nav-index {
+	float: left;
+	width: 100%;
+	font-size: 1.2em;
+}
 
-/* Side bar & Widget Styles */
+
+
+/* Side bar & Widget Styles 
+-------------------------------------------------------------- */
 #pp-sidebar{
 	float: right;
 	overflow: hidden;

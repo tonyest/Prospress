@@ -27,6 +27,13 @@ global $bid_system;
 			<?php the_content(); ?>
 
 			<p class="postmetadata">Posted in <?php the_category(', '); ?></p>
+
+			<div id="nav-below" class="navigation">
+				<div class="nav-index"><a href="<?php pp_get_index_permalink(); ?>"><?php printf( __("&larr; Return to %s Index", 'Prospress'), ucfirst( $bid_system->name ) ); ?></a></div>
+			</div>
+
+			<?php comments_template( '', true ); ?>
+
 			<?php endwhile; // end of the loop. ?>
 		</div>
 	</div>

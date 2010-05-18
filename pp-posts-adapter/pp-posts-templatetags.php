@@ -1,4 +1,35 @@
 <?php
+
+/**
+ * Returns the permalink for the Prospress index page. 
+ * 
+ * @param string $echo Optional, default 'echo'. If set to "echo" the function echo's the permalink, else, returns the permalink as a string. 
+ * @return returns false if no index page set, true if echod the permalink or a string representing the permalink if 'echo' not set.
+ */
+function pp_get_index_permalink( $echo = 'echo' ){
+	global $bid_system, $wpdb;
+	
+	$pp_index_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '$bid_system->name'" );
+
+	if( !$pp_index_id )
+		return false;
+	elseif( $echo = 'echo' )
+		echo get_permalink( $pp_index_id );
+	else
+		return get_permalink( $pp_index_id );
+}
+
+/**
+ * Print the details of an individual post, including custom taxonomies.  
+ * 
+ * @param string $echo Optional, default 'echo'. If set to "echo" the function echo's the permalink, else, returns the permalink as a string. 
+ * @return returns false if no index page set, true if echod the permalink or a string representing the permalink if 'echo' not set.
+ */
+function pp_the_post_meta(){
+	
+}
+
+
 /**
  * Get's the end time for a post. Can return it in GMT or user's timezone (specified by UTC offset). 
  * Can also return as either mysql date format or a unix timestamp.
