@@ -4,11 +4,13 @@ define( 'PP_TAX_URL', admin_url( '/options-general.php?page=custom_taxonomy_mana
 define( 'PP_ADD_TAX_URL', admin_url( '/admin.php?page=custom_taxonomy_add' ) );
 
 function pp_taxonomy_menus() {
+	global $pp_core_admin_page;
 	$base_title = 'Taxonomies';
 	$base_page = "custom_taxonomy";
 
 	add_submenu_page( 'hidden', 'Add New', 'Add New', 'administrator', $base_page.'_add', 'pp_add_new_page');
-	add_options_page( 'Prospress Taxonomies', 'Prospress Taxonomies', 'administrator', $base_page.'_manage', 'pp_manage_taxonomies');
+	//add_options_page( 'Prospress Taxonomies', 'Prospress Taxonomies', 'administrator', $base_page.'_manage', 'pp_manage_taxonomies');
+	add_submenu_page( 'Prospress', __( 'Custom Prospress Taxonomies', 'prospress' ), __( 'Taxonomies', 'prospress' ), 'administrator', $base_page.'_manage', 'pp_manage_taxonomies');
 }
 add_action('admin_menu', 'pp_taxonomy_menus');
 
@@ -34,7 +36,7 @@ function pp_manage_taxonomies() {
 		    </div>
 		    <?php
 		}
-		screen_icon();
+		screen_icon( 'prospress' );
 		?>
 		<h2><?php _e( 'Prospress Taxonomies' ) ?><a href="<?php echo PP_ADD_TAX_URL; ?>" class="button add-new-h2">Add New</a></h2>
 		<p><?php _e( 'Give traders in your marketplace a way to categorize their posts with a custom taxonomy. These make it easier for visitors to find that needle in your marketplace\'s haystack.') ?></p>

@@ -1,5 +1,11 @@
-.pp-title a:active, .pp-title a:link, .pp-title a:visited{color:#ff00ff;}
-.pp-title a:hover{color:#ff0000;}
+.pp-title a:active, 
+.pp-title a:link, 
+.pp-title a:visited{
+	color:#ff00ff;
+}
+.pp-title a:hover{
+	color:#ff0000;
+}
 .pp-dates{
 	width: 100%;
 	display:block;
@@ -23,7 +29,15 @@
 	display:block;
 }
 
-#bid{border:1px solid #ccc;margin: 1em 0; padding:1em;background-color:#f6f6f6; -webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;}
+#bid{ 
+	border:1px solid #ccc;
+	margin: 1em 0; 
+	padding:1em;
+	background-color:#f6f6f6; 
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
 
 /* Navigation
 -------------------------------------------------------------- */
@@ -49,6 +63,16 @@
 }
 
 
+/* Main sidebar */
+#pp-sidebar ul {
+	margin-left: 0;
+	padding: 0 20px 0 0;
+}
+#pp-sidebar ul ul {
+	border: none;
+	margin-left: 1.3em;
+	padding: 0;
+}
 
 /* Side bar & Widget Styles 
 -------------------------------------------------------------- */
@@ -129,7 +153,3 @@
 	height: 11px;
 	width: 11px;
 }
-
-/* Main sidebars */
-#pp-sidebar ul {margin-left: 0;padding: 0 20px 0 0;}
-#pp-sidebar ul ul {border: none;margin-left: 1.3em;padding: 0;}
