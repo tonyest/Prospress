@@ -117,7 +117,7 @@ function pp_targetted_signup_options(){
 	<table class="form-table">
 
 		<tr valign="top">
-			<th scope="row"><?php _e("Make Primary") ?></th> 
+			<th scope="row"><?php _e("Make Primary", 'prospress' ) ?></th> 
 			<td>
 				<input name="change_primary_blog" type="radio" id="change_primary_blog_yes" value='1' <?php echo get_site_option('change_primary_blog') == 1 ? 'checked="checked"' : ''; ?> /> <?php _e('Yes', 'prospress' ); ?><br />
 				<input name="change_primary_blog" type="radio" id="change_primary_blog_no" value='0' <?php echo get_site_option('change_primary_blog') == 0 ? 'checked="checked"' : ''; ?> /> <?php _e('No', 'prospress' ); ?><br />
@@ -137,11 +137,11 @@ function pp_targetted_signup_options(){
 			</td> 
 		</tr>
 		<tr valign="top">
-			<th scope="row"><?php _e("Add New Users to All Blogs") ?></th> 
+			<th scope="row"><?php _e("Add New Users to All Blogs", 'prospress' ) ?></th> 
 			<td>
 				<input name="add_to_all_blogs" type="radio" id="add_to_all_blogs_yes" value='1' <?php echo get_site_option('add_to_all_blogs') == 1 ? 'checked="checked"' : ''; ?> disabled="disabled" /> <?php _e('Yes (disabled)', 'prospress' ); ?><br />
 				<input name="add_to_all_blogs" type="radio" id="add_to_all_blogs_no" value='0' <?php echo get_site_option('add_to_all_blogs') == 0 ? 'checked="checked"' : ''; ?> /> <?php _e('No', 'prospress' ); ?><br />
-				<?php _e("Add new users to all blogs in your WPMU installation.") ?>
+				<?php _e("Add new users to all blogs in your WPMU installation.", 'prospress' ) ?>
 			</td> 
 		</tr>
 	</table>

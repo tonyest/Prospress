@@ -610,9 +610,9 @@ class PP_Market_System {
 				<div class="tablenav clearfix">
 					<div class="alignleft">
 						<select name='bs'>
-							<option<?php selected( $bid_status, 0 ); ?> value='0'><?php _e( 'Any bid status' ); ?></option>
-							<option<?php selected( $bid_status, 1 ); ?> value='1'><?php _e( 'Outbid' ); ?></option>
-							<option<?php selected( $bid_status, 2 ); ?> value='2'><?php _e( 'Winning' ); ?></option>
+							<option<?php selected( $bid_status, 0 ); ?> value='0'><?php _e( 'Any bid status', 'prospress' ); ?></option>
+							<option<?php selected( $bid_status, 1 ); ?> value='1'><?php _e( 'Outbid', 'prospress' ); ?></option>
+							<option<?php selected( $bid_status, 2 ); ?> value='2'><?php _e( 'Winning', 'prospress' ); ?></option>
 						</select>
 						<?php
 						if( strpos( $title, 'Winning' ) !== false )
@@ -627,7 +627,7 @@ class PP_Market_System {
 							$m = isset($_GET['m']) ? (int)$_GET['m'] : 0;
 						?>
 						<select name='m'>
-						<option<?php selected( $m, 0 ); ?> value='0'><?php _e('Show all dates'); ?></option>
+						<option<?php selected( $m, 0 ); ?> value='0'><?php _e('Show all dates', 'prospress' ); ?></option>
 						<?php
 						foreach ($arc_result as $arc_row) {
 							if ( $arc_row->yyear == 0 )
@@ -649,11 +649,11 @@ class PP_Market_System {
 						<input type="submit" value="Filter" id="filter_action" class="button-secondary action" />
 
 						<select name='sort'>
-							<option<?php selected( $sort, 0 ); ?> value='0'><?php _e('Sort by'); ?></option>
-							<option<?php selected( $sort, 1 ); ?> value='1'><?php _e('Bid Value'); ?></option>
-							<option<?php selected( $sort, 2 ); ?> value='2'><?php _e('Post'); ?></option>
-							<option<?php selected( $sort, 3 ); ?> value='3'><?php _e('Bid Status'); ?></option>
-							<option<?php selected( $sort, 4 ); ?> value='5'><?php _e('Bid Date'); ?></option>
+							<option<?php selected( $sort, 0 ); ?> value='0'><?php _e('Sort by', 'prospress' ); ?></option>
+							<option<?php selected( $sort, 1 ); ?> value='1'><?php _e('Bid Value', 'prospress' ); ?></option>
+							<option<?php selected( $sort, 2 ); ?> value='2'><?php _e('Post', 'prospress' ); ?></option>
+							<option<?php selected( $sort, 3 ); ?> value='3'><?php _e('Bid Status', 'prospress' ); ?></option>
+							<option<?php selected( $sort, 4 ); ?> value='5'><?php _e('Bid Date', 'prospress' ); ?></option>
 						</select>
 						<input type="submit" value="Sort" id="sort_action" class="button-secondary action" />
 					</div>
@@ -690,7 +690,7 @@ class PP_Market_System {
 									if( is_array( $actions ) && !empty( $actions ) ){
 									?>
 										<ul id="completed_actions">
-											<li class="base"><?php _e( 'Take action:' ) ?></li>
+											<li class="base"><?php _e( 'Take action:', 'prospress' ) ?></li>
 										<?php foreach( $actions as $action => $attributes )
 											//$url = add_query_arg ( 'post', $post_id, $attributes['url'] );
 											echo "<li class='completed_action'><a href='" . add_query_arg ( array( 'action' => $action, 'post' => $post_id ) , $attributes['url'] ) . "'>" . $attributes['label'] . "</a></li>";
@@ -698,7 +698,7 @@ class PP_Market_System {
 										</ul>
 									<?php
 									} else {
-										_e('No action can be taken.');
+										_e('No action can be taken.', 'prospress' );
 									}
 									echo '</td>';
 								}?>

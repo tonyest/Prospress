@@ -57,7 +57,7 @@ function _the_max_bid_value( $post_id = 0) {
 	if ($max_bid->bid_value)
 		echo $max_bid->bid_value;
 	else 
-		_e('no bids');
+		_e('no bids', 'prospress' );
 }
 
 /** MOVED TO BID CLASS
@@ -71,11 +71,11 @@ function _the_winning_bidder( $post_id = 0 ) {
 	
 	if ($max_bid->bidder_id){
 		if( $max_bid->bidder_id == $user_ID)
-			_e('You.');
+			_e('You.', 'prospress' );
 		else 
 			echo get_userdata($max_bid->bidder_id)->display_name;
 	} else {
-		_e('No bidders.');
+		_e('No bidders.', 'prospress' );
 	}
 }
 
@@ -106,7 +106,7 @@ function _the_winning_bid_value( $post_id = 0 ) {
 	if ($winning_bid)
 		echo $winning_bid;
 	else
-		_e('No Bids.');
+		_e('No Bids.', 'prospress' );
 }
 
 /** MOVED TO BID CLASS
@@ -136,7 +136,7 @@ function _the_users_max_bid_value( $user_id = 0, $post_id = 0) {
 	if ($users_max_bid->bid_value)
 		echo $users_max_bid->bid_value;
 	else
-		_e('No Bids.');
+		_e('No Bids.', 'prospress' );
 }
 
 

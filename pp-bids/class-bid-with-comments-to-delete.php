@@ -171,7 +171,7 @@ class PP_Market_System {
 	function form_header() {
 	?>
 		<div class="make-bid">
-			<h2><?php _e('Make a Bid'); ?></h2>
+			<h2><?php _e('Make a Bid', 'prospress' ); ?></h2>
 			<?php print_bid_messages(); ?>
 			<form id="makebidform" method="get" action="<?php pp_bid_form_action(); ?>">
 	<?php

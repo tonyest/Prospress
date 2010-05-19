@@ -23,7 +23,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		if ( !defined( 'BID_INCREMENT' ) )
 			define( 'BID_INCREMENT', '0.05' );
 
-		parent::__construct( __('auctions'), __('Auction Bid'), __('Bid!'), array( 'post_fields' ) );
+		parent::__construct( __('auctions', 'prospress' ), __('Auction Bid', 'prospress' ), __('Bid!', 'prospress' ), array( 'post_fields' ) );
 	}
 
 	function bid_form_fields( $post_id = NULL ) { 
@@ -35,14 +35,14 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		$dont_echo = false;
 
 		if( $bid_count == 0 ){
-			$bid_bid_form_fields .= '<div id="current_bid_val">' . __("Starting Price: ") . pp_money_format( get_post_meta( $post_id, 'start_price', true ) ) . '</div>';
+			$bid_bid_form_fields .= '<div id="current_bid_val">' . __("Starting Price: ", 'prospress' ) . pp_money_format( get_post_meta( $post_id, 'start_price', true ) ) . '</div>';
 		} else {
-			$bid_bid_form_fields .= '<div id="current_bid_num">' . __("Number of Bids: ") . $this->the_bid_count( $post_id, $dont_echo ) . '</div>';
-			$bid_bid_form_fields .= '<div id="winning_bidder">' . __("Winning Bidder: ") . $this->the_winning_bidder( $post_id, $dont_echo ) . '</div>';
-			$bid_bid_form_fields .= '<div id="current_bid_val">' . __("Current Bid: ") . $this->the_winning_bid_value( $post_id, $dont_echo ) . '</div>';
+			$bid_bid_form_fields .= '<div id="current_bid_num">' . __("Number of Bids: ", 'prospress' ) . $this->the_bid_count( $post_id, $dont_echo ) . '</div>';
+			$bid_bid_form_fields .= '<div id="winning_bidder">' . __("Winning Bidder: ", 'prospress' ) . $this->the_winning_bidder( $post_id, $dont_echo ) . '</div>';
+			$bid_bid_form_fields .= '<div id="current_bid_val">' . __("Current Bid: ", 'prospress' ) . $this->the_winning_bid_value( $post_id, $dont_echo ) . '</div>';
 		}
 
-		$bid_bid_form_fields .= '<label for="bid_value" class="bid-label">' . __( 'Enter max bid: ' ) . $currency_symbol . '</label>';
+		$bid_bid_form_fields .= '<label for="bid_value" class="bid-label">' . __( 'Enter max bid: ', 'prospress' ) . $currency_symbol . '</label>';
 		$bid_bid_form_fields .= '<input type="text" aria-required="true" tabindex="1" size="22" value="" id="bid_value" name="bid_value"/>';
 		
 		return $bid_bid_form_fields;
@@ -208,7 +208,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		  <tbody>
 				<tr>
 				  <td class="left">
-					<label for="start_price"><?php echo __("Starting Price: " ) . $currency_symbol; ?></label>
+					<label for="start_price"><?php echo __("Starting Price: ", 'prospress' ) . $currency_symbol; ?></label>
 					</td>
 					<td>
 				 		<input type="text" name="start_price" value="<?php echo number_format_i18n( $start_price, 2 ); ?>" size="20" />
