@@ -127,7 +127,7 @@ function pp_feedback_install() {
 function pp_feedback_controller() {
 	global $wpdb, $user_ID;
 
-	$title = __( 'Feedback' );
+	$title = __( 'Feedback', 'prospress' );
 
 	if( $_POST[ 'feedback_submit' ] ){
 		extract( pp_feedback_form_submit( $_POST ) );
@@ -169,19 +169,19 @@ function pp_edit_feedback( $post_id, $blog_ID = '' ) {
 	$bidder_id = $bid_system->get_winning_bid( $post_id )->bidder_id;
 
 	if( empty( $bidder_id ) )
-		wp_die( __("Error: could not determine winning bidder.") );
+		wp_die( __("Error: could not determine winning bidder.", 'prospress' ) );
 
 	$is_winning_bidder = $bid_system->is_winning_bidder( $from_user_id, $post_id );
 
 	if ( ( !$is_winning_bidder && $from_user_id != $post->post_author ) || NULL == $post->post_status || 'completed' != $post->post_status ) {
-		wp_die( __('You can not leave feedback on this post.') );
+		wp_die( __('You can not leave feedback on this post.', 'prospress' ) );
 	} elseif ( pp_has_feedback( $post_id, $from_user_id ) ) { //user already left feedback for post
 		$feedback = pp_get_feedback_item( $post_id, $from_user_id );
 		if( get_option( 'edit_feedback' ) != 'true' ){
 			$feedback[ 'disabled' ] = __( 'disabled="disabled"' );
-			$feedback[ 'title' ] = __( 'Feedback' );
+			$feedback[ 'title' ] = __( 'Feedback', 'prospress' );
 		} else {
-			$feedback[ 'title' ] = __( 'Edit Feedback' );
+			$feedback[ 'title' ] = __( 'Edit Feedback', 'prospress' );
 			$disabled = '';
 		}
 	} else {
@@ -192,7 +192,7 @@ function pp_edit_feedback( $post_id, $blog_ID = '' ) {
 			$role = 'bidder';
 			$for_user_id = $post->post_author;
 		}
-		$title = __( 'Give Feedback' );
+		$title = __( 'Give Feedback', 'prospress' );
 		$disabled = '';
 		$feedback = compact( 'post_id', 'from_user_id', 'for_user_id', 'role', 'disabled', 'title' );
 	}
@@ -222,15 +222,15 @@ function pp_feedback_form_submit( $feedback ) {
 
 	if ( ( !$is_winning_bidder && $feedback[ 'from_user_id' ] != $post->post_author ) || NULL == $post->post_status || 'completed' != $post->post_status ) {
 		if( !$is_winning_bidder )
-			wp_die( __( 'You can not leave feedback on this post. You are not the winning bidder.' ) );
+			wp_die( __( 'You can not leave feedback on this post. You are not the winning bidder.', 'prospress' ) );
 		if( $feedback[ 'from_user_id' ] != $post->post_author)
-			wp_die( __( 'You can not leave feedback on this post. As you are not the post author.' ) );
+			wp_die( __( 'You can not leave feedback on this post. As you are not the post author.', 'prospress' ) );
 		if( NULL == $post->post_status )
 			wp_die( __( "You can not leave feedback on this post as it's status is null" ) );
 		if( 'completed' != $post->post_status )
 			wp_die( __( "You can not leave feedback on this post as it's status is not set to completed." ) );
 
-		wp_die( __('You can not leave feedback on this post.') );
+		wp_die( __('You can not leave feedback on this post.', 'prospress' ) );
 	}
 
 	$feedback[ 'feedback_status' ] = 'publish';
@@ -239,7 +239,7 @@ function pp_feedback_form_submit( $feedback ) {
 	
 		if( get_option( 'edit_feedback' ) != 'true' ){ // user trying to edit feedback when not allowed
 			$feedback = pp_get_feedback_item( $feedback[ 'post_id' ], $feedback[ 'from_user_id' ] );
-			$feedback[ 'feedback_msg' ] = __('You are not allowed to edit this feedback');
+			$feedback[ 'feedback_msg' ] = __('You are not allowed to edit this feedback', 'prospress' );
 			return $feedback;
 		}
 
@@ -252,7 +252,7 @@ function pp_feedback_form_submit( $feedback ) {
 
 	pp_update_feedback( $feedback );
 
-	$feedback[ 'feedback_msg' ] = __('Feedback Submitted');
+	$feedback[ 'feedback_msg' ] = __('Feedback Submitted', 'prospress' );
 
 	if( function_exists( 'restore_current_blog' ) )
 		restore_current_blog();
@@ -336,22 +336,22 @@ function pp_feedback_action( $actions, $post_id ) {
 	if ( !$is_winning_bidder && $user_ID != $post->post_author ) { // admin viewing all ended posts
 
 		if( pp_has_feedback( $post_id ) ){
-			$actions[ 'view' ] = array('label' => __( 'View Feedback' ), 
+			$actions[ 'view' ] = array('label' => __( 'View Feedback', 'prospress' ), 
 										'url' => add_query_arg( array( 'post' => $post_id, 'blog' => $blog_id ), $feedback_url ) );
 		}
 		return $actions;
 	}
 
 	if ( !pp_has_feedback( $post_id, $user_ID ) ) {
-		$actions[ 'give-feedback' ] = array('label' => __( 'Give Feedback' ),
+		$actions[ 'give-feedback' ] = array('label' => __( 'Give Feedback', 'prospress' ),
 											'url' => add_query_arg( array( 'post' => $post_id, 'blog' => $blog_id ), $feedback_url ) );
 											//'url' => 'users.php?page=feedback' );
 	} else if ( get_option( 'edit_feedback' ) == 'true' ) {
-		$actions[ 'edit-feedback' ] = array('label' => __( 'Edit Feedback' ),
+		$actions[ 'edit-feedback' ] = array('label' => __( 'Edit Feedback', 'prospress' ),
 											'url' => add_query_arg( array( 'post' => $post_id, 'blog' => $blog_id ), $feedback_url ) );
 											//'url' => 'users.php?page=feedback' );
 	} else {
-		$actions[ 'view-feedback' ] = array('label' => __( 'View Feedback' ),
+		$actions[ 'view-feedback' ] = array('label' => __( 'View Feedback', 'prospress' ),
 											'url' => $feedback_url );
 											//'url' => 'users.php?page=feedback' );
 	}
@@ -374,13 +374,13 @@ function pp_feedback_history_admin( $user_id ) {
 		if( isset( $_GET[ 'post' ] ) ){
 			$_GET[ 'post' ] = (int)$_GET[ 'post' ];
 			$feedback = pp_get_feedback_user( $_GET[ 'uid' ], array( 'post' => $_GET[ 'post' ] ) );
-			$title = sprintf( __( 'Feedback for %1$s on Post %2$d' ), get_userdata( $_GET[ 'uid' ] )->user_nicename, $_GET[ 'post' ] );
+			$title = sprintf( __( 'Feedback for %1$s on Post %2$d', 'prospress' ), get_userdata( $_GET[ 'uid' ] )->user_nicename, $_GET[ 'post' ] );
 		} else if( $_GET[ 'filter' ] == 'given' ){
 			$feedback = pp_get_feedback_user( $_GET[ 'uid' ], array( 'given' => 'true' ) );
-			$title = sprintf( __( 'Feedback Given by %s' ), get_userdata( $_GET[ 'uid' ] )->user_nicename );
+			$title = sprintf( __( 'Feedback Given by %s', 'prospress' ), get_userdata( $_GET[ 'uid' ] )->user_nicename );
 		} else {
 			$feedback = pp_get_feedback_user( $_GET[ 'uid' ], array( 'received' => 'true' ) );
-			$title = sprintf( __( 'Feedback Received by %s' ), get_userdata( $_GET[ 'uid' ] )->user_nicename );
+			$title = sprintf( __( 'Feedback Received by %s', 'prospress' ), get_userdata( $_GET[ 'uid' ] )->user_nicename );
 		}
 		$user_id = $_GET[ 'uid' ];
 	} else if( isset( $_GET[ 'post' ] ) ){
@@ -392,7 +392,7 @@ function pp_feedback_history_admin( $user_id ) {
 		$title = __( "Feedback You've Given" );
 	} else {
 		$feedback = pp_get_feedback_user( $user_id, array( 'received' => 'true' ) );
-		$title = __( 'Your Feedback' );
+		$title = __( 'Your Feedback', 'prospress' );
 	}
 
 	include_once( PP_FEEDBACK_DIR . '/feedback-table-view.php' );
@@ -409,21 +409,21 @@ function pp_feedback_columns_admin(){
 	$feedback_columns = array( 'cb' => '<input type="checkbox" />' );
 	
  	if( strpos( $_SERVER['REQUEST_URI'], 'given' ) !== false ) {
-		$feedback_columns[ 'for_user_id' ] = __('For');
+		$feedback_columns[ 'for_user_id' ] = __('For', 'prospress' );
 	} else {
-		$feedback_columns[ 'from_user_id' ] = __('From');
+		$feedback_columns[ 'from_user_id' ] = __('From', 'prospress' );
 	}
 
 	$feedback_columns = array_merge( $feedback_columns, array(
-		'role' => __('Your Role'),
-		'feedback_score' => __('Score'),
-		'feedback_comment' => __('Comment'),
-		'feedback_date' => __('Date'),
-		'post_id' => __('Post')
+		'role' => __('Your Role', 'prospress' ),
+		'feedback_score' => __('Score', 'prospress' ),
+		'feedback_comment' => __('Comment', 'prospress' ),
+		'feedback_date' => __('Date', 'prospress' ),
+		'post_id' => __('Post', 'prospress' )
 	) );
 
 	if ( is_multisite() ) 
-		$feedback_columns[ 'blog_id' ] = __( 'Site' );
+		$feedback_columns[ 'blog_id' ] = __( 'Site', 'prospress' );
 	
 	return $feedback_columns;
 }
@@ -447,9 +447,9 @@ function pp_feedback_rows($feedback = ''){
 			else
 				echo "<td>" . ( ( $user_ID == $for_user_id ) ? 'You' : get_userdata( $for_user_id )->user_nicename ) . pp_users_feedback_link( $for_user_id ) . "</td>";
 			echo "<td>" . ucfirst( $role ) . "</td>";
-			echo "<td>" . (($feedback_score == 2) ? __("Positive") : (($feedback_score == 1) ? __("Neutral") : __("Negative"))) . "</td>";
+			echo "<td>" . (($feedback_score == 2) ? __("Positive", 'prospress' ) : (($feedback_score == 1) ? __("Neutral", 'prospress' ) : __("Negative", 'prospress' ))) . "</td>";
 			echo "<td>$feedback_comment</td>";
-			echo "<td>" . mysql2date( __('d M Y'), $feedback_date ) . "</td>";
+			echo "<td>" . mysql2date( __('d M Y', 'prospress' ), $feedback_date ) . "</td>";
 			echo "<td><a href='" . get_permalink( $post_id ) . "' target='blank'>" . get_post( $post_id )->post_title . "</a></td>";
 			if( is_multisite() )
 				echo "<td><a href='" . get_blogaddress_by_id( $blog_id ) . "' target='blank'>" . get_bloginfo( 'name' ) . "</a></td>";
@@ -462,7 +462,6 @@ function pp_feedback_rows($feedback = ''){
 	} else {
 		echo '<tr><td colspan="5">You have no feedback.</td>';
 	}
-	
 }
 
 // Displays the fields for handling feedback options in the Core Prospress Settings admin page.
@@ -503,14 +502,14 @@ add_filter( 'pp_options_whitelist', 'pp_feedback_admin_option' );
 function pp_feedback_dashboard_widget() {
 	global $user_ID;
 
-	echo "\n\t".'<p class="sub">' . __('Overview') . '</p>';
+	echo "\n\t".'<p class="sub">' . __('Overview', 'prospress' ) . '</p>';
 	echo "\n\t".'<div class="table">'."\n\t".'<table>';
 	echo "\n\t".'<tr class="first">';
 
 	// Feedback
 	$total_feedback = pp_users_feedback_count( $user_ID );
 	$num = number_format_i18n( $total_feedback );
-	$text = __( 'Feedback' );
+	$text = __( 'Feedback', 'prospress' );
 	if ( $total_feedback > 0 ) {
 		$feedback_url = add_query_arg( array( 'page' => 'feedback' ), 'users.php' );
 		$num = "<a href='$feedback_url'>$num</a>";
@@ -523,7 +522,7 @@ function pp_feedback_dashboard_widget() {
 	// Feedback Received
 	$received = pp_users_feedback_count( $user_ID, 'received' );
 	$num = '<span class="total-count">' . number_format_i18n( $received ) . '</span>';
-	$text = __( 'Received' );
+	$text = __( 'Received', 'prospress' );
 	if ( $received > 0 ) {
 		$received_url = add_query_arg( array( 'filter' => 'received' ), 'users.php?page=feedback' );
 		$num = "<a href='$received_url'>$num</a>";
@@ -535,7 +534,7 @@ function pp_feedback_dashboard_widget() {
 	// Feedback Given
 	$given = pp_users_feedback_count( $user_ID, 'given' );
 	$num = '<span class="total-count">' . number_format_i18n( $given ) . '</span>';
-	$text = __( 'Given' );
+	$text = __( 'Given', 'prospress' );
 	if ( $given > 0 ) {
 		$given_url = add_query_arg( array( 'filter' => 'given' ), 'users.php?page=feedback' );
 		$num = "<a href='$given_url'>$num</a>";
@@ -550,7 +549,7 @@ function pp_feedback_dashboard_widget() {
 		// Positive Feedback Received
 		$positive = pp_users_positive_feedback( $user_ID, 'received' );
 		$num = number_format_i18n( $positive );
-		$text = __( 'Positive Feedback Received' );
+		$text = __( 'Positive Feedback Received', 'prospress' );
 		if ( $positive > 0 ) {
 			$given_url = add_query_arg( array( 'filter' => 'received' ), 'users.php?page=feedback' );
 			$num = "<a href='$feedback_url'>$num</a>";
@@ -562,7 +561,7 @@ function pp_feedback_dashboard_widget() {
 		// Neutral Feedback Received
 		$neutral = pp_users_neutral_feedback( $user_ID, 'received' );
 		$num = '<span class="total-count">' . number_format_i18n( $neutral ) . '</span>';
-		$text = __( 'Neutral Feedback Received' );
+		$text = __( 'Neutral Feedback Received', 'prospress' );
 		if ( $neutral > 0 ) {
 			$given_url = add_query_arg( array( 'filter' => 'received' ), 'users.php?page=feedback' );
 			$num = "<a href='$received_url'>$num</a>";
@@ -574,7 +573,7 @@ function pp_feedback_dashboard_widget() {
 		// Negative Feedback Received
 		$negative = pp_users_negative_feedback( $user_ID, 'received' );
 		$num = '<span class="total-count">' . number_format_i18n( $negative ) . '</span>';
-		$text = __( 'Negative Feedback Received' );
+		$text = __( 'Negative Feedback Received', 'prospress' );
 		if ( $negative > 0 ) {
 			$given_url = add_query_arg( array( 'filter' => 'received' ), 'users.php?page=feedback' );
 			$num = "<a href='$given_url'>$num</a>";
@@ -588,7 +587,7 @@ function pp_feedback_dashboard_widget() {
 		// Positive Feedback Given
 		$positive = pp_users_positive_feedback( $user_ID, 'given' );
 		$num = number_format_i18n( $positive );
-		$text = __( 'Positive Feedback Given' );
+		$text = __( 'Positive Feedback Given', 'prospress' );
 		if ( $positive > 0 ) {
 			$received_url = add_query_arg( array( 'filter' => 'given' ), 'users.php?page=feedback' );
 			$num = "<a href='$feedback_url'>$num</a>";
@@ -600,7 +599,7 @@ function pp_feedback_dashboard_widget() {
 		// Neutral Feedback Given
 		$neutral = pp_users_neutral_feedback( $user_ID, 'given' );
 		$num = '<span class="total-count">' . number_format_i18n( $neutral ) . '</span>';
-		$text = __( 'Neutral Feedback Given' );
+		$text = __( 'Neutral Feedback Given', 'prospress' );
 		if ( $neutral > 0 ) {
 			$received_url = add_query_arg( array( 'filter' => 'given' ), 'users.php?page=feedback' );
 			$num = "<a href='$received_url'>$num</a>";
@@ -612,7 +611,7 @@ function pp_feedback_dashboard_widget() {
 		// Negative Feedback Given
 		$negative = pp_users_negative_feedback( $user_ID, 'given' );
 		$num = '<span class="total-count">' . number_format_i18n( $negative ) . '</span>';
-		$text = __( 'Negative Feedback Given' );
+		$text = __( 'Negative Feedback Given', 'prospress' );
 		if ( $negative > 0 ) {
 			$given_url = add_query_arg( array( 'filter' => 'given' ), 'users.php?page=feedback' );
 			$num = "<a href='$given_url'>$num</a>";

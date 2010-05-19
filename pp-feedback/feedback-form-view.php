@@ -15,7 +15,7 @@ error_log("feedback score = $feedback_score");
 	<?php if( isset ( $feedback_msg ) ): //if( isset ( $_POST [ 'feedback_submit' ] ) ):?>
 		<div id="message" class="updated fade">
 			<p><strong>
-				<?php echo $feedback_msg; //_e('Feedback Submitted!'); ?>
+				<?php echo $feedback_msg; //_e('Feedback Submitted!', 'prospress' ); ?>
 			</strong></p>
 		</div>
 	<?php endif; ?>
@@ -41,7 +41,7 @@ error_log("feedback score = $feedback_score");
 		<table class="form-table">
 			<tr id="GiveFeedback_Comment" class="">
 				<th scope="row" >
-					<label for="feedback_comment"><?php _e( 'Comment' ) ?></label>
+					<label for="feedback_comment"><?php _e( 'Comment', 'prospress' ) ?></label>
 				</th>
 				<td>
 					<input type="text" name="feedback_comment" id="feedback_comment" class="regular-text" value="<?php echo $feedback_comment; ?>" 
@@ -51,29 +51,29 @@ error_log("feedback score = $feedback_score");
 			</tr>
 			<tr id="GiveFeedback_Rating" class="">
 				<th scope="row" >
-					<label for="feedback_score"><?php _e( 'Rating' ) ?></label>
+					<label for="feedback_score"><?php _e( 'Rating', 'prospress' ) ?></label>
 				</th>
 				<td><fieldset>
 					<label title="positive">
 						<input name="feedback_score" type="radio" id="rating_positive" value='2' <?php echo $disabled;
 						echo ( isset( $feedback_score ) && $feedback_score == 2 ) ? 'checked="checked"' : ''; ?> /> 
-						<?php _e('Positive'); ?>
+						<?php _e('Positive', 'prospress' ); ?>
 					</label>
 					<label title="neutral">
 						<input name="feedback_score" type="radio" id="rating_neutral" value='1' <?php echo $disabled;
 						echo ( isset( $feedback_score ) && $feedback_score == 1 ) ? 'checked="checked"' : ''; ?> /> 
-						<?php _e('Neutral'); ?>
+						<?php _e('Neutral', 'prospress' ); ?>
 					</label>
 					<label title="negative">
 						<input name="feedback_score" type="radio" id="rating_negative" value='0' <?php echo $disabled;
 						echo ( isset( $feedback_score ) && $feedback_score == 0 ) ? 'checked="checked"' : ''; ?> /> 
-						<?php _e('Negative'); ?>
+						<?php _e('Negative', 'prospress' ); ?>
 					</label>
 				</fieldset></td>
 			</tr>
 		</table>
 		<p id="GiveFeedback_Submit" class="submit">
-			<input type="submit" name="feedback_submit" id="feedback_submit" class="button-primary action" value="<?php _e('Submit Feedback'); ?>" tabindex="100"  
+			<input type="submit" name="feedback_submit" id="feedback_submit" class="button-primary action" value="<?php _e('Submit Feedback', 'prospress' ); ?>" tabindex="100"  
 			<?php echo $disabled; ?> />
 		</p>
 	</form>
