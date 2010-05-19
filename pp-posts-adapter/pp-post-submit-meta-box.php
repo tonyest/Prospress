@@ -20,46 +20,46 @@ if ( 0 != $post->ID ) { //if not a new post, get the $post_end date
 
 if ( 'publish' == $post->post_status ) { //Determine preview button
 	$preview_link = esc_url(get_permalink($post->ID));
-	$preview_button = __('Preview Changes');
+	$preview_button = __('Preview Changes', 'prospress' );
 } else {
 	$preview_link = esc_url(apply_filters('preview_post_link', add_query_arg('preview', 'true', get_permalink($post->ID))));
-	$preview_button = __('Preview');
+	$preview_button = __('Preview', 'prospress' );
 }
 
 switch ( $post->post_status ) { //set post_status_display var
 	case 'private':
-		$post_status_display = __('Privately Published');
+		$post_status_display = __('Privately Published', 'prospress' );
 		break;
 	case 'publish':
-		$post_status_display = __('Published');
+		$post_status_display = __('Published', 'prospress' );
 		break;
 	case 'future':
-		$post_status_display = __('Scheduled');
+		$post_status_display = __('Scheduled', 'prospress' );
 		break;
 	case 'pending':
-		$post_status_display = __('Pending Review');
+		$post_status_display = __('Pending Review', 'prospress' );
 		break;
 	case 'draft':
-		$post_status_display = __('Draft');
+		$post_status_display = __('Draft', 'prospress' );
 		break;
 	case 'ended':
-		$post_status_display = __('Ended');
+		$post_status_display = __('Ended', 'prospress' );
 		break;
 }
 
 if ( 'private' == $post->post_status ) {
 	$post->post_password = '';
 	$visibility = 'private';
-	$visibility_trans = __('Private');
+	$visibility_trans = __('Private', 'prospress' );
 } elseif ( !empty( $post->post_password ) ) {
 	$visibility = 'password';
-	$visibility_trans = __('Password protected');
+	$visibility_trans = __('Password protected', 'prospress' );
 } elseif ( is_sticky( $post->ID ) ) {
 	$visibility = 'public';
 	$visibility_trans = __('Public, Sticky');
 } else {
 	$visibility = 'public';
-	$visibility_trans = __('Public');
+	$visibility_trans = __('Public', 'prospress' );
 }
 
 //Set up publish date and time variables
@@ -67,32 +67,32 @@ if ( 'private' == $post->post_status ) {
 $datef = __( 'M j, Y @ G:i' );
 if ( 0 != $post->ID ) {
 	if ( 'future' == $post->post_status ) { // scheduled for publishing at a future date
-		$publish_stamp = __('Scheduled for: <b>%1$s</b>');
+		$publish_stamp = __('Scheduled for: <b>%1$s</b>', 'prospress' );
 	} else if ( 'publish' == $post->post_status || 'private' == $post->post_status || 'ended' == $post->post_status ) { // already published
-		$publish_stamp = __('Published on: <b>%1$s</b>');
+		$publish_stamp = __('Published on: <b>%1$s</b>', 'prospress' );
 	} else if ( '0000-00-00 00:00:00' == $post->post_date_gmt ) { // draft, 1 or more saves, no date specified
-		$publish_stamp = __('Publish <b>immediately</b>');
+		$publish_stamp = __('Publish <b>immediately</b>', 'prospress' );
 	} else if ( time() < strtotime( $post->post_date_gmt . ' +0000' ) ) { // draft, 1 or more saves, future date specified
-		$publish_stamp = __('Schedule for: <b>%1$s</b>');
+		$publish_stamp = __('Schedule for: <b>%1$s</b>', 'prospress' );
 	} else { // draft, 1 or more saves, date specified
-		$publish_stamp = __('Publish on: <b>%1$s</b>');
+		$publish_stamp = __('Publish on: <b>%1$s</b>', 'prospress' );
 	}
 	$publish_date = date_i18n( $datef, strtotime( $post->post_date ) );
 } else { // draft (no saves, and thus no date specified)
-	$publish_stamp = __('Publish <b>immediately</b>');
+	$publish_stamp = __('Publish <b>immediately</b>', 'prospress' );
 	$publish_date = date_i18n( $datef, strtotime( current_time('mysql') ) );
 }
 
 //Set up post end date and time variables
 if ( 0 != $post->ID ) {
 	if ( 'ended' == $post->post_status ) { // already finished
-		$end_stamp = __('Ended  on: <b>%1$s</b>');
+		$end_stamp = __('Ended  on: <b>%1$s</b>', 'prospress' );
 	} else if ( '0000-00-00 00:00:00' == $post_end || empty($post_end)) { // draft, 1 or more saves, no date specified
-		$end_stamp = __('End <b>immediately</b>');
+		$end_stamp = __('End <b>immediately</b>', 'prospress' );
 	} else if ( time() < strtotime( $post_end . ' +0000' ) ) { // draft, 1 or more saves, future date specified
-		$end_stamp = __('End on: <b>%1$s</b>');
+		$end_stamp = __('End on: <b>%1$s</b>', 'prospress' );
 	} else { // draft, 1 or more saves, date specified
-		$end_stamp = __('End on: <b>%1$s</b>');
+		$end_stamp = __('End on: <b>%1$s</b>', 'prospress' );
 	}
 	$end_date = date_i18n( $datef, strtotime( $post_end ) );
 } else { // draft (no saves so no date specified, set to end in 7 days )
@@ -104,17 +104,17 @@ if ( 0 != $post->ID ) {
 if ( !in_array( $post->post_status, array('publish', 'future', 'private') ) || 0 == $post->ID ) {
 	if ( current_user_can('publish_posts') ) {
 		 if ('ended' == $post->post_status ) {
-			$original_publish = __('Repost');
+			$original_publish = __('Repost', 'prospress' );
 		} else if ( !empty($post->post_date_gmt) && time() < strtotime( $post->post_date_gmt . ' +0000' ) ) {
-			$original_publish = __('Schedule');
+			$original_publish = __('Schedule', 'prospress' );
 		} else {
-			$original_publish = __('Publish');
+			$original_publish = __('Publish', 'prospress' );
 		}
 	} else {
-		$original_publish = __('Submit for Review');
+		$original_publish = __('Submit for Review', 'prospress' );
 	}
 } else {
-	$original_publish = __('Update');
+	$original_publish = __('Update', 'prospress' );
 }
 
 // ************************************************************************************** //
@@ -132,17 +132,17 @@ if ( !in_array( $post->post_status, array('publish', 'future', 'private') ) || 0
 	<div id="minor-publishing">
 	<?php // Hidden submit button early on so that the browser chooses the right button when form is submitted with Return key ?>
 		<div style="display:none;">
-			<input type="submit" name="save" value="<?php esc_attr_e('Save'); ?>" />
+			<input type="submit" name="save" value="<?php esc_attr_e('Save', 'prospress' ); ?>" />
 		</div>
 
 		<div id="minor-publishing-actions">
 			<div id="save-action">
 			<?php //if ( 'publish' != $post->post_status && 'future' != $post->post_status && 'pending' != $post->post_status && 'ended' != $post->post_status )  { ?>
-				<input type="submit" name="save" id="save-post" value="<?php esc_attr_e('Save Draft'); ?>" tabindex="4" class="button button-highlighted" 
+				<input type="submit" name="save" id="save-post" value="<?php esc_attr_e('Save Draft', 'prospress' ); ?>" tabindex="4" class="button button-highlighted" 
 					<?php echo (in_array($post->post_status, array('private', 'publish', 'future', 'pending', 'ended') ) ) ? 'style="display:none"' : ''; ?> 
 				/>
 			<?php if ( 'pending' == $post->post_status && $can_publish ) { ?>
-				<input type="submit" name="save" id="save-post" value="<?php esc_attr_e('Save as Pending'); ?>" tabindex="4" class="button button-highlighted" />
+				<input type="submit" name="save" id="save-post" value="<?php esc_attr_e('Save as Pending', 'prospress' ); ?>" tabindex="4" class="button button-highlighted" />
 			<?php } ?>
 		</div>
 
@@ -156,54 +156,54 @@ if ( !in_array( $post->post_status, array('publish', 'future', 'private') ) || 0
 
 	<div id="misc-publishing-actions">
 
-		<div class="misc-pub-section<?php if ( !$can_publish ) { echo '  misc-pub-section-last'; } ?>"><label for="post_status"><?php _e('Status:') ?></label>
+		<div class="misc-pub-section<?php if ( !$can_publish ) { echo '  misc-pub-section-last'; } ?>"><label for="post_status"><?php _e('Status:', 'prospress' ) ?></label>
 			<span id="post-status-display" >
 				<?php echo $post_status_display; ?>
 			</span>
 			<?php //if ( 'ended' != $post->post_status && ('publish' == $post->post_status || 'private' == $post->post_status || $can_publish) ) { ?>
 			<?php if ( ('publish' == $post->post_status || 'private' == $post->post_status || $can_publish) ) { ?>
-				<a href="#post_status" <?php if ( 'private' == $post->post_status || 'ended' == $post->post_status) { ?>style="display:none;" <?php } ?>class="edit-post-status hide-if-no-js" tabindex='4'><?php _e('Edit') ?></a>
+				<a href="#post_status" <?php if ( 'private' == $post->post_status || 'ended' == $post->post_status) { ?>style="display:none;" <?php } ?>class="edit-post-status hide-if-no-js" tabindex='4'><?php _e('Edit', 'prospress' ) ?></a>
 				<div id="post-status-select" class="hide-if-js">
 					<input type="hidden" name="hidden_post_status" id="hidden_post_status" value="<?php echo esc_attr($post->post_status); ?>" />
 					<select name='post_status' id='post_status' tabindex='4'>
 						<?php if ( 'publish' == $post->post_status ) : ?>
-							<option<?php selected( $post->post_status, 'publish' ); ?> value='publish'><?php _e('Published') ?></option>
+							<option<?php selected( $post->post_status, 'publish' ); ?> value='publish'><?php _e('Published', 'prospress' ) ?></option>
 						<?php elseif ( 'private' == $post->post_status ) : ?>
-							<option<?php selected( $post->post_status, 'private' ); ?> value='publish'><?php _e('Privately Published') ?></option>
+							<option<?php selected( $post->post_status, 'private' ); ?> value='publish'><?php _e('Privately Published', 'prospress' ) ?></option>
 						<?php elseif ( 'future' == $post->post_status ) : ?>
-							<option<?php selected( $post->post_status, 'future' ); ?> value='future'><?php _e('Scheduled') ?></option>
+							<option<?php selected( $post->post_status, 'future' ); ?> value='future'><?php _e('Scheduled', 'prospress' ) ?></option>
 						<?php elseif ( 'ended' == $post->post_status ) : ?>
-							<option<?php selected( $post->post_status, 'ended' ); ?> value='ended'><?php _e('Ended') ?></option>
+							<option<?php selected( $post->post_status, 'ended' ); ?> value='ended'><?php _e('Ended', 'prospress' ) ?></option>
 						<?php endif; ?>
-						<option<?php selected( $post->post_status, 'pending' ); ?> value='pending'><?php _e('Pending Review') ?></option>
-						<option<?php selected( $post->post_status, 'draft' ); ?> value='draft'><?php _e('Draft') ?></option>
+						<option<?php selected( $post->post_status, 'pending' ); ?> value='pending'><?php _e('Pending Review', 'prospress' ) ?></option>
+						<option<?php selected( $post->post_status, 'draft' ); ?> value='draft'><?php _e('Draft', 'prospress' ) ?></option>
 					</select>
-					<a href="#post_status" class="save-post-status hide-if-no-js button"><?php _e('OK'); ?></a>
-					<a href="#post_status" class="cancel-post-status hide-if-no-js"><?php _e('Cancel'); ?></a>
+					<a href="#post_status" class="save-post-status hide-if-no-js button"><?php _e('OK', 'prospress' ); ?></a>
+					<a href="#post_status" class="cancel-post-status hide-if-no-js"><?php _e('Cancel', 'prospress' ); ?></a>
 				</div>
 			<?php } ?>
 		</div><?php // /misc-pub-section ?>
 
 		<div class="misc-pub-section " id="visibility">
-			<?php _e('Visibility:'); ?> <span id="post-visibility-display">
+			<?php _e('Visibility:', 'prospress' ); ?> <span id="post-visibility-display">
 			<?php echo esc_html( $visibility_trans ); ?></span> 
 			<?php if ( $can_publish ) { ?> 
-				<a href="#visibility" <?php if ( 'ended' == $post->post_status) { ?>style="display:none;" <?php } ?> class="edit-visibility hide-if-no-js"><?php _e('Edit'); ?></a>
+				<a href="#visibility" <?php if ( 'ended' == $post->post_status) { ?>style="display:none;" <?php } ?> class="edit-visibility hide-if-no-js"><?php _e('Edit', 'prospress' ); ?></a>
 
 				<div id="post-visibility-select" class="hide-if-js">
 					<input type="hidden" name="hidden_post_password" id="hidden-post-password" value="<?php echo esc_attr($post->post_password); ?>" />
 					<input type="checkbox" style="display:none" name="hidden_post_sticky" id="hidden-post-sticky" value="sticky" <?php checked(is_sticky($post->ID)); ?> />
 					<input type="hidden" name="hidden_post_visibility" id="hidden-post-visibility" value="<?php echo esc_attr( $visibility ); ?>" />
 
-					<input type="radio" name="visibility" id="visibility-radio-public" value="public" <?php checked( $visibility, 'public' ); ?> /> <label for="visibility-radio-public" class="selectit"><?php _e('Public'); ?></label><br />
-					<span id="sticky-span"><input id="sticky" name="sticky" type="checkbox" value="sticky" <?php checked(is_sticky($post->ID)); ?> tabindex="4" /> <label for="sticky" class="selectit"><?php _e('Stick this post to the front page') ?></label><br /></span>
-					<input type="radio" name="visibility" id="visibility-radio-password" value="password" <?php checked( $visibility, 'password' ); ?> /> <label for="visibility-radio-password" class="selectit"><?php _e('Password protected'); ?></label><br />
-					<span id="password-span"><label for="post_password"><?php _e('Password:'); ?></label> <input type="text" name="post_password" id="post_password" value="<?php echo esc_attr($post->post_password); ?>" /><br /></span>
-					<input type="radio" name="visibility" id="visibility-radio-private" value="private" <?php checked( $visibility, 'private' ); ?> /> <label for="visibility-radio-private" class="selectit"><?php _e('Private'); ?></label><br />
+					<input type="radio" name="visibility" id="visibility-radio-public" value="public" <?php checked( $visibility, 'public' ); ?> /> <label for="visibility-radio-public" class="selectit"><?php _e('Public', 'prospress' ); ?></label><br />
+					<span id="sticky-span"><input id="sticky" name="sticky" type="checkbox" value="sticky" <?php checked(is_sticky($post->ID)); ?> tabindex="4" /> <label for="sticky" class="selectit"><?php _e('Stick this post to the front page', 'prospress' ) ?></label><br /></span>
+					<input type="radio" name="visibility" id="visibility-radio-password" value="password" <?php checked( $visibility, 'password' ); ?> /> <label for="visibility-radio-password" class="selectit"><?php _e('Password protected', 'prospress' ); ?></label><br />
+					<span id="password-span"><label for="post_password"><?php _e('Password:', 'prospress' ); ?></label> <input type="text" name="post_password" id="post_password" value="<?php echo esc_attr($post->post_password); ?>" /><br /></span>
+					<input type="radio" name="visibility" id="visibility-radio-private" value="private" <?php checked( $visibility, 'private' ); ?> /> <label for="visibility-radio-private" class="selectit"><?php _e('Private', 'prospress' ); ?></label><br />
 
 					<p>
-						<a href="#visibility" class="save-post-visibility hide-if-no-js button"><?php _e('OK'); ?></a>
-						<a href="#visibility" class="cancel-post-visibility hide-if-no-js"><?php _e('Cancel'); ?></a>
+						<a href="#visibility" class="save-post-visibility hide-if-no-js button"><?php _e('OK', 'prospress' ); ?></a>
+						<a href="#visibility" class="cancel-post-visibility hide-if-no-js"><?php _e('Cancel', 'prospress' ); ?></a>
 					</p>
 				</div>
 			<?php } ?>
@@ -214,7 +214,7 @@ if ( !in_array( $post->post_status, array('publish', 'future', 'private') ) || 0
 			<div class="misc-pub-section curtime">
 				<span id="timestamp">
 				<?php printf($publish_stamp, $publish_date); ?></span>
-				<a href="#edit_timestamp" <?php if ( 'ended' == $post->post_status) { ?>style="display:none;" <?php } ?> class="edit-timestamp hide-if-no-js" tabindex='4'><?php _e('Edit') ?></a>
+				<a href="#edit_timestamp" <?php if ( 'ended' == $post->post_status) { ?>style="display:none;" <?php } ?> class="edit-timestamp hide-if-no-js" tabindex='4'><?php _e('Edit', 'prospress' ) ?></a>
 				<div id="timestampdiv" class="hide-if-js"><?php touch_time(($action == 'edit'),1,4); ?></div>
 			</div>
 		<?php endif; ?>
@@ -228,7 +228,7 @@ if ( !in_array( $post->post_status, array('publish', 'future', 'private') ) || 0
 		<div class="misc-pub-section curtime misc-pub-section-last">
 			<span id="endtimestamp">
 			<?php printf($end_stamp, $end_date); ?></span>
-			<a href="#edit_endtimestamp" class="edit-endtimestamp hide-if-no-js" tabindex='4'><?php ('ended' != $post->post_status) ? _e('Edit') : _e('Extend'); ?></a>
+			<a href="#edit_endtimestamp" class="edit-endtimestamp hide-if-no-js" tabindex='4'><?php ('ended' != $post->post_status) ? _e('Edit', 'prospress' ) : _e('Extend', 'prospress' ); ?></a>
 			<div id="endtimestampdiv" class="hide-if-js">
 				<?php touch_end_time(($action == 'edit'),5); ?>
 				<?php //touch_time(($action == 'edit'),1,5); ?>
@@ -247,7 +247,7 @@ if ( !in_array( $post->post_status, array('publish', 'future', 'private') ) || 0
 	<div id="delete-action">
 		<?php
 		if ( ( 'edit' == $action ) && current_user_can('delete_post', $post->ID) ) { ?>
-			<a class="submitdelete deletion" href="<?php echo wp_nonce_url("post.php?action=delete&amp;post=$post->ID", 'delete-post_' . $post->ID); ?>" onclick="if ( confirm('<?php echo esc_js(sprintf( ('draft' == $post->post_status) ? __("You are about to delete this draft '%s'\n  'Cancel' to stop, 'OK' to delete.") : __("You are about to delete this post '%s'\n  'Cancel' to stop, 'OK' to delete."), $post->post_title )); ?>') ) {return true;}return false;"><?php _e('Delete'); ?></a>
+			<a class="submitdelete deletion" href="<?php echo wp_nonce_url("post.php?action=delete&amp;post=$post->ID", 'delete-post_' . $post->ID); ?>" onclick="if ( confirm('<?php echo esc_js(sprintf( ('draft' == $post->post_status) ? __("You are about to delete this draft '%s'\n  'Cancel' to stop, 'OK' to delete.") : __("You are about to delete this post '%s'\n  'Cancel' to stop, 'OK' to delete."), $post->post_title )); ?>') ) {return true;}return false;"><?php _e('Delete', 'prospress' ); ?></a>
 		<?php } ?>
 	</div>
 

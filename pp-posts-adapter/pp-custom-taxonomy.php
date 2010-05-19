@@ -24,13 +24,13 @@ function pp_manage_taxonomies() {
 		    <div id="message" class="updated">
 		    	<?php switch( $_GET[ 'pp_msg' ] ){
 					case 'add': 
-							_e('Taxonomy created.' );
+							_e('Taxonomy created.', 'prospress' );
 					        break;
 					case 'del': 
-							_e('Taxonomy deleted.' );
+							_e('Taxonomy deleted.', 'prospress' );
 							break;
 					case 'edit': 
-							_e('Taxonomy updated.' );
+							_e('Taxonomy updated.', 'prospress' );
 					        break;
 					}?>
 		    </div>
@@ -38,7 +38,7 @@ function pp_manage_taxonomies() {
 		}
 		screen_icon( 'prospress' );
 		?>
-		<h2><?php _e( 'Prospress Taxonomies' ) ?><a href="<?php echo PP_ADD_TAX_URL; ?>" class="button add-new-h2">Add New</a></h2>
+		<h2><?php _e( 'Prospress Taxonomies', 'prospress' ) ?><a href="<?php echo PP_ADD_TAX_URL; ?>" class="button add-new-h2">Add New</a></h2>
 		<p><?php _e( 'Create a taxonomy to give traders in your marketplace a way to categorize their posts. A taxonomy makes it easier for visitors to find that needle in your marketplace\'s haystack.') ?></p>
 		<p><?php _e( "For example, to classify art related posts in a marketplace, one would create an \"Artistic Medium\" taxonomy and include \"Coloured Pencil\", \"Oil Paint\" or \"Lego Blocks\" as the taxonomies types." ) ?></p>
 		<p><?php printf( __( 'After creating the taxonomy here, you can add elements to it under the %s menu.'), ucfirst( $bid_system->name ) ) ?></p>
@@ -48,18 +48,18 @@ function pp_manage_taxonomies() {
 	        <table class="widefat post fixed">
 				<thead>
 		        	<tr>
-		            	<th><strong><?php _e('Name' );?></strong></th>
-		                <th><strong><?php _e('Label' );?></strong></th>
-		                <th><strong><?php _e('Singular Label' );?></strong></th>
-		            	<th><strong><?php _e('Action' );?></strong></th>
+		            	<th><strong><?php _e('Name', 'prospress' );?></strong></th>
+		                <th><strong><?php _e('Label', 'prospress' );?></strong></th>
+		                <th><strong><?php _e('Singular Label', 'prospress' );?></strong></th>
+		            	<th><strong><?php _e('Action', 'prospress' );?></strong></th>
 		            </tr>
 				</thead>
 				<tfoot>
 		        	<tr>
-		            	<th><strong><?php _e('Name' );?></strong></th>
-		                <th><strong><?php _e('Label' );?></strong></th>
-		                <th><strong><?php _e('Singular Label' );?></strong></th>
-		            	<th><strong><?php _e('Action' );?></strong></th>
+		            	<th><strong><?php _e('Name', 'prospress' );?></strong></th>
+		                <th><strong><?php _e('Label', 'prospress' );?></strong></th>
+		                <th><strong><?php _e('Singular Label', 'prospress' );?></strong></th>
+		            	<th><strong><?php _e('Action', 'prospress' );?></strong></th>
 		            </tr>
 				</tfoot>
 				<tbody>
@@ -80,10 +80,10 @@ function pp_manage_taxonomies() {
 				} ?>
 				</tbody>
 			</table>
-			<p><?php _e( 'Note: Deleting a taxonomy does not delete the posts and taxonomy types associated with it.' ) ?></p>
+			<p><?php _e( 'Note: Deleting a taxonomy does not delete the posts and taxonomy types associated with it.', 'prospress' ) ?></p>
 		<?php
 		}else{
-			echo '<p><a href="' . PP_ADD_TAX_URL . '" class="button add-new-h2">' . __( "Add New" ) . '</a></p>';
+			echo '<p><a href="' . PP_ADD_TAX_URL . '" class="button add-new-h2">' . __( "Add New", 'prospress' ) . '</a></p>';
 		}
 		echo '</div>';
 }
@@ -94,14 +94,14 @@ function pp_add_new_page() {
 	if ( isset( $_GET[ 'edittax' ] ) ) {
 		check_admin_referer('pp_edit_tax');
 
-		$pp_tax_submit_name = __( 'Edit Taxonomy' );
+		$pp_tax_submit_name = __( 'Edit Taxonomy', 'prospress' );
 		$tax_to_edit = $_GET[ 'edittax' ];
 		$pp_taxonomies = get_option( 'pp_custom_taxonomies' );
 		$pp_tax_label = $pp_taxonomies[ $tax_to_edit ][ 'label' ];
 		$pp_singular_label = $pp_taxonomies[ $tax_to_edit ][ 'singular_label' ];
 		$pp_add_or_edit = 'pp_edit_tax';
 	}else{
-		$pp_tax_submit_name = __( 'Create Taxonomy' );
+		$pp_tax_submit_name = __( 'Create Taxonomy', 'prospress' );
 		$tax_to_edit = '';
 		$pp_tax_label = '';
 		$pp_singular_label = '';
@@ -117,7 +117,7 @@ function pp_add_new_page() {
 	<?php 
 		if ( isset( $_GET['pp_error' ] ) && $_GET['pp_error'] == 2 ){
 			echo '<div class="error">';
-			echo __( 'Taxonomy name is required.' );
+			echo __( 'Taxonomy name is required.', 'prospress' );
 			echo '</div>';
 		}
 	?>
@@ -134,26 +134,26 @@ function pp_add_new_page() {
 	                <?php } ?>
 	                <table class="form-table">
 						<tr valign="top">
-							<th scope="row"><?php _e( 'Taxonomy Name' ) ?> <span style="color:red;">*</span></th>
+							<th scope="row"><?php _e( 'Taxonomy Name', 'prospress' ) ?> <span style="color:red;">*</span></th>
 							<td>
 								<input type="text" name="pp_custom_tax" tabindex="21" value="<?php echo esc_attr( $tax_to_edit ); ?>" />
-								<label><?php _e( "Used to define the taxonomy. Make it short and sweet. e.g. medium" ); ?></label>
+								<label><?php _e( "Used to define the taxonomy. Make it short and sweet. e.g. medium", 'prospress' ); ?></label>
 							</td>
 						</tr>
 
 						<tr valign="top">
-							<th scope="row"><?php _e( 'Plural Label' ) ?></th>
+							<th scope="row"><?php _e( 'Plural Label', 'prospress' ) ?></th>
 							<td>
 								<input type="text" name="label" tabindex="22" value="<?php echo esc_attr( $pp_tax_label ); ?>" />
-								<label><?php _e("Taxonomy label.  Used in the admin menu for displaying custom taxonomy. e.g. Artistic Mediums"); ?></label>
+								<label><?php _e("Taxonomy label.  Used in the admin menu for displaying custom taxonomy. e.g. Artistic Mediums", 'prospress' ); ?></label>
 							</td>
 						</tr>
 
 						<tr valign="top">
-							<th scope="row"><?php _e( 'Singular Label' ) ?></th>
+							<th scope="row"><?php _e( 'Singular Label', 'prospress' ) ?></th>
 							<td>
 								<input type="text" name="singular_label" tabindex="23" value="<?php echo esc_attr( $pp_singular_label ); ?>" />
-								<label><?php _e("Used when a singular label is needed. e.g. Artistic Medium"); ?></label>
+								<label><?php _e("Used when a singular label is needed. e.g. Artistic Medium", 'prospress' ); ?></label>
 							</td>
 						</tr>
 					</table>

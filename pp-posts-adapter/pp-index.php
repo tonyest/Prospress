@@ -28,10 +28,10 @@ global $bid_system;
 
 				<h2 class="pp-title"><a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h2>
 				<div class="pp-dates">
-					<div class="pp-publish-date"><?php  _e( 'Published: '); the_time('F jS, Y'); ?></div>
-					<div class="pp-end-date"><?php _e( 'Ending: '); the_post_end_date(); ?></div>
+					<div class="pp-publish-date"><?php  _e( 'Published: ', 'prospress' ); the_time('F jS, Y'); ?></div>
+					<div class="pp-end-date"><?php _e( 'Ending: ', 'prospress' ); the_post_end_date(); ?></div>
 				</div>
-				<div class="pp-price"><?php _e( 'Current Bid: '); $bid_system->the_winning_bid_value(); ?></div>
+				<div class="pp-price"><?php _e( 'Current Bid: ', 'prospress' ); $bid_system->the_winning_bid_value(); ?></div>
 				<?php the_content(); ?>
 
 				<p class="postmetadata">Posted in <?php the_category(', '); ?></p>

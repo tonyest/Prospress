@@ -19,8 +19,8 @@ global $bid_system;
 			<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 			<h2 class="pp-title"><?php the_title();?></h2>
 			<!-- Display the date (November 16th, 2009 format) and a link to other posts by this posts author. -->
-			<div class="pp-end-date"><?php _e('Ending: '); the_post_end_date(); ?></div>
-			<div class="publish-date"><?php _e('Published: ');  the_time('F jS, Y') ?> by <?php the_author_posts_link() ?></div>
+			<div class="pp-end-date"><?php _e('Ending: ', 'prospress' ); the_post_end_date(); ?></div>
+			<div class="publish-date"><?php _e('Published: ', 'prospress' );  the_time('F jS, Y') ?> by <?php the_author_posts_link() ?></div>
 
 			<?php echo $bid_system->bid_form(); ?>
 			<!-- Display the Post's Content in a div box. -->

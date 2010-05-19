@@ -46,7 +46,7 @@ function pp_post_type() {
 	error_log( 'capabilities = ' . print_r( $capabilities, true ) );
 	*/
 	$args = array(
-			'label' => __('Auctions'),
+			'label' => ucfirst( $bid_system->name ),
 			'public' => true,
 			'show_ui' => true,
 			'rewrite' => array( 'slug' => $bid_system->name, 'with_front' => false ),

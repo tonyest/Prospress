@@ -223,9 +223,9 @@ function pp_post_submit_meta_box() {
 
 	//Set up post end date label
 	if ( 'completed' == $post->post_status ) // already finished
-		$end_stamp = __('Ended: <b>%1$s</b>');
+		$end_stamp = __('Ended: <b>%1$s</b>', 'prospress' );
 	else
-		$end_stamp = __('End on: <b>%1$s</b>');
+		$end_stamp = __('End on: <b>%1$s</b>', 'prospress' );
 
 	//Set up post end date and time variables
 	if ( 0 != $post->ID ) {
@@ -244,7 +244,7 @@ function pp_post_submit_meta_box() {
 	<div class="misc-pub-section curtime misc-pub-section-last">
 		<span id="endtimestamp">
 		<?php printf($end_stamp, $end_date); ?></span>
-		<a href="#edit_endtimestamp" class="edit-endtimestamp hide-if-no-js" tabindex='4'><?php ('completed' != $post->post_status) ? _e('Edit') : _e('Extend'); ?></a>
+		<a href="#edit_endtimestamp" class="edit-endtimestamp hide-if-no-js" tabindex='4'><?php ('completed' != $post->post_status) ? _e('Edit', 'prospress' ) : _e('Extend', 'prospress' ); ?></a>
 		<div id="endtimestampdiv" class="hide-if-js">
 			<?php touch_end_time(($action == 'edit'),5); ?>
 		</div>
@@ -324,8 +324,8 @@ function touch_end_time( $edit = 1, $tab_index = 0, $multi = 0 ) {
 ?>
 
 <p>
-	<a href="#edit_endtimestamp" class="save-endtimestamp hide-if-no-js button"><?php _e('OK'); ?></a>
-	<a href="#edit_endtimestamp" class="cancel-endtimestamp hide-if-no-js"><?php _e('Cancel'); ?></a>
+	<a href="#edit_endtimestamp" class="save-endtimestamp hide-if-no-js button"><?php _e('OK', 'prospress' ); ?></a>
+	<a href="#edit_endtimestamp" class="cancel-endtimestamp hide-if-no-js"><?php _e('Cancel', 'prospress' ); ?></a>
 </p>
 <?php
 }
@@ -339,11 +339,11 @@ function pp_posts_admin_head() {
 		wp_enqueue_style( 'post-adapter',  PP_POSTS_URL . '/post-adapter.css' );
 		wp_enqueue_script( 'post-adapter', PP_POSTS_URL . '/post-adapter.dev.js', array('jquery') );
 		wp_localize_script( 'post-adapter', 'ppPostL10n', array(
-			'endedOn' => __('Ended on:'),
-			'endOn' => __('End on:'),
-			'end' => __('End'),
-			'update' => __('Update'),
-			'repost' => __('Repost'),
+			'endedOn' => __('Ended on:', 'prospress' ),
+			'endOn' => __('End on:', 'prospress' ),
+			'end' => __('End', 'prospress' ),
+			'update' => __('Update', 'prospress' ),
+			'repost' => __('Repost', 'prospress' ),
 			));
 	}
 
@@ -365,12 +365,12 @@ function pp_post_columns( $column_headings ) {
 	unset( $column_headings[ 'tags' ] );
 
 	if( strpos( $_SERVER['REQUEST_URI'], 'completed' ) !== false ) {
-		$column_headings[ 'end_date' ] = __( 'Ended' );
-		$column_headings[ 'post_actions' ] = __( 'Action' );
+		$column_headings[ 'end_date' ] = __( 'Ended', 'prospress' );
+		$column_headings[ 'post_actions' ] = __( 'Action', 'prospress' );
 		unset( $column_headings[ 'date' ] );
 	} else {
-		$column_headings[ 'date' ] = __( 'Date Published' );
-		$column_headings[ 'end_date' ] = __( 'Ending' );
+		$column_headings[ 'date' ] = __( 'Date Published', 'prospress' );
+		$column_headings[ 'end_date' ] = __( 'Ending', 'prospress' );
 	}
 
 	return $column_headings;
@@ -387,7 +387,7 @@ function pp_post_columns_custom( $column_name, $post_id ) {
 		$end_time_gmt = get_post_end_time( $post_id );
 
 		if ( $end_time_gmt == false || empty( $end_time_gmt ) ) {
-			$m_time = $human_time = __('Not set.');
+			$m_time = $human_time = __('Not set.', 'prospress' );
 			$time_diff = 0;
 		} else {
 			$human_time = human_interval( $end_time_gmt - time(), 3 );
@@ -402,7 +402,7 @@ function pp_post_columns_custom( $column_name, $post_id ) {
 		if( is_array( $actions ) && !empty( $actions ) ){
 		?>
 			<ul id="completed_actions">
-				<li class="base"><?php _e( 'Take action:' ) ?></li>
+				<li class="base"><?php _e( 'Take action:', 'prospress' ) ?></li>
 			<?php foreach( $actions as $action => $attributes )
 				//$url = add_query_arg ( 'post', $post_id, $attributes['url'] );
 				echo "<li class='completed_action'><a href='" . add_query_arg ( array( 'action' => $action, 'post' => $post_id ) , $attributes['url'] ) . "'>" . $attributes['label'] . "</a></li>";
@@ -410,7 +410,7 @@ function pp_post_columns_custom( $column_name, $post_id ) {
 			</ul>
 		<?php
 		} else {
-			echo '<p>' . __('No action can be taken.') . '</p>';
+			echo '<p>' . __('No action can be taken.', 'prospress' ) . '</p>';
 		}
 	}
 }
@@ -481,7 +481,7 @@ function pp_add_sidebars_widgets(){
 	if( empty( $sort_widget ) ){
 
 		$sort_widget[] = array(
-							'title' => __( 'Sort by:' ),
+							'title' => __( 'Sort by:', 'prospress' ),
 				            'post-desc' => 'on',
 				            'post-asc' => 'on',
 				            'end-asc' => 'on',
@@ -500,7 +500,7 @@ function pp_add_sidebars_widgets(){
 	error_log( '$filter_widget = ' . print_r( $filter_widget, true ) );
 	if( empty( $filter_widget ) ){
 
-		$filter_widget[] = array( 'title' => __( 'Price:' ) );
+		$filter_widget[] = array( 'title' => __( 'Price:', 'prospress' ) );
 
 		$filter_widget['_multiwidget'] = 1;
 		update_option( 'widget_bid-filter', $filter_widget );
@@ -529,9 +529,9 @@ function pp_add_sidebars(){
 	global $bid_system;
 
 	register_sidebar( array (
-		'name' => ucfirst( $bid_system->name ) . ' ' . __( 'Sidebar' ),
+		'name' => ucfirst( $bid_system->name ) . ' ' . __( 'Sidebar', 'prospress' ),
 		'id' => $bid_system->name . '-sidebar',
-		'description' => __( "The sidebar on your Prospress posts." ),
+		'description' => __( "The sidebar on your Prospress posts.", 'prospress' ),
 		'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
 		'after_widget' => "</li>",
 		'before_title' => '<h3 class="widget-title">',
@@ -542,10 +542,10 @@ add_action( 'init', 'pp_add_sidebars' );
 
 function pp_post_sort_options( $pp_sort_options ){
 
-	$pp_sort_options['post-desc'] = __( 'Time: Newly posted' );
-	$pp_sort_options['post-asc'] = __( 'Time: Oldest first' );
-	$pp_sort_options['end-asc'] = __( 'Time: Ending soonest' );
-	$pp_sort_options['end-desc'] = __( 'Time: Ending latest' );
+	$pp_sort_options['post-desc'] = __( 'Time: Newly posted', 'prospress' );
+	$pp_sort_options['post-asc'] = __( 'Time: Oldest first', 'prospress' );
+	$pp_sort_options['end-asc'] = __( 'Time: Ending soonest', 'prospress' );
+	$pp_sort_options['end-desc'] = __( 'Time: Ending latest', 'prospress' );
 	
 	return $pp_sort_options;
 }

@@ -90,7 +90,7 @@ function post_end_time_filter( $date ){
 	if( $end_time == false )
 	 	return $date;
 	
-	$content .= __(' ending on ') . date( 'j F Y, G:i e', $end_time );
+	$content .= __(' ending on ', 'prospress' ) . date( 'j F Y, G:i e', $end_time );
 	//$date .= ' ending on ' . date( 'r', $end_time );
 
 	return $content;
@@ -109,7 +109,7 @@ function get_post_end_countdown( $content ) {
 	global $post;
 
 	if( ( is_home() || is_search() ) && in_the_loop() && get_post_type( $post ) == 'post' && !is_admin() ){
-		$content .= __(' ending in ') . human_interval( wp_next_scheduled( 'schedule_end_post', array( "ID" => $post->ID ) ) - time() );
+		$content .= __(' ending in ', 'prospress' ) . human_interval( wp_next_scheduled( 'schedule_end_post', array( "ID" => $post->ID ) ) - time() );
 	}
 
 	return $content;
@@ -134,7 +134,7 @@ function human_interval( $time_period, $units = 3 ) {
 	);
 
 	if( $time_period <= 0 ) {
-	    return __('now');
+	    return __('now', 'prospress' );
 	}
 
 	// 1st chunk

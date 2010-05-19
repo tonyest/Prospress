@@ -79,13 +79,13 @@ PP_Sort_Query::init();
 class PP_Sort_Widget extends WP_Widget {
 	function PP_Sort_Widget() {
 		/* Widget settings. */
-		$widget_ops = array( 'classname' => 'pp-sort', 'description' => __( 'Allow visitors to sort posts in your Prospress Marketplace.' ) );
+		$widget_ops = array( 'classname' => 'pp-sort', 'description' => __( 'Allow visitors to sort posts in your Prospress Marketplace.', 'prospress' ) );
 
 		/* Widget control settings. */
 		$control_ops = array( 'id_base' => 'pp-sort' );
 
 		/* Create the widget. */
-		$this->WP_Widget( 'pp-sort', __('Prospress Sort'), $widget_ops, $control_ops );
+		$this->WP_Widget( 'pp-sort', __('Prospress Sort', 'prospress' ), $widget_ops, $control_ops );
 	}
 
 	function widget( $args, $instance ) {
@@ -98,7 +98,7 @@ class PP_Sort_Widget extends WP_Widget {
 		echo $before_widget;
 
 		echo $before_title;
-		echo ( $instance['title'] ) ? $instance['title'] : __( 'Sort By:' );
+		echo ( $instance['title'] ) ? $instance['title'] : __( 'Sort By:', 'prospress' );
 		echo $after_title;
 
 		echo '<form id="pp-sort" method="get" action="">';
@@ -109,7 +109,7 @@ class PP_Sort_Widget extends WP_Widget {
 			echo "<option value='".$key."' ".selected($key, $sorted_by, false)."'>".$label."</option>";
 		}
 		echo '</select>';
-		echo '<input type="submit" value="' . __("Sort") . '">';
+		echo '<input type="submit" value="' . __("Sort", 'prospress' ) . '">';
 		foreach( $_GET as $name => $value ){
 			if( $name == 'pp-sort' ) continue;
 			echo '<input type="hidden" name="' . esc_html( $name ) . '" value="' . esc_html( $value ) . '">';
@@ -126,8 +126,8 @@ class PP_Sort_Widget extends WP_Widget {
 
 		$title = $instance['title'];
 		?>
-		<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?> <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" /></label></p>
-		<p><?php _e( 'Sort By:') ?></p>
+		<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:', 'prospress' ); ?> <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" /></label></p>
+		<p><?php _e( 'Sort By:', 'prospress' ) ?></p>
 		<?php
 		foreach( $pp_sort_options as $key => $label ){
 			echo '<p><input class="checkbox" id="' . $this->get_field_id( $key ) . '" name="' . $this->get_field_name( $key ) . '" type="checkbox" ' . checked( $instance[ $key ], "on", false ) . ' /><label for="' . $this->get_field_id( $key ) . '"> ' . $label . '</label></p>';
