@@ -129,7 +129,7 @@ function pp_settings_page(){
  * To make a new currency available for your marketplace, add an array to this variable. 
  * The key for this array must be the currency's ISO 4217 code. The array must contain the currency 
  * name and symbol. 
- * e.g. $currencies['CAD'] = array( 'currency' => __('Canadian Dollar'), 'symbol' => '&#36;' ).
+ * e.g. $currencies['CAD'] = array( 'currency' => __('Canadian Dollar', 'prospress' ), 'symbol' => '&#36;' ).
  * 
  * Once added, the currency will be available for selection from the admin page.
  * 
@@ -139,13 +139,13 @@ function pp_settings_page(){
 global $currencies, $currency, $currency_symbol;
 
 $currencies = array(
-	'AUD' => array( 'currency' => __('Australian Dollar'), 'symbol' => '&#36;' ),
-	'GBP' => array( 'currency' => __('British Pound'), 'symbol' => '&#163;' ),
-	'CNY' => array( 'currency' => __('Chinese Yuan'), 'symbol' => '&#165;' ),
-	'EUR' => array( 'currency' => __('Euro'), 'symbol' => '&#8364;' ),
-	'INR' => array( 'currency' => __('Indian Rupee'), 'symbol' => 'Rs' ),
-	'JPY' => array( 'currency' => __('Japanese Yen'), 'symbol' => '&#165;' ),
-	'USD' => array( 'currency' => __('United States Dollar'), 'symbol' => '&#36;' )
+	'AUD' => array( 'currency' => __('Australian Dollar', 'prospress' ), 'symbol' => '&#36;' ),
+	'GBP' => array( 'currency' => __('British Pound', 'prospress' ), 'symbol' => '&#163;' ),
+	'CNY' => array( 'currency' => __('Chinese Yuan', 'prospress' ), 'symbol' => '&#165;' ),
+	'EUR' => array( 'currency' => __('Euro', 'prospress' ), 'symbol' => '&#8364;' ),
+	'INR' => array( 'currency' => __('Indian Rupee', 'prospress' ), 'symbol' => 'Rs' ),
+	'JPY' => array( 'currency' => __('Japanese Yen', 'prospress' ), 'symbol' => '&#165;' ),
+	'USD' => array( 'currency' => __('United States Dollar', 'prospress' ), 'symbol' => '&#36;' )
 	);
 
 $currency = get_option( 'currency_type' );

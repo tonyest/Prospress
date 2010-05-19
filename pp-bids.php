@@ -30,7 +30,6 @@ if ( !isset($wpdb->bidsmeta) || empty($wpdb->bidsmeta))
 	$wpdb->bidsmeta = $wpdb->prefix . 'bidsmeta';
 
 /* Include required files */
-require_once ( PP_BIDS_DIR . '/pp-bids-functions.php' );
 require_once ( PP_BIDS_DIR . '/pp-bids-templatetags.php' );
 
 /* Hook for requiring custom bid system. */
