@@ -60,7 +60,7 @@ class PP_Market_System {
 	/**
 	 * PHP4 constructor
 	 */
-	function PP_Market_System( $name, $bid_form_title = __("Make a bid"), $bid_button_value = __("Bid now!") ) {
+	function PP_Market_System( $name, $bid_form_title = __("Make a bid", 'prospress' ), $bid_button_value = __("Bid now!") ) {
 		$this->__construct( $name, $bid_form_title, $bid_button_value );
 	}
 
@@ -71,7 +71,7 @@ class PP_Market_System {
 	 * @param string $bid_form_title Optional used as the title text of the bid form. Defaults to "Make a bid".
 	 * @param string $bid_button_value Optional used on the button of the bid form.Defaults to "Bid now!".
 	 */
-	function __construct( $name, $bid_form_title = __("Make a bid"), $bid_button_value = __("Bid now!") ) {
+	function __construct( $name, $bid_form_title = __("Make a bid", 'prospress' ), $bid_button_value = __("Bid now!", 'prospress' ) ) {
 		$this->name = $name;
 		$this->$bid_form_title = $bid_form_title;
 		$this->bid_button_value = $bid_button_value;
@@ -126,7 +126,7 @@ class PP_Market_System {
 	 *
 	 */
 	function view_details(){
-		echo '<p class="no-bid-details">' . __('No details available for this bid.') . '</p>';
+		echo '<p class="no-bid-details">' . __('No details available for this bid.', 'prospress' ) . '</p>';
 		return 'no_details_view';
 	}
 	
@@ -236,10 +236,10 @@ class PP_Market_System {
 	function pp_bid_history_columns_admin(){
 	 	return array(
 			'cb' => '<input type="checkbox" />',
-			'bid_id' => __('Bid ID'),
-			'post_id' => __('Post'),
-			'bid_value' => __('Amount'),
-			'bid_date' => __('Date'),
+			'bid_id' => __('Bid ID', 'prospress' ),
+			'post_id' => __('Post', 'prospress' ),
+			'bid_value' => __('Amount', 'prospress' ),
+			'bid_date' => __('Date', 'prospress' ),
 		);
 	}
 	add_filter('manage_bid_history_columns','pp_bid_history_columns_admin');

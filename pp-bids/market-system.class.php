@@ -20,8 +20,8 @@ class PP_Market_System {
 	function __construct( $name, $bid_form_title = "", $bid_button_value = "", $post_fields = array(), $post_table_columns = array(), $bid_table_headings = array() ) {
 
 		$this->name = (string)$name;
-		$this->bid_form_title = empty( $bid_form_title ) ? __("Make a bid") : $bid_form_title;
-		$this->bid_button_value = empty( $bid_button_value ) ? __("Bid now!") : $bid_button_value;
+		$this->bid_form_title = empty( $bid_form_title ) ? __("Make a bid", 'prospress' ) : $bid_form_title;
+		$this->bid_button_value = empty( $bid_button_value ) ? __("Bid now!", 'prospress' ) : $bid_button_value;
 
 		if( empty( $post_table_columns ) || !is_array( $post_table_columns ) ){
 			$this->post_table_columns = array (	'current_bid' => array( 'title' => 'Winning Bid', 'function' => 'the_winning_bid_value' ),
@@ -111,12 +111,12 @@ class PP_Market_System {
 		$form .= '<h3>' . $this->bid_form_title . '</h3>';
 
 		if ( $the_post->post_status == 'completed' ) {
-			$form .= '<p>' . __( 'This post has ended. Bidding is closed.' ) . '</p>';
+			$form .= '<p>' . __( 'This post has ended. Bidding is closed.', 'prospress' ) . '</p>';
 		} else {
 			$form .= $this->get_bid_message();
 			$form .= '<form id="bid_form" method="post" action="">';
 
-			$form .= ( $post->post_status != 'completed' ) ? $this->bid_form_fields( $post_id ) : '<p>' . __( 'This post has ended. Bidding is closed.' ) . '</p>';
+			$form .= ( $post->post_status != 'completed' ) ? $this->bid_form_fields( $post_id ) : '<p>' . __( 'This post has ended. Bidding is closed.', 'prospress' ) . '</p>';
 
 			/** @TODO Implement bid bar in PP_Market_System::bid_form()*/
 
@@ -149,7 +149,7 @@ class PP_Market_System {
 	// This function is hooked in the constructor and is only called if post fields is defined. 
 	function post_fields_meta_box(){
 		if( function_exists( 'add_meta_box' )) {
-			add_meta_box('pp-bidding-options', __('Bidding Options'), array(&$this, 'post_fields'), $this->name, 'normal', 'core');
+			add_meta_box('pp-bidding-options', __('Bidding Options', 'prospress' ), array(&$this, 'post_fields'), $this->name, 'normal', 'core');
 		}
 	}
 
@@ -219,7 +219,7 @@ class PP_Market_System {
 	function the_max_bid_value( $post_id = '', $echo = true ) {
 		$max_bid = ( empty( $post_id ) ) ? $this->get_max_bid() : $this->get_max_bid( $post_id );
 		
-		$max_bid = ( $max_bid->bid_value ) ? pp_money_format( $max_bid->bid_value ) : __( 'No Bids' );
+		$max_bid = ( $max_bid->bid_value ) ? pp_money_format( $max_bid->bid_value ) : __( 'No Bids', 'prospress' );
 
 		//( $echo ) ? echo $max_bid; : return $max_bid;
 		if ( $echo ) 
@@ -284,7 +284,7 @@ class PP_Market_System {
 	function the_winning_bid_value( $post_id = '', $echo = true ) {
 		$winning_bid = $this->get_winning_bid_value( $post_id );
 
-		$winning_bid = ( $winning_bid == 0 ) ? __( 'No bids.' ) : pp_money_format( $winning_bid );
+		$winning_bid = ( $winning_bid == 0 ) ? __( 'No bids.', 'prospress' ) : pp_money_format( $winning_bid );
 
 		//( $echo ) ? echo $winning_bid : return $winning_bid;
 		if ( $echo ) 
@@ -305,7 +305,7 @@ class PP_Market_System {
 
 		if ( !empty( $winning_bidder ) ){
 			
-			$winning_bidder = ( $winning_bidder == $user_ID) ? __( 'You.' ) : get_userdata( $winning_bidder )->display_name;
+			$winning_bidder = ( $winning_bidder == $user_ID) ? __( 'You.', 'prospress' ) : get_userdata( $winning_bidder )->display_name;
 
 			if ( $echo ) 
 				echo $winning_bidder;
@@ -361,7 +361,7 @@ class PP_Market_System {
 	function the_users_max_bid_value( $user_id = '', $post_id = '', $echo = true ) {
 		$users_max_bid = get_users_max_bid( $user_id, $post_id );
 
-		$users_max_bid = ( $users_max_bid->bid_value ) ? $users_max_bid->bid_value : __('No Bids.');
+		$users_max_bid = ( $users_max_bid->bid_value ) ? $users_max_bid->bid_value : __('No Bids.', 'prospress' );
 
 		if ( $echo ) 
 			echo $users_max_bid;
@@ -386,9 +386,9 @@ class PP_Market_System {
 	 */
 	function the_bid_count( $post_id = '', $echo = true ) {
 		$bid_count = ( empty( $post_id ) ) ? $this->get_bid_count() : $this->get_bid_count( $post_id );
-		//echo ( $bid_count ) ? $bid_count : __( 'No Bids' );
+		//echo ( $bid_count ) ? $bid_count : __( 'No Bids', 'prospress' );
 		
-		$bid_count = ( $bid_count ) ? $bid_count : __( 'No Bids' );
+		$bid_count = ( $bid_count ) ? $bid_count : __( 'No Bids', 'prospress' );
 
 		//( $echo ) ? echo $bid_count : return $bid_count;	
 		if ( $echo ) 
@@ -424,34 +424,34 @@ class PP_Market_System {
 			switch( $message_id ) {
 				case 0:
 				case 1:
-					$message = __("1. You are the highest bidder.");
+					$message = __("1. You are the highest bidder.", 'prospress' );
 					break;
 				case 2:
-					$message = __("2. You have been outbid.");
+					$message = __("2. You have been outbid.", 'prospress' );
 					break;
 				case 3:
-					$message = __("3. You must bid higher than the current winning bid.");
+					$message = __("3. You must bid higher than the current winning bid.", 'prospress' );
 					break;
 				case 4:
-					$message = __("4. Your maximum bid has been increased.");
+					$message = __("4. Your maximum bid has been increased.", 'prospress' );
 					break;
 				case 5:
-					$message = __("5. You can not decrease your max bid.");
+					$message = __("5. You can not decrease your max bid.", 'prospress' );
 					break;
 				case 6:
-					$message = __("6. You have entered a bid equal to your current maximum bid.");
+					$message = __("6. You have entered a bid equal to your current maximum bid.", 'prospress' );
 					break;
 				case 7:
-					$message = __("7. Invalid bid. Please enter a valid number. e.g. 11.23 or 58");
+					$message = __("7. Invalid bid. Please enter a valid number. e.g. 11.23 or 58", 'prospress' );
 					break;
 				case 8:
-					$message = __("8. Invalid bid. Bid nonce did not validate.");
+					$message = __("8. Invalid bid. Bid nonce did not validate.", 'prospress' );
 					break;
 				case 9:
-					$message = __("9. Invalid bid. Bid must be higher than starting price.");
+					$message = __("9. Invalid bid. Bid must be higher than starting price.", 'prospress' );
 					break;
 				case 10:
-					$message = __("10. Bid submitted.");
+					$message = __("10. Bid submitted.", 'prospress' );
 					break;
 			}
 			$message = apply_filters( 'bid_message', $message );
@@ -479,7 +479,7 @@ class PP_Market_System {
 
 		$base_page = "bids";
 
-		$bids_title = apply_filters( 'bids_admin_title', __('Bids') );
+		$bids_title = apply_filters( 'bids_admin_title', __('Bids', 'prospress' ) );
 
 		if ( function_exists( 'add_object_page' ) ) {
 			add_object_page( $bids_title, $bids_title, 'read', $base_page, '', WP_PLUGIN_URL . '/prospress/images/bid-16x16.png' );
@@ -487,8 +487,8 @@ class PP_Market_System {
 			add_menu_page( $bids_title, $bids_title, 'read', $base_page, '', WP_PLUGIN_URL . '/prospress/images/bid-16x16.png' );
 		}
 
-		$winning_bids_title = apply_filters( 'winning_bids_title', __('Winning Bids') );
-		$bid_history_title = apply_filters( 'bid_history_title', __('Bid History') );
+		$winning_bids_title = apply_filters( 'winning_bids_title', __('Winning Bids', 'prospress' ) );
+		$bid_history_title = apply_filters( 'bid_history_title', __('Bid History', 'prospress' ) );
 
 	    // Add submenu items to the bids top-level menu
 		if (function_exists('add_submenu_page')){
@@ -516,7 +516,7 @@ class PP_Market_System {
 		
 		error_log('In admin_history');
 
-		$this->print_admin_bids_table( $bids, __('Bid History'), 'bid-history' );
+		$this->print_admin_bids_table( $bids, __('Bid History', 'prospress' ), 'bid-history' );
 	}
 
 	function winning_history() {
@@ -532,7 +532,7 @@ class PP_Market_System {
 
 		$bids = apply_filters( 'winning_history_bids', $bids );
 
-		$this->print_admin_bids_table( $bids, __('Winning Bids'), 'bids' );
+		$this->print_admin_bids_table( $bids, __('Winning Bids', 'prospress' ), 'bids' );
 	}
 
 	function create_bid_page_query( $bid_status = '' ){
@@ -682,8 +682,8 @@ class PP_Market_System {
 								</a></td>
 								<td><?php echo ucfirst( $post_status ); ?></td>
 								<td><?php echo ucfirst( $bid[ 'bid_status' ] ); ?></td>
-								<td><?php echo mysql2date( __( 'g:ia d M Y' ), $bid[ 'bid_date' ] ); ?></td>
-								<td><?php echo mysql2date( __( 'g:ia d M Y' ), $post_end_date ); ?></td>
+								<td><?php echo mysql2date( __( 'g:ia d M Y' , 'prospress' ), $bid[ 'bid_date' ] ); ?></td>
+								<td><?php echo mysql2date( __( 'g:ia d M Y' , 'prospress' ), $post_end_date ); ?></td>
 								<?php if( strpos( $_SERVER['REQUEST_URI'], 'bids' ) !== false ){
 									$actions = apply_filters( 'winning_bid_actions', array(), $post_id );
 									echo '<td>';
@@ -707,7 +707,7 @@ class PP_Market_System {
 							$style = ( 'alternate' == $style ) ? '' : 'alternate';
 						}
 					} else {
-						echo '<tr><td colspan="5">' . __('No bids.') . '</td></tr>';
+						echo '<tr><td colspan="5">' . __('No bids.', 'prospress' ) . '</td></tr>';
 					}
 				?>
 				</tbody>
@@ -727,7 +727,7 @@ class PP_Market_System {
 		$column_headings = $this->bid_table_headings;
 		
 		if( strpos( $_SERVER['REQUEST_URI'], 'bids' ) !== false )
-			$column_headings[ 'bid_actions' ] = __( 'Action' );
+			$column_headings[ 'bid_actions' ] = __( 'Action', 'prospress' );
 
 		return $column_headings;
 	}
@@ -757,11 +757,11 @@ class PP_Market_System {
 	function enqueue_bid_form_scripts(){
   		wp_enqueue_script( 'bid-form-ajax', PP_BIDS_URL . '/bid-form-ajax.js', array( 'jquery' ) );
 		wp_localize_script( 'bid-form-ajax', 'pppostL10n', array(
-			'endedOn' => __('Ended on:'),
-			'endOn' => __('End on:'),
-			'end' => __('End'),
-			'update' => __('Update'),
-			'repost' => __('Repost'),
+			'endedOn' => __('Ended on:', 'prospress' ),
+			'endOn' => __('End on:', 'prospress' ),
+			'end' => __('End', 'prospress' ),
+			'update' => __('Update', 'prospress' ),
+			'repost' => __('Repost', 'prospress' ),
 			));
 	}
 
@@ -770,8 +770,8 @@ class PP_Market_System {
 	}
 
 	function add_sort_options( $pp_sort_options ){
-		$pp_sort_options['price-asc'] = __( 'Price: low to high' );
-		$pp_sort_options['price-desc'] = __( 'Price: high to low' );
+		$pp_sort_options['price-asc'] = __( 'Price: low to high', 'prospress' );
+		$pp_sort_options['price-desc'] = __( 'Price: high to low', 'prospress' );
 
 		return $pp_sort_options;
 	}

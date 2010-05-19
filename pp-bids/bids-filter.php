@@ -6,8 +6,8 @@
 class Bid_Filter_Widget extends WP_Widget {
 
 	function Bid_Filter_Widget() {
-		$widget_ops = array('description' => __('Filter Prospress Posts by high & low price.') );
-		$this->WP_Widget('bid-filter', __('Bid Price Filter'), $widget_ops);
+		$widget_ops = array('description' => __('Filter Prospress Posts by high & low price.', 'prospress' ) );
+		$this->WP_Widget('bid-filter', __('Bid Price Filter', 'prospress' ), $widget_ops);
 	}
 
 	function widget( $args, $instance ) {
@@ -32,9 +32,9 @@ class Bid_Filter_Widget extends WP_Widget {
 		echo '<form action="" method="get">';
 		echo $currency_symbol . ' ';
 		echo '<input type="text" id="p-min" name="p-min" size="5" value="' . esc_attr($min) . '"> ';
-		echo __('to') . ' ';
+		echo __('to', 'prospress' ) . ' ';
 		echo '<input type="text" id="p-max" name="p-max" size="5" value="' . esc_attr($max) . '"> ';
-		echo '<input type="submit" id="bid-filter" value="' . __('Filter') . '">';
+		echo '<input type="submit" id="bid-filter" value="' . __('Filter', 'prospress' ) . '">';
 		foreach( $_GET as $name => $value ){
 			if( $name == 'p-min' || $name == 'p-max' ) continue;
 			echo '<input type="hidden" name="' . esc_html( $name ) . '" value="' . esc_html( $value ) . '">';
