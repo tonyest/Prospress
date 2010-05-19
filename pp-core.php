@@ -93,6 +93,8 @@ function pp_settings_page(){
 		<?php screen_icon( 'prospress' ); ?>
 		<h2><?php _e( 'Prospress Settings' ) ?></h2>
 		<form action="" method="post">
+			<h3><?php _e( 'Currency' )?></h3>
+			<p><?php _e( 'Please choose a currency for transactions in your marketplace.' ); ?></p>
 			<table class='form-table'>
 				<tr>
 					<th scope="row"><?php _e('Currency:'); ?></th>
@@ -157,52 +159,6 @@ function pp_maybe_install(){
 	if( !get_option( 'currency_sign_location' ) )
 		update_option( 'currency_sign_location', '1' );
 }
-
-
-// Administration functions for choosing default currency (may be set by locale in future, like number format is already)
-function pp_add_admin_pages(){
-	if ( function_exists( 'add_settings_section' ) ){
-		add_settings_section( 'currency', 'Currency', 'pp_currency_settings_section', 'general' );
-	} else {
-		$bid_settings_page = add_submenu_page( 'options-general.php', 'Currency', 'Currency', 58, 'currency', 'pp_currency_settings_section' );
-	}
-}
-//add_action( 'admin_menu', 'pp_add_admin_pages' );
-
-
-// Displays the fields for handling currency default options
-function pp_currency_settings_section() {
-	global $currencies;
-	?>
-	<h3><?php _e( 'Currency' )?></h3>
-	<p><?php _e( 'Please choose a currency for your marketplace.' ); ?></p>
-	<table class='form-table'>
-		<tr>
-			<th scope="row"><?php _e('Currency Type'); ?>:</th>
-			<td>
-				<select id='currency_type' name='currency_type'>
-				<?php
-				$currency_type = get_option( 'currency_type' );
-				foreach( $currencies as $code => $currency ) {
-				?>
-					<option value='<?php echo $code; ?>' <?php selected( $currency_type, $code ); ?> >
-						<?php echo $currency[ 'currency' ]; ?> (<?php echo $code . ', ' . $currency['symbol']; ?>)
-					</option>
-		<?php	} ?>
-				</select>
-			</td>
-		</tr>
-	</table>
-<?php
-}
-//Moved into core
-//add_action( 'pp_core_settings_page', 'pp_currency_settings_section' );
-
-function currency_admin_option( $whitelist_options ) {
-	$whitelist_options['general'][] = 'currency_type';
-	return $whitelist_options;
-}
-add_filter( 'whitelist_options', 'currency_admin_option' );
 
 /** 
  * Function for transforming a number into a monetary formatted number, complete with currency symbol.

@@ -465,17 +465,7 @@ function pp_feedback_rows($feedback = ''){
 	
 }
 
-// Administration functions for choosing default currency (may be set by locale in future, like number format is already)
-function pp_add_feedback_admin_option(){
-	if ( function_exists( 'add_settings_section' ) ){
-		add_settings_section( 'feedback', 'Feedback', 'pp_feedback_settings_section', 'general' );
-	} else {
-		$bid_settings_page = add_submenu_page( 'options-general.php', 'Feedback', 'Feedback', 57, 'feedback', 'pp_feedback_settings_section' );
-	}
-}
-//add_action( 'admin_menu', 'pp_add_feedback_admin_option' );
-
-// Displays the fields for handling currency default options
+// Displays the fields for handling feedback options in the Core Prospress Settings admin page.
 function pp_feedback_settings_section() { ?>
 	<table class='form-table'>
 		<tr>
@@ -493,13 +483,10 @@ function pp_feedback_settings_section() { ?>
 add_action( 'pp_core_settings_page', 'pp_feedback_settings_section' );
 
 function pp_feedback_admin_option( $whitelist_options ) {
-
 	$whitelist_options[ 'general' ][] = 'edit_feedback';
-	//$whitelist_options[ 'edit_feedback' ] = '';
 
 	return $whitelist_options;
 }
-//add_filter( 'whitelist_options', 'pp_feedback_admin_option' );
 add_filter( 'pp_options_whitelist', 'pp_feedback_admin_option' );
 
 //**************************************************************************************************//
