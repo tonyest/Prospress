@@ -174,11 +174,6 @@ function _pp_bid_form_action() {
 	echo pp_get_bid_form_action();
 }
 
-/** MOVED TO BID CLASS
- */
-function _pp_get_bid_form_action() {
-	return apply_filters( 'pp_bid_form_action', PP_BIDS_URL . '/bid-post.php' );
-}
 
 /** MOVED TO BID CLASS
  */

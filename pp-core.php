@@ -91,13 +91,13 @@ function pp_settings_page(){
 	?>
 	<div class="wrap">
 		<?php screen_icon( 'prospress' ); ?>
-		<h2><?php _e( 'Prospress Settings' ) ?></h2>
+		<h2><?php _e( 'Prospress Settings', 'prospress' ) ?></h2>
 		<form action="" method="post">
-			<h3><?php _e( 'Currency' )?></h3>
-			<p><?php _e( 'Please choose a currency for transactions in your marketplace.' ); ?></p>
+			<h3><?php _e( 'Currency', 'prospress' )?></h3>
+			<p><?php _e( 'Please choose a currency for transactions in your marketplace.', 'prospress' ); ?></p>
 			<table class='form-table'>
 				<tr>
-					<th scope="row"><?php _e('Currency:'); ?></th>
+					<th scope="row"><?php _e('Currency:', 'prospress' ); ?></th>
 					<td>
 						<select id='currency_type' name='currency_type'>
 						<?php $currency_type = get_option( 'currency_type' );

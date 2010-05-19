@@ -113,19 +113,19 @@ add_action('wpmu_activate_user', 'pp_register_user_with_blog', 10, 3);
 // Print Automatic Signup options with the 'Site Admin | Options' menu
 function pp_targetted_signup_options(){
 	?>
-	<h3><?php _e('Automatic Signup Settings') ?></h3> 
+	<h3><?php _e('Automatic Signup Settings', 'prospress' ) ?></h3> 
 	<table class="form-table">
 
 		<tr valign="top">
 			<th scope="row"><?php _e("Make Primary") ?></th> 
 			<td>
-				<input name="change_primary_blog" type="radio" id="change_primary_blog_yes" value='1' <?php echo get_site_option('change_primary_blog') == 1 ? 'checked="checked"' : ''; ?> /> <?php _e('Yes'); ?><br />
-				<input name="change_primary_blog" type="radio" id="change_primary_blog_no" value='0' <?php echo get_site_option('change_primary_blog') == 0 ? 'checked="checked"' : ''; ?> /> <?php _e('No'); ?><br />
+				<input name="change_primary_blog" type="radio" id="change_primary_blog_yes" value='1' <?php echo get_site_option('change_primary_blog') == 1 ? 'checked="checked"' : ''; ?> /> <?php _e('Yes', 'prospress' ); ?><br />
+				<input name="change_primary_blog" type="radio" id="change_primary_blog_no" value='0' <?php echo get_site_option('change_primary_blog') == 0 ? 'checked="checked"' : ''; ?> /> <?php _e('No', 'prospress' ); ?><br />
 				<?php _e("Make the referring blog the user's primary blog. By default, a user's primary blog is the dashboard blog.") ?>
 			</td> 
 		</tr>
 		<tr valign="top">
-			<th scope="row"><?php _e('User Default Role on Referral Blog') ?></th> 
+			<th scope="row"><?php _e('User Default Role on Referral Blog', 'prospress' ) ?></th> 
 			<td>
 				<select name="default_user_role_ref" id="role_ref">
 					<?php
@@ -139,8 +139,8 @@ function pp_targetted_signup_options(){
 		<tr valign="top">
 			<th scope="row"><?php _e("Add New Users to All Blogs") ?></th> 
 			<td>
-				<input name="add_to_all_blogs" type="radio" id="add_to_all_blogs_yes" value='1' <?php echo get_site_option('add_to_all_blogs') == 1 ? 'checked="checked"' : ''; ?> disabled="disabled" /> <?php _e('Yes (disabled)'); ?><br />
-				<input name="add_to_all_blogs" type="radio" id="add_to_all_blogs_no" value='0' <?php echo get_site_option('add_to_all_blogs') == 0 ? 'checked="checked"' : ''; ?> /> <?php _e('No'); ?><br />
+				<input name="add_to_all_blogs" type="radio" id="add_to_all_blogs_yes" value='1' <?php echo get_site_option('add_to_all_blogs') == 1 ? 'checked="checked"' : ''; ?> disabled="disabled" /> <?php _e('Yes (disabled)', 'prospress' ); ?><br />
+				<input name="add_to_all_blogs" type="radio" id="add_to_all_blogs_no" value='0' <?php echo get_site_option('add_to_all_blogs') == 0 ? 'checked="checked"' : ''; ?> /> <?php _e('No', 'prospress' ); ?><br />
 				<?php _e("Add new users to all blogs in your WPMU installation.") ?>
 			</td> 
 		</tr>

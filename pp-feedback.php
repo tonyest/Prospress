@@ -467,9 +467,11 @@ function pp_feedback_rows($feedback = ''){
 
 // Displays the fields for handling feedback options in the Core Prospress Settings admin page.
 function pp_feedback_settings_section() { ?>
+	<h3><?php _e( 'Feedback' , 'prospress' )?></h3>
+	<p><?php _e( 'You can allow a trader to modify feedback items she has imparted. Allowing feedback to be modified helps make feedback more accurate, as circumstances change and mistakes are made, even after feedback has been provided.' , 'prospress' ); ?></p>
 	<table class='form-table'>
 		<tr>
-			<th scope="row"><?php echo _e('Allow traders to edit feedback');?>:</th>
+			<th scope="row"><?php echo _e('Allow feedback to be edited' , 'prospress' );?>:</th>
 			<td>
 				<?php
 				$edit_feedback = get_option( 'edit_feedback' );
@@ -629,11 +631,11 @@ function pp_feedback_dashboard_widget() {
 		$latest = pp_get_latest_feedback( $user_ID );
 
 		echo "\n\t<p>";
-		_e( 'Recent Comment: ' );
+		_e( 'Recent Comment: ', 'prospress' );
 		echo '<quote class="sub">' . $latest['feedback_comment'] . '</quote>';
 		echo '</p>';
 		echo "\n\t<p>";
-		_e( 'From: ' );
+		_e( 'From: ', 'prospress' );
 		echo get_userdata( $latest['from_user_id'] )->user_nicename;
 		echo '</p>';
 		echo "\n\t".'<br class="clear" /></div>';

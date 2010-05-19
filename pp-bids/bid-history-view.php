@@ -1,6 +1,6 @@
 <div class="wrap feedback-history">
 	<?php screen_icon(); ?>
-	<h2><?php _e('Bid History'); ?></h2>
+	<h2><?php _e('Bid History', 'prospress' ); ?></h2>
 
 	<table class="widefat fixed" cellspacing="0">
 		<thead>
