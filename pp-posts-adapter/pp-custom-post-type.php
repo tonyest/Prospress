@@ -24,7 +24,7 @@ function pp_post_type() {
 	    'taxonomies' => array(),
 	    'show_ui' => null
 	);
-
+	/*
 	$default_capabilities = array(
 		'edit_post' => 'edit_post',
 		'edit_posts' => 'edit_posts',
@@ -44,7 +44,7 @@ function pp_post_type() {
 
 	$capabilities = array_merge( $default_capabilities, $bid_system_capabilities );
 	error_log( 'capabilities = ' . print_r( $capabilities, true ) );
-
+	*/
 	$args = array(
 			'label' => __('Auctions'),
 			'public' => true,

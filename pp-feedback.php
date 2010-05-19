@@ -473,7 +473,7 @@ function pp_add_feedback_admin_option(){
 		$bid_settings_page = add_submenu_page( 'options-general.php', 'Feedback', 'Feedback', 57, 'feedback', 'pp_feedback_settings_section' );
 	}
 }
-add_action( 'admin_menu', 'pp_add_feedback_admin_option' );
+//add_action( 'admin_menu', 'pp_add_feedback_admin_option' );
 
 // Displays the fields for handling currency default options
 function pp_feedback_settings_section() { ?>
@@ -490,13 +490,17 @@ function pp_feedback_settings_section() { ?>
 	</table>
 <?php
 }
+add_action( 'pp_core_settings_page', 'pp_feedback_settings_section' );
 
-function feedback_admin_option( $whitelist_options ) {
-	$whitelist_options['general'][] = 'edit_feedback';
+function pp_feedback_admin_option( $whitelist_options ) {
+
+	$whitelist_options[ 'general' ][] = 'edit_feedback';
+	//$whitelist_options[ 'edit_feedback' ] = '';
 
 	return $whitelist_options;
 }
-add_filter( 'whitelist_options', 'feedback_admin_option' );
+//add_filter( 'whitelist_options', 'pp_feedback_admin_option' );
+add_filter( 'pp_options_whitelist', 'pp_feedback_admin_option' );
 
 //**************************************************************************************************//
 // ADD DASHBOARD WIDGETS 

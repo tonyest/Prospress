@@ -52,7 +52,8 @@ function pp_add_core_admin_menu() {
 	global $pp_core_admin_page;
 
 	/* Add the administration tab under the "Site Admin" tab for site administrators */
-	$pp_core_admin_page = add_menu_page( __( 'Prospress', 'prospress' ), __( 'Prospress', 'prospress' ), 10, 'Prospress', 'pp_settings_page', PP_PLUGIN_URL . '/images/prospress-16x16.png', 3 );
+	$pp_core_admin_page = add_menu_page( __( 'Prospress', 'prospress' ), __( 'Prospress', 'prospress' ), 10, 'Prospress', '', PP_PLUGIN_URL . '/images/prospress-16x16.png', 3 );
+	$pp_core_settings_page = add_submenu_page( 'Prospress', __( 'Prospress Settings', 'prospress' ), __( 'Settings', 'prospress' ), 10, 'Prospress', 'pp_settings_page' );
 }
 add_action( 'admin_menu', 'pp_add_core_admin_menu' );
 
@@ -60,14 +61,61 @@ function pp_add_icon_css() {
 
 	if ( strpos( $_SERVER['REQUEST_URI'], 'Prospress' ) !== false ||  strpos( $_SERVER['REQUEST_URI'], 'custom_taxonomy_manage' ) !== false ) {
 		echo "<style type='text/css'>";
-		echo "#icon-prospress{background: url(" . PP_PLUGIN_URL . "/images/prospress-30x30.png) no-repeat center transparent}";
+		echo "#icon-prospress{background: url(" . PP_PLUGIN_URL . "/images/prospress-35x35.png) no-repeat center transparent}";
 		echo "</style>";
 	}
 }
 add_action( 'admin_head', 'pp_add_icon_css' );
 
 function pp_settings_page(){
-	echo "<h1>Prospress Settings</h1>";
+	global $currencies;
+	error_log('pp_settings_page being called.');
+	error_log('POST = ' . print_r( $_POST, true ) );
+	if( isset( $_POST[ 'submit' ] ) && $_POST[ 'submit' ] == 'Save' ){
+
+		$pp_options_whitelist = apply_filters( 'pp_options_whitelist', array( 'general' => array( 'currency_type' ) ) );
+
+		error_log( "pp_options_whitelist = " . print_r( $pp_options_whitelist, true ) );
+		foreach ( $pp_options_whitelist[ 'general' ] as $option ) {
+			$option = trim($option);
+			$value = null;
+			if ( isset($_POST[$option]) )
+				$value = $_POST[$option];
+			if ( !is_array($value) )
+				$value = trim($value);
+			$value = stripslashes_deep($value);
+			error_log( "value = " . print_r( $value, true ) );
+			update_option($option, $value);
+		}
+	}
+	?>
+	<div class="wrap">
+		<?php screen_icon( 'prospress' ); ?>
+		<h2><?php _e( 'Prospress Settings' ) ?></h2>
+		<form action="" method="post">
+			<table class='form-table'>
+				<tr>
+					<th scope="row"><?php _e('Currency:'); ?></th>
+					<td>
+						<select id='currency_type' name='currency_type'>
+						<?php $currency_type = get_option( 'currency_type' );
+						foreach( $currencies as $code => $currency ) {
+						?>
+							<option value='<?php echo $code; ?>' <?php selected( $currency_type, $code ); ?> >
+								<?php echo $currency[ 'currency' ]; ?> (<?php echo $code . ', ' . $currency['symbol']; ?>)
+							</option>
+				<?php	} ?>
+						</select>
+					</td>
+				</tr>
+			</table>
+		<?php do_action( 'pp_core_settings_page' ); ?>
+		<p class="submit">
+			<input type="submit" value="Save" class="button-primary" name="submit">
+		</p>
+		</form>
+	</div>
+	<?php
 }
 
 /************************************************************************************************************************/
@@ -119,14 +167,15 @@ function pp_add_admin_pages(){
 		$bid_settings_page = add_submenu_page( 'options-general.php', 'Currency', 'Currency', 58, 'currency', 'pp_currency_settings_section' );
 	}
 }
-add_action( 'admin_menu', 'pp_add_admin_pages' );
+//add_action( 'admin_menu', 'pp_add_admin_pages' );
 
 
 // Displays the fields for handling currency default options
 function pp_currency_settings_section() {
 	global $currencies;
 	?>
-	<p><?php _e('Please choose a default currency and where the symbol for this currency should be positioned.'); ?></p>
+	<h3><?php _e( 'Currency' )?></h3>
+	<p><?php _e( 'Please choose a currency for your marketplace.' ); ?></p>
 	<table class='form-table'>
 		<tr>
 			<th scope="row"><?php _e('Currency Type'); ?>:</th>
@@ -146,6 +195,8 @@ function pp_currency_settings_section() {
 	</table>
 <?php
 }
+//Moved into core
+//add_action( 'pp_core_settings_page', 'pp_currency_settings_section' );
 
 function currency_admin_option( $whitelist_options ) {
 	$whitelist_options['general'][] = 'currency_type';
