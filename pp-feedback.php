@@ -174,11 +174,11 @@ function pp_edit_feedback( $post_id, $blog_ID = '' ) {
 	$is_winning_bidder = $bid_system->is_winning_bidder( $from_user_id, $post_id );
 
 	if ( ( !$is_winning_bidder && $from_user_id != $post->post_author ) || NULL == $post->post_status || 'completed' != $post->post_status ) {
-		wp_die( __('You can not leave feedback on this post.') );
+		wp_die( __('You can not leave feedback on this post.', 'prospress' ) );
 	} elseif ( pp_has_feedback( $post_id, $from_user_id ) ) { //user already left feedback for post
 		$feedback = pp_get_feedback_item( $post_id, $from_user_id );
 		if( get_option( 'edit_feedback' ) != 'true' ){
-			$feedback[ 'disabled' ] = __( 'disabled="disabled"' );
+			$feedback[ 'disabled' ] = 'disabled="disabled"';
 			$feedback[ 'title' ] = __( 'Feedback', 'prospress' );
 		} else {
 			$feedback[ 'title' ] = __( 'Edit Feedback', 'prospress' );
@@ -222,15 +222,15 @@ function pp_feedback_form_submit( $feedback ) {
 
 	if ( ( !$is_winning_bidder && $feedback[ 'from_user_id' ] != $post->post_author ) || NULL == $post->post_status || 'completed' != $post->post_status ) {
 		if( !$is_winning_bidder )
-			wp_die( __( 'You can not leave feedback on this post. You are not the winning bidder.' ) );
+			wp_die( __( 'You can not leave feedback on this post. You are not the winning bidder.', 'prospress' ) );
 		if( $feedback[ 'from_user_id' ] != $post->post_author)
-			wp_die( __( 'You can not leave feedback on this post. As you are not the post author.' ) );
+			wp_die( __( 'You can not leave feedback on this post. As you are not the post author.', 'prospress' ) );
 		if( NULL == $post->post_status )
-			wp_die( __( "You can not leave feedback on this post as it's status is null" ) );
+			wp_die( __( "You can not leave feedback on this post as it's status is null", 'prospress' ) );
 		if( 'completed' != $post->post_status )
-			wp_die( __( "You can not leave feedback on this post as it's status is not set to completed." ) );
+			wp_die( __( "You can not leave feedback on this post as it's status is not set to completed.", 'prospress' ) );
 
-		wp_die( __('You can not leave feedback on this post.') );
+		wp_die( __('You can not leave feedback on this post.', 'prospress' ) );
 	}
 
 	$feedback[ 'feedback_status' ] = 'publish';
@@ -336,7 +336,7 @@ function pp_feedback_action( $actions, $post_id ) {
 	if ( !$is_winning_bidder && $user_ID != $post->post_author ) { // admin viewing all ended posts
 
 		if( pp_has_feedback( $post_id ) ){
-			$actions[ 'view' ] = array('label' => __( 'View Feedback' ), 
+			$actions[ 'view' ] = array('label' => __( 'View Feedback', 'prospress' ), 
 										'url' => add_query_arg( array( 'post' => $post_id, 'blog' => $blog_id ), $feedback_url ) );
 		}
 		return $actions;
@@ -377,19 +377,19 @@ function pp_feedback_history_admin( $user_id ) {
 			$title = sprintf( __( 'Feedback for %1$s on Post %2$d', 'prospress' ), get_userdata( $_GET[ 'uid' ] )->user_nicename, $_GET[ 'post' ] );
 		} else if( $_GET[ 'filter' ] == 'given' ){
 			$feedback = pp_get_feedback_user( $_GET[ 'uid' ], array( 'given' => 'true' ) );
-			$title = sprintf( __( 'Feedback Given by %s' ), get_userdata( $_GET[ 'uid' ] )->user_nicename );
+			$title = sprintf( __( 'Feedback Given by %s', 'prospress' ), get_userdata( $_GET[ 'uid' ] )->user_nicename );
 		} else {
 			$feedback = pp_get_feedback_user( $_GET[ 'uid' ], array( 'received' => 'true' ) );
-			$title = sprintf( __( 'Feedback Received by %s' ), get_userdata( $_GET[ 'uid' ] )->user_nicename );
+			$title = sprintf( __( 'Feedback Received by %s', 'prospress' ), get_userdata( $_GET[ 'uid' ] )->user_nicename );
 		}
 		$user_id = $_GET[ 'uid' ];
 	} else if( isset( $_GET[ 'post' ] ) ){
 		$_GET[ 'post' ] = (int)$_GET[ 'post' ];
 		$feedback = pp_get_feedback_user( $user_id, array( 'post' => $_GET[ 'post' ] ) );
-		$title = __( 'Feedback on Post ' . $_GET[ 'post' ] );
+		$title = sprintf( __( 'Feedback on Post ', 'prospress' ), $_GET[ 'post' ] );
 	} else if( $_GET[ 'filter' ] == 'given' ){
 		$feedback = pp_get_feedback_user( $user_id, array( 'given' => 'true' ) );
-		$title = __( "Feedback You've Given" );
+		$title = __( "Feedback You've Given" , 'prospress' );
 	} else {
 		$feedback = pp_get_feedback_user( $user_id, array( 'received' => 'true' ) );
 		$title = __( 'Your Feedback', 'prospress' );
@@ -407,7 +407,7 @@ function pp_users_feedback_link( $user_id ){
 function pp_feedback_columns_admin(){
 
 	$feedback_columns = array( 'cb' => '<input type="checkbox" />' );
-	
+
  	if( strpos( $_SERVER['REQUEST_URI'], 'given' ) !== false ) {
 		$feedback_columns[ 'for_user_id' ] = __('For', 'prospress' );
 	} else {
