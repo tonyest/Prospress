@@ -482,9 +482,9 @@ class PP_Market_System {
 		$bids_title = apply_filters( 'bids_admin_title', __('Bids', 'prospress' ) );
 
 		if ( function_exists( 'add_object_page' ) ) {
-			add_object_page( $bids_title, $bids_title, 'read', $base_page, '', WP_PLUGIN_URL . '/prospress/images/bid-16x16.png' );
+			add_object_page( $bids_title, $bids_title, 'read', $base_page, '', WP_PLUGIN_URL . '/prospress/images/menu.png' );
 		} elseif ( function_exists( 'add_menu_page' ) ) {
-			add_menu_page( $bids_title, $bids_title, 'read', $base_page, '', WP_PLUGIN_URL . '/prospress/images/bid-16x16.png' );
+			add_menu_page( $bids_title, $bids_title, 'read', $base_page, '', WP_PLUGIN_URL . '/prospress/images/menu.png' );
 		}
 
 		$winning_bids_title = apply_filters( 'winning_bids_title', __('Winning Bids', 'prospress' ) );

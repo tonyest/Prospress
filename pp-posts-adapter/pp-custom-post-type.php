@@ -50,16 +50,15 @@ function pp_post_type() {
 			'public' => true,
 			'show_ui' => true,
 			'rewrite' => array( 'slug' => $bid_system->name, 'with_front' => false ),
-		    'capability_type' => 'post',
-			//'capabilities' => $capabilities, @TODO when WP3.0 bugs are fixed come back to this.
             'supports' => array(
 							'title',
 							'editor',
 							'thumbnail',
 							'post-thumbnails',
 							'comments',
-							'revisions')
-							);
+							'revisions'),
+			'menu_position' => 20
+	);
 
 	register_post_type( $bid_system->name, $args );
 
