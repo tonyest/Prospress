@@ -10,10 +10,10 @@ class PP_Sort_Query {
 	}
 
 	static function add_filters( $obj ) {
-		global $bid_system;
+		global $market_system;
 
 		// Don't touch the main query or queries for non-Prospress posts
-		if ( $GLOBALS['wp_query'] == $obj || $obj->query_vars['post_type'] != $bid_system->name )
+		if ( $GLOBALS['wp_query'] == $obj || $obj->query_vars['post_type'] != $market_system->name )
 			return;
 
 		add_filter('posts_orderby', array(__CLASS__, 'posts_orderby'));
@@ -108,7 +108,7 @@ class PP_Sort_Widget extends WP_Widget {
 				continue;
 			echo "<option value='".$key."' ".selected($key, $sorted_by, false)."'>".$label."</option>";
 		}
-		echo '</select>';
+		echo '</selec$market_systemt>';
 		echo '<input type="submit" value="' . __("Sort", 'prospress' ) . '">';
 		foreach( $_GET as $name => $value ){
 			if( $name == 'pp-sort' ) continue;

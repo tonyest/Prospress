@@ -9,7 +9,7 @@ Template Name: Auctions Index
  * @subpackage Theme
  * @since 0.7
  */
-global $bid_system;
+global $market_system;
 ?>
 <link rel="stylesheet" type="text/css" media="all" href="<?php echo PP_CORE_URL . '/prospress.css'; ?>">
 <?php get_header(); ?>
@@ -21,8 +21,8 @@ global $bid_system;
 			<p><?php the_content(); ?></p>
 		<?php endwhile; ?>
 		<?php error_log( 'ended Auctions page query, starting next query.' ); ?>
-			<?php $loop = new WP_Query( array( 'post_type' => $bid_system->name ) ); ?>
-			<?php //query_posts( array( 'post_type' => $bid_system->name ) ); ?>
+			<?php $loop = new WP_Query( array( 'post_type' => $market_system->name ) ); ?>
+			<?php //query_posts( array( 'post_type' => $market_system->name ) ); ?>
 			<?php if ( $loop->have_posts() ) : while ( $loop->have_posts() ) : $loop->the_post(); ?>
 			<?php //if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
 
@@ -31,7 +31,7 @@ global $bid_system;
 					<div class="pp-publish-date"><?php  _e( 'Published: ', 'prospress' ); the_time('F jS, Y'); ?></div>
 					<div class="pp-end-date"><?php _e( 'Ending: ', 'prospress' ); the_post_end_date(); ?></div>
 				</div>
-				<div class="pp-price"><?php _e( 'Current Bid: ', 'prospress' ); $bid_system->the_winning_bid_value(); ?></div>
+				<div class="pp-price"><?php _e( 'Current Bid: ', 'prospress' ); $market_system->the_winning_bid_value(); ?></div>
 				<?php the_content(); ?>
 
 				<p class="postmetadata">Posted in <?php the_category(', '); ?></p>
@@ -46,7 +46,7 @@ global $bid_system;
 
 	<div id="pp-sidebar" class="pp-sidebar">
 		<ul class="xoxo">
-			<?php dynamic_sidebar( $bid_system->name . '-sidebar' ); ?>
+			<?php dynamic_sidebar( $market_system->name . '-sidebar' ); ?>
 		</ul>
 	</div>
 <?php get_footer(); ?>

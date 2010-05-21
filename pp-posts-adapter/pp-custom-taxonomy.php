@@ -15,7 +15,7 @@ function pp_taxonomy_menus() {
 add_action('admin_menu', 'pp_taxonomy_menus');
 
 function pp_manage_taxonomies() {
-	global $bid_system;
+	global $market_system;
 	?>
 	<div class="wrap">
 		<?php
@@ -41,7 +41,7 @@ function pp_manage_taxonomies() {
 		<h2><?php _e( 'Prospress Taxonomies', 'prospress' ) ?><a href="<?php echo PP_ADD_TAX_URL; ?>" class="button add-new-h2">Add New</a></h2>
 		<p><?php _e( 'Create a taxonomy to give traders in your marketplace a way to categorize their posts. A taxonomy makes it easier for visitors to find that needle in your marketplace\'s haystack.') ?></p>
 		<p><?php _e( "For example, to classify art related posts in a marketplace, one would create an \"Artistic Medium\" taxonomy and include \"Coloured Pencil\", \"Oil Paint\" or \"Lego Blocks\" as the taxonomies types." ) ?></p>
-		<p><?php printf( __( 'After creating the taxonomy here, you can add elements to it under the %s menu.'), ucfirst( $bid_system->name ) ) ?></p>
+		<p><?php printf( __( 'After creating the taxonomy here, you can add elements to it under the %s menu.'), ucfirst( $market_system->name ) ) ?></p>
 		<?php 
 		$pp_tax_types = get_option( 'pp_custom_taxonomies' );
 		if( !empty( $pp_tax_types ) ) { ?>
@@ -187,7 +187,7 @@ function pp_delete_taxonomy() {
 add_action( 'admin_init', 'pp_delete_taxonomy' );
 
 function pp_register_settings() {
-	global $bid_system;
+	global $market_system;
 
 	if( !isset( $_POST[ 'pp_add_tax' ] ) && !isset( $_POST[ 'pp_edit_tax' ] ) )
 		return;
@@ -203,7 +203,7 @@ function pp_register_settings() {
 
 	$pp_new_tax[ 'label' ] = ( !$_POST[ 'label' ] ) ? $pp_tax_name : strip_tags( $_POST[ 'label' ] );
 	$pp_new_tax[ 'singular_label' ] = ( !$_POST[ 'singular_label' ] ) ? $pp_tax_name : strip_tags( $_POST[ 'singular_label' ] );
-	$pp_new_tax[ 'object_type' ] = $bid_system->name;
+	$pp_new_tax[ 'object_type' ] = $market_system->name;
 	$pp_new_tax[ 'hierarchical' ] = true;
 	$pp_new_tax[ 'show_ui' ] = true;
 	$pp_new_tax[ 'query_var' ] = $pp_tax_name;

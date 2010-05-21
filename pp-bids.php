@@ -47,14 +47,14 @@ include( PP_BIDS_DIR . '/bids-filter.php');
  * However, to make the bid system extensible, filters are applied to the bid system file and bid system name.
  */
 /* Require bid system. */
-$bid_system_file = apply_filters( 'bid_system_file', PP_BIDS_DIR . '/PP_Auction_Bid_System.class.php' );
-require_once ( $bid_system_file );
+$market_system_file = apply_filters( 'bid_system_file', PP_BIDS_DIR . '/PP_Auction_Bid_System.class.php' );
+require_once ( $market_system_file );
 
 /* Determine which type of bid system to use. */
-global $bid_system;
+global $market_system;
 
-$bid_system_name = apply_filters( 'bid_system_name', 'PP_Auction_Bid_System' ); 
-$bid_system = new $bid_system_name;
+$market_system_name = apply_filters( 'bid_system_name', 'PP_Auction_Bid_System' ); 
+$market_system = new $market_system_name;
 
 /**
  * 	Checks if the bids database tables are set up and options set, if not,call install function to set them up.

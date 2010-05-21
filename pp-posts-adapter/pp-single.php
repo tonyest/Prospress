@@ -9,7 +9,7 @@ Template Name: Single Prospress page
  * @subpackage Theme
  * @since 0.7
  */
-global $bid_system;
+global $market_system;
 
 ?>
 <link rel="stylesheet" type="text/css" media="all" href="<?php echo PP_CORE_URL . '/prospress.css'; ?>">
@@ -22,14 +22,14 @@ global $bid_system;
 			<div class="pp-end-date"><?php _e('Ending: ', 'prospress' ); the_post_end_date(); ?></div>
 			<div class="publish-date"><?php _e('Published: ', 'prospress' );  the_time('F jS, Y') ?> by <?php the_author_posts_link() ?></div>
 
-			<?php echo $bid_system->bid_form(); ?>
+			<?php echo $market_system->bid_form(); ?>
 			<!-- Display the Post's Content in a div box. -->
 			<?php the_content(); ?>
 
 			<p class="postmetadata">Posted in <?php the_category(', '); ?></p>
 
 			<div id="nav-below" class="navigation">
-				<div class="nav-index"><a href="<?php pp_get_index_permalink(); ?>"><?php printf( __("&larr; Return to %s Index", 'Prospress'), ucfirst( $bid_system->name ) ); ?></a></div>
+				<div class="nav-index"><a href="<?php pp_get_index_permalink(); ?>"><?php printf( __("&larr; Return to %s Index", 'Prospress'), ucfirst( $market_system->name ) ); ?></a></div>
 			</div>
 
 			<?php comments_template( '', true ); ?>
@@ -40,7 +40,7 @@ global $bid_system;
 
 	<div id="pp-sidebar" class="pp-sidebar">
 		<ul class="xoxo">
-			<?php dynamic_sidebar( $bid_system->name . '-sidebar' ); ?>
+			<?php dynamic_sidebar( $market_system->name . '-sidebar' ); ?>
 		</ul>
 	</div>
 <?php get_footer(); ?>

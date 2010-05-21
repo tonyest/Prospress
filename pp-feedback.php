@@ -153,7 +153,7 @@ function pp_feedback_controller() {
 
 //Function to ensure current user can give/edit the feedback for a transaction, it also determines the contents of the feedback form.
 function pp_edit_feedback( $post_id, $blog_ID = '' ) {
-  	global $wpdb, $user_ID, $bid_system, $blog_id;
+  	global $wpdb, $user_ID, $market_system, $blog_id;
 
 	$post_id = (int)$post_id;
 	$blog_ID = ( empty( $blog_ID ) ) ? $blog_id : (int)$blog_ID;
@@ -166,12 +166,12 @@ function pp_edit_feedback( $post_id, $blog_ID = '' ) {
 
 	$post = get_post( $post_id );
 
-	$bidder_id = $bid_system->get_winning_bid( $post_id )->bidder_id;
+	$bidder_id = $market_system->get_winning_bid( $post_id )->bidder_id;
 
 	if( empty( $bidder_id ) )
 		wp_die( __("Error: could not determine winning bidder.", 'prospress' ) );
 
-	$is_winning_bidder = $bid_system->is_winning_bidder( $from_user_id, $post_id );
+	$is_winning_bidder = $market_system->is_winning_bidder( $from_user_id, $post_id );
 
 	if ( ( !$is_winning_bidder && $from_user_id != $post->post_author ) || NULL == $post->post_status || 'completed' != $post->post_status ) {
 		wp_die( __('You can not leave feedback on this post.', 'prospress' ) );
@@ -210,7 +210,7 @@ function pp_edit_feedback( $post_id, $blog_ID = '' ) {
 
 /** Performs submission process for the feedback form. **/
 function pp_feedback_form_submit( $feedback ) {
-	global $wpdb, $bid_system;
+	global $wpdb, $market_system;
 
 	$feedback = pp_feedback_sanitize( $feedback );
 	
@@ -218,7 +218,7 @@ function pp_feedback_form_submit( $feedback ) {
 		switch_to_blog( $feedback_details[ 'blog_id' ] );
 
 	$post = get_post( $feedback[ 'post_id' ] );
-	$is_winning_bidder = $bid_system->is_winning_bidder( $feedback[ 'from_user_id' ], $feedback[ 'post_id' ] );
+	$is_winning_bidder = $market_system->is_winning_bidder( $feedback[ 'from_user_id' ], $feedback[ 'post_id' ] );
 
 	if ( ( !$is_winning_bidder && $feedback[ 'from_user_id' ] != $post->post_author ) || NULL == $post->post_status || 'completed' != $post->post_status ) {
 		if( !$is_winning_bidder )
@@ -325,11 +325,11 @@ add_action( 'admin_menu', 'pp_feedback_admin_head' );
 
 
 function pp_feedback_action( $actions, $post_id ) {
-	global $user_ID, $bid_system, $blog_id;
+	global $user_ID, $market_system, $blog_id;
  
 	$post = get_post( $post_id );
 
-	$is_winning_bidder = $bid_system->is_winning_bidder( $user_ID, $post_id );
+	$is_winning_bidder = $market_system->is_winning_bidder( $user_ID, $post_id );
 
 	$feedback_url = ( is_admin() ) ? 'users.php?page=feedback' : 'profile.php?page=feedback';
 

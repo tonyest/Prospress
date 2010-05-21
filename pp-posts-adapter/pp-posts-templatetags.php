@@ -7,9 +7,9 @@
  * @return returns false if no index page set, true if echod the permalink or a string representing the permalink if 'echo' not set.
  */
 function pp_get_index_permalink( $echo = 'echo' ){
-	global $bid_system, $wpdb;
+	global $market_system, $wpdb;
 	
-	$pp_index_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '$bid_system->name'" );
+	$pp_index_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '$market_system->name'" );
 
 	if( !$pp_index_id )
 		return false;

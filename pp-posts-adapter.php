@@ -53,18 +53,18 @@ include( PP_POSTS_DIR . '/pp-posts-templatetags.php');
 include( PP_POSTS_DIR . '/pp-custom-taxonomy.php');
 
 function pp_posts_adapter_install(){
-	global $wpdb, $bid_system, $wp_rewrite;
+	global $wpdb, $market_system, $wp_rewrite;
 
 	$wp_rewrite->flush_rules(false);
 
 	error_log('activation hook being called.');
 
-	if( !$wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '$bid_system->name'" ) ){
+	if( !$wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '$market_system->name'" ) ){
 		$index_page = array();
-		$index_page['post_title'] = ucfirst( $bid_system->name );
-		$index_page['post_name'] = $bid_system->name;
+		$index_page['post_title'] = ucfirst( $market_system->name );
+		$index_page['post_name'] = $market_system->name;
 		$index_page['post_status'] = 'publish';
-		$index_page['post_content'] = 'This is the index for ' . $bid_system->name. ' posts.';
+		$index_page['post_content'] = 'This is the index for ' . $market_system->name. ' posts.';
 		$index_page['post_type'] = 'page';
 
 		error_log('Creating page = ' . print_r( $index_page, true ) );
@@ -214,7 +214,7 @@ add_action('init', 'pp_register_completed_status');
  * @param object $post
  */
 function pp_post_submit_meta_box() {
-	global $action, $wpdb, $post, $bid_system;
+	global $action, $wpdb, $post, $market_system;
 
 	if( !is_pp_post_admin_page() )
 		return;
@@ -357,7 +357,7 @@ add_action('admin_menu', 'pp_posts_admin_head');
 // Customise columns on table of posts shown on edit.php
 //**************************************************************************************************//
 function pp_post_columns( $column_headings ) {
-	global $bid_system;
+	global $market_system;
 
 	if( !is_pp_post_admin_page() )
 		return $column_headings;
@@ -448,17 +448,17 @@ add_action( 'admin_head', 'pp_remove_classes' );
 //**************************************************************************************************//
 
 function pp_template_redirects() {
-	global $post, $bid_system;
+	global $post, $market_system;
 
-	if( $post->post_name == $bid_system->name ){
+	if( $post->post_name == $market_system->name ){
 		do_action( 'pp_template_index_redirect' );
 		if( file_exists( TEMPLATEPATH . '/pp-index.php' ) )
 			include( TEMPLATEPATH . '/pp-index.php');
 		else
 			include( PP_POSTS_DIR . '/pp-index.php');
 		exit;
-	} elseif ( $post->post_type == $bid_system->name && !isset( $_GET[ 's' ] ) ) {
-		error_log( '$post->post_name == $bid_system->name' );
+	} elseif ( $post->post_type == $market_system->name && !isset( $_GET[ 's' ] ) ) {
+		error_log( '$post->post_name == $market_system->name' );
 		do_action( 'pp_template_single_redirect' );
 		if( file_exists( TEMPLATEPATH . '/pp-single.php' ) )
 			include( TEMPLATEPATH . '/pp-single.php');
@@ -470,12 +470,12 @@ function pp_template_redirects() {
 add_action( 'template_redirect', 'pp_template_redirects' );
 
 function pp_add_sidebars_widgets(){
-	global $bid_system;
+	global $market_system;
 
 	$sidebars_widgets = get_option( 'sidebars_widgets' );
 
-	if( !isset( $sidebars_widgets[ $bid_system->name . '-sidebar' ] ) )
-		$sidebars_widgets[ $bid_system->name . '-sidebar' ] = array();
+	if( !isset( $sidebars_widgets[ $market_system->name . '-sidebar' ] ) )
+		$sidebars_widgets[ $market_system->name . '-sidebar' ] = array();
 
 	$sort_widget = get_option( 'widget_pp-sort' );
 	if( empty( $sort_widget ) ){
@@ -492,7 +492,7 @@ function pp_add_sidebars_widgets(){
 
 		$sort_widget['_multiwidget'] = 1;
 		update_option( 'widget_pp-sort',$sort_widget );
-		array_push( $sidebars_widgets[ $bid_system->name . '-sidebar' ], 'pp-sort-0' );
+		array_push( $sidebars_widgets[ $market_system->name . '-sidebar' ], 'pp-sort-0' );
 	}
 
 	//$filter_widget = get_option( 'widget_bid-filter' );
@@ -504,33 +504,33 @@ function pp_add_sidebars_widgets(){
 
 		$filter_widget['_multiwidget'] = 1;
 		update_option( 'widget_bid-filter', $filter_widget );
-		array_push( $sidebars_widgets[ $bid_system->name . '-sidebar' ], 'bid-filter-0' );
+		array_push( $sidebars_widgets[ $market_system->name . '-sidebar' ], 'bid-filter-0' );
 	}
 
 	update_option( 'sidebars_widgets', $sidebars_widgets );
 }
 
 function pp_posts_adapter_uninstall(){
-	global $bid_system;
+	global $market_system;
 
 	delete_option( 'widget_bid-filter' );
 	delete_option( 'widget_pp-sort' );
 	
 	$sidebars_widgets = get_option( 'sidebars_widgets' );
 
-	if( isset( $sidebars_widgets[ $bid_system->name . '-sidebar' ] ) ){
-		unset( $sidebars_widgets[ $bid_system->name . '-sidebar' ] );
+	if( isset( $sidebars_widgets[ $market_system->name . '-sidebar' ] ) ){
+		unset( $sidebars_widgets[ $market_system->name . '-sidebar' ] );
 		update_option( 'sidebars_widgets', $sidebars_widgets );
 	}
 }
 register_deactivation_hook( __FILE__, 'pp_posts_adapter_uninstall' );
 
 function pp_add_sidebars(){
-	global $bid_system;
+	global $market_system;
 
 	register_sidebar( array (
-		'name' => ucfirst( $bid_system->name ) . ' ' . __( 'Sidebar', 'prospress' ),
-		'id' => $bid_system->name . '-sidebar',
+		'name' => ucfirst( $market_system->name ) . ' ' . __( 'Sidebar', 'prospress' ),
+		'id' => $market_system->name . '-sidebar',
 		'description' => __( "The sidebar on your Prospress posts.", 'prospress' ),
 		'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
 		'after_widget' => "</li>",
@@ -552,9 +552,9 @@ function pp_post_sort_options( $pp_sort_options ){
 add_filter( 'pp_sort_options', 'pp_post_sort_options' );
 
 function is_pp_post_admin_page(){
-	global $bid_system;
+	global $market_system;
 
-	if( !( ( $_GET[ 'post_type' ] == $bid_system->name ) || ( get_post_type( $_GET[ 'post' ] ) ==  $bid_system->name ) ) )
+	if( !( ( $_GET[ 'post_type' ] == $market_system->name ) || ( get_post_type( $_GET[ 'post' ] ) ==  $market_system->name ) ) )
 		return false;
 	else
 		return true;
@@ -562,10 +562,10 @@ function is_pp_post_admin_page(){
 
 //Removes the Prospress index page from the search results
 function pp_remove_index( $search ){
-	global $wpdb, $bid_system;
+	global $wpdb, $market_system;
 
 	if ( isset( $_GET['s'] ) ) // only remove posts from search results
-		$search .= "AND ID NOT IN (SELECT ID FROM $wpdb->posts WHERE post_name = '$bid_system->name')";
+		$search .= "AND ID NOT IN (SELECT ID FROM $wpdb->posts WHERE post_name = '$market_system->name')";
 
 	return $search;
 }

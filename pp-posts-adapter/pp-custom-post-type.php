@@ -6,7 +6,7 @@
  */
 
 function pp_post_type() {
-	global $bid_system;
+	global $market_system;
 
 	$defaults = array(
 	    'label' => false,
@@ -35,21 +35,21 @@ function pp_post_type() {
 		'delete_post' => 'delete_post',
 	);
 
-	$bid_system_capabilities = array(
-		'edit_post' => 'edit_' . $bid_system->name,
-		'edit_posts' => 'edit_' . $bid_system->name,
-		'publish_posts' => 'publish_' . $bid_system->name,
-		'delete_post' => 'delete_' . $bid_system->name 
+	$market_system_capabilities = array(
+		'edit_post' => 'edit_' . $market_system->name,
+		'edit_posts' => 'edit_' . $market_system->name,
+		'publish_posts' => 'publish_' . $market_system->name,
+		'delete_post' => 'delete_' . $market_system->name 
 		);
 
-	$capabilities = array_merge( $default_capabilities, $bid_system_capabilities );
+	$capabilities = array_merge( $default_capabilities, $market_system_capabilities );
 	error_log( 'capabilities = ' . print_r( $capabilities, true ) );
 	*/
 	$args = array(
-			'label' => ucfirst( $bid_system->name ),
+			'label' => ucfirst( $market_system->name ),
 			'public' => true,
 			'show_ui' => true,
-			'rewrite' => array( 'slug' => $bid_system->name, 'with_front' => false ),
+			'rewrite' => array( 'slug' => $market_system->name, 'with_front' => false ),
 			'capability_type' => 'post',
 			//'capabilities' => $capabilities, @TODO when WP3.0 bugs are fixed come back to this.
             'supports' => array(
@@ -61,13 +61,13 @@ function pp_post_type() {
 							'revisions'),
 					);
 
-	register_post_type( $bid_system->name, $args );
+	register_post_type( $market_system->name, $args );
 
 	// Get the subscriber role & add capabilities to it
 	/*
 	$role = get_role( 'subscriber' );
 
-	foreach ( $bid_system_capabilities as $cap ){
+	foreach ( $market_system_capabilities as $cap ){
 		error_log( 'cap = ' . print_r( $cap, true ) );
 		$role->add_cap( $cap );
 	}

@@ -15,12 +15,12 @@
  * @return null Returns null if no bids appear
  */
 function the_bid_form( $content ) {
-	global $bid_system;
+	global $market_system;
 
 	if( is_single() && !is_admin() )
-		$content = $bid_system->bid_form() . $content;
-		//$content .= $bid_system->bid_form();
-		//echo $bid_system->bid_form();
+		$content = $market_system->bid_form() . $content;
+		//$content .= $market_system->bid_form();
+		//echo $market_system->bid_form();
 	return $content;
 }
 
