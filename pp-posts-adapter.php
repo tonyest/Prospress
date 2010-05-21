@@ -332,8 +332,8 @@ function touch_end_time( $edit = 1, $tab_index = 0, $multi = 0 ) {
 
 function pp_posts_admin_head() {
 	
-	if( !is_pp_post_admin_page() )
-		return;
+	//if( !is_pp_post_admin_page() )
+	//	return;
 
 	if( strpos( $_SERVER['REQUEST_URI'], 'post.php' ) !== false || strpos( $_SERVER['REQUEST_URI'], 'post-new.php' ) !== false ) {
 		wp_enqueue_style( 'post-adapter',  PP_POSTS_URL . '/post-adapter.css' );
@@ -347,9 +347,7 @@ function pp_posts_admin_head() {
 			));
 	}
 
-	if( strpos( $_SERVER['REQUEST_URI'], 'completed' ) !== false ) {
-		wp_enqueue_style( 'post-adapter',  PP_POSTS_URL . '/post-completed.css' );
-	}
+	wp_enqueue_style( 'post-adapter',  PP_POSTS_URL . '/post-completed.css' );
 }
 add_action('admin_menu', 'pp_posts_admin_head');
 
@@ -399,18 +397,16 @@ function pp_post_columns_custom( $column_name, $post_id ) {
 
 	if( $column_name == 'post_actions' ) {
 		$actions = apply_filters( 'completed_post_actions', array(), $post_id );
-		if( is_array( $actions ) && !empty( $actions ) ){
-		?>
-			<ul id="completed_actions">
+		if( is_array( $actions ) && !empty( $actions ) ){?>
+			<ul id="completed-actions">
 				<li class="base"><?php _e( 'Take action:', 'prospress' ) ?></li>
 			<?php foreach( $actions as $action => $attributes )
-				//$url = add_query_arg ( 'post', $post_id, $attributes['url'] );
-				echo "<li class='completed_action'><a href='" . add_query_arg ( array( 'action' => $action, 'post' => $post_id ) , $attributes['url'] ) . "'>" . $attributes['label'] . "</a></li>";
+				echo "<li class='completed-action'><a href='" . add_query_arg ( array( 'action' => $action, 'post' => $post_id ) , $attributes['url'] ) . "'>" . $attributes['label'] . "</a></li>";
 			 ?>
 			</ul>
 		<?php
 		} else {
-			echo '<p>' . __('No action can be taken.', 'prospress' ) . '</p>';
+			echo '<p>' . __( 'No action can be taken.', 'prospress' ) . '</p>';
 		}
 	}
 }

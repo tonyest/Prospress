@@ -180,3 +180,18 @@ function pp_money_format( $number, $decimals = 2, $currency = '' ){
 
 	return $currency_sym . ' ' . number_format_i18n( $number, $decimals );
 }
+
+
+/************************************************************************************************************************/
+/**** MONEY FORMAT FUNCTIONS ****/
+/************************************************************************************************************************/
+/** 
+ * Add admin style and scripts that are required by more than one component. 
+ * 
+ * @package Prospress
+ * @since 0.1
+ */
+function pp_core_admin_head() {
+	wp_enqueue_style( 'post-adapter',  PP_CORE_URL . '/prospress-admin.css' );
+}
+add_action('admin_menu', 'pp_core_admin_head');

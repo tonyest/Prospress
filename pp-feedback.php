@@ -324,7 +324,7 @@ function pp_feedback_admin_head() {
 add_action( 'admin_menu', 'pp_feedback_admin_head' );
 
 
-function pp_feedback_action( $actions, $post_id ) {
+function pp_add_feedback_action( $actions, $post_id ) {
 	global $user_ID, $market_system, $blog_id;
  
 	$post = get_post( $post_id );
@@ -345,19 +345,17 @@ function pp_feedback_action( $actions, $post_id ) {
 	if ( !pp_has_feedback( $post_id, $user_ID ) ) {
 		$actions[ 'give-feedback' ] = array('label' => __( 'Give Feedback', 'prospress' ),
 											'url' => add_query_arg( array( 'post' => $post_id, 'blog' => $blog_id ), $feedback_url ) );
-											//'url' => 'users.php?page=feedback' );
 	} else if ( get_option( 'edit_feedback' ) == 'true' ) {
 		$actions[ 'edit-feedback' ] = array('label' => __( 'Edit Feedback', 'prospress' ),
 											'url' => add_query_arg( array( 'post' => $post_id, 'blog' => $blog_id ), $feedback_url ) );
-											//'url' => 'users.php?page=feedback' );
 	} else {
 		$actions[ 'view-feedback' ] = array('label' => __( 'View Feedback', 'prospress' ),
 											'url' => $feedback_url );
-											//'url' => 'users.php?page=feedback' );
 	}
 	return $actions;
 }
-add_filter( 'completed_post_actions', 'pp_feedback_action', 10, 2 );
+add_filter( 'completed_post_actions', 'pp_add_feedback_action', 10, 2 );
+add_filter( 'winning_bid_actions', 'pp_add_feedback_action', 10, 2 );
 
 
 //**************************************************************************************************//

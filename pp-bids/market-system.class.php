@@ -244,6 +244,10 @@ class PP_Market_System {
 			$post_id = $post->ID;
 		}
 
+		foreach ( debug_backtrace() as $key => $value ) {
+			error_log( "** " . $key . ". " . $value['function'] . "( " . $value['args'][0] . " )" );
+			error_log( " ** FILE: " . $value['file'] . ":" . $value['line'] );
+		}
 		$winning_bid = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $wpdb->bids WHERE post_id = %d AND bid_status = %s", $post_id, 'winning' ) );
 		
 		return $winning_bid;
@@ -685,17 +689,17 @@ class PP_Market_System {
 								<td><?php echo mysql2date( __( 'g:ia d M Y' , 'prospress' ), $bid[ 'bid_date' ] ); ?></td>
 								<td><?php echo mysql2date( __( 'g:ia d M Y' , 'prospress' ), $post_end_date ); ?></td>
 								<?php if( strpos( $_SERVER['REQUEST_URI'], 'bids' ) !== false ){
-									$actions = apply_filters( 'winning_bid_actions', array(), $post_id );
+									$actions = apply_filters( 'winning_bid_actions', array(), $post->ID );
 									echo '<td>';
 									if( is_array( $actions ) && !empty( $actions ) ){
-									?>
-										<ul id="completed_actions">
+									?><div id="prospress-actions">
+										<ul id="completed-actions">
 											<li class="base"><?php _e( 'Take action:', 'prospress' ) ?></li>
 										<?php foreach( $actions as $action => $attributes )
-											//$url = add_query_arg ( 'post', $post_id, $attributes['url'] );
-											echo "<li class='completed_action'><a href='" . add_query_arg ( array( 'action' => $action, 'post' => $post_id ) , $attributes['url'] ) . "'>" . $attributes['label'] . "</a></li>";
+											echo "<li class='completed-action'><a href='" . add_query_arg ( array( 'action' => $action, 'post' => $post_id ) , $attributes['url'] ) . "'>" . $attributes['label'] . "</a></li>";
 										 ?>
 										</ul>
+									</div>
 									<?php
 									} else {
 										_e('No action can be taken.', 'prospress' );
