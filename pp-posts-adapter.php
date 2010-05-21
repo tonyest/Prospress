@@ -332,8 +332,8 @@ function touch_end_time( $edit = 1, $tab_index = 0, $multi = 0 ) {
 
 function pp_posts_admin_head() {
 	
-	//if( !is_pp_post_admin_page() )
-	//	return;
+	if( !is_pp_post_admin_page() )
+		return;
 
 	if( strpos( $_SERVER['REQUEST_URI'], 'post.php' ) !== false || strpos( $_SERVER['REQUEST_URI'], 'post-new.php' ) !== false ) {
 		wp_enqueue_style( 'post-adapter',  PP_POSTS_URL . '/post-adapter.css' );
@@ -346,8 +346,6 @@ function pp_posts_admin_head() {
 			'repost' => __('Repost', 'prospress' ),
 			));
 	}
-
-	wp_enqueue_style( 'post-adapter',  PP_POSTS_URL . '/post-completed.css' );
 }
 add_action('admin_menu', 'pp_posts_admin_head');
 

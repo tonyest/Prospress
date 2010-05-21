@@ -108,15 +108,13 @@ class PP_Sort_Widget extends WP_Widget {
 				continue;
 			echo "<option value='".$key."' ".selected($key, $sorted_by, false)."'>".$label."</option>";
 		}
-		echo '</selec$market_systemt>';
+		echo '</select>';
 		echo '<input type="submit" value="' . __("Sort", 'prospress' ) . '">';
 		foreach( $_GET as $name => $value ){
 			if( $name == 'pp-sort' ) continue;
 			echo '<input type="hidden" name="' . esc_html( $name ) . '" value="' . esc_html( $value ) . '">';
 		}
 		echo '</form>';
-
-		echo $after_widget;
 
 		echo $after_widget;
 	}

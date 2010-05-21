@@ -10,8 +10,10 @@ Template Name: Auctions Index
  * @since 0.7
  */
 global $market_system;
+
+wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
+
 ?>
-<link rel="stylesheet" type="text/css" media="all" href="<?php echo PP_CORE_URL . '/prospress.css'; ?>">
 <?php get_header(); ?>
 	<div id="container">
 		<div id="content">

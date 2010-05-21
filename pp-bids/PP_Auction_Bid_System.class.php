@@ -24,6 +24,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 			define( 'BID_INCREMENT', '0.05' );
 
 		parent::__construct( __('auctions', 'prospress' ), __('Auction Bid', 'prospress' ), __('Bid!', 'prospress' ), array( 'post_fields' ) );
+		add_filter( 'winning_bid_actions', array( &$this, 'add_winning_bid_actions' ), 10, 2 );
 	}
 
 	function bid_form_fields( $post_id = NULL ) { 
@@ -239,7 +240,27 @@ class PP_Auction_Bid_System extends PP_Market_System {
 			update_post_meta( $post_id, 'start_price', $_POST[ 'start_price' ] );
 		}
 	}
+
+	// Called on winning_bid_actions hook
+	function add_winning_bid_actions( $actions, $post_id ) {
+		global $user_ID, $market_system, $blog_id;
+
+		$post = get_post( $post_id );
+		
+		if( $post->post_status == 'completed' )
+			return;
+
+		$permalink = get_permalink( $post_id );
+
+		$actions[ 'increase-bid' ] = array('label' => __( 'Increase Bid', 'prospress' ),
+												'url' => $permalink );
+
+		error_log('add_increase_bid_action being called');
+		return $actions;
+	}
 }
+
+
 
 // Runs a suite of tests on the auction bid system.
 function auction_test(){

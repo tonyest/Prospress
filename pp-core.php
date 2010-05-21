@@ -192,6 +192,9 @@ function pp_money_format( $number, $decimals = 2, $currency = '' ){
  * @since 0.1
  */
 function pp_core_admin_head() {
-	wp_enqueue_style( 'post-adapter',  PP_CORE_URL . '/prospress-admin.css' );
+	global $market_system;
+
+	if( strpos( $_SERVER['REQUEST_URI'], $market_system->name ) !== false || strpos( $_SERVER['REQUEST_URI'], 'bids' ) !== false )
+		wp_enqueue_style( 'completed-actions',  PP_CORE_URL . '/prospress-admin.css' );
 }
 add_action('admin_menu', 'pp_core_admin_head');

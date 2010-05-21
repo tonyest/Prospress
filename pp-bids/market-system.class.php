@@ -239,15 +239,9 @@ class PP_Market_System {
 	function get_winning_bid( $post_id = '' ) {
 		global $post, $wpdb;
 
-		if ( empty( $post_id ) ){
-			error_log('$post_id empty, setting post_id to ' . $post->ID);
+		if ( empty( $post_id ) )
 			$post_id = $post->ID;
-		}
 
-		foreach ( debug_backtrace() as $key => $value ) {
-			error_log( "** " . $key . ". " . $value['function'] . "( " . $value['args'][0] . " )" );
-			error_log( " ** FILE: " . $value['file'] . ":" . $value['line'] );
-		}
 		$winning_bid = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $wpdb->bids WHERE post_id = %d AND bid_status = %s", $post_id, 'winning' ) );
 		
 		return $winning_bid;
@@ -428,34 +422,34 @@ class PP_Market_System {
 			switch( $message_id ) {
 				case 0:
 				case 1:
-					$message = __("1. You are the highest bidder.", 'prospress' );
+					$message = __("Congratulations, you are the highest bidder.", 'prospress' );
 					break;
 				case 2:
-					$message = __("2. You have been outbid.", 'prospress' );
+					$message = __("You have been automatically outbid.", 'prospress' );
 					break;
 				case 3:
-					$message = __("3. You must bid higher than the current winning bid.", 'prospress' );
+					$message = __("You must bid higher than the winning bid.", 'prospress' );
 					break;
 				case 4:
-					$message = __("4. Your maximum bid has been increased.", 'prospress' );
+					$message = __("Your maximum bid has been increased.", 'prospress' );
 					break;
 				case 5:
-					$message = __("5. You can not decrease your max bid.", 'prospress' );
+					$message = __("You can not decrease your maximum bid.", 'prospress' );
 					break;
 				case 6:
-					$message = __("6. You have entered a bid equal to your current maximum bid.", 'prospress' );
+					$message = __("You have entered a bid equal to your current maximum bid.", 'prospress' );
 					break;
 				case 7:
-					$message = __("7. Invalid bid. Please enter a valid number. e.g. 11.23 or 58", 'prospress' );
+					$message = __("Invalid bid. Please enter a valid number. e.g. 11.23 or 58", 'prospress' );
 					break;
 				case 8:
-					$message = __("8. Invalid bid. Bid nonce did not validate.", 'prospress' );
+					$message = __("Invalid bid. Bid nonce did not validate.", 'prospress' );
 					break;
 				case 9:
-					$message = __("9. Invalid bid. Bid must be higher than starting price.", 'prospress' );
+					$message = __("Invalid bid. Please enter a bid greater than the starting price.", 'prospress' );
 					break;
 				case 10:
-					$message = __("10. Bid submitted.", 'prospress' );
+					$message = __("Bid submitted.", 'prospress' );
 					break;
 			}
 			$message = apply_filters( 'bid_message', $message );
@@ -529,10 +523,8 @@ class PP_Market_System {
 		get_currentuserinfo(); //get's user ID of currently logged in user and puts into global $user_id
 
 		$query = $this->create_bid_page_query( 'winning' );
-		//$bids = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $wpdb->bids WHERE bidder_id = %d AND bid_status = 'winning' ORDER BY bid_date_gmt DESC" , $user_ID ), ARRAY_A );
-		$bids = $wpdb->get_results( $query, ARRAY_A );
 
-		error_log('$bids = ' . print_r($bids, true));
+		$bids = $wpdb->get_results( $query, ARRAY_A );
 
 		$bids = apply_filters( 'winning_history_bids', $bids );
 
@@ -724,7 +716,6 @@ class PP_Market_System {
 		</div>
 		<?php
 	}
-
 
 	// Returns bid column headings for market system. Used with the built in print_column_headers function.
 	function get_column_headings(){

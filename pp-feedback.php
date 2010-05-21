@@ -331,18 +331,16 @@ function pp_add_feedback_action( $actions, $post_id ) {
 
 	$is_winning_bidder = $market_system->is_winning_bidder( $user_ID, $post_id );
 
+	if ( $post->post_status != 'completed' || ( !$is_winning_bidder && $user_ID != $post->post_author && !is_super_admin() ) ) 
+		return $actions;
+
 	$feedback_url = ( is_admin() ) ? 'users.php?page=feedback' : 'profile.php?page=feedback';
 
-	if ( !$is_winning_bidder && $user_ID != $post->post_author ) { // admin viewing all ended posts
-
-		if( pp_has_feedback( $post_id ) ){
+	if ( is_super_admin() && !$is_winning_bidder && $user_ID != $post->post_author ) { // Admin isn't bidder or author
+		if( pp_has_feedback( $post_id ) )
 			$actions[ 'view' ] = array('label' => __( 'View Feedback', 'prospress' ), 
 										'url' => add_query_arg( array( 'post' => $post_id, 'blog' => $blog_id ), $feedback_url ) );
-		}
-		return $actions;
-	}
-
-	if ( !pp_has_feedback( $post_id, $user_ID ) ) {
+	} else if ( !pp_has_feedback( $post_id, $user_ID ) ) {
 		$actions[ 'give-feedback' ] = array('label' => __( 'Give Feedback', 'prospress' ),
 											'url' => add_query_arg( array( 'post' => $post_id, 'blog' => $blog_id ), $feedback_url ) );
 	} else if ( get_option( 'edit_feedback' ) == 'true' ) {
