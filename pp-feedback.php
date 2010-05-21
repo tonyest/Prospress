@@ -331,10 +331,10 @@ function pp_add_feedback_action( $actions, $post_id ) {
 
 	$is_winning_bidder = $market_system->is_winning_bidder( $user_ID, $post_id );
 
-	if ( $post->post_status != 'completed' || ( !$is_winning_bidder && $user_ID != $post->post_author && !is_super_admin() ) ) 
+	if ( $post->post_status != 'completed' || $market_system->get_bid_count( $post_id ) == false || ( !$is_winning_bidder && $user_ID != $post->post_author && !is_super_admin() ) ) 
 		return $actions;
 
-	$feedback_url = ( is_admin() ) ? 'users.php?page=feedback' : 'profile.php?page=feedback';
+	$feedback_url = ( is_super_admin() ) ? 'users.php?page=feedback' : 'profile.php?page=feedback';
 
 	if ( is_super_admin() && !$is_winning_bidder && $user_ID != $post->post_author ) { // Admin isn't bidder or author
 		if( pp_has_feedback( $post_id ) )

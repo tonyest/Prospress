@@ -367,7 +367,7 @@ class PP_Market_System {
 			return $users_max_bid;
 	}
 
-	// Get's the max bid for a post, optionally specified with $post_id.
+	// Get's the number of bids for a post, optionally specified with $post_id.
 	function get_bid_count( $post_id = '' ) {
 		global $post, $wpdb;
 
