@@ -107,31 +107,26 @@ class PP_Market_System {
 		$post_id = ( $post_id === NULL ) ? $post->ID : $post_id;
 		$the_post = ( empty ( $post ) ) ? get_post( $post_id) : $post;
 
-		$form = '<div id="bid-' . $post_id . '" class="bid-container">';
+		//$form = '<div id="bid-' . $post_id . '" class="bid-container">';
 		//$form = '<div id="bid">';
 		//$form .= '<h3>' . $this->bid_form_title . '</h3>';
 
 		if ( $the_post->post_status == 'completed' ) {
-			$form .= '<p>' . __( 'This post has ended. Bidding is closed.', 'prospress' ) . '</p>';
+			$form .= '<p class="bid-form">' . __( 'This post has ended. Bidding is closed.', 'prospress' ) . '</p>';
 		} else {
-			$form .= '<form id="bid_form-' . $post_id . '" class="bid_form" method="post" action="">';
+			$form .= '<form id="bid_form-' . $post_id . '" class="bid-form" method="post" action="">';
 			$form .= '<em class="bid-updated bid_msg" >' . $this->get_bid_message() . '</em>';
-
 			$form .= ( $post->post_status != 'completed' ) ? $this->bid_form_fields( $post_id ) : '<p>' . __( 'This post has ended. Bidding is closed.', 'prospress' ) . '</p>';
-
-			/** @TODO Implement bid widget bar in PP_Market_System::bid_form()*/
-
 			apply_filters( 'bid_form_hidden_fields', $form );
-
 			$form .= wp_nonce_field( __FILE__, 'bid_nonce', false, false );
-			$form .= '<input type="hidden" name="post_ID" value="' . $post_id . '" id="post_ID" />';
+			$form .= '<input type="hidden" name="post_ID" value="' . $post_id . '" id="post_ID" /> ';
 			$form .= '<input name="bid_submit" type="submit" id="bid_submit" value="' . $this->bid_button_value .'" />';
 			$form .= '</form>';
 
 			$form = apply_filters( 'bid_form', $form );
 		}
 
-		$form .= '</div>';
+		//$form .= '</div>';
 
 		return $form;		
 	}
