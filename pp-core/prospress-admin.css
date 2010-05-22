@@ -1,0 +1,54 @@
+#prospress-actions{
+	height: 2.5em;
+}
+
+#completed-actions {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	position: absolute;
+	border: 1px solid #ccc;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	}
+
+#completed-actions:hover {
+	-moz-border-radius-bottomright: 0px;
+	-moz-border-radius-bottomleft: 0px;
+	-webkit-border-bottom-left-radius: 0px;
+	-webkit-border-bottom-right-radius: 0px;
+	}
+
+#completed-actions li {
+	margin: 0;
+	text-decoration: none;
+	padding: 4px 5px;
+	}
+
+#completed-actions li.base {
+	display: block;
+	text-decoration: none;
+	padding-right: 2.6em;
+	background: transparent url('../images/down-arrow.gif') no-repeat 95% center;
+	}
+
+#completed-actions:hover li {
+	}
+
+li.completed-action {
+	display: none;
+	background-color: #fff;
+	position: relative;
+	z-index: 2;
+	}
+
+#completed-actions:hover li.completed-action {
+	display: block;
+	}
+
+
+
+/* Fix IE. \*/
+* html ul li { float: left; }
+* html ul li a { height: 1%; }
+/* End */
