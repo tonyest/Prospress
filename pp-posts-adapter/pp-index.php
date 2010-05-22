@@ -23,9 +23,9 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 			<p><?php the_content(); ?></p>
 		<?php endwhile; ?>
 		<?php error_log( 'ended Auctions page query, starting next query.' ); ?>
-			<?php $loop = new WP_Query( array( 'post_type' => $market_system->name ) ); ?>
+			<?php $pp_loop = new WP_Query( array( 'post_type' => $market_system->name ) ); ?>
 			<?php //query_posts( array( 'post_type' => $market_system->name ) ); ?>
-			<?php if ( $loop->have_posts() ) : while ( $loop->have_posts() ) : $loop->the_post(); ?>
+			<?php if ( $pp_loop->have_posts() ) : while ( $pp_loop->have_posts() ) : $pp_loop->the_post(); ?>
 			<?php //if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
 
 				<h2 class="pp-title"><a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h2>
@@ -34,6 +34,7 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 					<div class="pp-end-date"><?php _e( 'Ending: ', 'prospress' ); the_post_end_date(); ?></div>
 				</div>
 				<div class="pp-price"><?php _e( 'Current Bid: ', 'prospress' ); $market_system->the_winning_bid_value(); ?></div>
+				<?php echo $market_system->bid_form(); ?>
 				<?php the_content(); ?>
 
 				<p class="postmetadata">Posted in <?php the_category(', '); ?></p>

@@ -6,8 +6,9 @@
 class Bid_Filter_Widget extends WP_Widget {
 
 	function Bid_Filter_Widget() {
-		$widget_ops = array('description' => __('Filter Prospress Posts by high & low price.', 'prospress' ) );
-		$this->WP_Widget('bid-filter', __('Bid Price Filter', 'prospress' ), $widget_ops);
+		global $market_system;
+		$widget_ops = array('description' => sprintf( __('Filter %s by price.', 'prospress' ), ucfirst( $market_system->name ) ) );
+		$this->WP_Widget('bid-filter', __('Prospress Price Filter', 'prospress' ), $widget_ops);
 	}
 
 	function widget( $args, $instance ) {

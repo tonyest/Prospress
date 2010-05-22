@@ -107,24 +107,25 @@ class PP_Market_System {
 		$post_id = ( $post_id === NULL ) ? $post->ID : $post_id;
 		$the_post = ( empty ( $post ) ) ? get_post( $post_id) : $post;
 
-		$form = '<div id="bid">';
-		$form .= '<h3>' . $this->bid_form_title . '</h3>';
+		$form = '<div id="bid-' . $post_id . '" class="bid-box">';
+		//$form = '<div id="bid">';
+		//$form .= '<h3>' . $this->bid_form_title . '</h3>';
 
 		if ( $the_post->post_status == 'completed' ) {
 			$form .= '<p>' . __( 'This post has ended. Bidding is closed.', 'prospress' ) . '</p>';
 		} else {
-			$form .= $this->get_bid_message();
-			$form .= '<form id="bid_form" method="post" action="">';
+			$form .= '<form id="bid_form-' . $post_id . '" class="bid_form" method="post" action="">';
+			$form .= '<em class="bid-updated bid_msg" >' . $this->get_bid_message() . '</em>';
 
 			$form .= ( $post->post_status != 'completed' ) ? $this->bid_form_fields( $post_id ) : '<p>' . __( 'This post has ended. Bidding is closed.', 'prospress' ) . '</p>';
 
-			/** @TODO Implement bid bar in PP_Market_System::bid_form()*/
+			/** @TODO Implement bid widget bar in PP_Market_System::bid_form()*/
 
 			apply_filters( 'bid_form_hidden_fields', $form );
 
 			$form .= wp_nonce_field( __FILE__, 'bid_nonce', false, false );
 			$form .= '<input type="hidden" name="post_ID" value="' . $post_id . '" id="post_ID" />';
-			$form .= '<input name="bid_submit" type="submit" id="bid_submit" value="' . $this->bid_button_value .'" />';
+			$form .= ' <input name="bid_submit" type="submit" id="bid_submit" value="' . $this->bid_button_value .'" />';
 			$form .= '</form>';
 
 			$form = apply_filters( 'bid_form', $form );
@@ -402,13 +403,10 @@ class PP_Market_System {
 	 * passed to a page containing a bid form and prints the messages. 
 	 */
 	function get_bid_message(){
+		global $pp_bid_status;
 
 		if ( !is_user_logged_in() ) //|| !isset( $pp_bid_status ) )//|| !isset( $_GET[ 'bid_msg' ] ) )
 			return;
-
-		//error_log('in get_bid_message, $_REQUEST = ' . print_r($_REQUEST, true));
-		global $pp_bid_status;
-		//error_log('in get_bid_message, $pp_bid_status = ' . print_r($pp_bid_status, true));
 
 		if ( isset( $pp_bid_status ) )
 			$message_id = $pp_bid_status;
@@ -453,8 +451,6 @@ class PP_Market_System {
 					break;
 			}
 			$message = apply_filters( 'bid_message', $message );
-			$message = '<em class="bid-updated" id="bid_msg">' . $message . '</em>';
-			$message = apply_filters( 'bid_message_html', $message );
 			return $message;
 		}
 	}
@@ -590,8 +586,6 @@ class PP_Market_System {
 
 		if( empty( $bids ) && !is_array( $bids ) )
 			$bids = array();
-		
-		//error_log('bids = ' . print_r($bids, true));
 
 		$sort = isset( $_GET[ 'sort' ] ) ? (int)$_GET[ 'sort' ] : 0;
 		$bid_status = isset( $_GET[ 'bs' ] ) ? (int)$_GET[ 'bs' ] : 0;
@@ -785,10 +779,8 @@ class PP_Market_System {
 
 		// If bidder is not logged in, redirect to login page
 		if ( !is_user_logged_in() ){ 
-			do_action('bidder_not_logged_in');
+			do_action( 'bidder_not_logged_in' );
 
-			//$redirect = is_ssl() ? "https://" : "http://";
-			//$redirect .= $_SERVER['HTTP_HOST'] . esc_url( $_SERVER['PHP_SELF'] );
 			$redirect = wp_get_referer();
 			$redirect = add_query_arg( urlencode_deep( $_POST ), $redirect );
 			$redirect = add_query_arg('bid_redirect', wp_get_referer(), $redirect );
@@ -809,7 +801,7 @@ class PP_Market_System {
 			error_log('in !is_user_logged_in() even after exit');
 		}
 
-		// Verify bid nonce if bid is not coming from a login redirect (deteremined by bid_redirect)
+		// Verify bid nonce if bid is not coming from a login redirect
 		if ( !isset( $_REQUEST[ 'bid_redirect' ] ) && ( !isset( $_REQUEST[ 'bid_nonce' ] ) || !wp_verify_nonce( $_REQUEST['bid_nonce'], __FILE__) ) ) {
 			if ( !isset( $_REQUEST[ 'bid_nonce' ] ))
 				error_log('$_REQUEST[ bid_nonce ] not set' );
@@ -844,7 +836,6 @@ class PP_Market_System {
 		$pp_bid_status = $bid_status;
 
 		// If bid was submitted using Ajax
-		//if ( isset( $_POST[ 'ajax_bid' ] ) ){
 		if( $_POST[ 'bid_submit' ] == 'ajax' ){
 			error_log("*********** AJAX BID SET ****************");
 			echo $this->bid_form( $_POST[ 'post_ID' ] );

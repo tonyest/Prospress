@@ -78,8 +78,9 @@ PP_Sort_Query::init();
  **************************************************************************************/
 class PP_Sort_Widget extends WP_Widget {
 	function PP_Sort_Widget() {
+		global $market_system; 
 		/* Widget settings. */
-		$widget_ops = array( 'classname' => 'pp-sort', 'description' => __( 'Allow visitors to sort posts in your Prospress Marketplace.', 'prospress' ) );
+		$widget_ops = array( 'classname' => 'pp-sort', 'description' => sprintf( __('Sort %s in your marketplace.', 'prospress' ), ucfirst( $market_system->name ) ) );
 
 		/* Widget control settings. */
 		$control_ops = array( 'id_base' => 'pp-sort' );
