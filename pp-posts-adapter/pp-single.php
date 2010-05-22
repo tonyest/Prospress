@@ -17,15 +17,16 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 <?php get_header(); ?>
 	<div id="container">
 		<div id="content">
-			<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
-			<h2 class="pp-title"><?php the_title();?></h2>
-			<!-- Display the date (November 16th, 2009 format) and a link to other posts by this posts author. -->
-			<div class="pp-end-date"><?php _e('Ending: ', 'prospress' ); the_post_end_date(); ?></div>
-			<div class="publish-date"><?php _e('Published: ', 'prospress' );  the_time('F jS, Y') ?> by <?php the_author_posts_link() ?></div>
+		<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
+			<h2 class="pp-title entry-title"><?php the_title();?></h2>
+			<div class=""><?php _e('Ending: ', 'prospress' ); the_post_end_date(); ?></div>
+			<div class=""><?php _e('Published: ', 'prospress' );  the_time('F jS, Y'); _e(' by '); the_author() ?></div>
 
-			<?php echo $market_system->bid_form(); ?>
-			<!-- Display the Post's Content in a div box. -->
-			<?php the_content(); ?>
+			<?php the_bid_form(); ?>
+
+			<div class="pp-the-content">
+				<?php the_content(); ?>
+			</div>
 
 			<p class="postmetadata">Posted in <?php the_category(', '); ?></p>
 
@@ -35,11 +36,11 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 
 			<?php comments_template( '', true ); ?>
 
-			<?php endwhile; // end of the loop. ?>
+		<?php endwhile; // end of the loop. ?>
 		</div>
 	</div>
 
-	<div id="pp-sidebar" class="pp-sidebar">
+	<div id="sidebar" class="prospress-sidebar">
 		<ul class="xoxo">
 			<?php dynamic_sidebar( $market_system->name . '-sidebar' ); ?>
 		</ul>

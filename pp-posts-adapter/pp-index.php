@@ -15,28 +15,41 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 
 ?>
 <?php get_header(); ?>
-	<div id="container">
-		<div id="content">
-		<?php error_log( 'starting Auctions page if.' ); ?>
+	<div id="container" class="prospress-container">
+		<div id="content" class="prospress-content">
+
 		<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
+
 			<h1><?php the_title(); ?></h1>
 			<p><?php the_content(); ?></p>
+			<div class="end-header pp-end"><?php _e( 'Ending', 'prospress' ); ?></div>
+			<div class="price-header pp-price"><?php _e( 'Price', 'prospress' ); ?></div>
+
 		<?php endwhile; ?>
-		<?php error_log( 'ended Auctions page query, starting next query.' ); ?>
-			<?php $pp_loop = new WP_Query( array( 'post_type' => $market_system->name ) ); ?>
-			<?php //query_posts( array( 'post_type' => $market_system->name ) ); ?>
-			<?php if ( $pp_loop->have_posts() ) : while ( $pp_loop->have_posts() ) : $pp_loop->the_post(); ?>
-			<?php //if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
 
-				<h2 class="pp-title"><a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>"><?php the_title(); ?></a></h2>
-				<div class="pp-dates">
-					<div class="pp-publish-date"><?php  _e( 'Published: ', 'prospress' ); the_time('F jS, Y'); ?></div>
-					<div class="pp-end-date"><?php _e( 'Ending: ', 'prospress' ); the_post_end_date(); ?></div>
+		<?php $pp_loop = new WP_Query( array( 'post_type' => $market_system->name ) ); ?>
+
+		<?php if ( $pp_loop->have_posts() ) : while ( $pp_loop->have_posts() ) : $pp_loop->the_post(); ?>
+
+			<div class="pp-post">
+				<div class="pp-post-content">
+					<h2 class="pp-title entry-title">
+						<a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>">
+							<?php the_title(); ?>
+						</a>
+					</h2>
+					<?php the_bid_form(); ?>
+					<div class="pp-the-excerpt">
+						<?php the_excerpt(); ?>
+					</div>
+					<div class="pp-publish-details">
+						<?php  _e( 'Published: ', 'prospress' ); the_time('F jS, Y'); ?>
+						<?php _e( 'by ', 'prospress'); the_author(); ?>
+					</div>
 				</div>
-				<div class="pp-price"><?php _e( 'Current Bid: ', 'prospress' ); $market_system->the_winning_bid_value(); ?></div>
-				<?php the_content(); ?>
-
-				<p class="postmetadata">Posted in <?php the_category(', '); ?></p>
+				<div class="pp-end"><?php the_post_end_countdown(); ?></div>
+				<div class="pp-price"><?php $market_system->the_winning_bid_value(); ?></div>
+			</div>
 
 			<?php endwhile; else: ?>
 
@@ -46,7 +59,7 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 		</div>
 	</div>
 
-	<div id="pp-sidebar" class="pp-sidebar">
+	<div id="sidebar" class="prospress-sidebar">
 		<ul class="xoxo">
 			<?php dynamic_sidebar( $market_system->name . '-sidebar' ); ?>
 		</ul>

@@ -304,7 +304,7 @@ class PP_Market_System {
 
 		if ( !empty( $winning_bidder ) ){
 			
-			$winning_bidder = ( $winning_bidder == $user_ID) ? __( 'You.', 'prospress' ) : get_userdata( $winning_bidder )->display_name;
+			$winning_bidder = ( $winning_bidder == $user_ID) ? __( 'You', 'prospress' ) : get_userdata( $winning_bidder )->display_name;
 
 			if ( $echo ) 
 				echo $winning_bidder;

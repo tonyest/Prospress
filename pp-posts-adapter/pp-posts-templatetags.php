@@ -105,15 +105,20 @@ function post_end_time_filter( $date ){
  * @param int $post_id Optional, default 0. The post id for which you want the max bid. 
  * @return object Returns the row in the bids 
  */
-function get_post_end_countdown( $content ) {
+function get_post_end_countdown() {
 	global $post;
 
-	if( ( is_home() || is_search() ) && in_the_loop() && get_post_type( $post ) == 'post' && !is_admin() ){
-		$content .= __(' ending in ', 'prospress' ) . human_interval( wp_next_scheduled( 'schedule_end_post', array( "ID" => $post->ID ) ) - time() );
-	}
+	//if( ( is_home() || is_search() ) && in_the_loop() && get_post_type( $post ) == 'post' && !is_admin() ){
+		return human_interval( wp_next_scheduled( 'schedule_end_post', array( "ID" => $post->ID ) ) - time() );
+	//}
 
-	return $content;
+	//return $countdown;
 }
+
+function the_post_end_countdown() {
+	echo get_post_end_countdown();
+}
+
 
 /** 
  * Takes a period of time as a unix time stamp and returns a string 

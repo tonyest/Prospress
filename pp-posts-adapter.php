@@ -445,15 +445,14 @@ function pp_template_redirects() {
 	global $post, $market_system;
 
 	if( $post->post_name == $market_system->name ){
-		do_action( 'pp_template_index_redirect' );
+		do_action( 'pp_index_template_redirect' );
 		if( file_exists( TEMPLATEPATH . '/pp-index.php' ) )
 			include( TEMPLATEPATH . '/pp-index.php');
 		else
 			include( PP_POSTS_DIR . '/pp-index.php');
 		exit;
 	} elseif ( $post->post_type == $market_system->name && !isset( $_GET[ 's' ] ) ) {
-		error_log( '$post->post_name == $market_system->name' );
-		do_action( 'pp_template_single_redirect' );
+		do_action( 'pp_single_template_redirect' );
 		if( file_exists( TEMPLATEPATH . '/pp-single.php' ) )
 			include( TEMPLATEPATH . '/pp-single.php');
 		else

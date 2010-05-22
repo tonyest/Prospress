@@ -1,42 +1,59 @@
-.pp-title a:active, 
-.pp-title a:link, 
-.pp-title a:visited{
-	color:#ff0000;
-}
-.pp-title a:hover{
-	color:#ff00ff;
-}
-.pp-dates{
+/*
+LAYOUT: Two columns
+-------------------------------------------------------------- */
+.prospress-container{
+	float: left;
 	width: 100%;
-	display:block;
-	float:left;
-	}
-.pp-publish-date{
-	float:left;
-	}
-.pp-end-date{
-	float:right;
 }
-.pp-price{
-	clear:both;
-	float:left;
-	display:block;
-	width:100%;
-}
-.pp-author{
-	clear:both;
-	float:left;
-	display:block;
+.prospress-content{
+	margin:0 280px 0 10px;
 }
 
-.bid-container{ 
-	border:1px solid #ccc;
-	margin: 1em 0; 
-	padding:1em;
-	background-color:#f6f6f6; 
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
+/*
+Index & Single Page Layouts
+-------------------------------------------------------------- */
+.pp-post{
+	float:left;
+	width:100%;
+	clear:both;
+	border-bottom: 1px solid #ccc;
+	margin: 5px;
+}
+.pp-post-content{
+	float:left;
+	width:70%;
+}
+.pp-price,.pp-end{
+	float:right;
+	width:12%;
+	margin-left:3%;
+}
+.price-header,.end-header{
+	text-align:center;
+	font-weight:bold;
+}
+.pp-publish-details{
+	font-size:0.8em;
+}
+.pp-the-excerpt,.pp-the-content{
+	clear:both;
+}
+
+/* Side bar & Widget Styles 
+-------------------------------------------------------------- */
+.prospress-sidebar{
+	float: right;
+	overflow: hidden;
+	width: 220px;
+}
+.prospress-sidebar ul {
+	margin-left: 0;
+	padding: 0 20px 0 0;
+}
+.prospress-sidebar ul ul {
+	border: none;
+	margin-left: 1.3em;
+	padding: 0;
 }
 
 /* Navigation
@@ -61,95 +78,15 @@
 	width: 100%;
 	font-size: 1.2em;
 }
-
-
-/* Main sidebar */
-#pp-sidebar ul {
-	margin-left: 0;
-	padding: 0 20px 0 0;
-}
-#pp-sidebar ul ul {
-	border: none;
-	margin-left: 1.3em;
-	padding: 0;
-}
-
-/* Side bar & Widget Styles 
+/* Bid Form
 -------------------------------------------------------------- */
-#pp-sidebar{
-	float: right;
-	overflow: hidden;
-	width: 220px;
-}
-#pp-sidebar > ul{
-	list-style: none;
-	margin-left: 0;
-}
-#pp-sidebar ul ul {
-	list-style: square;
-	margin-left: 1.3em;
-}
-.widget_search #s {
-	width: 60%;
-}
-.widget_search label {
-	display:none;
-}
-.widget-container {
-	margin: 0 0 18px 0;
-}
-.widget-title {
-	color: #222;
-	font-weight: bold;
-}
-#pp-sidebar a:link,
-#pp-sidebar a:visited {
-	text-decoration: none;
-}
-#pp-sidebar a:active,
-#pp-sidebar a:hover {
-	text-decoration: underline;
-}
-#wp_tag_cloud div {
-	line-height: 1.6em;
-}
-#wp-calendar {
-	width:100%;
-}
-#wp-calendar caption {
-	font-weight: bold;
-	color: #222;
-	text-align: left;
-	font-size:14px;
-	padding-bottom: 4px;
-}
-#wp-calendar thead {
-	font-size:11px;
-}
-#wp-calendar thead th {
-}
-#wp-calendar tbody {
-	color: #aaa;
-}
-#wp-calendar tbody td {
-	padding: 3px 0 2px;
-	background: #f5f5f5;
-	border:1px solid #fff;
-	text-align: center;
-}
-#wp-calendar tbody .pad {
-	background: none;
-}
-#wp-calendar tfoot #next {
-	text-align: right;
-}
-.widget_rss a.rsswidget {
-	color: #000;
-}
-.widget_rss a.rsswidget:hover {
-	color: #FF4B33;
-}
-.widget_rss .widget-title img {
-	height: 11px;
-	width: 11px;
+.bid-container, .bid-form{
+	border:1px solid #ccc;
+	clear:both;
+	margin:1em 0; 
+	padding:1em;
+	background-color:#f6f6f6; 
+	border-radius:5px;
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px;
 }
