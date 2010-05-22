@@ -107,7 +107,7 @@ class PP_Market_System {
 		$post_id = ( $post_id === NULL ) ? $post->ID : $post_id;
 		$the_post = ( empty ( $post ) ) ? get_post( $post_id) : $post;
 
-		$form = '<div id="bid-' . $post_id . '" class="bid-box">';
+		$form = '<div id="bid-' . $post_id . '" class="bid-container">';
 		//$form = '<div id="bid">';
 		//$form .= '<h3>' . $this->bid_form_title . '</h3>';
 
@@ -125,7 +125,7 @@ class PP_Market_System {
 
 			$form .= wp_nonce_field( __FILE__, 'bid_nonce', false, false );
 			$form .= '<input type="hidden" name="post_ID" value="' . $post_id . '" id="post_ID" />';
-			$form .= ' <input name="bid_submit" type="submit" id="bid_submit" value="' . $this->bid_button_value .'" />';
+			$form .= '<input name="bid_submit" type="submit" id="bid_submit" value="' . $this->bid_button_value .'" />';
 			$form .= '</form>';
 
 			$form = apply_filters( 'bid_form', $form );

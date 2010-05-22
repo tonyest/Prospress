@@ -5,12 +5,13 @@ jQuery(document).ready(function($) {
 		var form_data = $(this).serialize() + '&bid_submit=ajax';
 		//alert('form_data = ' + form_data);
 		//alert('#post_ID this = ' + $("#post_ID",this).val());
-		var $bidBox = $( "#bid-" + $("#post_ID",this).val() );
-		//alert('bidBox = ' + $bidBox.html() );
+		var post_id = $("#post_ID",this).val();
+		var $bidContainer = $("#bid-" + post_id);
+		//alert('bidBox = ' + $bidContainer.html() );
 
 		$("#bid_submit",this).attr("disabled", "true");
 		$(this).css('background', 'url("http://localhost.localdomain/trunk/wp-content/plugins/prospress/images/loadroller.gif") no-repeat center');
-		$bidBox.fadeTo(500,0.5,function(){
+		$bidContainer.fadeTo(500,0.5,function(){
 		//$(this).fadeTo(500,0.5,function(){
 			$.post(link,form_data,function(data) {
 				try{ var jso = $.parseJSON(data);
@@ -20,20 +21,13 @@ jQuery(document).ready(function($) {
 						if($(".bid_msg",this).length == 0){
 							$(".bid_msg",htmlStr).hide();
 						}
-						//alert('before replace htmlStr = ' + htmlStr.html() );
-						//alert('before replace bidBox = ' + $bidBox.html() );
-						//$("#bid").replaceWith(htmlStr.fadeTo(0,0.5));
-						//$bidBox.replaceWith(htmlStr.fadeTo(0,0.5));
-						$($bidBox).replaceWith(htmlStr.fadeTo(0,0.5));
-						//$( "#bid-" + $("#post_ID",this)).replaceWith(htmlStr.fadeTo(0,0.5));
-						//alert('after replace bidBox = ' + $bidBox.html() );
-						//$bidBox = $( "#bid-" + $("#post_ID",this).val());
-						//alert('after reselection bidBox = ' + $bidBox.html() );
-						$bidBox.fadeTo(500,1,function(){
-							if($(".bid_msg",$bidBox).is(":hidden")){
-								$(".bid_msg",$bidBox).slideDown();
+						$bidContainer.replaceWith(htmlStr.fadeTo(0,0.5));
+						$bidContainer = $("#bid-" + post_id);
+						$bidContainer.fadeTo(500,1,function(){
+							if($(".bid_msg",$bidContainer).is(":hidden")){
+								$(".bid_msg",$bidContainer).slideDown();
 							}
-							fadeBidMsg($bidBox);
+							fadeBidMsg($bidContainer);
 						});
 					}
 			});
@@ -42,7 +36,7 @@ jQuery(document).ready(function($) {
 	});
 
 	function fadeBidMsg(context){
-		$(".bid_msg",context).fadeTo(400,0.5);
+		$(".bid_msg",context).fadeTo(600,0.5);
 		$(".bid_msg",context).fadeTo(600,1);
 		return false;
 	}

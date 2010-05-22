@@ -34,7 +34,6 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 					<div class="pp-end-date"><?php _e( 'Ending: ', 'prospress' ); the_post_end_date(); ?></div>
 				</div>
 				<div class="pp-price"><?php _e( 'Current Bid: ', 'prospress' ); $market_system->the_winning_bid_value(); ?></div>
-				<?php echo $market_system->bid_form(); ?>
 				<?php the_content(); ?>
 
 				<p class="postmetadata">Posted in <?php the_category(', '); ?></p>
