@@ -38,8 +38,7 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 							<?php the_title(); ?>
 						</a>
 					</h2>
-					<?php the_bid_form(); ?>
-					<div class="pp-the-excerpt">
+					<div class="pp-excerpt">
 						<?php the_excerpt(); ?>
 					</div>
 					<div class="pp-publish-details">
@@ -61,7 +60,7 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 
 	<div id="sidebar" class="prospress-sidebar">
 		<ul class="xoxo">
-			<?php dynamic_sidebar( $market_system->name . '-sidebar' ); ?>
+			<?php dynamic_sidebar( $market_system->name . '-index-sidebar' ); ?>
 		</ul>
 	</div>
 <?php get_footer(); ?>

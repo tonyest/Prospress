@@ -27,6 +27,7 @@ Index & Single Page Layouts
 	float:right;
 	width:12%;
 	margin-left:3%;
+	text-align:center;
 }
 .price-header,.end-header{
 	text-align:center;
@@ -35,8 +36,18 @@ Index & Single Page Layouts
 .pp-publish-details{
 	font-size:0.8em;
 }
-.pp-the-excerpt,.pp-the-content{
+.pp-excerpt,.pp-content{
 	clear:both;
+}
+.pp-publish-date{
+	float:left;
+}
+.pp-end-date{
+	float:right;
+	text-align:right;
+}
+.pp-publish-date,.pp-end-date{
+	width:50%;
 }
 
 /* Side bar & Widget Styles 
@@ -78,6 +89,7 @@ Index & Single Page Layouts
 	width: 100%;
 	font-size: 1.2em;
 }
+
 /* Bid Form
 -------------------------------------------------------------- */
 .bid-container,.bid-form{

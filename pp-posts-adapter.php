@@ -522,8 +522,17 @@ function pp_add_sidebars(){
 	global $market_system;
 
 	register_sidebar( array (
-		'name' => ucfirst( $market_system->name ) . ' ' . __( 'Sidebar', 'prospress' ),
-		'id' => $market_system->name . '-sidebar',
+		'name' => ucfirst( $market_system->name ) . ' ' . __( 'Index Sidebar', 'prospress' ),
+		'id' => $market_system->name . '-index-sidebar',
+		'description' => __( "The sidebar on your Prospress posts.", 'prospress' ),
+		'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
+		'after_widget' => "</li>",
+		'before_title' => '<h3 class="widget-title">',
+		'after_title' => '</h3>',
+	) );
+	register_sidebar( array (
+		'name' => ucfirst( $market_system->name ) . ' ' . __( 'Single Sidebar', 'prospress' ),
+		'id' => $market_system->name . '-single-sidebar',
 		'description' => __( "The sidebar on your Prospress posts.", 'prospress' ),
 		'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
 		'after_widget' => "</li>",
@@ -539,7 +548,7 @@ function pp_post_sort_options( $pp_sort_options ){
 	$pp_sort_options['post-asc'] = __( 'Time: Oldest first', 'prospress' );
 	$pp_sort_options['end-asc'] = __( 'Time: Ending soonest', 'prospress' );
 	$pp_sort_options['end-desc'] = __( 'Time: Ending latest', 'prospress' );
-	
+
 	return $pp_sort_options;
 }
 add_filter( 'pp_sort_options', 'pp_post_sort_options' );

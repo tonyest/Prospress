@@ -19,16 +19,17 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 		<div id="content">
 		<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 			<h2 class="pp-title entry-title"><?php the_title();?></h2>
-			<div class=""><?php _e('Ending: ', 'prospress' ); the_post_end_date(); ?></div>
-			<div class=""><?php _e('Published: ', 'prospress' );  the_time('F jS, Y'); _e(' by '); the_author() ?></div>
+
+			<p class="pp-content">
+				<div class="pp-publish-date"><?php _e('Published: ', 'prospress' );  the_time('F jS, Y'); _e(' by '); the_author() ?></div>
+				<div class="pp-end-date"><?php _e('Ending: ', 'prospress' ); the_post_end_date(); ?></div>
+			</p>
 
 			<?php the_bid_form(); ?>
 
-			<div class="pp-the-content">
+			<div class="pp-content">
 				<?php the_content(); ?>
 			</div>
-
-			<p class="postmetadata">Posted in <?php the_category(', '); ?></p>
 
 			<div id="nav-below" class="navigation">
 				<div class="nav-index"><a href="<?php pp_get_index_permalink(); ?>"><?php printf( __("&larr; Return to %s Index", 'Prospress'), ucfirst( $market_system->name ) ); ?></a></div>
@@ -42,7 +43,7 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 
 	<div id="sidebar" class="prospress-sidebar">
 		<ul class="xoxo">
-			<?php dynamic_sidebar( $market_system->name . '-sidebar' ); ?>
+			<?php dynamic_sidebar( $market_system->name . '-single-sidebar' ); ?>
 		</ul>
 	</div>
 <?php get_footer(); ?>

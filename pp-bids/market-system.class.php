@@ -107,10 +107,6 @@ class PP_Market_System {
 		$post_id = ( $post_id === NULL ) ? $post->ID : $post_id;
 		$the_post = ( empty ( $post ) ) ? get_post( $post_id) : $post;
 
-		//$form = '<div id="bid-' . $post_id . '" class="bid-container">';
-		//$form = '<div id="bid">';
-		//$form .= '<h3>' . $this->bid_form_title . '</h3>';
-
 		if ( $the_post->post_status == 'completed' ) {
 			$form .= '<p class="bid-form">' . __( 'This post has ended. Bidding is closed.', 'prospress' ) . '</p>';
 		} else {
@@ -125,8 +121,6 @@ class PP_Market_System {
 
 			$form = apply_filters( 'bid_form', $form );
 		}
-
-		//$form .= '</div>';
 
 		return $form;		
 	}
@@ -259,13 +253,17 @@ class PP_Market_System {
 		if ( empty( $post_id ) )
 			$post_id = $post->ID;
 
-		$winning_bid = $this->get_winning_bid( $post_id );
+		if ( $this->get_bid_count( $post_id ) == 0 ){
+			$winning_bid_value = get_post_meta( $post_id, 'start_price', true );
+		} else {
+			$winning_bid = $this->get_winning_bid( $post_id );
 
-		$winning_bid_value = $wpdb->get_var( $wpdb->prepare( "SELECT meta_value FROM $wpdb->bidsmeta WHERE bid_id = %d AND meta_key = %s", $winning_bid->bid_id, 'winning_bid_value' ) );
+			$winning_bid_value = $wpdb->get_var( $wpdb->prepare( "SELECT meta_value FROM $wpdb->bidsmeta WHERE bid_id = %d AND meta_key = %s", $winning_bid->bid_id, 'winning_bid_value' ) );
 
-		// If no winning bid value in meta table, default to max value of winning bid.
-		if( empty( $winning_bid_value ) )
-			$winning_bid_value = $winning_bid->bid_value;
+			// If no winning bid value in meta table, default to max value of winning bid.
+			if( empty( $winning_bid_value ) )
+				$winning_bid_value = $winning_bid->bid_value;
+		}
 
 		return $winning_bid_value;
 	}
@@ -280,7 +278,6 @@ class PP_Market_System {
 
 		$winning_bid = ( $winning_bid == 0 ) ? __( 'No bids.', 'prospress' ) : pp_money_format( $winning_bid );
 
-		//( $echo ) ? echo $winning_bid : return $winning_bid;
 		if ( $echo ) 
 			echo $winning_bid;
 		else 
@@ -384,7 +381,6 @@ class PP_Market_System {
 		
 		$bid_count = ( $bid_count ) ? $bid_count : __( 'No Bids', 'prospress' );
 
-		//( $echo ) ? echo $bid_count : return $bid_count;	
 		if ( $echo ) 
 			echo $bid_count;
 		else 
@@ -409,9 +405,6 @@ class PP_Market_System {
 			$message_id = $_GET[ 'bid_msg' ];
 
 		if ( isset( $message_id ) ){
-			//$message_id = $pp_bid_status;
-			error_log('in get_bid_message, isset $message_id == true, message_id = ' . print_r($pp_bid_status, true));
-
 			switch( $message_id ) {
 				case 0:
 				case 1:
@@ -449,7 +442,7 @@ class PP_Market_System {
 			return $message;
 		}
 	}
-	
+
 
 	// *******************************************************************************************************************
 	// Private Functions. Don't worry about these, unless you want to get really tricky
