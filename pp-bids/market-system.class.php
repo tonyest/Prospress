@@ -420,10 +420,10 @@ class PP_Market_System {
 			switch( $message_id ) {
 				case 0:
 				case 1:
-					$message = __("Congratulations, you are the highest bidder.", 'prospress' );
+					$message = __("Congratulations, you are the winning bidder.", 'prospress' );
 					break;
 				case 2:
-					$message = __("You have been automatically outbid.", 'prospress' );
+					$message = __("You have been outbid.", 'prospress' );
 					break;
 				case 3:
 					$message = __("You must bid higher than the winning bid.", 'prospress' );
