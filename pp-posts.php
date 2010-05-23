@@ -5,9 +5,9 @@
  * @version 0.1
  */
 /*
-Plugin Name: Prospress Post Adapter
-Plugin URI: http://prospress.com
-Description: Transforms the WordPress blog post system into a marketplace posting system.
+Plugin Name: Prospress Posts
+Plugin URI: http://prospress.org
+Description: Adds a marketplace posting system into WordPress.
 Author: Brent Shepherd
 Version: 0.1
 Author URI: http://brentshepherd.com/
@@ -22,15 +22,9 @@ if ( !defined( 'PP_PLUGIN_URL' ) )
 	define( 'PP_PLUGIN_URL', WP_PLUGIN_URL . '/prospress' );
 
 if ( !defined( 'PP_POSTS_DIR' ) )
-	define( 'PP_POSTS_DIR', PP_PLUGIN_DIR . '/pp-posts-adapter' );
+	define( 'PP_POSTS_DIR', PP_PLUGIN_DIR . '/pp-posts' );
 if ( !defined( 'PP_POSTS_URL' ) )
-	define( 'PP_POSTS_URL', PP_PLUGIN_URL . '/pp-posts-adapter' );
-
-/**
- * Declare view files as constants
- */
-if ( !defined( "PP_POST_OPTIONS"))
-	define("PP_POST_OPTIONS", PP_POSTS_DIR . "/pp-post-options.php");
+	define( 'PP_POSTS_URL', PP_PLUGIN_URL . '/pp-posts' );
 
 /**
  * Include Custom Post Type
@@ -38,7 +32,7 @@ if ( !defined( "PP_POST_OPTIONS"))
 include( PP_POSTS_DIR . '/pp-custom-post-type.php');
 
 /**
- * Include Sort functions
+ * Include Sort widget
  */
 include( PP_POSTS_DIR . '/pp-sort.php');
 
@@ -52,7 +46,7 @@ include( PP_POSTS_DIR . '/pp-posts-templatetags.php');
  */
 include( PP_POSTS_DIR . '/pp-custom-taxonomy.php');
 
-function pp_posts_adapter_install(){
+function pp_posts_install(){
 	global $wpdb, $market_system, $wp_rewrite;
 
 	$wp_rewrite->flush_rules(false);
@@ -74,7 +68,7 @@ function pp_posts_adapter_install(){
 
 	pp_add_sidebars_widgets();
 }
-register_activation_hook( __FILE__, 'pp_posts_adapter_install' );
+register_activation_hook( __FILE__, 'pp_posts_install' );
 
 /* When the post is saved, saves our custom data */
 function pp_post_save_postdata( $post_id, $post ) {
@@ -336,9 +330,9 @@ function pp_posts_admin_head() {
 		return;
 
 	if( strpos( $_SERVER['REQUEST_URI'], 'post.php' ) !== false || strpos( $_SERVER['REQUEST_URI'], 'post-new.php' ) !== false ) {
-		wp_enqueue_style( 'post-adapter',  PP_POSTS_URL . '/post-adapter.css' );
-		wp_enqueue_script( 'post-adapter', PP_POSTS_URL . '/post-adapter.dev.js', array('jquery') );
-		wp_localize_script( 'post-adapter', 'ppPostL10n', array(
+		wp_enqueue_style( 'prospress-post',  PP_POSTS_URL . '/pp-post.css' );
+		wp_enqueue_script( 'prospress-post', PP_POSTS_URL . '/pp-post.dev.js', array('jquery') );
+		wp_localize_script( 'prospress-post', 'ppPostL10n', array(
 			'endedOn' => __('Ended on:', 'prospress' ),
 			'endOn' => __('End on:', 'prospress' ),
 			'end' => __('End', 'prospress' ),
@@ -503,7 +497,7 @@ function pp_add_sidebars_widgets(){
 	update_option( 'sidebars_widgets', $sidebars_widgets );
 }
 
-function pp_posts_adapter_uninstall(){
+function pp_posts_uninstall(){
 	global $market_system;
 
 	delete_option( 'widget_bid-filter' );
@@ -516,7 +510,7 @@ function pp_posts_adapter_uninstall(){
 		update_option( 'sidebars_widgets', $sidebars_widgets );
 	}
 }
-register_deactivation_hook( __FILE__, 'pp_posts_adapter_uninstall' );
+register_deactivation_hook( __FILE__, 'pp_posts_uninstall' );
 
 function pp_add_sidebars(){
 	global $market_system;

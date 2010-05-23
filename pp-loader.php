@@ -23,7 +23,7 @@ register_activation_hook( __FILE__, 'pp_maybe_install' );
 
 //require_once( WP_PLUGIN_DIR . '/prospress/pp-bids.php' );
 
-//require_once( WP_PLUGIN_DIR . '/prospress/pp-posts-adapter.php' );
+//require_once( WP_PLUGIN_DIR . '/prospress/pp-posts.php' );
 
 //require_once( WP_PLUGIN_DIR . '/prospress/pp-feedback.php' );
 

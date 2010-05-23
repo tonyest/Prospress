@@ -24,7 +24,7 @@ class PP_Market_System {
 		$this->bid_button_value = empty( $bid_button_value ) ? __("Bid now!", 'prospress' ) : $bid_button_value;
 
 		if( empty( $post_table_columns ) || !is_array( $post_table_columns ) ){
-			$this->post_table_columns = array (	'current_bid' => array( 'title' => 'Winning Bid', 'function' => 'the_winning_bid_value' ),
+			$this->post_table_columns = array (	'current_bid' => array( 'title' => 'Price', 'function' => 'the_winning_bid_value' ),
 												'bid_count' => array( 'title' => 'Number of Bids', 'function' => 'the_bid_count' ) );
 		} else {
 			$this->post_table_columns = $post_table_columns;
