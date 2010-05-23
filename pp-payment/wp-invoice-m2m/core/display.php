@@ -88,7 +88,7 @@ function wp_invoice_lookup() {  ?>
 			$row_actions = 	"<div class='row-actions'>";
 
 			if(!$invoice->is_paid)			
-				$row_actions .= "<span class='edit'><a href='$invoice_send_pay_link'>Send</a> | </span>";
+				$row_actions .= "<span class='edit'><a href='$invoice_send_pay_link'>Send Invoice</a> | </span>";
 
 			if($invoice->is_archived)
 				$row_actions .= "<span class='unarchive'><a href='$overview_link&wp_invoice_action=unrachive_invoice&multiple_invoices[0]=$invoice_id' class=''>Un-Archive</a> </span>";
@@ -351,7 +351,7 @@ function wp_invoice_show_receipt_email($invoice_id) {
 function wp_invoice_draw_itemized_table($invoice_id) {
 	global $wpdb;
 
-	$invoice_info = $wpdb->get_row("SELECT * FROM ".$wpdb->payments." WHERE invoice_num = '".$invoice_id."'");
+	$invoice_info = $wpdb->get_row("SELECT * FROM ".$wpdb->payments." WHERE id = '".$invoice_id."'");
 	$itemized = $invoice_info->itemized;
 	$amount = $invoice_info->amount;
 
@@ -428,7 +428,7 @@ function wp_invoice_draw_itemized_table($invoice_id) {
 
 function wp_invoice_draw_itemized_table_plaintext($invoice_id) {
 	global $wpdb;
-	$invoice_info = $wpdb->get_row("SELECT * FROM ".$wpdb->payments." WHERE invoice_num = '".$invoice_id."'");
+	$invoice_info = $wpdb->get_row("SELECT * FROM ".$wpdb->payments." WHERE id = '".$invoice_id."'");
 	$itemized = $invoice_info->itemized;
 	$amount = $invoice_info->amount;
 	if(!strpos($amount,'.')) $amount = $amount . ".00";
@@ -661,7 +661,7 @@ function wp_invoice_draw_user_selection_form($user_id) {
 		$profileuser = @get_user_to_edit($invoice->user_id);
 		?>
 
-		<option value="<?php echo $invoice->invoice_num; ?>"><?php if(wp_invoice_recurring($invoice->invoice_num)) {?>(recurring)<?php } ?> <?php echo $invoice->subject . " - $" .$invoice->amount; ?> </option>
+		<option value="<?php echo $invoice->id; ?>"><?php if(wp_invoice_recurring($invoice->id)) {?>(recurring)<?php } ?> <?php echo $invoice->subject . " - $" .$invoice->amount; ?> </option>
 
 		<?php } ?>
 

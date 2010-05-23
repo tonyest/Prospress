@@ -17,7 +17,7 @@
 	<input type="hidden" name="rm" value="2">
 	<input type="hidden" name="amount"  value="<?php echo $invoice->amount; ?>">
 	<input type="hidden" name="cbt"  value="Mark Invoice as Paid">
-	<input  type="hidden" name="invoice" id="invoice_num"  value="<?php echo  $invoice->id; ?>">
+	<input  type="hidden" name="invoice" id="id"  value="<?php echo  $invoice->id; ?>">
  
 	<fieldset id="paypal_information">
 	<ol>		

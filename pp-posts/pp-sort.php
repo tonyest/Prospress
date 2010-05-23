@@ -66,7 +66,7 @@ class PP_Sort_Query {
 			$sql = "$wpdb->posts.post_date $order";
 		}
 
-		error_log("sql = $sql");
+		error_log("posts_orderby sql = $sql");
 		return $sql;
 	}
 }

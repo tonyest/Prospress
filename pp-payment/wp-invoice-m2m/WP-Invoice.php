@@ -115,11 +115,11 @@ class WP_Invoice {
 		$unsent_invoices = (count($this->unsent_invoices) > 0 ? "(" . count($this->unsent_invoices) . ")" : "");
 		$unpaid_invoices = (count($this->unpaid_invoices) > 0 ? "(" . count($this->unpaid_invoices) . ")" : "");
 
-		$wp_invoice_page_names['web_invoice'] 			= add_menu_page('Payments and Accounts', 'Accounts',  $this->wp_invoice_user_level,'outgoing_invoices', array(&$this,'outgoing_invoices'),$this->uri."/core/images/wp_invoice.png", $_wp_last_object_menu);		
-		$wp_invoice_page_names['outgoing_invoices'] 	= add_submenu_page( 'outgoing_invoices', "Incoming Payments $unsent_invoices", "Incoming Payments $unsent_invoices", $this->wp_invoice_user_level, 'outgoing_invoices', array(&$this,'outgoing_invoices'));
-		$wp_invoice_page_names['incoming_invoices'] 	= add_submenu_page( 'outgoing_invoices', "Outgoing Payments $unpaid_invoices", "Outgoing Payments $unpaid_invoices", $this->wp_invoice_user_level, 'incoming_invoices', array(&$this,'incoming_invoices'));
+		$wp_invoice_page_names['web_invoice'] 			= add_menu_page('Payments', 'Payments',  $this->wp_invoice_user_level,'outgoing_invoices', array(&$this,'outgoing_invoices'),$this->uri."/core/images/wp_invoice.png", $_wp_last_object_menu);		
+		$wp_invoice_page_names['outgoing_invoices'] 	= add_submenu_page( 'outgoing_invoices', "Incoming Payments $unsent_invoices", "Incoming $unsent_invoices", $this->wp_invoice_user_level, 'outgoing_invoices', array(&$this,'outgoing_invoices'));
+		$wp_invoice_page_names['incoming_invoices'] 	= add_submenu_page( 'outgoing_invoices', "Outgoing Payments $unpaid_invoices", "Outgoing $unpaid_invoices", $this->wp_invoice_user_level, 'incoming_invoices', array(&$this,'incoming_invoices'));
 		$wp_invoice_page_names['user_settings'] 		= add_submenu_page( 'outgoing_invoices', "Settings", "Settings", $this->wp_invoice_user_level, 'user_settings_page', array(&$this,'user_settings_page'));
-		$wp_invoice_page_names['global_settings'] 		= add_submenu_page( 'outgoing_invoices', "Global Settings", "Global Settings", $this->admin_user_level, 'invoice_settings', array(&$this,'settings_page'));
+		$wp_invoice_page_names['global_settings'] 		= add_submenu_page( 'Prospress', 'Payment Settings', 'Payment Settings', $this->admin_user_level, 'invoice_settings', array(&$this,'settings_page'));
 
 		$wp_invoice_page_names['make_payment'] = add_submenu_page( 'hidden', "View Invoice", "View Invoice", $this->wp_invoice_user_level, 'make_payment', array(&$this,'make_payment'));
 		$wp_invoice_page_names['send_invoice'] = add_submenu_page( 'hidden', "Send Invoice", "Send Invoice", $this->wp_invoice_user_level, 'send_invoice', array(&$this,'send_invoice'));
@@ -548,7 +548,7 @@ class WP_Invoice {
 				$md5_invoice_id = $_GET['invoice_id'];
 
 				// Convert MD5 hash into Actual Invoice ID
-				$all_invoices = $wpdb->get_col("SELECT invoice_num FROM ".$wpdb->payments." ");
+				$all_invoices = $wpdb->get_col("SELECT id FROM ".$wpdb->payments." ");
 				foreach ($all_invoices as $value) { if(md5($value) == $md5_invoice_id) {$invoice_id = $value;} }		
 
 				//Check if invoice exists, SSL enforcement is setp, and we are not currently browing HTTPS,  then reload page into HTTPS 
@@ -563,7 +563,7 @@ class WP_Invoice {
 				$md5_invoice_id = $_POST['wp_invoice_id_hash'];
 
 				// Convert MD5 hash into Actual Invoice ID
-				$all_invoices = $wpdb->get_col("SELECT invoice_num FROM ".$wpdb->payments." ");
+				$all_invoices = $wpdb->get_col("SELECT id FROM ".$wpdb->payments." ");
 				foreach ($all_invoices as $value) { if(md5($value) == $md5_invoice_id) {$invoice_id = $value;} }
 
 				//Check to see if this is a credit card transaction, if so process

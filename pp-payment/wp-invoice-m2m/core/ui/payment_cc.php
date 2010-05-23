@@ -87,7 +87,7 @@
 	
 	<input type="hidden" name="amount" value="<?php echo $invoice->amount; ?>">
  	<input type="hidden" name="email_address" value="<?php echo $invoice->payee_class->user_email; ?>">
-	<input type="hidden" name="invoice_num" value="<?php echo  $invoice->id; ?>">
+	<input type="hidden" name="id" value="<?php echo  $invoice->id; ?>">
 	<input type="hidden" name="currency_code" id="currency_code"  value="<?php echo $invoice->currency_code; ?>">
  	<fieldset id="credit_card_information" class="clearfix">
 		<ol>
