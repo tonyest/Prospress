@@ -27,7 +27,6 @@ Copyright 2009  TwinCitiesTech.com Inc.   (email : andy.potanin@twincitiestech.c
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-define("WP_INVOICE_VERSION_NUM", "0.8");
 // define("WP_INVOICE_UI_PATH", ABSPATH . "wp-content/plugins/wp-invoice-m2m/core/ui/");
 define("WP_INVOICE_UI_PATH", PP_INVOICE_DIR . "/core/ui/");
 
@@ -41,7 +40,7 @@ $wp_invoice_debug = false;
 class WP_Invoice {
 
 	var $Invoice;
-	var $wp_invoice_user_level = 8;
+	var $wp_invoice_user_level = 0;
 	var $uri;
 	var $the_path;
 	var $frontend_path;
@@ -108,13 +107,6 @@ class WP_Invoice {
 
 	function wp_invoice_add_pages() {
 		global $_wp_last_object_menu, $wp_invoice_page_names, $screen_layout_columns;
-		/*
-
-		Make Payment Page: admin_page_make_payment
-		Outgoing Invoices: toplevel_page_outgoing_invoices
-		Incoming Invoices: web-invoice_page_incoming_invoices
-		Send Invoice: admin_page_send_invoice
-		*/
 
 		//necessary to insert the page link correctly into admin menu
 		$_wp_last_object_menu++;
@@ -123,9 +115,9 @@ class WP_Invoice {
 		$unsent_invoices = (count($this->unsent_invoices) > 0 ? "(" . count($this->unsent_invoices) . ")" : "");
 		$unpaid_invoices = (count($this->unpaid_invoices) > 0 ? "(" . count($this->unpaid_invoices) . ")" : "");
 
-		$wp_invoice_page_names['web_invoice'] = add_menu_page('Web Invoice System', 'Web Invoice',  $this->wp_invoice_user_level,'outgoing_invoices', array(&$this,'outgoing_invoices'),$this->uri."/core/images/wp_invoice.png", $_wp_last_object_menu);		
-		$wp_invoice_page_names['outgoing_invoices'] 	= add_submenu_page( 'outgoing_invoices', "Send Invoices $unsent_invoices", "Send Invoices $unsent_invoices", $this->wp_invoice_user_level, 'outgoing_invoices', array(&$this,'outgoing_invoices'));
-		$wp_invoice_page_names['incoming_invoices'] 	= add_submenu_page( 'outgoing_invoices', "Pay Invoices $unpaid_invoices", "Pay Invoices $unpaid_invoices", $this->wp_invoice_user_level, 'incoming_invoices', array(&$this,'incoming_invoices'));
+		$wp_invoice_page_names['web_invoice'] 			= add_menu_page('Payments and Accounts', 'Accounts',  $this->wp_invoice_user_level,'outgoing_invoices', array(&$this,'outgoing_invoices'),$this->uri."/core/images/wp_invoice.png", $_wp_last_object_menu);		
+		$wp_invoice_page_names['outgoing_invoices'] 	= add_submenu_page( 'outgoing_invoices', "Incoming Payments $unsent_invoices", "Incoming Payments $unsent_invoices", $this->wp_invoice_user_level, 'outgoing_invoices', array(&$this,'outgoing_invoices'));
+		$wp_invoice_page_names['incoming_invoices'] 	= add_submenu_page( 'outgoing_invoices', "Outgoing Payments $unpaid_invoices", "Outgoing Payments $unpaid_invoices", $this->wp_invoice_user_level, 'incoming_invoices', array(&$this,'incoming_invoices'));
 		$wp_invoice_page_names['user_settings'] 		= add_submenu_page( 'outgoing_invoices', "Settings", "Settings", $this->wp_invoice_user_level, 'user_settings_page', array(&$this,'user_settings_page'));
 		$wp_invoice_page_names['global_settings'] 		= add_submenu_page( 'outgoing_invoices', "Global Settings", "Global Settings", $this->admin_user_level, 'invoice_settings', array(&$this,'settings_page'));
 
@@ -660,7 +652,6 @@ class WP_Invoice {
 			add_option('wp_invoice_fe_paypal_link_url', "https://www.paypal.com/en_US/i/btn/btn_paynow_LG.gif");
 			add_option('wp_invoice_fe_state_selection', "Dropdown");
 
-			add_option('wp_invoice_version', WP_INVOICE_VERSION_NUM);
 			add_option('wp_invoice_email_address',get_bloginfo('admin_email'));
 			add_option('wp_invoice_business_name', get_bloginfo('blogname'));
 			add_option('wp_invoice_business_address', '');

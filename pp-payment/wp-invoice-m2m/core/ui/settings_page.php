@@ -14,7 +14,7 @@
 			<tr>
 				<th>Minimum User Level to Use WP-Invoice</a>:</th>
 				<td>
-				<?php echo wp_invoice_draw_select('wp_invoice_user_level',array("level_0" => "Subscriber","level_0" => "Contributor","level_2" => "Author","level_5" => "Editor","level_8" => "Administrator"), get_option('wp_invoice_user_level')); ?>
+				<?php echo wp_invoice_draw_select('wp_invoice_user_level',array("level_0" => "Subscriber","level_1" => "Contributor","level_2" => "Author","level_5" => "Editor","level_8" => "Administrator"), get_option('wp_invoice_user_level')); ?>
 				</td>
 			</tr>
 		</table>
