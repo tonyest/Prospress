@@ -57,7 +57,7 @@ function wp_invoice_the_content($content) {
 
 		} 
 	$result .= "</div>";
-	
+
 	if(get_option('wp_invoice_where_to_display') == 'overwrite' || get_option('wp_invoice_where_to_display') == '' || get_option('wp_invoice_where_to_display') == 'replace_tag') return $result;
 	if(get_option('wp_invoice_where_to_display') == 'bellow_content') return $content . $result;
 	if(get_option('wp_invoice_where_to_display') == 'above_content') return $result . $content;
@@ -84,12 +84,12 @@ $invoice_id = wp_invoice_md5_to_invoice($_GET['invoice_id']);
 			jQuery(".payment_info").hide();
 			jQuery(".paypal_ui").show();
 		}		
-		
+
 		if(ddVal == 'Credit Card') {
 			jQuery(".payment_info").hide();
 			jQuery(".cc_ui").show();
 		}
-		
+
 	}
 
 function cc_card_pick(){
@@ -119,14 +119,14 @@ function wp_invoice_curPageURL() {
  return $pageURL;
 }
 ?>
-	
+
 function process_cc_checkout(){
 
 jQuery('#wp_invoice_process_wait span').html('<img src="<?php echo WP_Invoice::frontend_path(); ?>/core/images/processing-ajax.gif">');
 
  link_id = 'wp_cc_response';
 	var req = jQuery.post ( ajaxurl , jQuery('#checkout_form').serialize(), function(html){
-			
+
 			var explode = html.toString().split('\n');
 			var shown = false;
 			var msg = '<b><?php _e('There are problems with your transaction:', WP_INVOICE_TRANS_DOMAIN); ?></b><ol>';
@@ -149,16 +149,16 @@ jQuery('#wp_invoice_process_wait span').html('<img src="<?php echo WP_Invoice::f
 					/*jQuery('#err_' + explode_again[1]).hide(); */
 				}
 			}
-			
+
 			if ( ! shown )
 			{
 			if(html == 'Transaction okay.') {
-				
+
 				jQuery('.online_payment_form').fadeOut("slow");
 				jQuery('#wp_cc_response').fadeIn("slow");
 				jQuery('#wp_cc_response').html("<?php _e('Thank you! <br />Payment processed successfully!', WP_INVOICE_TRANS_DOMAIN); ?>");
 				jQuery("#credit_card_information").hide(); 
-				
+
 				jQuery("#welcome_message").html('<?php _e('Invoice Paid!', WP_INVOICE_TRANS_DOMAIN); ?>');
 				jQuery('#' + link_id).show();
 				}
@@ -259,4 +259,3 @@ html[xmlns] #invoice_page .clearfix {display: block;}
 <?php } 
 
 }
-

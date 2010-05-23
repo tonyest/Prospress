@@ -18,14 +18,12 @@
 */
 
 function wp_invoice_backend_wrap($title = false, $content = false) {
-
 	?>
 	<div class='wrap'>
 	<h2><?php echo $title; ?></h2>
 	<?php echo $content; ?>
 	</div>
 	<?php
-
 }
 
 function wp_invoice_lookup() {  ?>
@@ -43,9 +41,9 @@ function wp_invoice_lookup() {  ?>
 	Draw invoice row for overview tables
 */
 	function wp_invoice_invoice_row($invoice, $page) {
-	
+
 		$invoice_id = $invoice->id;
-		
+
 		if($page == 'outgoing') {
 			$overview_link = admin_url("admin.php?page=outgoing_invoices");;
 			$columns = get_column_headers("toplevel_page_outgoing_invoices");
@@ -88,38 +86,38 @@ function wp_invoice_lookup() {  ?>
 
 		if($page == 'outgoing') {
 			$row_actions = 	"<div class='row-actions'>";
-			
+
 			if(!$invoice->is_paid)			
 				$row_actions .= "<span class='edit'><a href='$invoice_send_pay_link'>Send</a> | </span>";
-			
+
 			if($invoice->is_archived)
 				$row_actions .= "<span class='unarchive'><a href='$overview_link&wp_invoice_action=unrachive_invoice&multiple_invoices[0]=$invoice_id' class=''>Un-Archive</a> </span>";
-			
+
 			if(!$invoice->is_archived)
 				$row_actions .= "<span class='archive'><a href='$overview_link&wp_invoice_action=archive_invoice&multiple_invoices[0]=$invoice_id' class=''>Archive</a>  </span>";
-						
+
 			// $row_actions .= "<span class='delete'><a onclick='return wp_invoice_confirm_delete();' href='$overview_link&wp_invoice_action=delete_invoice&multiple_invoices[0]=$invoice_id' class='submitdelete'>Delete</a></span>";		
 			$row_actions .= "</div>";
 		}
 
 		if($page == 'incoming') {
 			$row_actions = 	"<div class='row-actions'>";
-			
+
 			if(!$invoice->is_paid)
 				$row_actions .= "<span class='edit'><a href='$invoice_send_pay_link'>Make Payment</a> | </span>";
-			
+
 			if($invoice->is_archived)
 				$row_actions .= "<span class='unarchive'><a href='$overview_link&wp_invoice_action=unrachive_invoice&multiple_invoices[0]=$invoice_id' class=''>Un-Archive</a>  </span>";
-			
+
 			if(!$invoice->is_archived)
 				$row_actions .= "<span class='archive'><a href='$overview_link&wp_invoice_action=archive_invoice&multiple_invoices[0]=$invoice_id' class=''>Archive</a>  </span>";
-	
+
 			$row_actions .= "</div>";
 
 		}
 
 		// Setup display
-			
+
 		$r = "<tr id='invoice-$invoice_id' class='{$invoice_id}_row $class_settings'>";
 
 		foreach ( $columns as $column_name => $column_display_name ) {
@@ -144,13 +142,13 @@ function wp_invoice_lookup() {  ?>
 			case 'balance':
 				$r .= "<td $attributes>{$invoice->display_amount}</td>";
 			break;			
-		
+
 			case 'status':
 				$r .= "<td $attributes>". ($days_since ? " $days_since " : "-")."</td>";
 			break;		
 
 			case 'date_sent':
-				
+
 				$date_sent_string = strtotime(wp_invoice_meta($invoice_id,'sent_date')); 
 				if(!empty($date_sent_string))
 					$r .= "<td $attributes sortvalue='".date("Y-m-d", $date_sent_string)."'>". date("M d, Y", $date_sent_string). "</td>";
@@ -158,19 +156,19 @@ function wp_invoice_lookup() {  ?>
 					$r .= "<td $attributes>&nbsp;</td>";
 
 			break;		
-			
+
 			case 'invoice_id':
 				$r .= "<td $attributes>{$invoice->id}</td>";
 			break;			
-			
+
 			case 'user_email':
 				$r .= "<td $attributes><a href='mailto:{{$user_class->user_email}'>{$user_class->user_email}</a></td>";
 			break;			
-			
+
 			case 'user':
 				$r .= "<td $attributes>{$user_class->nickname}</td>";
 			break;	
- 			
+
 			case 'display_name':
 				$r .= "<td $attributes>{$user_class->display_name}</td>";
 			break;	
@@ -180,7 +178,7 @@ function wp_invoice_lookup() {  ?>
 			break;			
 
 			case 'due_date':
-				
+
 				$due_date_string = strtotime($invoice->due_date_day . "-" . $invoice->due_date_month . "-" . $invoice->due_date_year);
 				if(!empty($due_date_string))
 					$r .= "<td $attributes sortvalue='".date(get_option('date_format'), $due_date_string)."'>" . date(get_option('date_format'), $due_date_string). "</td>";
@@ -192,13 +190,13 @@ function wp_invoice_lookup() {  ?>
 				$r .= "<td $attributes>";
  				$r .= "$column_name";
 				$r .= "</td>";
-		
+
 		}
 		}
 	$r .= '</tr>';
 
 	return $r;		
-	
+
 	}
 
 function wp_invoice_user_selection_screen() {
@@ -213,7 +211,7 @@ function wp_invoice_user_selection_screen() {
 		</div>
 		</div>
 	</div>
-	
+
 	<?php
 
 }
@@ -250,7 +248,7 @@ global $wpdb; ?>
 		</select>
 	</li>
 <?php } ?>
-	
+
 <?php if(empty($wp_invoice_payment_method)) { ?>
 	<li>Select how you want to accept money: 
 		<select id="wp_invoice_payment_method" name="wp_invoice_payment_method">
@@ -260,12 +258,12 @@ global $wpdb; ?>
 		</select> 
 
 		<li class="paypal_info payment_info">Your PayPal username: <input id='wp_invoice_paypal_address' name="wp_invoice_paypal_address" class="search-input input_field"  type="text" value="<?php echo stripslashes(get_option('wp_invoice_paypal_address')); ?>"></li>
-		
+
 		<li class="gateway_info payment_info">
 		<a class="wp_invoice_tooltip"  title="Your credit card processor will provide you with a gateway username.">Gateway Username</a>
 		<input AUTOCOMPLETE="off" name="wp_invoice_gateway_username" class="input_field search-input" type="text" value="<?php echo stripslashes(get_option('wp_invoice_gateway_username')); ?>">
 		</li>
-				
+
 		<li class="gateway_info payment_info">
 		<a class="wp_invoice_tooltip"  title="You will be able to generate this in our credit card processor's control panel.">Gateway Transaction Key</a>
 		<input AUTOCOMPLETE="off" name="wp_invoice_gateway_tran_key" class="input_field search-input" type="text" value="<?php echo stripslashes(get_option('wp_invoice_gateway_tran_key')); ?>">
@@ -298,11 +296,11 @@ global $wpdb; ?>
 		</select>
 	</li>
 	</ol>
-	
+
 	<input type='submit' class='button' value='Save Settings and Create Invoice'>
 	</form>
 	<?php  if(wp_invoice_is_not_merchant()) wp_invoice_cc_setup(false); ?>
-	
+
 <?php
 }
 
@@ -315,7 +313,7 @@ if($show_title) { ?> 	<div id="wp_invoice_need_mm" style="border-top: 1px solid 
 </p>
 </div>
 </div>
-		
+
 	<?php
 }
 
@@ -328,17 +326,17 @@ function wp_invoice_dashboard() {
 function wp_invoice_show_email($invoice_id, $force_original = false) {
 	global $wp_invoice_email_variables;
 	$wp_invoice_email_variables = wp_invoice_email_variables($invoice_id);
-	
+
 	if(!$force_original && wp_invoice_meta($invoice_id, 'wp_invoice_email_message_content') != "") return str_replace("<br />", "\n",wp_invoice_meta($invoice_id, 'wp_invoice_email_message_content'));
 	return str_replace("<br />", "\n",preg_replace_callback('/(%([a-z_]+)%)/',  'wp_invoice_email_apply_variables', get_option('wp_invoice_email_send_invoice_content')));
-	
+
 }
 
 function wp_invoice_show_reminder_email($invoice_id) {
 
 	global $wp_invoice_email_variables;
 	$wp_invoice_email_variables = wp_invoice_email_variables($invoice_id);
-	
+
 	return preg_replace_callback('/(%([a-z_]+)%)/', 'wp_invoice_email_apply_variables', get_option('wp_invoice_email_send_reminder_content'));
 }
 
@@ -346,17 +344,17 @@ function wp_invoice_show_receipt_email($invoice_id) {
 
 	global $wp_invoice_email_variables;
 	$wp_invoice_email_variables = wp_invoice_email_variables($invoice_id);
-	
+
 	return preg_replace_callback('/(%([a-z_]+)%)/', 'wp_invoice_email_apply_variables', get_option('wp_invoice_email_send_receipt_content'));
 }
 
 function wp_invoice_draw_itemized_table($invoice_id) {
 	global $wpdb;
 
-	$invoice_info = $wpdb->get_row("SELECT * FROM ".WP_Invoice::tablename('main')." WHERE invoice_num = '".$invoice_id."'");
+	$invoice_info = $wpdb->get_row("SELECT * FROM ".$wpdb->payments." WHERE invoice_num = '".$invoice_id."'");
 	$itemized = $invoice_info->itemized;
 	$amount = $invoice_info->amount;
-	
+
 	$wp_invoice_tax = wp_invoice_meta($invoice_id,'wp_invoice_tax');
 	if($wp_invoice_tax == '') $wp_invoice_tax = wp_invoice_meta($invoice_id,'tax_value');
 
@@ -386,14 +384,14 @@ function wp_invoice_draw_itemized_table($invoice_id) {
 
 		if(!empty($itemized_item[name])) {
 		if(!strpos($itemized_item[price],'.')) $itemized_item[price] = $itemized_item[price] . ".00";
-		
+
 		if($i % 2) { $response .= "<tr>"; } 
 		else { $response .= "<tr  class='alt_row'>"; } 
-		
+
 		//Quantities
 		if($show_quantity) {
 		$response .= "<td style=\"width: 70px; text-align: right;\">" . $itemized_item[quantity] . "</td>";	}
-		
+
 		//Item Name
 		$response .= "<td>" . stripslashes($itemized_item[name]) . " <br /><span class='description_text'>" . stripslashes($itemized_item[description]) . "</span></td>";
 
@@ -407,14 +405,14 @@ function wp_invoice_draw_itemized_table($invoice_id) {
 		$response .="</tr>";
 		$i++;
 		}
-		
+
 		}
 		if($wp_invoice_tax) {
 		$response .= "<tr>";
 		if(get_option('wp_invoice_show_quantities') == "Show") { $response .= "<td></td>"; }
 		$response .= "<td>". get_option('wp_invoice_custom_label_tax') . " (". round($wp_invoice_tax,2). "%) </td><td style='text-align:right;' colspan='2'>" . wp_invoice_currency_symbol($currency_code) . wp_invoice_currency_format($tax_value)."</td></tr>";
 		}
-		
+
 		$response .="		
 		<tr class=\"wp_invoice_bottom_line\">
 		<td align=\"right\">Invoice Total:</td>
@@ -430,11 +428,11 @@ function wp_invoice_draw_itemized_table($invoice_id) {
 
 function wp_invoice_draw_itemized_table_plaintext($invoice_id) {
 	global $wpdb;
-	$invoice_info = $wpdb->get_row("SELECT * FROM ".WP_Invoice::tablename('main')." WHERE invoice_num = '".$invoice_id."'");
+	$invoice_info = $wpdb->get_row("SELECT * FROM ".$wpdb->payments." WHERE invoice_num = '".$invoice_id."'");
 	$itemized = $invoice_info->itemized;
 	$amount = $invoice_info->amount;
 	if(!strpos($amount,'.')) $amount = $amount . ".00";
-	
+
 	$itemized_array = unserialize(urldecode($itemized)); 
 
 	if(is_array($itemized_array)) {
@@ -470,23 +468,23 @@ function wp_invoice_user_profile_fields()
 	<th><label for="company_name">Company Name</label></th>
 	<td><input type="text" name="company_name" id="company_name" value="<?php echo get_usermeta($user_id,'company_name'); ?>" /></td>
 	</tr>
-	
+
 	<tr>
 	<th><label for="streetaddress">Street Address</label></th>
 	<td><input type="text" name="streetaddress" id="streetaddress" value="<?php echo get_usermeta($user_id,'streetaddress'); ?>" /></td>
 	</tr>
-	
+
 	<tr>
 	<th><label for="city">City</label></th>
 	<td><input type="text" name="city" id="city" value="<?php echo get_usermeta($user_id,'city'); ?>" /></td>
 	</tr>
-	
+
 	<tr>
 	<th><label for="state">State</label></th>
 	<td><input type="text" name="state" id="state" value="<?php echo get_usermeta($user_id,'state'); ?>" /><br />
 	<p class="note">Use two-letter state codes for safe credit card processing.</p></td>
 	</tr>
-	
+
 	<tr>
 	<th><label for="streetaddress">ZIP Code</label></th>
 	<td><input type="text" name="zip" id="zip" value="<?php echo get_usermeta($user_id,'zip'); ?>" /></td>
@@ -497,7 +495,7 @@ function wp_invoice_user_profile_fields()
 	<td><input type="text" name="phonenumber" id="phonenumber" value="<?php echo get_usermeta($user_id,'phonenumber'); ?>" />
 	<p class="note">Enforce 555-555-5555 format if you are using PayPal.</p></td>
 	</tr>
-	
+
 	<tr>
 	<th></th>
 	<td>
@@ -517,7 +515,7 @@ function wp_invoice_show_paypal_reciept($invoice_id) {
 	if(isset($_POST['last_name'])) update_usermeta($invoice->recipient('user_id'), 'last_name', $_POST['last_name']);
 
 	if(get_option('wp_invoice_send_thank_you_email') == 'yes') wp_invoice_send_email_receipt($invoice_id);
-	
+
 	wp_invoice_paid($invoice_id);
 	wp_invoice_update_log($invoice_id,'paid',"PayPal Reciept: (" . $_REQUEST['receipt_id']. ")");
 	if(isset($_REQUEST['payer_email'])) wp_invoice_update_log($invoice_id,'paid',"PayPal payee user email: (" . $_REQUEST['payer_email']. ")");
@@ -608,17 +606,17 @@ function wp_invoice_show_recurring_info($invoice_id) {
 	<?php if($invoice->display('due_date')) { ?> <p class="wp_invoice_due_date">Due Date: <?php echo $invoice->display('due_date'); } ?>	
 	<h2 id="wp_invoice_welcome_message" class="invoice_page_subheading">Welcome, <?php echo $invoice->recipient('callsign'); ?>!</h2>
 	<?php if($invoice->display('description')) { ?><p><?php echo $invoice->display('description');  ?></p><?php  } ?>
-	
+
 	<p class="recurring_info_breakdown">This is a recurring bill, id: <b><?php echo $invoice->display('display_id'); ?></b>.</p>
 	<p>You will be billed <?php echo $invoice->display('display_billing_rate'); ?> in the amount of <?php echo $invoice->display('display_amount'); 
-	
+
 	// Determine if startning now or t a set date
 	if (wp_invoice_meta($invoice_id,'wp_invoice_subscription_start_day') != '' && wp_invoice_meta($invoice_id,'wp_invoice_subscription_start_month')  != '' && wp_invoice_meta($invoice_id,'wp_invoice_subscription_start_year'  != ''))
 	echo wp_invoice_meta($invoice_id,'wp_invoice_subscription_start_day') .", ". wp_invoice_meta($invoice_id,'wp_invoice_subscription_start_month') .", ".  wp_invoice_meta($invoice_id,'wp_invoice_subscription_start_year');
 	?>.</p>
 
 	<?php echo wp_invoice_draw_itemized_table($invoice_id); ?> 
-	
+
 </div>
 <?php
 }
@@ -656,24 +654,24 @@ function wp_invoice_draw_user_selection_form($user_id) {
 					<br />
 
 			<div class="wp_invoice_copy_invoice">
-			<?php 	$all_invoices = $wpdb->get_results("SELECT * FROM ".WP_Invoice::tablename('main')); ?>
+			<?php 	$all_invoices = $wpdb->get_results("SELECT * FROM ".$wpdb->payments); ?>
 			<select name="copy_from_template">
 <option SELECTED value=""></option>
 		<?php 	foreach ($all_invoices as $invoice) { 
 		$profileuser = @get_user_to_edit($invoice->user_id);
 		?>
-		
+
 		<option value="<?php echo $invoice->invoice_num; ?>"><?php if(wp_invoice_recurring($invoice->invoice_num)) {?>(recurring)<?php } ?> <?php echo $invoice->subject . " - $" .$invoice->amount; ?> </option>
-		
+
 		<?php } ?>
-		
+
 		</select><input type='submit' class='button' value='New Invoice from Template'> <span id="wp_invoice_copy_invoice_cancel" class="wp_invoice_click_me">cancel</span>
 			</div>
 <?php } ?>	
-					
+
 				</td>
 			</tr>
-			
+
 		</table>
 	</form>
 
@@ -687,20 +685,20 @@ function wp_invoice_draw_user_selection_form($user_id) {
 	function wpi_input($args = '') {
 		$defaults = array('name' => '', 'group' => '','special' => '','value' => '', 'type' => '', 'hidden' => false, 'style' => false, 'readonly' => false, 'label' => false);
 		extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
-		
+
 		// if [ character is present, we do not use the name in class and id field
 		if(!strpos("$name",'[')) {
 			$id = $name;
 			$class_from_name = $name;
 		}
-		
+
 		if($label) $return .= "<label for='$name'>";
 		$return .= "<input ".($type ?  "type=\"$type\" " : '')." ".($style ?  "style=\"$style\" " : '')." id=\"$id\" class=\"".($type ?  "" : "input_field")." $class_from_name $class ".($hidden ?  " hidden " : '').""  .($group ? "group_$group" : ''). " \"  	name=\"" .($group ? $group."[".$name."]" : $name). "\" 	value=\"".stripslashes($value)."\" 	title=\"$title\" $special ".($type == 'forget' ?  " autocomplete='off'" : '')." ".($readonly ?  " readonly=\"readonly\" " : "")." />";		
 		if($label) $return .= "$label </label>";
 
 		return $return;
 	}
-	
+
 /*
 	Function from WPI Premium
 	Shorthand function for drawing select boxes
@@ -708,9 +706,9 @@ function wp_invoice_draw_user_selection_form($user_id) {
 	function select($args = '') {
 		$defaults = array('name' => '', 'group' => '','special' => '','values' => '','current_value' => '');
 		extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
-	
+
 		global $wpi_settings;
-		
+
 		// Get rid of all brackets
 		if(strpos("$name",'[') || strpos("$name",']')) {
 			$replace_variables = array('][',']','[');
@@ -719,13 +717,13 @@ function wp_invoice_draw_user_selection_form($user_id) {
 		} else {
 			$class_from_name = "wpi_" . $name;	
 		}
-		
+
 		// Overwrite class_from_name if class is set
 		if($class)
 			$class_from_name = $class;
-		
+
  		$values_array = unserialize($values);
-		
+
 		if($values == 'yon') {
 			$values_array = array("yes" => __("Yes", WP_INVOICE_TRANS_DOMAIN),"no" => __("No", WP_INVOICE_TRANS_DOMAIN));
 		}
@@ -733,14 +731,14 @@ function wp_invoice_draw_user_selection_form($user_id) {
 		if($values == 'us_states') {
 			$values_array = $wpi_settings['states'];
 		}
-		
+
 		if($values == 'countries') {
 			$values_array = $wpi_settings['countries'];
 		}
-		
+
 		if($values == 'years') {
 			// Create year array
-			
+
 			$current_year = intval(date('y'));
 			$values_array = array();
 			$counter = 0;
@@ -750,11 +748,11 @@ function wp_invoice_draw_user_selection_form($user_id) {
 				$counter++;
 			}
  		}
-		
+
 		if($values == 'months') {
  			$values_array = array("" => "", "01" => "Jan", "02" => "Feb", "03" => "Mar", "04" => "Apr", "05" => "May", "06" => "Jun", "07" => "Jul","08" => "Aug","09" => "Sep","10" => "Oct","11" => "Nov","12" => "Dec");
 		}
-		
+
 		$output = "<select id='".($id ? $id : $class_from_name)."' name='"  .($group ? $group."[".$name."]" : $name). "' class='$class_from_name "  .($group ? "group_$group" : ''). "'>";
 
  		foreach($values_array as $key => $value) {
@@ -774,7 +772,7 @@ function wp_invoice_draw_user_selection_form($user_id) {
 	function wpi_checkbox($args = '', $checked = false) {
 		$defaults = array('name' => '', 'id' => false,'class' => false, 'group' => '','special' => '','value' => '', 'label' => false, 'maxlength' => false);
 		extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
-		
+
 		// Get rid of all brackets
 		if(strpos("$name",'[') || strpos("$name",']')) {
 			$replace_variables = array('][',']','[');
@@ -808,11 +806,11 @@ function wp_invoice_draw_user_selection_form($user_id) {
 		if($checked == 'true') 	$checked = 'true'; 
 		if($checked == 'no') 	$checked = false;
 		if($checked == 'false') $checked = false; 
-		
+
 //		WPI_Functions::qc($checked);
-		
+
 		$id					= 	($id ? $id : $class_from_name);
-		
+
 		$insert_id 			= 	($id ? " id='$id' " : " id='$class_from_name' ");
 		$insert_name		= 	($group_string ? " name='".$group_string."[$name]' " : " name='$name' ");
 		$insert_checked		= 	($checked ? " checked='checked' " : " ");
@@ -829,28 +827,28 @@ function wp_invoice_draw_user_selection_form($user_id) {
 			case 'true':
 			$opposite_value = 'false';
 			break;
-		
+
 		}
-		
+
 		// Print label if one is set
 		if($label) $return .= "<label for='$id'>";
-		
+
 		// Print hidden checkbox
 		$return .= "<input type='hidden' value='$opposite_value' $insert_name />";
-		
+
 		// Print checkbox
 		$return .= "<input type='checkbox' $insert_name $insert_id $insert_class $insert_checked $insert_maxlength  $insert_value $special />";
 		if($label) $return .= " $label</label>";	
-		
+
 		return $return;
 	}
-	
+
 	function wpi_qc($what, $title = false) {
-		
+
 		// Do nothing is user is not logged in to prevent headers errors
 		if(!is_user_logged_in())
 			return;
-	
+
 		?>
 		<div class="error" onclick="jQuery(this).hide();" style="padding: 10px;">
 		<b><?php echo $title; ?></b>
@@ -859,5 +857,5 @@ function wp_invoice_draw_user_selection_form($user_id) {
 
 		<?php
 	}
-	
+
 ?>

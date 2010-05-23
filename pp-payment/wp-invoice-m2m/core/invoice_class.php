@@ -19,14 +19,14 @@ class wp_invoice_get {
 		if(empty($this->invoice_id))
 			return false;
 		
-		$row_obj = $wpdb->get_row("SELECT * FROM ".WP_Invoice::tablename('m2m')."  WHERE id = '$invoice_id'");
+		$row_obj = $wpdb->get_row("SELECT * FROM ".$wpdb->payments."  WHERE id = '$invoice_id'");
 
 		foreach($row_obj as $key => $value) {		
 			$this->data->$key = $value;
 		}
 		
 		// Get meta
-		$meta_obj = $wpdb->get_results("SELECT meta_key, meta_value FROM ".WP_Invoice::tablename('meta')."  WHERE invoice_id = '$invoice_id'");
+		$meta_obj = $wpdb->get_results("SELECT meta_key, meta_value FROM ".$wpdb->paymentsmeta."  WHERE invoice_id = '$invoice_id'");
 		foreach($meta_obj as $meta_row) {
 			$meta_key = $meta_row->meta_key;
 			$meta_value = $meta_row->meta_value;
@@ -65,7 +65,7 @@ class wp_invoice_get {
 			$this->data->is_archived = true;
 
 		// Load Invoice History
-		if($raw_history = $wpdb->get_results("SELECT * FROM ".WP_Invoice::tablename('log')." WHERE invoice_id = '$invoice_id' ORDER BY time_stamp DESC"))
+		if($raw_history = $wpdb->get_results("SELECT * FROM ".$wpdb->payments_log." WHERE invoice_id = '$invoice_id' ORDER BY time_stamp DESC"))
 			$this->data->log = $raw_history;
 		else
 			$this->data->log = false;

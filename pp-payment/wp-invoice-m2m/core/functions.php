@@ -6,7 +6,7 @@
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; version 3 of the License.
-	
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -36,17 +36,17 @@ wp_invoice_create("post_id=2&payer_id=5&payee_id=3&amount=42.00&status=good&type
 */
 	function wp_invoice_delete_post($post_id) {
 		global $wpdb;
-			
+
 		if(!$post_id)
 			return;
-		
-		$invoice_id = $wpdb->get_var("SELECT id FROM ".WP_Invoice::tablename('m2m')."  WHERE post_id = '$post_id'");
-		
+
+		$invoice_id = $wpdb->get_var("SELECT id FROM ".$wpdb->payments."  WHERE post_id = '$post_id'");
+
 		if(!$invoice_id)
 			return;
-		
+
 		wp_invoice_delete($invoice_id);	
-	
+
 	}
 
 /*
@@ -55,7 +55,7 @@ wp_invoice_create("post_id=2&payer_id=5&payee_id=3&amount=42.00&status=good&type
 	function wp_send_single_invoice($invoice_id, $message = false) {
 		$invoice_class = new wp_invoice_get($invoice_id);
 		$invoice = $invoice_class->data;
-				
+
 		if(wp_mail($invoice->payer_class->user_email, "Invoice: {$invoice->post_title}", $invoice_class->data->email_payment_request, "From: {$invoice->payee_class->user_nickname} <{$invoice->payee_class->user_email}>\r\n")) {
  			wp_invoice_update_invoice_meta($invoice_id, "sent_date", date("Y-m-d", time()));
 			wp_invoice_update_log($invoice_id,'contact',"Invoice eMailed to {$invoice->payer_class->user_email}"); 
@@ -65,12 +65,12 @@ wp_invoice_create("post_id=2&payer_id=5&payee_id=3&amount=42.00&status=good&type
 		}
 
 	}
-	
+
 /*
 	Converts payment venue slug into nice name
 */	
 	function wp_invoice_payment_nicename($slug) {
-		
+
 		switch($slug) {
 			case 'paypal':
 				return "PayPal";
@@ -83,16 +83,16 @@ wp_invoice_create("post_id=2&payer_id=5&payee_id=3&amount=42.00&status=good&type
 			break;
 
 		}
-	
+
 	}
-	
+
 /*
 	Return a user's WP-Invoice setting
 	If not user_id is passed, current user is used
 */
 function wp_invoice_user_settings($what, $user_id = false) {
 	global $user_ID;
-	
+
 	if(!$user_id)
 		$user_id = $user_ID;
 
@@ -104,7 +104,7 @@ function wp_invoice_user_settings($what, $user_id = false) {
 			wpi_qc("Calling wp_invoice_load_default_user_settings() from wp_invoice_user_settings()");
 			wpi_qc($user_settings, '$user_settings');
 		$user_settings = wp_invoice_load_default_user_settings($user_id);
-		
+
 	}
 
 	// Remove slashes from entire array
@@ -113,13 +113,13 @@ function wp_invoice_user_settings($what, $user_id = false) {
 	// Replace "false" and "true" strings with boolean values
 	if(is_array($user_settings)) {
 		foreach($user_settings as $setting_name => $setting_value) {
-			
+
 			if($setting_value == 'true')
 				$user_settings[$setting_name] = true;
-				
+
 			if($setting_value == 'false')
 				$user_settings[$setting_name] = false;
-		
+
 		}
 	}
 
@@ -155,11 +155,11 @@ function wp_invoice_load_default_user_settings($user_id) {
 	payment_received_notification
 	default_currency_code
 	tax_label
-	
+
 	*/
- 
+
 	update_usermeta($user_id, 'wp_invoice_settings', $settings);
-	
+
 	return $settings;
 }
 
@@ -167,7 +167,7 @@ function wp_invoice_create($args) {
 	global $blog_id, $wpdb;
 
 	//echo "runnning wp_invoice_create with $args";
-	
+
 	$defaults = array(
 		'post_id' => false,
 		'payer_id' => false, 
@@ -176,7 +176,7 @@ function wp_invoice_create($args) {
 		'status' => false,
 		'type' => false,
 		'blog_id' => $blog_id);
-	
+
 	$args = wp_parse_args($args, $defaults);
 	extract($args, EXTR_SKIP);
 
@@ -188,20 +188,20 @@ function wp_invoice_create($args) {
 	echo "status - $status <br />";
 	echo "type - $type <br />";
 	*/
-	
+
 	if(!$post_id)
 		return;
-	
+
 	if(!$payer_id)
 		return;
-	
+
 	if(!$payee_id)
 		return;
-	
+
 	if(!$amount)
 		return;
 
-	if($wpdb->query("INSERT INTO ".WP_Invoice::tablename('m2m')." (post_id, payer_id,payee_id,amount,status,type,blog_id)	VALUES ('$post_id','$payer_id','$payee_id','$amount','$status','$type','$blog_id')")) {
+	if($wpdb->query("INSERT INTO ".$wpdb->payments." (post_id, payer_id,payee_id,amount,status,type,blog_id)	VALUES ('$post_id','$payer_id','$payee_id','$amount','$status','$type','$blog_id')")) {
 		$message = __("New Invoice saved for $post_id.", WP_INVOICE_TRANS_DOMAIN);
 		$invoice_id = $wpdb->insert_id;
 		wp_invoice_update_log($invoice_id, 'created', "Invoice created from post ($post_id).");;
@@ -212,22 +212,22 @@ function wp_invoice_create($args) {
 
 	echo $message;
 	echo $error;
-	
+
 	}
 
 function wp_invoice_user_has_permissions($invoice_id, $user_id = false) {
 	global $user_ID, $wpdb;
-	
+
 	// Set to global variable if no user_id is passed
 	if(!$user_id)
 		$user_id = $user_ID;
-	
+
  	// Get invoice with passed id where user is either a payee or a payer
-	$invoices = $wpdb->get_row("SELECT * FROM ".WP_Invoice::tablename('m2m')." 
+	$invoices = $wpdb->get_row("SELECT * FROM ".$wpdb->payments." 
 	WHERE id = '$invoice_id' 
 	AND (payer_id = '$user_id'
 	OR payee_id = '$user_id')");
-	
+
 	// If an invoice exists, return wheather the user is a payee or payer
 	if(count($invoices) > 0) {
 		if($invoices->payer_id == $user_id && $invoices->payee_id != $user_id)
@@ -235,11 +235,11 @@ function wp_invoice_user_has_permissions($invoice_id, $user_id = false) {
 
 		if($invoices->payer_id != $user_id && $invoices->payee_id == $user_id)
 			return 'payee';
-		
+
 		if($invoices->payer_id == $user_id && $invoices->payee_id == $user_id)
 			return 'self_invoice';	
 	}
-	
+
 	return false;
 
 }
@@ -247,14 +247,14 @@ function wp_invoice_user_has_permissions($invoice_id, $user_id = false) {
 function wp_invoice_number_of_invoices()
 {
 	global $wpdb;
-	$query = "SELECT COUNT(*) FROM ".WP_Invoice::tablename('main')."";
+	$query = "SELECT COUNT(*) FROM ".$wpdb->payments."";
 	$count = $wpdb->get_var($query);
 	return $count;
 }
 
 function wp_invoice_does_invoice_exist($invoice_id) {
 	global $wpdb;
-	return $wpdb->get_var("SELECT * FROM ".WP_Invoice::tablename('main')." WHERE invoice_num = $invoice_id");
+	return $wpdb->get_var("SELECT * FROM ".$wpdb->payments." WHERE invoice_num = $invoice_id");
 }
 
 function wp_invoice_validate_cc_number($cc_number) {
@@ -310,7 +310,7 @@ function wp_invoice_update_log($invoice_id,$action_type,$value)
 	if(isset($invoice_id))
 	{
 	$time_stamp = date("Y-m-d h-i-s");
-	$wpdb->query("INSERT INTO ".WP_Invoice::tablename('log')." 
+	$wpdb->query("INSERT INTO ".$wpdb->payments_log." 
 	(invoice_id , action_type , value, time_stamp)
 	VALUES ('$invoice_id', '$action_type', '$value', '$time_stamp');");
 	}
@@ -318,14 +318,14 @@ function wp_invoice_update_log($invoice_id,$action_type,$value)
 
 function wp_invoice_query_log($invoice_id,$action_type) {
 	global $wpdb;
-	if($results = $wpdb->get_results("SELECT * FROM ".WP_Invoice::tablename('log')." WHERE invoice_id = '$invoice_id' AND action_type = '$action_type' ORDER BY 'time_stamp' DESC")) return $results;
-	
+	if($results = $wpdb->get_results("SELECT * FROM ".$wpdb->payments_log." WHERE invoice_id = '$invoice_id' AND action_type = '$action_type' ORDER BY 'time_stamp' DESC")) return $results;
+
 }
 
 function wp_invoice_meta($invoice_id,$meta_key)
 {
 	global $wpdb;
-	return $wpdb->get_var("SELECT meta_value FROM `".WP_Invoice::tablename('meta')."` WHERE meta_key = '$meta_key' AND invoice_id = '$invoice_id'");
+	return $wpdb->get_var("SELECT meta_value FROM `".$wpdb->paymentsmeta."` WHERE meta_key = '$meta_key' AND invoice_id = '$invoice_id'");
 }
 
 function wp_invoice_update_invoice_meta($invoice_id,$meta_key,$meta_value)
@@ -334,15 +334,15 @@ function wp_invoice_update_invoice_meta($invoice_id,$meta_key,$meta_value)
 	global $wpdb;
 	if(empty($meta_value)) {
 		// Dlete meta_key if no value is set
-		$wpdb->query("DELETE FROM ".WP_Invoice::tablename('meta')." WHERE  invoice_id = '$invoice_id' AND meta_key = '$meta_key'"); 
+		$wpdb->query("DELETE FROM ".$wpdb->paymentsmeta." WHERE  invoice_id = '$invoice_id' AND meta_key = '$meta_key'"); 
 	}
 	else
 	{
-		// Check if meta key already exists, then we replace it WP_Invoice::tablename('meta')
-		if($wpdb->get_var("SELECT meta_key 	FROM `".WP_Invoice::tablename('meta')."` WHERE meta_key = '$meta_key' AND invoice_id = '$invoice_id'"))
-		{ $wpdb->query("UPDATE `".WP_Invoice::tablename('meta')."` SET meta_value = '$meta_value' WHERE meta_key = '$meta_key' AND invoice_id = '$invoice_id'"); }
+		// Check if meta key already exists, then we replace it $wpdb->paymentsmeta
+		if($wpdb->get_var("SELECT meta_key 	FROM `".$wpdb->paymentsmeta."` WHERE meta_key = '$meta_key' AND invoice_id = '$invoice_id'"))
+		{ $wpdb->query("UPDATE `".$wpdb->paymentsmeta."` SET meta_value = '$meta_value' WHERE meta_key = '$meta_key' AND invoice_id = '$invoice_id'"); }
 		else
-		{ $wpdb->query("INSERT INTO `".WP_Invoice::tablename('meta')."` (invoice_id, meta_key, meta_value) VALUES ('$invoice_id','$meta_key','$meta_value')"); }
+		{ $wpdb->query("INSERT INTO `".$wpdb->paymentsmeta."` (invoice_id, meta_key, meta_value) VALUES ('$invoice_id','$meta_key','$meta_value')"); }
 	}
 }
 
@@ -351,9 +351,9 @@ function wp_invoice_delete_invoice_meta($invoice_id,$meta_key='')
 
 	global $wpdb;
 	if(empty($meta_key)) 
-	{ $wpdb->query("DELETE FROM `".WP_Invoice::tablename('meta')."` WHERE invoice_id = '$invoice_id' ");}
+	{ $wpdb->query("DELETE FROM `".$wpdb->paymentsmeta."` WHERE invoice_id = '$invoice_id' ");}
 	else
-	{ $wpdb->query("DELETE FROM `".WP_Invoice::tablename('meta')."` WHERE invoice_id = '$invoice_id' AND meta_key = '$meta_key'");}
+	{ $wpdb->query("DELETE FROM `".$wpdb->paymentsmeta."` WHERE invoice_id = '$invoice_id' AND meta_key = '$meta_key'");}
 
 }
 
@@ -366,13 +366,13 @@ if(is_array($invoice_id))
 	$counter=0;
 	foreach ($invoice_id as $single_invoice_id) {
 		$counter++;
-		$wpdb->query("DELETE FROM ".WP_Invoice::tablename('m2m')." WHERE id = '$single_invoice_id'");
+		$wpdb->query("DELETE FROM ".$wpdb->payments." WHERE id = '$single_invoice_id'");
 
 		wp_invoice_update_log($single_invoice_id, "deleted", "Deleted on ");
-		
+
 		// Get all meta keys for this invoice, then delete them
-		
-		$all_invoice_meta_values = $wpdb->get_col("SELECT invoice_id FROM ".WP_Invoice::tablename('meta')." WHERE invoice_id = '$single_invoice_id'");
+
+		$all_invoice_meta_values = $wpdb->get_col("SELECT invoice_id FROM ".$wpdb->paymentsmeta." WHERE invoice_id = '$single_invoice_id'");
 
 		//print_r($all_invoice_meta_values);
 		foreach ($all_invoice_meta_values as $meta_key) {
@@ -385,15 +385,15 @@ if(is_array($invoice_id))
 else
 {
 	// Delete Single
-	$wpdb->query("DELETE FROM ".WP_Invoice::tablename('m2m')." WHERE id = '$invoice_id'");
-	
-	$all_invoice_meta_values = $wpdb->get_col("SELECT invoice_id FROM ".WP_Invoice::tablename('meta')." WHERE invoice_id = '$invoice_id'");
+	$wpdb->query("DELETE FROM ".$wpdb->payments." WHERE id = '$invoice_id'");
+
+	$all_invoice_meta_values = $wpdb->get_col("SELECT invoice_id FROM ".$wpdb->paymentsmeta." WHERE invoice_id = '$invoice_id'");
 
 	//print_r($all_invoice_meta_values);
 	foreach ($all_invoice_meta_values as $meta_key) {
 		wp_invoice_delete_invoice_meta($single_invoice_id);
 	}
-	
+
 		// Make log entry
 	wp_invoice_update_log($invoice_id, "deleted", "Deleted on ");
 
@@ -511,7 +511,7 @@ if(is_array($invoice_id))
 	$counter++;
 	wp_invoice_update_invoice_meta($single_invoice_id, "sent_date", date("Y-m-d", time()));
 	wp_invoice_update_log($single_invoice_id,'contact','Invoice Maked as eMailed'); //make sent entry
-	
+
 	}
 	return $counter .  __(' invoice(s) marked as sent.', WP_INVOICE_TRANS_DOMAIN);
 
@@ -520,7 +520,7 @@ else
 {
 	wp_invoice_update_invoice_meta($invoice_id, "sent_date", date("Y-m-d", time()));
 	wp_invoice_update_log($invoice_id,'contact','Invoice Maked as eMailed'); //make sent entry
-	
+
 	return __('Invoice market as sent.', WP_INVOICE_TRANS_DOMAIN);
 }
 }
@@ -528,7 +528,7 @@ else
 function wp_invoice_get_invoice_attrib($invoice_id,$attribute) 
 {
 	global $wpdb;
-	$query = "SELECT $attribute FROM ".WP_Invoice::tablename('main')." WHERE invoice_num=".$invoice_id."";
+	$query = "SELECT $attribute FROM ".$wpdb->payments." WHERE invoice_num=".$invoice_id."";
 	return $wpdb->get_var($query);
 }
 
@@ -536,13 +536,13 @@ function wp_invoice_get_invoice_status($invoice_id,$count='1')
 {
 if($invoice_id != '') {
 	global $wpdb;
-	$query = "SELECT * FROM ".WP_Invoice::tablename('log')."
+	$query = "SELECT * FROM ".$wpdb->payments_log."
 	WHERE invoice_id = $invoice_id
 	ORDER BY time_stamp DESC
 	LIMIT 0 , $count";
 
 	$status_update = $wpdb->get_results($query);
-	
+
 	if(count($status_update) < 1)
 		return false;
 
@@ -559,7 +559,7 @@ function wp_invoice_clear_invoice_status($invoice_id)
 {
 	global $wpdb;
 	if(isset($invoice_id)) {
-	if($wpdb->query("DELETE FROM ".WP_Invoice::tablename('log')." WHERE invoice_id = $invoice_id"))
+	if($wpdb->query("DELETE FROM ".$wpdb->payments_log." WHERE invoice_id = $invoice_id"))
 	return  __('Logs for invoice #', WP_INVOICE_TRANS_DOMAIN) . $invoice_id .  __(' cleared.', WP_INVOICE_TRANS_DOMAIN);
 	}
 }
@@ -568,7 +568,7 @@ function wp_invoice_get_single_invoice_status($invoice_id)
 {
 	// in class
 	global $wpdb;
-	if($status_update = $wpdb->get_row("SELECT * FROM ".WP_Invoice::tablename('log')." WHERE invoice_id = $invoice_id ORDER BY `".WP_Invoice::tablename('log')."`.`time_stamp` DESC LIMIT 0 , 1"))
+	if($status_update = $wpdb->get_row("SELECT * FROM ".$wpdb->payments_log." WHERE invoice_id = $invoice_id ORDER BY `".$wpdb->payments_log."`.`time_stamp` DESC LIMIT 0 , 1"))
 	return $status_update->value . " - " . wp_invoice_Date::convert($status_update->time_stamp, 'Y-m-d H', 'M d Y');
 }
 
@@ -578,7 +578,7 @@ function wp_invoice_currency_format($amount) {
 
 function wp_invoice_paid($invoice_id) {
 	global $wpdb;
-	//$wpdb->query("UPDATE  ".WP_Invoice::tablename('main')." SET status = 1 WHERE  invoice_num = '$invoice_id'");
+	//$wpdb->query("UPDATE  ".$wpdb->payments." SET status = 1 WHERE  invoice_num = '$invoice_id'");
 	wp_invoice_update_invoice_meta($invoice_id,'paid_status','paid');
  	wp_invoice_update_log($invoice_id,'paid',"Invoice successfully processed by ". $_SERVER['REMOTE_ADDR']);	
 
@@ -597,20 +597,20 @@ function wp_invoice_recurring_started($invoice_id) {
 function wp_invoice_paid_status($invoice_id) {
 	//Merged with paid_status in class
 	global $wpdb;
-	if(!empty($invoice_id) && wp_invoice_meta($invoice_id,'paid_status') || $wpdb->get_var("SELECT status FROM  ".WP_Invoice::tablename('main')." WHERE invoice_num = '$invoice_id'")) return true;
+	if(!empty($invoice_id) && wp_invoice_meta($invoice_id,'paid_status') || $wpdb->get_var("SELECT status FROM  ".$wpdb->payments." WHERE invoice_num = '$invoice_id'")) return true;
 }
 
 function wp_invoice_paid_date($invoice_id) {
 	// in invoice class
 	global $wpdb;
-	return $wpdb->get_var("SELECT time_stamp FROM  ".WP_Invoice::tablename('log')." WHERE action_type = 'paid' AND invoice_id = '".$invoice_id."' ORDER BY time_stamp DESC LIMIT 0, 1");
-	
+	return $wpdb->get_var("SELECT time_stamp FROM  ".$wpdb->payments_log." WHERE action_type = 'paid' AND invoice_id = '".$invoice_id."' ORDER BY time_stamp DESC LIMIT 0, 1");
+
 }
 
 function wp_invoice_build_invoice_link($invoice_id) {
 	// in invoice class
 	global $wpdb;
-	
+
 	$link_to_page = get_permalink(get_option('wp_invoice_web_invoice_page'));
 
 	$hashed_invoice_id = md5($invoice_id);
@@ -621,16 +621,16 @@ function wp_invoice_build_invoice_link($invoice_id) {
 }
 
 function wp_invoice_draw_inputfield($name,$value,$special = '') {
-	
+
 	return "<input id='$name' class='$name input_field' name='$name' value='$value' $special />";
 }
 function wp_invoice_draw_textarea($name,$value,$special = '') {
-	
+
 	return "<textarea id='$name' class='$name' name='$name'  $special>$value</textarea>";
 }
 
 function wp_invoice_draw_select($name,$values,$current_value = '') {
-	
+
 	$output = "<select id='$name' name='$name' class='$name'>";
 	foreach($values as $key => $value) {
 	$output .=  "<option style='padding-right: 10px;' value='$key'";
@@ -646,12 +646,12 @@ function wp_invoice_send_email_receipt($invoice_id) {
 	global $wpdb, $wp_invoice_email_variables;
 	$invoice_info = new WP_Invoice_GetInfo($invoice_id);
 	$wp_invoice_email_variables = wp_invoice_email_variables($invoice_id);
-	
+
 	$message = wp_invoice_show_receipt_email($invoice_id);
 
 	$name = get_option("wp_invoice_business_name");
 	$from = get_option("wp_invoice_email_address");
-	
+
 	$headers = "From: {$name} <{$from}>\r\n";
 	if (get_option('wp_invoice_cc_thank_you_email') == 'yes') {
 		$headers .= "CC: {$from}\r\n";
@@ -689,10 +689,10 @@ function wp_invoice_complete_removal()
 	// Run regular deactivation, but also delete the main table - all invoice data is gone
 	global $wpdb;
 	wp_invoice_deactivation() ;;
-	$wpdb->query("DROP TABLE " . WP_Invoice::tablename('log') .";");
-	$wpdb->query("DROP TABLE " . WP_Invoice::tablename('m2m') .";");
-	$wpdb->query("DROP TABLE " . WP_Invoice::tablename('meta') .";");
-	
+	$wpdb->query("DROP TABLE " . $wpdb->payments_log .";");
+	$wpdb->query("DROP TABLE " . $wpdb->payments .";");
+	$wpdb->query("DROP TABLE " . $wpdb->paymentsmeta .";");
+
 	delete_option('wp_invoice_version');
 	delete_option('wp_invoice_payment_link');
 	delete_option('wp_invoice_payment_method');
@@ -713,10 +713,10 @@ function wp_invoice_complete_removal()
 	delete_option('wp_invoice_hide_page_title');
 	delete_option('wp_invoice_send_thank_you_email');
 	delete_option('wp_invoice_reminder_message');
-	
+
 	delete_option('wp_invoice_email_message_subject');
 	delete_option('wp_invoice_email_message_content');
-	
+
 	//Gateway Settings
 	delete_option('wp_invoice_gateway_username');
 	delete_option('wp_invoice_gateway_tran_key');
@@ -730,21 +730,21 @@ function wp_invoice_complete_removal()
 	delete_option('wp_invoice_gateway_delim_data');
 	delete_option('wp_invoice_gateway_relay_response');
 	delete_option('wp_invoice_gateway_email_customer');
-	
+
 	return __("All settings and databases removed.", WP_INVOICE_TRANS_DOMAIN);
 }
 
 function get_invoice_user_id($invoice_id) {
 	// in class
 	global $wpdb;
-	$invoice_info = $wpdb->get_row("SELECT * FROM ".WP_Invoice::tablename('main')." WHERE invoice_num = '".$invoice_id."'");
+	$invoice_info = $wpdb->get_row("SELECT * FROM ".$wpdb->payments." WHERE invoice_num = '".$invoice_id."'");
 	return $invoice_info->user_id;
 }
 
 function wp_invoice_send_email($invoice_array, $reminder = false)
 {
 	global $wpdb, $wp_invoice_email_variables;
-	
+
 	if(is_array($invoice_array))
 	{
 		$counter=0;
@@ -752,7 +752,7 @@ function wp_invoice_send_email($invoice_array, $reminder = false)
 		{
 			$wp_invoice_email_variables = wp_invoice_email_variables($invoice_id);
 
-			$invoice_info = $wpdb->get_row("SELECT * FROM ".WP_Invoice::tablename('main')." WHERE invoice_num = '".$invoice_id."'");
+			$invoice_info = $wpdb->get_row("SELECT * FROM ".$wpdb->payments." WHERE invoice_num = '".$invoice_id."'");
 
 			$profileuser = get_user_to_edit($invoice_info->user_id);
 
@@ -766,7 +766,7 @@ function wp_invoice_send_email($invoice_array, $reminder = false)
 
 			$name = get_option("wp_invoice_business_name");
 			$from = get_option("wp_invoice_email_address");
-			
+
 			$headers = "From: {$name} <{$from}>\r\n";
 
 			$message = html_entity_decode($message, ENT_QUOTES, 'UTF-8');
@@ -784,7 +784,7 @@ function wp_invoice_send_email($invoice_array, $reminder = false)
 	{
 		$invoice_id = $invoice_array;
 		$wp_invoice_email_variables = wp_invoice_email_variables($invoice_id);
-		$invoice_info = $wpdb->get_row("SELECT * FROM ".WP_Invoice::tablename('main')." WHERE invoice_num = '".$invoice_array."'");
+		$invoice_info = $wpdb->get_row("SELECT * FROM ".$wpdb->payments." WHERE invoice_num = '".$invoice_array."'");
 
 		$profileuser = get_user_to_edit($invoice_info->user_id);
 
@@ -798,7 +798,7 @@ function wp_invoice_send_email($invoice_array, $reminder = false)
 
 		$name = get_option("wp_invoice_business_name");
 		$from = get_option("wp_invoice_email_address");
-		
+
 		$headers = "From: {$name} <{$from}>\r\n";
 
 		$message = html_entity_decode($message, ENT_QUOTES, 'UTF-8');
@@ -831,7 +831,7 @@ function wp_invoice_array_stripslashes($slash_array = array())
 	}
 	return($slash_array);
 }
-	
+
 function wp_invoice_profile_update() {
 	global $wpdb;
 	$user_id =  $_REQUEST['user_id'];
@@ -844,7 +844,7 @@ function wp_invoice_profile_update() {
 	if(isset($_POST['phonenumber'])) update_usermeta($user_id, 'phonenumber', $_POST['phonenumber']);
 
 }
-	
+
 class wp_invoice_Date 
 {
 
@@ -910,7 +910,7 @@ class wp_invoice_Date
 		$unix_time = mktime(
 			(int)$hours, (int)$minutes, (int)$seconds, 
 			(int)$month, (int)$day, (int)$year);
-		
+
 		if($return_unix)
 			return $unix_time;
 
@@ -933,7 +933,7 @@ function wp_invoice_fix_billing_meta_array($arr){
                 $narr[$counter] = $val;$counter++;
             }
         }
-		
+
     }
     unset($arr);
     return $narr;
@@ -1050,7 +1050,7 @@ $StateProvinceTwoToFull = array(
 
   return($StateProvinceTwoToFull);
 }
-		
+
 function wp_invoice_country_array() {
 	return array("US"=> "United States","AL"=> "Albania","DZ"=> "Algeria","AD"=> "Andorra","AO"=> "Angola","AI"=> "Anguilla","AG"=> "Antigua and Barbuda","AR"=> "Argentina","AM"=> "Armenia","AW"=> "Aruba","AU"=> "Australia","AT"=> "Austria","AZ"=> "Azerbaijan Republic","BS"=> "Bahamas","BH"=> "Bahrain","BB"=> "Barbados","BE"=> "Belgium","BZ"=> "Belize","BJ"=> "Benin","BM"=> "Bermuda","BT"=> "Bhutan","BO"=> "Bolivia","BA"=> "Bosnia and Herzegovina","BW"=> "Botswana","BR"=> "Brazil","VG"=> "British Virgin Islands","BN"=> "Brunei","BG"=> "Bulgaria","BF"=> "Burkina Faso","BI"=> "Burundi","KH"=> "Cambodia","CA"=> "Canada","CV"=> "Cape Verde","KY"=> "Cayman Islands","TD"=> "Chad","CL"=> "Chile","C2"=> "China","CO"=> "Colombia","KM"=> "Comoros","CK"=> "Cook Islands","CR"=> "Costa Rica","HR"=> "Croatia","CY"=> "Cyprus","CZ"=> "Czech Republic","CD"=> "Democratic Republic of the Congo","DK"=> "Denmark","DJ"=> "Djibouti","DM"=> "Dominica","DO"=> "Dominican Republic","EC"=> "Ecuador","SV"=> "El Salvador","ER"=> "Eritrea","EE"=> "Estonia","ET"=> "Ethiopia","FK"=> "Falkland Islands","FO"=> "Faroe Islands","FM"=> "Federated States of Micronesia","FJ"=> "Fiji","FI"=> "Finland","FR"=> "France","GF"=> "French Guiana","PF"=> "French Polynesia","GA"=> "Gabon Republic","GM"=> "Gambia","DE"=> "Germany","GI"=> "Gibraltar","GR"=> "Greece","GL"=> "Greenland","GD"=> "Grenada","GP"=> "Guadeloupe","GT"=> "Guatemala","GN"=> "Guinea","GW"=> "Guinea Bissau","GY"=> "Guyana","HN"=> "Honduras","HK"=> "Hong Kong","HU"=> "Hungary","IS"=> "Iceland","IN"=> "India","ID"=> "Indonesia","IE"=> "Ireland","IL"=> "Israel","IT"=> "Italy","JM"=> "Jamaica","JP"=> "Japan","JO"=> "Jordan","KZ"=> "Kazakhstan","KE"=> "Kenya","KI"=> "Kiribati","KW"=> "Kuwait","KG"=> "Kyrgyzstan","LA"=> "Laos","LV"=> "Latvia","LS"=> "Lesotho","LI"=> "Liechtenstein","LT"=> "Lithuania","LU"=> "Luxembourg","MG"=> "Madagascar","MW"=> "Malawi","MY"=> "Malaysia","MV"=> "Maldives","ML"=> "Mali","MT"=> "Malta","MH"=> "Marshall Islands","MQ"=> "Martinique","MR"=> "Mauritania","MU"=> "Mauritius","YT"=> "Mayotte","MX"=> "Mexico","MN"=> "Mongolia","MS"=> "Montserrat","MA"=> "Morocco","MZ"=> "Mozambique","NA"=> "Namibia","NR"=> "Nauru","NP"=> "Nepal","NL"=> "Netherlands","AN"=> "Netherlands Antilles","NC"=> "New Caledonia","NZ"=> "New Zealand","NI"=> "Nicaragua","NE"=> "Niger","NU"=> "Niue","NF"=> "Norfolk Island","NO"=> "Norway","OM"=> "Oman","PW"=> "Palau","PA"=> "Panama","PG"=> "Papua New Guinea","PE"=> "Peru","PH"=> "Philippines","PN"=> "Pitcairn Islands","PL"=> "Poland","PT"=> "Portugal","QA"=> "Qatar","CG"=> "Republic of the Congo","RE"=> "Reunion","RO"=> "Romania","RU"=> "Russia","RW"=> "Rwanda","VC"=> "Saint Vincent and the Grenadines","WS"=> "Samoa","SM"=> "San Marino","ST"=> "São Tomé and Príncipe","SA"=> "Saudi Arabia","SN"=> "Senegal","SC"=> "Seychelles","SL"=> "Sierra Leone","SG"=> "Singapore","SK"=> "Slovakia","SI"=> "Slovenia","SB"=> "Solomon Islands","SO"=> "Somalia","ZA"=> "South Africa","KR"=> "South Korea","ES"=> "Spain","LK"=> "Sri Lanka","SH"=> "St. Helena","KN"=> "St. Kitts and Nevis","LC"=> "St. Lucia","PM"=> "St. Pierre and Miquelon","SR"=> "Suriname","SJ"=> "Svalbard and Jan Mayen Islands","SZ"=> "Swaziland","SE"=> "Sweden","CH"=> "Switzerland","TW"=> "Taiwan","TJ"=> "Tajikistan","TZ"=> "Tanzania","TH"=> "Thailand","TG"=> "Togo","TO"=> "Tonga","TT"=> "Trinidad and Tobago","TN"=> "Tunisia","TR"=> "Turkey","TM"=> "Turkmenistan","TC"=> "Turks and Caicos Islands","TV"=> "Tuvalu","UG"=> "Uganda","UA"=> "Ukraine","AE"=> "United Arab Emirates","GB"=> "United Kingdom","UY"=> "Uruguay","VU"=> "Vanuatu","VA"=> "Vatican City State","VE"=> "Venezuela","VN"=> "Vietnam","WF"=> "Wallis and Futuna Islands","YE"=> "Yemen","ZM"=> "Zambia");
 }
@@ -1096,7 +1096,7 @@ function wp_invoice_process_cc_transaction($cc_data = false) {
 	$_POST['processing_problem'] = '';
 	unset($stop_transaction);
 	$invoice_id = preg_replace("/[^0-9]/","", $_POST['invoice_id']); /* this is the real invoice id */
-	 
+
 	$invoice_class = new wp_invoice_get($invoice_id);
 	$invoice_class = $invoice_class->data;
 
@@ -1124,18 +1124,18 @@ function wp_invoice_process_cc_transaction($cc_data = false) {
 
 	$payment = new WP_Invoice_Authnet(true); 
 	$payment->transaction($_POST['card_num']); 
-	
+
 	// Billing Info
 	$payment->setParameter("x_card_code", $_POST['card_code']);
 	$payment->setParameter("x_exp_date ", $_POST['exp_month'] . $_POST['exp_year']);
 	$payment->setParameter("x_amount", $invoice_class->amount);
- 	
+
 	// Order Info
 	$payment->setParameter("x_description", $invoice_class->post_title);
 	$payment->setParameter("x_invoice_num",  $invoice_id);
 	$payment->setParameter("x_test_request", false);
 	$payment->setParameter("x_duplicate_window", 30);
-	
+
 	//Customer Info
 	$payment->setParameter("x_first_name", $_POST['first_name']);
 	$payment->setParameter("x_last_name", $_POST['last_name']);
@@ -1148,11 +1148,11 @@ function wp_invoice_process_cc_transaction($cc_data = false) {
 	$payment->setParameter("x_email", $_POST['email_address']);
 	$payment->setParameter("x_cust_id", "WP User - " . $invoice_class->payer_class->user_nicename);
 	$payment->setParameter("x_customer_ip ", $_SERVER['REMOTE_ADDR']);
-	
+
 	$payment->process(); 
- 
+
 	if($payment->isApproved()) {
-		
+
 		// Returning valid nonce marks transaction as good on front-end
 		echo wp_create_nonce('wp_invoice_process_cc_' . $invoice_id);
 
@@ -1222,7 +1222,7 @@ function wp_invoice_currency_array() {
 	"CZK"=> "Czech Koruna",
 	"ILS"=> "Israeli Shekel",
 	"MXN"=> "Mexican Peso");
-	
+
 	return $currency_list;
 }
 
@@ -1249,7 +1249,7 @@ function wp_invoice_process_invoice_update($invoice_id) {
 	global $wpdb;
 
 	if($_REQUEST['user_id'] == 'create_new_user') {
-		
+
 		$user_info = array();
 		$user_info['wp_invoice_first_name'] = $_REQUEST['wp_invoice_first_name'];
 		$user_info['wp_invoice_last_name'] = $_REQUEST['wp_invoice_last_name'];
@@ -1261,7 +1261,7 @@ function wp_invoice_process_invoice_update($invoice_id) {
 	} else {
 		$user_id = $_REQUEST['user_id'];
 	}
-	
+
 	//Update User Information
 	$profileuser = get_user_to_edit($_POST['user_id']);
 	$description = $_REQUEST['description'];
@@ -1297,15 +1297,15 @@ function wp_invoice_process_invoice_update($invoice_id) {
 	if(wp_invoice_does_invoice_exist($invoice_id)) {
 		// Updating Old Invoice
 
-		if(wp_invoice_get_invoice_attrib($invoice_id,'subject') != $subject) { $wpdb->query("UPDATE ".WP_Invoice::tablename('main')." SET subject = '$subject' WHERE invoice_num = $invoice_id"); 			wp_invoice_update_log($invoice_id, 'updated', ' Subject Updated '); $message .= "Subject updated. ";}
-		if(wp_invoice_get_invoice_attrib($invoice_id,'description') != $description) { $wpdb->query("UPDATE ".WP_Invoice::tablename('main')." SET description = '$description' WHERE invoice_num = $invoice_id"); 			wp_invoice_update_log($invoice_id, 'updated', ' Description Updated '); $message .= "Description updated. ";}
-		if(wp_invoice_get_invoice_attrib($invoice_id,'amount') != $amount) { $wpdb->query("UPDATE ".WP_Invoice::tablename('main')." SET amount = '$amount' WHERE invoice_num = $invoice_id"); 			wp_invoice_update_log($invoice_id, 'updated', ' Amount Updated '); $message .= "Amount updated. ";}
-		if(wp_invoice_get_invoice_attrib($invoice_id,'itemized') != $itemized) { $wpdb->query("UPDATE ".WP_Invoice::tablename('main')." SET itemized = '$itemized' WHERE invoice_num = $invoice_id"); 			wp_invoice_update_log($invoice_id, 'updated', ' Itemized List Updated '); $message .= "Itemized List updated. ";}
+		if(wp_invoice_get_invoice_attrib($invoice_id,'subject') != $subject) { $wpdb->query("UPDATE ".$wpdb->payments." SET subject = '$subject' WHERE invoice_num = $invoice_id"); 			wp_invoice_update_log($invoice_id, 'updated', ' Subject Updated '); $message .= "Subject updated. ";}
+		if(wp_invoice_get_invoice_attrib($invoice_id,'description') != $description) { $wpdb->query("UPDATE ".$wpdb->payments." SET description = '$description' WHERE invoice_num = $invoice_id"); 			wp_invoice_update_log($invoice_id, 'updated', ' Description Updated '); $message .= "Description updated. ";}
+		if(wp_invoice_get_invoice_attrib($invoice_id,'amount') != $amount) { $wpdb->query("UPDATE ".$wpdb->payments." SET amount = '$amount' WHERE invoice_num = $invoice_id"); 			wp_invoice_update_log($invoice_id, 'updated', ' Amount Updated '); $message .= "Amount updated. ";}
+		if(wp_invoice_get_invoice_attrib($invoice_id,'itemized') != $itemized) { $wpdb->query("UPDATE ".$wpdb->payments." SET itemized = '$itemized' WHERE invoice_num = $invoice_id"); 			wp_invoice_update_log($invoice_id, 'updated', ' Itemized List Updated '); $message .= "Itemized List updated. ";}
 	}
 	else {
 		// Create New Invoice
 
-		if($wpdb->query("INSERT INTO ".WP_Invoice::tablename('main')." (amount,description,invoice_num,user_id,subject,itemized,status)	VALUES ('$amount','$description','$invoice_id','$user_id','$subject','$itemized','0')")) {
+		if($wpdb->query("INSERT INTO ".$wpdb->payments." (amount,description,invoice_num,user_id,subject,itemized,status)	VALUES ('$amount','$description','$invoice_id','$user_id','$subject','$itemized','0')")) {
 			$message = __("New Invoice saved.", WP_INVOICE_TRANS_DOMAIN);
 			wp_invoice_update_log($invoice_id, 'created', ' Created ');;
 		} 
@@ -1313,7 +1313,7 @@ function wp_invoice_process_invoice_update($invoice_id) {
 			$error = true; $message = __("There was a problem saving invoice.  Try deactivating and reactivating plugin.", WP_INVOICE_TRANS_DOMAIN); 
 		}
 	}
-		
+
 	// See if invoice is recurring
 	if(!empty($_REQUEST['wp_invoice_subscription_name']) &&	!empty($_REQUEST['wp_invoice_subscription_unit']) && !empty($_REQUEST['wp_invoice_subscription_total_occurances'])) {
 		$wp_invoice_recurring_status = true;
@@ -1328,16 +1328,16 @@ function wp_invoice_process_invoice_update($invoice_id) {
 	"wp_invoice_due_date_day",
 	"wp_invoice_due_date_month",
 	"wp_invoice_due_date_year");
-	
+
 	wp_invoice_process_updates($basic_invoice_settings, 'wp_invoice_update_invoice_meta', $invoice_id);
 
 	$payment_and_billing_settings_array = array(
 	"wp_invoice_payment_method",
 	"wp_invoice_client_change_payment_method",
-	
+
 	"wp_invoice_paypal_allow",
 	"wp_invoice_paypal_address",
-	
+
 	"wp_invoice_cc_allow",
 	"wp_invoice_gateway_url",
 	"wp_invoice_gateway_username",
@@ -1351,7 +1351,7 @@ function wp_invoice_process_invoice_update($invoice_id) {
 	"wp_invoice_gateway_relay_response",
 	"wp_invoice_gateway_email_customer",
 	"wp_invoice_recurring_gateway_url",
-	
+
 	"wp_invoice_moneybookers_allow",
 	"wp_invoice_moneybookers_address",
 	"wp_invoice_moneybookers_merchant",
@@ -1359,14 +1359,14 @@ function wp_invoice_process_invoice_update($invoice_id) {
 	"wp_invoice_moneybookers_ip",
 
 	"wp_invoice_googlecheckout_address",
-	
+
 	"wp_invoice_alertpay_allow",
 	"wp_invoice_alertpay_address",
 	"wp_invoice_alertpay_merchant",
 	"wp_invoice_alertpay_secret",
 	"wp_invoice_gateway_email_customer",
 	"wp_invoice_alertpay_test_mode",
-	
+
 	"wp_invoice_subscription_name",
 	"wp_invoice_subscription_unit",
 	"wp_invoice_subscription_length",
@@ -1404,7 +1404,7 @@ function wp_invoice_detect_config_erors() {
 		$warning_message .= __("Visit ", WP_INVOICE_TRANS_DOMAIN)."<a href='admin.php?page=invoice_settings'>settings page</a>".__(" to configure.", WP_INVOICE_TRANS_DOMAIN);
 	}
 
-	if(!$wpdb->query("SHOW TABLES LIKE '".WP_Invoice::tablename('meta')."';") || !$wpdb->query("SHOW TABLES LIKE '".WP_Invoice::tablename('main')."';") || !$wpdb->query("SHOW TABLES LIKE '".WP_Invoice::tablename('log')."';")) { 
+	if(!$wpdb->query("SHOW TABLES LIKE '".$wpdb->paymentsmeta."';") || !$wpdb->query("SHOW TABLES LIKE '".$wpdb->payments."';") || !$wpdb->query("SHOW TABLES LIKE '".$wpdb->payments_log."';")) { 
 		$warning_message .= __("The plugin database tables are gone, deactivate and reactivate plugin to re-create them.", WP_INVOICE_TRANS_DOMAIN);
 	}
 
@@ -1424,11 +1424,11 @@ function wp_invoice_process_settings() {
 	"wp_invoice_force_https",
 	"wp_invoice_where_to_display",
 	"wp_invoice_custom_label_tax",
-	
+
 	"wp_invoice_googlecheckout_address",
 	"wp_invoice_payment_link",
 	"wp_invoice_payment_method",
-	
+
 	"wp_invoice_send_thank_you_email",
 	"wp_invoice_show_business_address",
 	"wp_invoice_show_quantities",
@@ -1449,13 +1449,13 @@ function wp_invoice_process_settings() {
 	"wp_invoice_email_send_reminder_content",
 	"wp_invoice_email_send_receipt_subject",
 	"wp_invoice_email_send_receipt_content");
-	
+
 	$payment_and_billing_settings_array = array(
 	"wp_invoice_client_change_payment_method",
-	
+
 	"wp_invoice_paypal_allow",
 	"wp_invoice_paypal_address",
-	
+
 	"wp_invoice_cc_allow",
 	"wp_invoice_gateway_url",
 	"wp_invoice_gateway_username",
@@ -1469,13 +1469,13 @@ function wp_invoice_process_settings() {
 	"wp_invoice_gateway_relay_response",
 	"wp_invoice_gateway_email_customer",
 	"wp_invoice_recurring_gateway_url",
-	
+
 	"wp_invoice_moneybookers_allow",
 	"wp_invoice_moneybookers_address",
 	"wp_invoice_moneybookers_merchant",
 	"wp_invoice_moneybookers_secret",
 	"wp_invoice_moneybookers_ip",
-	
+
 	"wp_invoice_alertpay_allow",
 	"wp_invoice_alertpay_address",
 	"wp_invoice_alertpay_merchant",
@@ -1485,9 +1485,9 @@ function wp_invoice_process_settings() {
 
 	wp_invoice_process_updates($payment_and_billing_settings_array);
 	wp_invoice_process_updates($settings_array);
-	
+
 	if($_REQUEST['wp_invoice_load_original_email_templates']) { wp_invoice_load_email_template_content(); }
-	
+
 }
 
 function wp_invoice_is_not_merchant() {
@@ -1496,12 +1496,12 @@ function wp_invoice_is_not_merchant() {
 
 function wp_invoice_process_updates($array, $type = "update_option", $invoice_id = '') {
 	global $wp_invoice_debug;
-	
+
 	if($type == "update_option") foreach($array as $item_name) { 
 		if($wp_invoice_debug) echo $item_name . " - " . $_POST[$item_name] . "  <br />";
 		if(isset($_POST[$item_name])) update_option($item_name, $_POST[$item_name]); 
 	}
-	
+
 	if($type == "wp_invoice_update_invoice_meta") foreach($array as $item_name) { 
 		if($wp_invoice_debug) echo $item_name . " - " . $_POST[$item_name] . "  <br />";
 		if(isset($_POST[$item_name])) wp_invoice_update_invoice_meta($invoice_id, $item_name, $_POST[$item_name]); }
@@ -1524,7 +1524,7 @@ function wp_invoice_md5_to_invoice($md5) {
 	}
 
 	$md5_escaped = mysql_escape_string($md5);
-	$all_invoices = $wpdb->get_col("SELECT invoice_num FROM ".WP_Invoice::tablename('main')." WHERE MD5(invoice_num) = '{$md5_escaped}'");
+	$all_invoices = $wpdb->get_col("SELECT invoice_num FROM ".$wpdb->payments." WHERE MD5(invoice_num) = '{$md5_escaped}'");
 	foreach ($all_invoices as $value) {
 		if(md5($value) == $md5) {
 			$_wp_invoice_md5_to_invoice_cache[$md5] = $value;
@@ -1538,7 +1538,7 @@ function wp_invoice_create_paypal_itemized_list($itemized_array,$invoice_id) {
 	$tax = $invoice->display('tax_percent');
 	$amount = $invoice->display('amount');
 	$display_id = $invoice->display('display_id');
-	
+
 	$tax_free_sum = 0;
 	$counter = 1;
 	foreach($itemized_array as $itemized_item) {
@@ -1581,7 +1581,7 @@ function wp_invoice_create_googlecheckout_itemized_list($itemized_array,$invoice
 	$display_id = $invoice->display('display_id');
 	$currency = $invoice->display('currency');
 	$tax_percent = $invoice->display('tax_percent');
-	
+
 	$tax_free_sum = 0;
 	$counter = 1;
 	foreach($itemized_array as $itemized_item) {
@@ -1702,20 +1702,20 @@ function wp_invoice_user_accepted_payments($payee_id) {
 }
 
 function wp_invoice_accepted_payment($invoice_id = 'global') {
-	
+
 	// fix the occasional issue with empty varlue being passed
 	if(empty($invoice_id))
 		$invoice_id = "global";
 
  	if($invoice_id == 'global') {
-	
+
 		if(get_option('wp_invoice_paypal_allow') == 'yes') { 
 			$payment_array['paypal']['name'] = 'paypal'; 
 			$payment_array['paypal']['active'] = true; 
 			$payment_array['paypal']['nicename'] = "PayPal"; 
 			if(get_option('wp_invoice_payment_method') == 'paypal' || get_option('wp_invoice_payment_method') == 'PayPal') $payment_array['paypal']['default'] = true; 
 		}
-		
+
 		if(get_option('wp_invoice_cc_allow') == 'yes') { 
 			$payment_array['cc']['name'] = 'cc'; 
 			$payment_array['cc']['active'] = true; 
@@ -1744,7 +1744,7 @@ function wp_invoice_accepted_payment($invoice_id = 'global') {
 		$invoice_info = new WP_Invoice_GetInfo($invoice_id);
 		$payment_array = array();
 		if($invoice_info->display('wp_invoice_payment_method') != '') { $custom_default_payment = true; } else { $custom_default_payment = false; }
-		
+
 		if($invoice_info->display('wp_invoice_paypal_allow') == 'yes') {
 			$payment_array['paypal']['name'] = 'paypal'; 
 			$payment_array['paypal']['active'] = true; 
@@ -1752,9 +1752,9 @@ function wp_invoice_accepted_payment($invoice_id = 'global') {
 
 			if($custom_default_payment && $invoice_info->display('wp_invoice_payment_method') == 'paypal' || $invoice_info->display('wp_invoice_payment_method') == 'PayPal') $payment_array['paypal']['default'] = true; 
 			if(!$custom_default_payment &&  empty($payment_array['paypal']['default']) && get_option('wp_invoice_payment_method') == 'paypal') { $payment_array['paypal']['default'] = true;}
-			
+
 		}
-		
+
 		if($invoice_info->display('wp_invoice_cc_allow') == 'yes') { 
 			$payment_array['cc']['name'] = 'cc'; 
 			$payment_array['cc']['active'] = true; 
@@ -1785,7 +1785,7 @@ function wp_invoice_accepted_payment($invoice_id = 'global') {
 }
 
 function wp_invoice_create_wp_user($p) {
-   
+
 	$username = $p['wp_invoice_new_user_username'];
 	if(!$username or wp_invoice_username_taken($username)) {
 		$username = wp_invoice_get_user_login_name();
@@ -1814,7 +1814,7 @@ function wp_invoice_get_user_login_name() {
 
 function wp_invoice_email_variables($invoice_id) {
 	global $wp_invoice_email_variables, $user_ID;
-	
+
 	$invoice_class = new wp_invoice_get($invoice_id);
 	$invoice_info = $invoice_class->data;
 
@@ -1883,7 +1883,7 @@ Thank you very much for your patronage.
 
 Best regards,
 %business_name% ( %business_email% )");
-	
+
 }	
 
 class load_wp_invoice {
@@ -1892,7 +1892,7 @@ class load_wp_invoice {
 
 	function create_new($user_id) {
 		$profileuser = @get_user_to_edit($user_id);
-	
+
 		// this is a new invoice, get defaults
 		$this->client_change_payment_method = get_option('wp_invoice_client_change_payment_method');
 		$this->payment_method = get_option('wp_invoice_payment_method');
@@ -1901,12 +1901,12 @@ class load_wp_invoice {
 		$this->paypal_address = get_option('wp_invoice_paypal_address');
 
 		$this->googlecheckout_address = get_option('wp_invoice_googlecheckout_address');
-				
+
 		$this->moneybookers_address = get_option('wp_invoice_moneybookers_address');	
 		$this->moneybookers_allow = get_option('wp_invoice_moneybookers_allow');
 		$this->moneybookers_secret = get_option('wp_invoice_moneybookers_secret');
 		$this->moneybookers_ip = get_option('wp_invoice_moneybookers_ip');
-	
+
 		$this->cc_allow = get_option('wp_invoice_cc_allow');		
 		$this->gateway_username = get_option('wp_invoice_gateway_username');
 		$this->gateway_tran_key = get_option('wp_invoice_gateway_tran_key');
@@ -1930,12 +1930,12 @@ class load_wp_invoice {
 
 		// Check if new user is being created
 		if($user_id == 'create_new_user') {
-		
+
 				$this->create_new_user = true;
-		
+
 		} else {
 			$profileuser = @get_user_to_edit($user_id);
-		
+
 			if(!$profileuser->data->ID): 
 				$this->user_deleted = true;
 			else:
@@ -1951,13 +1951,13 @@ class load_wp_invoice {
 				$this->country = $profileuser->country;
 			endif;	
 		}
-	
+
 	}
 
 	function create_from_template($template_invoice_id, $user_id) {
 		global $wpdb;
-		
- 		$invoice_info = $wpdb->get_row("SELECT * FROM ".WP_Invoice::tablename('main')." WHERE invoice_num = '".$template_invoice_id."'");
+
+ 		$invoice_info = $wpdb->get_row("SELECT * FROM ".$wpdb->payments." WHERE invoice_num = '".$template_invoice_id."'");
  		$this->invoice_id = rand(10000000, 90000000);
 		$this->amount = $invoice_info->amount;
 		$this->subject = $invoice_info->subject;
@@ -1967,7 +1967,7 @@ class load_wp_invoice {
 
 		// Verify user account still exists
 		$profileuser = @get_user_to_edit($user_id);
-	
+
 		if(!$profileuser->data->ID): 
 			$this->user_deleted = true;
 		else:
@@ -1998,18 +1998,18 @@ class load_wp_invoice {
 		$this->subscription_start_day = wp_invoice_meta($template_invoice_id,'wp_invoice_subscription_start_day');
 		$this->subscription_start_year = wp_invoice_meta($template_invoice_id,'wp_invoice_subscription_start_year');
 		$this->subscription_total_occurances = wp_invoice_meta($template_invoice_id,'wp_invoice_subscription_total_occurances');
-		
+
 		$this->recurring_billing = wp_invoice_meta($template_invoice_id,'wp_invoice_recurring_billing');
 
 		// Get billing information for invoice we are modifying
 		$billing_information = new WP_Invoice_GetInfo($template_invoice_id);
-		
+
 		$this->client_change_payment_method = $billing_information->display('wp_invoice_client_change_payment_method');
 		$this->payment_method = $billing_information->display('wp_invoice_payment_method');
 
 		$this->paypal_allow = $billing_information->display('wp_invoice_paypal_allow'); 
 		$this->paypal_address = $billing_information->display('wp_invoice_paypal_address');
-		
+
 		$this->cc_allow = $billing_information->display('wp_invoice_cc_allow');  
 		$this->gateway_username = $billing_information->display('wp_invoice_gateway_username');
 		$this->gateway_tran_key = $billing_information->display('wp_invoice_gateway_tran_key');
@@ -2020,9 +2020,9 @@ class load_wp_invoice {
 		$this->moneybookers_secret = $billing_information->display('wp_invoice_moneybookers_secret'); 
 		$this->moneybookers_address = $billing_information->display('wp_invoice_moneybookers_address');
 		$this->moneybookers_ip = $billing_information->display('wp_invoice_moneybookers_ip'); 
-		
+
 		$this->googlecheckout_address = $billing_information->display('wp_invoice_googlecheckout_address');
-		
+
 		$this->alertpay_allow = $billing_information->display('wp_invoice_alertpay_allow'); 
 		$this->alertpay_address = $billing_information->display('wp_invoice_alertpay_address');
 		$this->alertpay_secret = $billing_information->display('wp_invoice_alertpay_secret'); 
@@ -2031,26 +2031,26 @@ class load_wp_invoice {
 
 	function load_existing($invoice_id = false) {
 		global $wpdb;
-		
+
 		// If variable is passed, overwrite class variable
 		if(isset($invoice_id))
 			$this->invoice_id = $invoice_id;
-			
+
 		// set local variable to class variable
 		$invoice_id = $this->invoice_id;
-		
-		$invoice_info = $wpdb->get_row("SELECT * FROM ".WP_Invoice::tablename('main')." WHERE invoice_num = '".$this->invoice_id."'");
-		
+
+		$invoice_info = $wpdb->get_row("SELECT * FROM ".$wpdb->payments." WHERE invoice_num = '".$this->invoice_id."'");
+
 		$this->user_id = $invoice_info->user_id;
 		$this->amount = $invoice_info->amount;
 		$this->subject = $invoice_info->subject;
 		$this->description = $invoice_info->description;
 		$this->itemized = $invoice_info->itemized;
  		$this->itemized_array = unserialize(urldecode($this->itemized)); 
-	
+
 		// Verify user account still exists
 		$profileuser = @get_user_to_edit($this->user_id);
-	
+
 		if(!$profileuser->data->ID): 
 			$this->user_deleted = true;
 		else:
@@ -2075,7 +2075,7 @@ class load_wp_invoice {
 		$this->due_date_year = wp_invoice_meta($invoice_id,'wp_invoice_due_date_year');
 		$this->currency_code = wp_invoice_meta($invoice_id,'wp_invoice_currency_code');
 		$this->recurring_billing = wp_invoice_meta($invoice_id,'wp_invoice_recurring_billing');
-				
+
 		$this->subscription_name = wp_invoice_meta($invoice_id,'wp_invoice_subscription_name');
 		$this->subscription_unit = wp_invoice_meta($invoice_id,'wp_invoice_subscription_unit');
 		$this->subscription_length = wp_invoice_meta($invoice_id,'wp_invoice_subscription_length');
@@ -2092,7 +2092,7 @@ class load_wp_invoice {
 
 		$this->paypal_allow = $billing_information->display('wp_invoice_paypal_allow'); 
 		$this->paypal_address = $billing_information->display('wp_invoice_paypal_address');
-		
+
 		$this->cc_allow = $billing_information->display('wp_invoice_cc_allow');  
 		$this->gateway_username = $billing_information->display('wp_invoice_gateway_username');
 		$this->gateway_tran_key = $billing_information->display('wp_invoice_gateway_tran_key');
@@ -2103,9 +2103,9 @@ class load_wp_invoice {
 		$this->moneybookers_secret = $billing_information->display('wp_invoice_moneybookers_secret'); 
 		$this->moneybookers_address = $billing_information->display('wp_invoice_moneybookers_address');
 		$this->moneybookers_ip = $billing_information->display('wp_invoice_moneybookers_ip'); 
-		
+
 		$this->googlecheckout_address = $billing_information->display('wp_invoice_googlecheckout_address');
-		
+
 		$this->alertpay_allow = $billing_information->display('wp_invoice_alertpay_allow'); 
 		$this->alertpay_address = $billing_information->display('wp_invoice_alertpay_address');
 		$this->alertpay_secret = $billing_information->display('wp_invoice_alertpay_secret'); 	
@@ -2115,7 +2115,7 @@ class load_wp_invoice {
 
 function wp_invoice_get_user_invoices($args = false) {
 	global $wpdb;
-	
+
 	$defaults = array('user_id' => false, 'status' => 'paid');
 	$args = wp_parse_args($args, $defaults);
 	extract($args, EXTR_SKIP);
@@ -2125,43 +2125,43 @@ function wp_invoice_get_user_invoices($args = false) {
 
 	if($status == 'paid'):
 		$paid_array = $wpdb->get_results("
-		SELECT DISTINCT amount, description, invoice_num, subject FROM  ".WP_Invoice::tablename('main')." 
-		LEFT JOIN ".WP_Invoice::tablename('meta')."  
-		ON ".WP_Invoice::tablename('main').".invoice_num = ".WP_Invoice::tablename('meta').".invoice_id 
+		SELECT DISTINCT amount, description, invoice_num, subject FROM  ".$wpdb->payments." 
+		LEFT JOIN ".$wpdb->paymentsmeta."  
+		ON ".$wpdb->payments.".invoice_num = ".$wpdb->paymentsmeta.".invoice_id 
 		WHERE meta_key = 'paid_status' 
 		AND meta_value = 'paid'
 		AND user_id = '$user_id'");
 
 		if(count($paid_array) > 0)
 			return $paid_array;
-		
+
 		return false;
 	endif;
-	
+
 	if($status == 'unpaid'):
-	
+
 		// can't do a neat query as above because unpaid invoices don't have any special designators
 		$unpaid_raw_array = $wpdb->get_results("
-		SELECT DISTINCT amount, description, invoice_num, subject FROM ".WP_Invoice::tablename('main')." 
-		LEFT JOIN ".WP_Invoice::tablename('meta')."  
-		ON ".WP_Invoice::tablename('main').".invoice_num = ".WP_Invoice::tablename('meta').".invoice_id 
+		SELECT DISTINCT amount, description, invoice_num, subject FROM ".$wpdb->payments." 
+		LEFT JOIN ".$wpdb->paymentsmeta."  
+		ON ".$wpdb->payments.".invoice_num = ".$wpdb->paymentsmeta.".invoice_id 
 		WHERE user_id = '$user_id'");
-		
+
 		if(count($unpaid_raw_array) > 0) {
 			$unpaid_array = array();
-			
+
 			foreach($unpaid_raw_array as $unpaid_invoice) {
-			
+
 				if(!wp_invoice_meta($unpaid_invoice->invoice_num, 'paid_status'))
 					array_push($unpaid_array, $unpaid_invoice);
 
 			}	
-		
+
 			return $unpaid_array;
 		}
 
 		return false;
-		
+
 	endif;
 
 }
