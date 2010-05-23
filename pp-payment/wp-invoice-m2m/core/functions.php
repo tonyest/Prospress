@@ -58,7 +58,7 @@ wp_invoice_create("post_id=2&payer_id=5&payee_id=3&amount=42.00&status=good&type
 
 		if(wp_mail($invoice->payer_class->user_email, "Invoice: {$invoice->post_title}", $invoice_class->data->email_payment_request, "From: {$invoice->payee_class->user_nickname} <{$invoice->payee_class->user_email}>\r\n")) {
  			wp_invoice_update_invoice_meta($invoice_id, "sent_date", date("Y-m-d", time()));
-			wp_invoice_update_log($invoice_id,'contact',"Invoice eMailed to {$invoice->payer_class->user_email}"); 
+			wp_invoice_update_log($invoice_id,'contact',"Invoice emailed to {$invoice->payer_class->user_email}"); 
 			return "Web invoice sent successfully."; 
 		} else { 
 			return "There was a problem sending the invoice."; 
@@ -774,7 +774,7 @@ function wp_invoice_send_email($invoice_array, $reminder = false)
 			if(wp_mail($profileuser->user_email, $subject, $message, $headers))
 			{
 				$counter++; // Success in sending quantified.
-				wp_invoice_update_log($invoice_id,'contact','Invoice eMailed'); //make sent entry
+				wp_invoice_update_log($invoice_id,'contact','Invoice emailed'); //make sent entry
 				wp_invoice_update_invoice_meta($invoice_id, "sent_date", date("Y-m-d", time()));
 			}
 		}
@@ -806,7 +806,7 @@ function wp_invoice_send_email($invoice_array, $reminder = false)
 		if(wp_mail($profileuser->user_email, $subject, $message, $headers))
 		{
 			wp_invoice_update_invoice_meta($invoice_id, "sent_date", date("Y-m-d", time()));
-			wp_invoice_update_log($invoice_id,'contact','Invoice eMailed'); return "Web invoice sent successfully."; }
+			wp_invoice_update_log($invoice_id,'contact','Invoice emailed'); return "Web invoice sent successfully."; }
 			else
 			{ return "There was a problem sending the invoice."; }
 

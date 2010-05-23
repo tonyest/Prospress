@@ -227,7 +227,7 @@ class WP_Invoice {
 				$messages[] = "You have not yet paid this invoice.";
 
 			if(!$invoice->is_paid && $has_invoice_permissions == 'payee')
-				$messages[] = "{$invoice->payer_class->user_nicename} has not paid this invoice yet.";
+				$messages[] = "{$invoice->payer_class->user_nicename} has not paid this invoice.";
 
 			if($invoice->is_paid)
 				$messages[] = "{$paid_data->value} on $paid_date.";
@@ -290,7 +290,7 @@ class WP_Invoice {
 				$messages[] = "You have not yet paid this invoice.";
 
 			if(!$invoice->is_paid && $has_invoice_permissions == 'payee')
-				$messages[] = "{$invoice->payer_class->user_nicename} has not paid this invoice yet.";
+				$messages[] = "{$invoice->payer_class->user_nicename} has not paid this invoice.";
 
 			if($invoice->is_paid)
 				$messages[] = "{$paid_data->value}. <br />Processed on $paid_date.";
