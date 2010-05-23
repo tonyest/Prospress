@@ -59,18 +59,23 @@
 	<tbody id="invoices" class="list:invoices invoice-list">
 	<?php
 	$style = '';
-	$x_counter = 0;
-	foreach ($outgoing_invoices as $invoice_id) {			
-		$style = ( ' class="alternate"' == $style ) ? '' : ' class="alternate"';
-		$invoice_class = new wp_invoice_get($invoice_id);
-		echo "\n\t" . wp_invoice_invoice_row($invoice_class->data, 'outgoing');
-		$x_counter++;
-	}
-	
-	if($x_counter == 0) { ?>
-	<tr><td colspan="00" align="center"><div style="padding: 20px;"><?php _e('You don\'t have any invoices to send out.', WP_INVOICE_TRANS_DOMAIN); ?></div></td></tr>
+	if( !empty( $outgoing_invoices ) ){
+		foreach ($outgoing_invoices as $invoice_id) {			
+			$style = ( ' class="alternate"' == $style ) ? '' : ' class="alternate"';
+			$invoice_class = new wp_invoice_get($invoice_id);
+			echo "\n\t" . wp_invoice_invoice_row($invoice_class->data, 'outgoing');
+		}
+	} else { ?>
+		<tr>
+			<td colspan="10" align="center">
+				<div>
+					<?php _e('You have no incoming payments.', WP_INVOICE_TRANS_DOMAIN); ?>
+				</div>
+			</td>
+		</tr>
 	<?php }	?>
-	
+
+
 	</tbody>
 	</table>
 

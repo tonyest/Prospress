@@ -104,14 +104,21 @@
 			</tr>
 			<tr class="paypal_settings">
 				<th>PayPal Settings:</th>
-				<td><?php echo __("PayPal Username: ") . wp_invoice_draw_inputfield('wp_invoice_user_settings[paypal_address]',$user_settings[paypal_address]); ?></td>
+				<td>
+				<table>
+					<tr class="paypal_settings">
+						<th><?php _e("PayPal Username: "); ?></th>
+						<td><?php echo wp_invoice_draw_inputfield('wp_invoice_user_settings[paypal_address]',$user_settings[paypal_address]); ?></td>
+					</tr>
+					<?php if( is_super_admin() ) {?>
+					<tr class="paypal_settings">
+						<th>&nbsp;</th>
+						<td><?php echo wpi_checkbox('group=wp_invoice_user_settings&name=paypal_sandbox&value=true&label=PayPal Sandbox Mode',$user_settings[paypal_sandbox]); ?></td>
+					</tr>
+					<?php } ?>
+				</table>
+				</td>
 			</tr>
-			<?php if( is_super_admin() ) {?>
-			<tr class="paypal_settings">
-				<th>&nbsp;</th>
-				<td><?php echo wpi_checkbox('group=wp_invoice_user_settings&name=paypal_sandbox&value=true&label=PayPal Sandbox Mode',$user_settings[paypal_sandbox]); ?></td>
-			</tr>
-			<?php } ?>
 			<tr class="gateway_info">
 				<th>Credit Card Settings</th>
 				<td>
