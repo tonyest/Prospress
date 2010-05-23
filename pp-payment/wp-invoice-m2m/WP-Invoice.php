@@ -169,21 +169,6 @@ class WP_Invoice {
 			'due_date' => __('Due Date'),
 			'invoice_id' => __('Invoice ID')
 		));		
-
-		// We use this in case the current user is a buyer only, the incoming page is registered as top level
-		register_column_headers("toplevel_page_incoming_invoices", array(
-			'cb' => '<input type="checkbox" />',
-			'subject' => __('Subject'),
-			'balance' => __('Balance'),
-			'user_email' => __('User Email'),
-			'user' => __('User Name'),
-			'display_name' => __('Name'),
-			'company_name' => __('Company Name'),
-			'status' => __('Status'),
-			'date_sent' => __('Date Received'),
-			'due_date' => __('Due Date'),
-			'invoice_id' => __('Invoice ID')
-		));	
  	}
 
 /*

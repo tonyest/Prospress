@@ -254,7 +254,7 @@ function wp_invoice_number_of_invoices()
 
 function wp_invoice_does_invoice_exist($invoice_id) {
 	global $wpdb;
-	return $wpdb->get_var("SELECT * FROM ".$wpdb->payments." WHERE invoice_num = $invoice_id");
+	return $wpdb->get_var("SELECT * FROM ".$wpdb->payments." WHERE id = $invoice_id");
 }
 
 function wp_invoice_validate_cc_number($cc_number) {
@@ -528,7 +528,7 @@ else
 function wp_invoice_get_invoice_attrib($invoice_id,$attribute) 
 {
 	global $wpdb;
-	$query = "SELECT $attribute FROM ".$wpdb->payments." WHERE invoice_num=".$invoice_id."";
+	$query = "SELECT $attribute FROM ".$wpdb->payments." WHERE id=".$invoice_id."";
 	return $wpdb->get_var($query);
 }
 
@@ -578,7 +578,7 @@ function wp_invoice_currency_format($amount) {
 
 function wp_invoice_paid($invoice_id) {
 	global $wpdb;
-	//$wpdb->query("UPDATE  ".$wpdb->payments." SET status = 1 WHERE  invoice_num = '$invoice_id'");
+	//$wpdb->query("UPDATE  ".$wpdb->payments." SET status = 1 WHERE  id = '$invoice_id'");
 	wp_invoice_update_invoice_meta($invoice_id,'paid_status','paid');
  	wp_invoice_update_log($invoice_id,'paid',"Invoice successfully processed by ". $_SERVER['REMOTE_ADDR']);	
 
@@ -597,7 +597,7 @@ function wp_invoice_recurring_started($invoice_id) {
 function wp_invoice_paid_status($invoice_id) {
 	//Merged with paid_status in class
 	global $wpdb;
-	if(!empty($invoice_id) && wp_invoice_meta($invoice_id,'paid_status') || $wpdb->get_var("SELECT status FROM  ".$wpdb->payments." WHERE invoice_num = '$invoice_id'")) return true;
+	if(!empty($invoice_id) && wp_invoice_meta($invoice_id,'paid_status') || $wpdb->get_var("SELECT status FROM  ".$wpdb->payments." WHERE id = '$invoice_id'")) return true;
 }
 
 function wp_invoice_paid_date($invoice_id) {
@@ -737,7 +737,7 @@ function wp_invoice_complete_removal()
 function get_invoice_user_id($invoice_id) {
 	// in class
 	global $wpdb;
-	$invoice_info = $wpdb->get_row("SELECT * FROM ".$wpdb->payments." WHERE invoice_num = '".$invoice_id."'");
+	$invoice_info = $wpdb->get_row("SELECT * FROM ".$wpdb->payments." WHERE id = '".$invoice_id."'");
 	return $invoice_info->user_id;
 }
 
@@ -752,7 +752,7 @@ function wp_invoice_send_email($invoice_array, $reminder = false)
 		{
 			$wp_invoice_email_variables = wp_invoice_email_variables($invoice_id);
 
-			$invoice_info = $wpdb->get_row("SELECT * FROM ".$wpdb->payments." WHERE invoice_num = '".$invoice_id."'");
+			$invoice_info = $wpdb->get_row("SELECT * FROM ".$wpdb->payments." WHERE id = '".$invoice_id."'");
 
 			$profileuser = get_user_to_edit($invoice_info->user_id);
 
@@ -784,7 +784,7 @@ function wp_invoice_send_email($invoice_array, $reminder = false)
 	{
 		$invoice_id = $invoice_array;
 		$wp_invoice_email_variables = wp_invoice_email_variables($invoice_id);
-		$invoice_info = $wpdb->get_row("SELECT * FROM ".$wpdb->payments." WHERE invoice_num = '".$invoice_array."'");
+		$invoice_info = $wpdb->get_row("SELECT * FROM ".$wpdb->payments." WHERE id = '".$invoice_array."'");
 
 		$profileuser = get_user_to_edit($invoice_info->user_id);
 
@@ -1297,15 +1297,15 @@ function wp_invoice_process_invoice_update($invoice_id) {
 	if(wp_invoice_does_invoice_exist($invoice_id)) {
 		// Updating Old Invoice
 
-		if(wp_invoice_get_invoice_attrib($invoice_id,'subject') != $subject) { $wpdb->query("UPDATE ".$wpdb->payments." SET subject = '$subject' WHERE invoice_num = $invoice_id"); 			wp_invoice_update_log($invoice_id, 'updated', ' Subject Updated '); $message .= "Subject updated. ";}
-		if(wp_invoice_get_invoice_attrib($invoice_id,'description') != $description) { $wpdb->query("UPDATE ".$wpdb->payments." SET description = '$description' WHERE invoice_num = $invoice_id"); 			wp_invoice_update_log($invoice_id, 'updated', ' Description Updated '); $message .= "Description updated. ";}
-		if(wp_invoice_get_invoice_attrib($invoice_id,'amount') != $amount) { $wpdb->query("UPDATE ".$wpdb->payments." SET amount = '$amount' WHERE invoice_num = $invoice_id"); 			wp_invoice_update_log($invoice_id, 'updated', ' Amount Updated '); $message .= "Amount updated. ";}
-		if(wp_invoice_get_invoice_attrib($invoice_id,'itemized') != $itemized) { $wpdb->query("UPDATE ".$wpdb->payments." SET itemized = '$itemized' WHERE invoice_num = $invoice_id"); 			wp_invoice_update_log($invoice_id, 'updated', ' Itemized List Updated '); $message .= "Itemized List updated. ";}
+		if(wp_invoice_get_invoice_attrib($invoice_id,'subject') != $subject) { $wpdb->query("UPDATE ".$wpdb->payments." SET subject = '$subject' WHERE id = $invoice_id"); 			wp_invoice_update_log($invoice_id, 'updated', ' Subject Updated '); $message .= "Subject updated. ";}
+		if(wp_invoice_get_invoice_attrib($invoice_id,'description') != $description) { $wpdb->query("UPDATE ".$wpdb->payments." SET description = '$description' WHERE id = $invoice_id"); 			wp_invoice_update_log($invoice_id, 'updated', ' Description Updated '); $message .= "Description updated. ";}
+		if(wp_invoice_get_invoice_attrib($invoice_id,'amount') != $amount) { $wpdb->query("UPDATE ".$wpdb->payments." SET amount = '$amount' WHERE id = $invoice_id"); 			wp_invoice_update_log($invoice_id, 'updated', ' Amount Updated '); $message .= "Amount updated. ";}
+		if(wp_invoice_get_invoice_attrib($invoice_id,'itemized') != $itemized) { $wpdb->query("UPDATE ".$wpdb->payments." SET itemized = '$itemized' WHERE id = $invoice_id"); 			wp_invoice_update_log($invoice_id, 'updated', ' Itemized List Updated '); $message .= "Itemized List updated. ";}
 	}
 	else {
 		// Create New Invoice
 
-		if($wpdb->query("INSERT INTO ".$wpdb->payments." (amount,description,invoice_num,user_id,subject,itemized,status)	VALUES ('$amount','$description','$invoice_id','$user_id','$subject','$itemized','0')")) {
+		if($wpdb->query("INSERT INTO ".$wpdb->payments." (amount,description,id,user_id,subject,itemized,status)	VALUES ('$amount','$description','$invoice_id','$user_id','$subject','$itemized','0')")) {
 			$message = __("New Invoice saved.", WP_INVOICE_TRANS_DOMAIN);
 			wp_invoice_update_log($invoice_id, 'created', ' Created ');;
 		} 
@@ -1524,7 +1524,7 @@ function wp_invoice_md5_to_invoice($md5) {
 	}
 
 	$md5_escaped = mysql_escape_string($md5);
-	$all_invoices = $wpdb->get_col("SELECT invoice_num FROM ".$wpdb->payments." WHERE MD5(invoice_num) = '{$md5_escaped}'");
+	$all_invoices = $wpdb->get_col("SELECT id FROM ".$wpdb->payments." WHERE MD5(id) = '{$md5_escaped}'");
 	foreach ($all_invoices as $value) {
 		if(md5($value) == $md5) {
 			$_wp_invoice_md5_to_invoice_cache[$md5] = $value;
@@ -1957,7 +1957,7 @@ class load_wp_invoice {
 	function create_from_template($template_invoice_id, $user_id) {
 		global $wpdb;
 
- 		$invoice_info = $wpdb->get_row("SELECT * FROM ".$wpdb->payments." WHERE invoice_num = '".$template_invoice_id."'");
+ 		$invoice_info = $wpdb->get_row("SELECT * FROM ".$wpdb->payments." WHERE id = '".$template_invoice_id."'");
  		$this->invoice_id = rand(10000000, 90000000);
 		$this->amount = $invoice_info->amount;
 		$this->subject = $invoice_info->subject;
@@ -2039,7 +2039,7 @@ class load_wp_invoice {
 		// set local variable to class variable
 		$invoice_id = $this->invoice_id;
 
-		$invoice_info = $wpdb->get_row("SELECT * FROM ".$wpdb->payments." WHERE invoice_num = '".$this->invoice_id."'");
+		$invoice_info = $wpdb->get_row("SELECT * FROM ".$wpdb->payments." WHERE id = '".$this->invoice_id."'");
 
 		$this->user_id = $invoice_info->user_id;
 		$this->amount = $invoice_info->amount;
@@ -2125,9 +2125,9 @@ function wp_invoice_get_user_invoices($args = false) {
 
 	if($status == 'paid'):
 		$paid_array = $wpdb->get_results("
-		SELECT DISTINCT amount, description, invoice_num, subject FROM  ".$wpdb->payments." 
+		SELECT DISTINCT amount, description, id, subject FROM  ".$wpdb->payments." 
 		LEFT JOIN ".$wpdb->paymentsmeta."  
-		ON ".$wpdb->payments.".invoice_num = ".$wpdb->paymentsmeta.".invoice_id 
+		ON ".$wpdb->payments.".id = ".$wpdb->paymentsmeta.".invoice_id 
 		WHERE meta_key = 'paid_status' 
 		AND meta_value = 'paid'
 		AND user_id = '$user_id'");
@@ -2142,9 +2142,9 @@ function wp_invoice_get_user_invoices($args = false) {
 
 		// can't do a neat query as above because unpaid invoices don't have any special designators
 		$unpaid_raw_array = $wpdb->get_results("
-		SELECT DISTINCT amount, description, invoice_num, subject FROM ".$wpdb->payments." 
+		SELECT DISTINCT amount, description, id, subject FROM ".$wpdb->payments." 
 		LEFT JOIN ".$wpdb->paymentsmeta."  
-		ON ".$wpdb->payments.".invoice_num = ".$wpdb->paymentsmeta.".invoice_id 
+		ON ".$wpdb->payments.".id = ".$wpdb->paymentsmeta.".invoice_id 
 		WHERE user_id = '$user_id'");
 
 		if(count($unpaid_raw_array) > 0) {
@@ -2152,7 +2152,7 @@ function wp_invoice_get_user_invoices($args = false) {
 
 			foreach($unpaid_raw_array as $unpaid_invoice) {
 
-				if(!wp_invoice_meta($unpaid_invoice->invoice_num, 'paid_status'))
+				if(!wp_invoice_meta($unpaid_invoice->id, 'paid_status'))
 					array_push($unpaid_array, $unpaid_invoice);
 
 			}	

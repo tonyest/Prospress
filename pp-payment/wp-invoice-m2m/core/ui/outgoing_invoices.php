@@ -3,8 +3,8 @@
 	 pagenow = 'toplevel_page_outgoing_invoices';
 	</script>
 	<form id="invoices-filter" action="" method="post" >
-	<h2><?php _e('Invoices to Send', WP_INVOICE_TRANS_DOMAIN); ?></h2>
-	
+	<h2><?php _e('Incoming Payments', WP_INVOICE_TRANS_DOMAIN); ?></h2>
+
 	<?php if($message): ?>
 	<div class="updated fade">
 		<p><?php echo $message; ?></p>
@@ -41,46 +41,41 @@
 		</ul>
 	</div>
 	</div>
-	<br class="clear" />
-	
+	<br class="clear" />	
 	<table class="widefat fixed" cellspacing="0"  id="invoice_sorter_table">
-	<thead>
-	<tr class="thead">
-	<?php print_column_headers('toplevel_page_outgoing_invoices') ?>
-	</tr>
-	</thead>
-
-	<tfoot>
-	<tr class="thead">
-	<?php print_column_headers('toplevel_page_outgoing_invoices', false) ?>
-	</tr>
-	</tfoot>
-
-	<tbody id="invoices" class="list:invoices invoice-list">
-	<?php
-	$style = '';
-	if( !empty( $outgoing_invoices ) ){
-		foreach ($outgoing_invoices as $invoice_id) {			
-			$style = ( ' class="alternate"' == $style ) ? '' : ' class="alternate"';
-			$invoice_class = new wp_invoice_get($invoice_id);
-			echo "\n\t" . wp_invoice_invoice_row($invoice_class->data, 'outgoing');
-		}
-	} else { ?>
-		<tr>
-			<td colspan="10" align="center">
-				<div>
-					<?php _e('You have no incoming payments.', WP_INVOICE_TRANS_DOMAIN); ?>
-				</div>
-			</td>
-		</tr>
-	<?php }	?>
-
-
-	</tbody>
+		<thead>
+			<tr class="thead">
+			<?php print_column_headers('toplevel_page_outgoing_invoices') ?>
+			</tr>
+		</thead>
+		<tfoot>
+			<tr class="thead">
+			<?php print_column_headers('toplevel_page_outgoing_invoices', false) ?>
+			</tr>
+		</tfoot>
+		<tbody id="invoices" class="list:invoices invoice-list">
+			<?php
+			$style = '';
+			if( !empty( $outgoing_invoices ) ){
+				foreach ($outgoing_invoices as $invoice_id) {			
+					$style = ( ' class="alternate"' == $style ) ? '' : ' class="alternate"';
+					$invoice_class = new wp_invoice_get($invoice_id);
+					echo "\n\t" . wp_invoice_invoice_row($invoice_class->data, 'outgoing');
+				}
+			} else { ?>
+				<tr>
+					<td colspan="10" align="center">
+						<div>
+							<?php _e('You have no incoming payments.', WP_INVOICE_TRANS_DOMAIN); ?>
+						</div>
+					</td>
+				</tr>
+			<?php }	?>
+		</tbody>
 	</table>
-
 	<a href="" id="wp_invoice_show_archived">Show / Hide Archived</a>
-	</form> 
-	<div class="wp_invoice_stats">Total of Displayed Invoices: <span id="wp_invoice_total_owed"></span></div>
-
+	</form>
+	<div class="wp_invoice_stats">
+		Total of Displayed Invoices: <span id="wp_invoice_total_owed"></span>
+	</div>
 </div>
