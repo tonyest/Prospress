@@ -37,18 +37,18 @@
 			</tr>
 		
 			<tr class="gateway_info payment_info">
-				<th width="300"><a class="wp_invoice_tooltip" title="<?php _e('Your credit card processor will provide you with a gateway username.', WP_INVOICE_TRANS_DOMAIN); ?>"><?php _e('Gateway Username', WP_INVOICE_TRANS_DOMAIN); ?></a></th>
+				<th width="300"><a class="wp_invoice_tooltip" title="<?php _e('Your credit card processor will provide you with a gateway username.', 'prospress'); ?>"><?php _e('Gateway Username', 'prospress'); ?></a></th>
 				<td><?php echo wp_invoice_draw_inputfield('wp_invoice_gateway_username',$wp_invoice_gateway_username, ' AUTOCOMPLETE="off"  '); ?>
 				</td>
 			</tr>
 
 			<tr class="gateway_info payment_info">
-				<th width="300"><a class="wp_invoice_tooltip" title="<?php _e("You will be able to generate this in your credit card processor's control panel.", WP_INVOICE_TRANS_DOMAIN); ?>"><?php _e('Gateway Transaction Key', WP_INVOICE_TRANS_DOMAIN); ?></a></th>
+				<th width="300"><a class="wp_invoice_tooltip" title="<?php _e("You will be able to generate this in your credit card processor's control panel.", 'prospress'); ?>"><?php _e('Gateway Transaction Key', 'prospress'); ?></a></th>
 				<td><?php echo wp_invoice_draw_inputfield('wp_invoice_gateway_tran_key',$wp_invoice_gateway_tran_key, ' AUTOCOMPLETE="off"  '); ?></td>
 			</tr>
 
 			<tr class="gateway_info payment_info">
-				<th width="300"><a class="wp_invoice_tooltip"  title="<?php _e('This is the URL provided to you by your credit card processing company.', WP_INVOICE_TRANS_DOMAIN); ?>"><?php _e('Gateway URL', WP_INVOICE_TRANS_DOMAIN); ?></a></th>
+				<th width="300"><a class="wp_invoice_tooltip"  title="<?php _e('This is the URL provided to you by your credit card processing company.', 'prospress'); ?>"><?php _e('Gateway URL', 'prospress'); ?></a></th>
 				<td><?php echo wp_invoice_draw_inputfield('wp_invoice_gateway_url',$wp_invoice_gateway_url); ?><br />
 				<span class="wp_invoice_click_me" onclick="jQuery('#wp_invoice_gateway_url').val('https://gateway.merchantplus.com/cgi-bin/PAWebClient.cgi');">MerchantPlus</span> |
 				<span class="wp_invoice_click_me" onclick="jQuery('#wp_invoice_gateway_url').val('https://secure.authorize.net/gateway/transact.dll');">Authorize.Net</span> |
@@ -57,7 +57,7 @@
 			</tr>
 
 			<tr class="gateway_info payment_info">
-				<th width="300"><a class="wp_invoice_tooltip"  title="<?php _e('Recurring billing gateway URL is most likely different from the Gateway URL, and will almost always be with Authorize.net. Be advised - test credit card numbers will be declined even when in test mode.', WP_INVOICE_TRANS_DOMAIN); ?>"><?php _e('Recurring Billing Gateway URL', WP_INVOICE_TRANS_DOMAIN); ?></a></th>
+				<th width="300"><a class="wp_invoice_tooltip"  title="<?php _e('Recurring billing gateway URL is most likely different from the Gateway URL, and will almost always be with Authorize.net. Be advised - test credit card numbers will be declined even when in test mode.', 'prospress'); ?>"><?php _e('Recurring Billing Gateway URL', 'prospress'); ?></a></th>
 				<td><?php echo wp_invoice_draw_inputfield('wp_invoice_recurring_gateway_url',$wp_invoice_recurring_gateway_url); ?><br />
 				<span class="wp_invoice_click_me" onclick="jQuery('#wp_invoice_recurring_gateway_url').val('https://api.authorize.net/xml/v1/request.api');">Authorize.net ARB</span> |
 				<span class="wp_invoice_click_me" onclick="jQuery('#wp_invoice_recurring_gateway_url').val('https://apitest.authorize.net/xml/v1/request.api');">Authorize.Net ARB Testing</span>
@@ -71,32 +71,32 @@
 			</tr>
 
 			<tr class="gateway_info">
-				<th width="300"><a class="wp_invoice_tooltip"  title="<?php _e('Get this from your credit card processor. If the transactions are not going through, this character is most likely wrong.', WP_INVOICE_TRANS_DOMAIN); ?>"><?php _e('Delimiter Character', WP_INVOICE_TRANS_DOMAIN); ?></a></th>
+				<th width="300"><a class="wp_invoice_tooltip"  title="<?php _e('Get this from your credit card processor. If the transactions are not going through, this character is most likely wrong.', 'prospress'); ?>"><?php _e('Delimiter Character', 'prospress'); ?></a></th>
 				<td><?php echo wp_invoice_draw_inputfield('wp_invoice_gateway_delim_char',$wp_invoice_gateway_delim_char); ?>
 			</tr>
 
 			<tr class="gateway_info">
-				<th width="300"><a class="wp_invoice_tooltip" title="<?php _e('Authorize.net default is blank. Otherwise, get this from your credit card processor. If the transactions are going through, but getting strange responses, this character is most likely wrong.', WP_INVOICE_TRANS_DOMAIN); ?>"><?php _e('Encapsulation Character', WP_INVOICE_TRANS_DOMAIN); ?></a></th>
+				<th width="300"><a class="wp_invoice_tooltip" title="<?php _e('Authorize.net default is blank. Otherwise, get this from your credit card processor. If the transactions are going through, but getting strange responses, this character is most likely wrong.', 'prospress'); ?>"><?php _e('Encapsulation Character', 'prospress'); ?></a></th>
 				<td><?php echo wp_invoice_draw_inputfield('wp_invoice_gateway_encap_char',$wp_invoice_gateway_encap_char); ?></td>
 			</tr>
 
 			<tr class="gateway_info">
-				<th width="300"><?php _e('Merchant Email', WP_INVOICE_TRANS_DOMAIN); ?></th>
+				<th width="300"><?php _e('Merchant Email', 'prospress'); ?></th>
 				<td><?php echo wp_invoice_draw_inputfield('wp_invoice_gateway_merchant_email',$wp_invoice_gateway_merchant_email); ?></td>
 			</tr>
 
 			<tr class="gateway_info">
-				<th><?php _e('Email Customer (on success):', WP_INVOICE_TRANS_DOMAIN); ?></th>
+				<th><?php _e('Email Customer (on success):', 'prospress'); ?></th>
 				<td><?php echo wp_invoice_draw_select('wp_invoice_gateway_email_customer',array("TRUE" => "Yes","FALSE" => "No"), $wp_invoice_gateway_test_mode); ?></td>
 			</tr>
 
 			<tr class="gateway_info">
-				<th width="300"><?php _e('Security: MD5 Hash', WP_INVOICE_TRANS_DOMAIN); ?></th>
+				<th width="300"><?php _e('Security: MD5 Hash', 'prospress'); ?></th>
 				<td><?php echo wp_invoice_draw_inputfield('wp_invoice_gateway_MD5Hash',$wp_invoice_gateway_MD5Hash); ?></td>				</td>
 			</tr>
 
 			<tr class="gateway_info">
-				<th><?php _e('Delim Data:', WP_INVOICE_TRANS_DOMAIN); ?></th>
+				<th><?php _e('Delim Data:', 'prospress'); ?></th>
 				<td><?php echo wp_invoice_draw_select('wp_invoice_gateway_delim_data',array("TRUE" => "True","FALSE" => "False"), $wp_invoice_gateway_delim_data); ?></td>
 			</tr>
 <?php } ?>			

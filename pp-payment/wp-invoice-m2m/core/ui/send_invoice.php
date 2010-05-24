@@ -45,7 +45,7 @@
 		<div id="side-info-column" class="inner-sidebar">
 			<?php 
 			if(!$invoice->is_paid)
-				add_meta_box('wp_invoice_metabox_publish', __('Send Invoice',WP_INVOICE_TRANS_DOMAIN), 'wp_invoice_metabox_publish', 'admin_page_send_invoice', 'side', 'high');
+				add_meta_box('wp_invoice_metabox_publish', __('Send Invoice','prospress'), 'wp_invoice_metabox_publish', 'admin_page_send_invoice', 'side', 'high');
 				
 			do_meta_boxes('admin_page_send_invoice', 'side', $invoice); ?>				
 		</div>
