@@ -1,6 +1,6 @@
 <div class="wrap">
 <form method='POST'>
-<h2><?php _e("Account Settings", WP_INVOICE_TRANS_DOMAIN) ?></h2>
+<h2><?php _e("Account Settings", 'prospress') ?></h2>
 <?php // wpi_qc($user_settings); ?>
 	<style>
 		<?php if($user_settings[paypal_allow] != 'true') : ?>
@@ -124,31 +124,31 @@
 				<td>
 				<table>
 				<tr class="gateway_info">
-					<th><a class="wp_invoice_tooltip" title="<?php _e('Your credit card processor will provide you with a gateway username.', WP_INVOICE_TRANS_DOMAIN); ?>"><?php _e('Gateway Username', WP_INVOICE_TRANS_DOMAIN); ?></a></th>
+					<th><a class="wp_invoice_tooltip" title="<?php _e('Your credit card processor will provide you with a gateway username.', 'prospress'); ?>"><?php _e('Gateway Username', 'prospress'); ?></a></th>
 					<td><?php echo wp_invoice_draw_inputfield('wp_invoice_user_settings[gateway_username]',$user_settings[gateway_username], ' AUTOCOMPLETE="off"  '); ?></td>
 				</tr>
 				<tr class="gateway_info">
-					<th><a class="wp_invoice_tooltip" title="<?php _e("You will be able to generate this in your credit card processor's control panel.", WP_INVOICE_TRANS_DOMAIN); ?>"><?php _e('Gateway Transaction Key', WP_INVOICE_TRANS_DOMAIN); ?></a></th>
+					<th><a class="wp_invoice_tooltip" title="<?php _e("You will be able to generate this in your credit card processor's control panel.", 'prospress'); ?>"><?php _e('Gateway Transaction Key', 'prospress'); ?></a></th>
 					<td><?php echo wp_invoice_draw_inputfield('wp_invoice_user_settings[gateway_tran_key]',$user_settings[gateway_tran_key], ' AUTOCOMPLETE="off"  '); ?></td>
 				<tr class="gateway_info payment_info">
-					<th width="300"><a class="wp_invoice_tooltip"  title="<?php _e('This is the URL provided to you by your credit card processing company.', WP_INVOICE_TRANS_DOMAIN); ?>"><?php _e('Gateway URL', WP_INVOICE_TRANS_DOMAIN); ?></a></th>
+					<th width="300"><a class="wp_invoice_tooltip"  title="<?php _e('This is the URL provided to you by your credit card processing company.', 'prospress'); ?>"><?php _e('Gateway URL', 'prospress'); ?></a></th>
 					<td><?php echo wp_invoice_draw_inputfield('wp_invoice_user_settings[gateway_url]',$user_settings[gateway_url]); ?><br />
 					</td>
 				</tr>
 				<tr class="gateway_info">
-					<th width="300"><a class="wp_invoice_tooltip"  title="<?php _e('Get this from your credit card processor. If the transactions are not going through, this character is most likely wrong.', WP_INVOICE_TRANS_DOMAIN); ?>"><?php _e('Delimiter Character', WP_INVOICE_TRANS_DOMAIN); ?></a></th>
+					<th width="300"><a class="wp_invoice_tooltip"  title="<?php _e('Get this from your credit card processor. If the transactions are not going through, this character is most likely wrong.', 'prospress'); ?>"><?php _e('Delimiter Character', 'prospress'); ?></a></th>
 					<td><?php echo wp_invoice_draw_inputfield('wp_invoice_user_settings[gateway_delim_char]',$user_settings[gateway_delim_char]); ?>
 				</tr>
 				<tr class="gateway_info">
-					<th width="300"><a class="wp_invoice_tooltip" title="<?php _e('Authorize.net default is blank. Otherwise, get this from your credit card processor. If the transactions are going through, but getting strange responses, this character is most likely wrong.', WP_INVOICE_TRANS_DOMAIN); ?>"><?php _e('Encapsulation Character', WP_INVOICE_TRANS_DOMAIN); ?></a></th>
+					<th width="300"><a class="wp_invoice_tooltip" title="<?php _e('Authorize.net default is blank. Otherwise, get this from your credit card processor. If the transactions are going through, but getting strange responses, this character is most likely wrong.', 'prospress'); ?>"><?php _e('Encapsulation Character', 'prospress'); ?></a></th>
 					<td><?php echo wp_invoice_draw_inputfield('wp_invoice_user_settings[gateway_encap_char]',$user_settings[gateway_encap_char]); ?></td>
 				</tr>
 				<tr class="gateway_info">
-					<th width="300"><?php _e('Security: MD5 Hash', WP_INVOICE_TRANS_DOMAIN); ?></th>
+					<th width="300"><?php _e('Security: MD5 Hash', 'prospress'); ?></th>
 					<td><?php echo wp_invoice_draw_inputfield('wp_invoice_user_settings[gateway_MD5Hash]',$user_settings[gateway_MD5Hash]); ?></td>
 				</tr>
 				<tr class="gateway_info">
-					<th><?php _e('Delim Data:', WP_INVOICE_TRANS_DOMAIN); ?></th>
+					<th><?php _e('Delim Data:', 'prospress'); ?></th>
 					<td><?php echo wp_invoice_draw_select('wp_invoice_user_settings[gateway_delim_data]',array("TRUE" => "True","FALSE" => "False"), $user_settings[gateway_delim_data]); ?></td>
 				</tr>
 				</table>

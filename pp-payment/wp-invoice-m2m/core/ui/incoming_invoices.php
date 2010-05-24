@@ -3,25 +3,25 @@
 	 pagenow = 'web-invoice_page_incoming_invoices';
 	</script>
 	<form id="invoices-filter" action="" method="post" >
-	<h2><?php _e('Outgoing Payments', WP_INVOICE_TRANS_DOMAIN); ?></h2>
+	<h2><?php _e('Outgoing Payments', 'prospress'); ?></h2>
 	<div class="tablenav clearfix">
 
 	<div class="alignleft">
 	<select id="wp_invoice_action" name="wp_invoice_action">
-		<option value="-1" selected="selected"><?php _e('-- Actions --', WP_INVOICE_TRANS_DOMAIN); ?></option>
-		<option value="archive_invoice" name="archive" ><?php _e('Archive Invoice(s)', WP_INVOICE_TRANS_DOMAIN); ?></option>
-		<option value="unrachive_invoice" name="unarchive" ><?php _e('Un-Archive Invoice(s)', WP_INVOICE_TRANS_DOMAIN); ?></option>
+		<option value="-1" selected="selected"><?php _e('-- Actions --', 'prospress'); ?></option>
+		<option value="archive_invoice" name="archive" ><?php _e('Archive Invoice(s)', 'prospress'); ?></option>
+		<option value="unrachive_invoice" name="unarchive" ><?php _e('Un-Archive Invoice(s)', 'prospress'); ?></option>
 	</select>
 	<input type="submit" value="Apply" id="submit_bulk_action" class="button-secondary action" />
 	</div>
 
 	<div class="alignright">
 		<ul class="subsubsub" style="margin:0;">
-		<li><?php _e('Filter:', WP_INVOICE_TRANS_DOMAIN); ?></li>
+		<li><?php _e('Filter:', 'prospress'); ?></li>
 		<li><a href='#' class="" id="">All Invoices</a> |</li>
 		<li><a href='#'  class="paid" id="">Paid</a> |</li>
 		<li><a href='#'  class="sent" id="">Unpaid</a> |</li>
-		<li><?php _e('Custom: ', WP_INVOICE_TRANS_DOMAIN); ?><input type="text" id="FilterTextBox" class="search-input" name="FilterTextBox" /> </li>
+		<li><?php _e('Custom: ', 'prospress'); ?><input type="text" id="FilterTextBox" class="search-input" name="FilterTextBox" /> </li>
 		</ul>
 	</div>
 	</div>
@@ -51,7 +51,7 @@
 			<tr>
 				<td colspan="10" align="center">
 					<div>
-						<?php _e('You have no invoices to pay.', WP_INVOICE_TRANS_DOMAIN); ?>
+						<?php _e('You have no invoices to pay.', 'prospress'); ?>
 					</div>
 				</td>
 			</tr>

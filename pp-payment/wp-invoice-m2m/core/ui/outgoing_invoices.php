@@ -3,7 +3,7 @@
 	 pagenow = 'toplevel_page_outgoing_invoices';
 	</script>
 	<form id="invoices-filter" action="" method="post" >
-	<h2><?php _e('Incoming Payments', WP_INVOICE_TRANS_DOMAIN); ?></h2>
+	<h2><?php _e('Incoming Payments', 'prospress'); ?></h2>
 
 	<?php if($message): ?>
 	<div class="updated fade">
@@ -15,17 +15,17 @@
 	
 	<div class="alignleft">
 	<select id="wp_invoice_action" name="wp_invoice_action">
-		<option value="-1" selected="selected"><?php _e('-- Actions --', WP_INVOICE_TRANS_DOMAIN); ?></option>
-		<option value="archive_invoice" name="archive" ><?php _e('Archive Invoice(s)', WP_INVOICE_TRANS_DOMAIN); ?></option>
-		<option value="unrachive_invoice" name="unarchive" ><?php _e('Un-Archive Invoice(s)', WP_INVOICE_TRANS_DOMAIN); ?></option>
-		<option value="mark_as_sent" name="mark_as_sent" ><?php _e('Mark as Sent', WP_INVOICE_TRANS_DOMAIN); ?></option>
-		<option value="mark_as_paid" name="mark_as_paid" ><?php _e('Mark as Paid', WP_INVOICE_TRANS_DOMAIN); ?></option>
-		<option value="mark_as_unpaid" name="mark_as_unpaid" ><?php _e('Unset Paid Status', WP_INVOICE_TRANS_DOMAIN); ?></option>
+		<option value="-1" selected="selected"><?php _e('-- Actions --', 'prospress'); ?></option>
+		<option value="archive_invoice" name="archive" ><?php _e('Archive Invoice(s)', 'prospress'); ?></option>
+		<option value="unrachive_invoice" name="unarchive" ><?php _e('Un-Archive Invoice(s)', 'prospress'); ?></option>
+		<option value="mark_as_sent" name="mark_as_sent" ><?php _e('Mark as Sent', 'prospress'); ?></option>
+		<option value="mark_as_paid" name="mark_as_paid" ><?php _e('Mark as Paid', 'prospress'); ?></option>
+		<option value="mark_as_unpaid" name="mark_as_unpaid" ><?php _e('Unset Paid Status', 'prospress'); ?></option>
 		
 		<?php /*
-		<option value="send_invoice" name="sendit" ><?php _e('Send Invoice(s)', WP_INVOICE_TRANS_DOMAIN); ?></option>
-		<option value="send_reminder" name="sendit" ><?php _e('Send Reminder(s)', WP_INVOICE_TRANS_DOMAIN); ?></option>
-		<option  value="delete_invoice" name="deleteit" ><?php _e('Delete', WP_INVOICE_TRANS_DOMAIN); ?></option>
+		<option value="send_invoice" name="sendit" ><?php _e('Send Invoice(s)', 'prospress'); ?></option>
+		<option value="send_reminder" name="sendit" ><?php _e('Send Reminder(s)', 'prospress'); ?></option>
+		<option  value="delete_invoice" name="deleteit" ><?php _e('Delete', 'prospress'); ?></option>
 		*/ ?>
 	</select>
 	<input type="submit" value="Apply" id="submit_bulk_action" class="button-secondary action" />
@@ -33,11 +33,11 @@
 
 	<div class="alignright">
 		<ul class="subsubsub" style="margin:0;">
-		<li><?php _e('Filter:', WP_INVOICE_TRANS_DOMAIN); ?></li>
+		<li><?php _e('Filter:', 'prospress'); ?></li>
 		<li><a href='#' class="" id="">All Invoices</a> |</li>
 		<li><a href='#'  class="paid" id="">Paid</a> |</li>
 		<li><a href='#'  class="sent" id="">Unpaid</a> |</li>
-		<li><?php _e('Custom: ', WP_INVOICE_TRANS_DOMAIN); ?><input type="text" id="FilterTextBox" class="search-input" name="FilterTextBox" /> </li>
+		<li><?php _e('Custom: ', 'prospress'); ?><input type="text" id="FilterTextBox" class="search-input" name="FilterTextBox" /> </li>
 		</ul>
 	</div>
 	</div>
@@ -66,7 +66,7 @@
 				<tr>
 					<td colspan="10" align="center">
 						<div>
-							<?php _e('You have no incoming payments.', WP_INVOICE_TRANS_DOMAIN); ?>
+							<?php _e('You have no incoming payments.', 'prospress'); ?>
 						</div>
 					</td>
 				</tr>

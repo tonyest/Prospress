@@ -374,8 +374,6 @@ width:100%;
 
 .no_style_list {list-style-type:none;padding:0;margin:0;}
 #invoice_history_log {margin-left:00px; line-height: 1.5em;}
-#wp_invoice_settings_page  .input_field, #wp_invoice_billing_information   .input_field, #wp_invoice_settings_page  textarea  {width: 400px;}
-#wp_invoice_enable_recurring_billing {}
 .clearfix:after { content: ".";display: block;clear: both;visibility: hidden;line-height: 0;height: 0;}
 .clearfix { display: inline-block; }
 html[xmlns] .clearfix { display: block; }

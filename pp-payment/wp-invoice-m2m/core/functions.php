@@ -202,12 +202,12 @@ function wp_invoice_create($args) {
 		return;
 
 	if($wpdb->query("INSERT INTO ".$wpdb->payments." (post_id, payer_id,payee_id,amount,status,type,blog_id)	VALUES ('$post_id','$payer_id','$payee_id','$amount','$status','$type','$blog_id')")) {
-		$message = __("New Invoice saved for $post_id.", WP_INVOICE_TRANS_DOMAIN);
+		$message = __("New Invoice saved for $post_id.", 'prospress');
 		$invoice_id = $wpdb->insert_id;
 		wp_invoice_update_log($invoice_id, 'created', "Invoice created from post ($post_id).");;
 	} 
 	else { 
-		$error = true; $message = __("There was a problem saving invoice.  Try deactivating and reactivating plugin.", WP_INVOICE_TRANS_DOMAIN); 
+		$error = true; $message = __("There was a problem saving invoice.  Try deactivating and reactivating plugin.", 'prospress'); 
 	}
 
 	echo $message;
@@ -379,7 +379,7 @@ if(is_array($invoice_id))
 			wp_invoice_delete_invoice_meta($single_invoice_id);
 		}
 	}
-	return $counter . __(' invoice(s) successfully deleted.', WP_INVOICE_TRANS_DOMAIN);
+	return $counter . __(' invoice(s) successfully deleted.', 'prospress');
 
 }
 else
@@ -397,7 +397,7 @@ else
 		// Make log entry
 	wp_invoice_update_log($invoice_id, "deleted", "Deleted on ");
 
-	return __('Invoice successfully deleted.', WP_INVOICE_TRANS_DOMAIN);
+	return __('Invoice successfully deleted.', 'prospress');
 }
 }
 
@@ -412,13 +412,13 @@ if(is_array($invoice_id))
 	$counter++;
 	wp_invoice_update_invoice_meta($single_invoice_id, "archive_status", "archived");
 	}
-	return __("$counter  invoice(s) archived.", WP_INVOICE_TRANS_DOMAIN);
+	return __("$counter  invoice(s) archived.", 'prospress');
 
 }
 else
 {
 	wp_invoice_update_invoice_meta($invoice_id, "archive_status", "archived");
-	return __('Invoice successfully archived.', WP_INVOICE_TRANS_DOMAIN);
+	return __('Invoice successfully archived.', 'prospress');
 }
 }
 
@@ -434,14 +434,14 @@ function wp_invoice_mark_as_unpaid($invoice_id) {
 			wp_invoice_delete_invoice_meta($single_invoice_id,'paid_status');
 			wp_invoice_update_log($single_invoice_id,'paid',"Invoice marked as un-paid");
 		}
-		return $counter . __(' invoice(s) marked as paid.', WP_INVOICE_TRANS_DOMAIN);
+		return $counter . __(' invoice(s) marked as paid.', 'prospress');
 
 	}
 	else
 	{
 		wp_invoice_delete_invoice_meta($invoice_id,'paid_status');
 		wp_invoice_update_log($invoice_id,'paid',"Invoice marked as un-paid");
-		return $counter .  __(' invoice marked as paid.', WP_INVOICE_TRANS_DOMAIN);
+		return $counter .  __(' invoice marked as paid.', 'prospress');
 	}
 }
 
@@ -459,10 +459,10 @@ function wp_invoice_mark_as_paid($invoice_id) {
 		if(get_option('wp_invoice_send_thank_you_email') == 'yes') wp_invoice_send_email_receipt($single_invoice_id);
 		}
 		if(get_option('wp_invoice_send_thank_you_email') == 'yes') {
-		return $counter . __(' invoice(s) marked as paid, and thank you email sent to customer.', WP_INVOICE_TRANS_DOMAIN);
+		return $counter . __(' invoice(s) marked as paid, and thank you email sent to customer.', 'prospress');
 		}
 		else{
-		return $counter . __(' invoice(s) marked as paid.', WP_INVOICE_TRANS_DOMAIN);
+		return $counter . __(' invoice(s) marked as paid.', 'prospress');
 		}
 	}
 	else
@@ -472,10 +472,10 @@ function wp_invoice_mark_as_paid($invoice_id) {
 		if(get_option('wp_invoice_send_thank_you_email') == 'yes') wp_invoice_send_email_receipt($single_invoice_id);
 
 		if(get_option('wp_invoice_send_thank_you_email') == 'yes') {
-		return $counter . __(' invoice marked as paid, and thank you email sent to customer.', WP_INVOICE_TRANS_DOMAIN);
+		return $counter . __(' invoice marked as paid, and thank you email sent to customer.', 'prospress');
 		}
 		else{
-		return $counter .  __(' invoice marked as paid.', WP_INVOICE_TRANS_DOMAIN);
+		return $counter .  __(' invoice marked as paid.', 'prospress');
 		}}
 }
 
@@ -490,13 +490,13 @@ if(is_array($invoice_id))
 	$counter++;
 	wp_invoice_delete_invoice_meta($single_invoice_id, "archive_status");
 	}
-	return $counter . __(' invoice(s) unarchived.', WP_INVOICE_TRANS_DOMAIN);
+	return $counter . __(' invoice(s) unarchived.', 'prospress');
 
 }
 else
 {
 	wp_invoice_delete_invoice_meta($invoice_id, "archive_status");
-	return __('Invoice successfully unarchived', WP_INVOICE_TRANS_DOMAIN);
+	return __('Invoice successfully unarchived', 'prospress');
 }
 }
 
@@ -513,7 +513,7 @@ if(is_array($invoice_id))
 	wp_invoice_update_log($single_invoice_id,'contact','Invoice Maked as eMailed'); //make sent entry
 
 	}
-	return $counter .  __(' invoice(s) marked as sent.', WP_INVOICE_TRANS_DOMAIN);
+	return $counter .  __(' invoice(s) marked as sent.', 'prospress');
 
 }
 else
@@ -521,7 +521,7 @@ else
 	wp_invoice_update_invoice_meta($invoice_id, "sent_date", date("Y-m-d", time()));
 	wp_invoice_update_log($invoice_id,'contact','Invoice Maked as eMailed'); //make sent entry
 
-	return __('Invoice market as sent.', WP_INVOICE_TRANS_DOMAIN);
+	return __('Invoice market as sent.', 'prospress');
 }
 }
 
@@ -560,7 +560,7 @@ function wp_invoice_clear_invoice_status($invoice_id)
 	global $wpdb;
 	if(isset($invoice_id)) {
 	if($wpdb->query("DELETE FROM ".$wpdb->payments_log." WHERE invoice_id = $invoice_id"))
-	return  __('Logs for invoice #', WP_INVOICE_TRANS_DOMAIN) . $invoice_id .  __(' cleared.', WP_INVOICE_TRANS_DOMAIN);
+	return  __('Logs for invoice #', 'prospress') . $invoice_id .  __(' cleared.', 'prospress');
 	}
 }
 
@@ -622,11 +622,11 @@ function wp_invoice_build_invoice_link($invoice_id) {
 
 function wp_invoice_draw_inputfield($name,$value,$special = '') {
 
-	return "<input id='$name' class='$name input_field' name='$name' value='$value' $special />";
+	return "<input id='$name' type='text' class='$name input_field regular-text' name='$name' value='$value' $special />";
 }
 function wp_invoice_draw_textarea($name,$value,$special = '') {
 
-	return "<textarea id='$name' class='$name' name='$name'  $special>$value</textarea>";
+	return "<textarea id='$name' class='$name large-text' name='$name' $special >$value</textarea>";
 }
 
 function wp_invoice_draw_select($name,$values,$current_value = '') {
@@ -731,7 +731,7 @@ function wp_invoice_complete_removal()
 	delete_option('wp_invoice_gateway_relay_response');
 	delete_option('wp_invoice_gateway_email_customer');
 
-	return __("All settings and databases removed.", WP_INVOICE_TRANS_DOMAIN);
+	return __("All settings and databases removed.", 'prospress');
 }
 
 function get_invoice_user_id($invoice_id) {
@@ -1057,18 +1057,18 @@ function wp_invoice_country_array() {
 
 function wp_invoice_month_array() {
 	return array(
-		"01" => __("Jan", WP_INVOICE_TRANS_DOMAIN),
-		"02" => __("Feb", WP_INVOICE_TRANS_DOMAIN),
-		"03" => __("Mar", WP_INVOICE_TRANS_DOMAIN),
-		"04" => __("Apr", WP_INVOICE_TRANS_DOMAIN),
-		"05" => __("May", WP_INVOICE_TRANS_DOMAIN),
-		"06" => __("Jun", WP_INVOICE_TRANS_DOMAIN),
-		"07" => __("Jul", WP_INVOICE_TRANS_DOMAIN),
-		"08" => __("Aug", WP_INVOICE_TRANS_DOMAIN),
-		"09" => __("Sep", WP_INVOICE_TRANS_DOMAIN),
-		"10" => __("Oct", WP_INVOICE_TRANS_DOMAIN),
-		"11" => __("Nov", WP_INVOICE_TRANS_DOMAIN),
-		"12" => __("Dec", WP_INVOICE_TRANS_DOMAIN));
+		"01" => __("Jan", 'prospress'),
+		"02" => __("Feb", 'prospress'),
+		"03" => __("Mar", 'prospress'),
+		"04" => __("Apr", 'prospress'),
+		"05" => __("May", 'prospress'),
+		"06" => __("Jun", 'prospress'),
+		"07" => __("Jul", 'prospress'),
+		"08" => __("Aug", 'prospress'),
+		"09" => __("Sep", 'prospress'),
+		"10" => __("Oct", 'prospress'),
+		"11" => __("Nov", 'prospress'),
+		"12" => __("Dec", 'prospress'));
 }
 
 function wp_invoice_go_secure($destination) {
@@ -1306,11 +1306,11 @@ function wp_invoice_process_invoice_update($invoice_id) {
 		// Create New Invoice
 
 		if($wpdb->query("INSERT INTO ".$wpdb->payments." (amount,description,id,user_id,subject,itemized,status)	VALUES ('$amount','$description','$invoice_id','$user_id','$subject','$itemized','0')")) {
-			$message = __("New Invoice saved.", WP_INVOICE_TRANS_DOMAIN);
+			$message = __("New Invoice saved.", 'prospress');
 			wp_invoice_update_log($invoice_id, 'created', ' Created ');;
 		} 
 		else { 
-			$error = true; $message = __("There was a problem saving invoice.  Try deactivating and reactivating plugin.", WP_INVOICE_TRANS_DOMAIN); 
+			$error = true; $message = __("There was a problem saving invoice.  Try deactivating and reactivating plugin.", 'prospress'); 
 		}
 	}
 
@@ -1318,7 +1318,7 @@ function wp_invoice_process_invoice_update($invoice_id) {
 	if(!empty($_REQUEST['wp_invoice_subscription_name']) &&	!empty($_REQUEST['wp_invoice_subscription_unit']) && !empty($_REQUEST['wp_invoice_subscription_total_occurances'])) {
 		$wp_invoice_recurring_status = true;
 		wp_invoice_update_invoice_meta($invoice_id, "recurring_billing", true);
-		$message .= __(" Recurring invoice saved.  This invoice may be viewed under <b>Recurring Billing</b>. ", WP_INVOICE_TRANS_DOMAIN);
+		$message .= __(" Recurring invoice saved.  This invoice may be viewed under <b>Recurring Billing</b>. ", 'prospress');
 	}
 
 	$basic_invoice_settings = array(
@@ -1380,7 +1380,7 @@ function wp_invoice_process_invoice_update($invoice_id) {
 	//If there is a message, append it with the web invoice link
 	if($message && $invoice_id) {
 	$invoice_info = new WP_Invoice_GetInfo($invoice_id); 
-	$message .= " <a href='".$invoice_info->display('link')."'>".__("View Web Invoice", WP_INVOICE_TRANS_DOMAIN)."</a>.";
+	$message .= " <a href='".$invoice_info->display('link')."'>".__("View Web Invoice", 'prospress')."</a>.";
 	}
 
 	if(!$error) return $message;
@@ -1398,14 +1398,14 @@ if($content) echo "<div id=\"message\" class='$type' ><p>".$content."</p></div>"
 function wp_invoice_detect_config_erors() {
 	global $wpdb;
 
-	if(get_option("wp_invoice_web_invoice_page") == '') { $warning_message .= __('Invoice page not selected. ', WP_INVOICE_TRANS_DOMAIN); }
-	if(get_option("wp_invoice_payment_method") == '') { $warning_message .= __('Payment method not set. ', WP_INVOICE_TRANS_DOMAIN); }
+	if(get_option("wp_invoice_web_invoice_page") == '') { $warning_message .= __('Invoice page not selected. ', 'prospress'); }
+	if(get_option("wp_invoice_payment_method") == '') { $warning_message .= __('Payment method not set. ', 'prospress'); }
 	if(get_option("wp_invoice_payment_method") == '' || get_option("wp_invoice_web_invoice_page") == '') {
-		$warning_message .= __("Visit ", WP_INVOICE_TRANS_DOMAIN)."<a href='admin.php?page=invoice_settings'>settings page</a>".__(" to configure.", WP_INVOICE_TRANS_DOMAIN);
+		$warning_message .= __("Visit ", 'prospress')."<a href='admin.php?page=invoice_settings'>settings page</a>".__(" to configure.", 'prospress');
 	}
 
 	if(!$wpdb->query("SHOW TABLES LIKE '".$wpdb->paymentsmeta."';") || !$wpdb->query("SHOW TABLES LIKE '".$wpdb->payments."';") || !$wpdb->query("SHOW TABLES LIKE '".$wpdb->payments_log."';")) { 
-		$warning_message .= __("The plugin database tables are gone, deactivate and reactivate plugin to re-create them.", WP_INVOICE_TRANS_DOMAIN);
+		$warning_message .= __("The plugin database tables are gone, deactivate and reactivate plugin to re-create them.", 'prospress');
 	}
 
 	return $warning_message;

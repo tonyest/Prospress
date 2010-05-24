@@ -466,33 +466,33 @@ function wp_invoice_user_profile_fields()
 
 	<tr>
 	<th><label for="company_name">Company Name</label></th>
-	<td><input type="text" name="company_name" id="company_name" value="<?php echo get_usermeta($user_id,'company_name'); ?>" /></td>
+	<td><input type="text" name="company_name" id="company_name" class="regular-text" value="<?php echo get_usermeta($user_id,'company_name'); ?>" /></td>
 	</tr>
 
 	<tr>
 	<th><label for="streetaddress">Street Address</label></th>
-	<td><input type="text" name="streetaddress" id="streetaddress" value="<?php echo get_usermeta($user_id,'streetaddress'); ?>" /></td>
+	<td><input type="text" name="streetaddress" id="streetaddress" class="regular-text" value="<?php echo get_usermeta($user_id,'streetaddress'); ?>" /></td>
 	</tr>
 
 	<tr>
 	<th><label for="city">City</label></th>
-	<td><input type="text" name="city" id="city" value="<?php echo get_usermeta($user_id,'city'); ?>" /></td>
+	<td><input type="text" name="city" id="city" class="regular-text" value="<?php echo get_usermeta($user_id,'city'); ?>" /></td>
 	</tr>
 
 	<tr>
 	<th><label for="state">State</label></th>
-	<td><input type="text" name="state" id="state" value="<?php echo get_usermeta($user_id,'state'); ?>" /><br />
+	<td><input type="text" name="state" id="state" class="regular-text" value="<?php echo get_usermeta($user_id,'state'); ?>" /><br />
 	<p class="note">Use two-letter state codes for safe credit card processing.</p></td>
 	</tr>
 
 	<tr>
 	<th><label for="streetaddress">ZIP Code</label></th>
-	<td><input type="text" name="zip" id="zip" value="<?php echo get_usermeta($user_id,'zip'); ?>" /></td>
+	<td><input type="text" name="zip" id="zip" class="regular-text" value="<?php echo get_usermeta($user_id,'zip'); ?>" /></td>
 	</tr>
 
 	<tr>
 	<th><label for="phonenumber">Phone Number</label></th>
-	<td><input type="text" name="phonenumber" id="phonenumber" value="<?php echo get_usermeta($user_id,'phonenumber'); ?>" />
+	<td><input type="text" name="phonenumber" id="phonenumber" class="regular-text" value="<?php echo get_usermeta($user_id,'phonenumber'); ?>" />
 	<p class="note">Enforce 555-555-5555 format if you are using PayPal.</p></td>
 	</tr>
 

@@ -80,7 +80,7 @@ class WP_Invoice {
 		add_action('edit_user_profile', 'wp_invoice_user_profile_fields');
 		add_action('show_user_profile', 'wp_invoice_user_profile_fields');
 		add_action('admin_menu', array($this, 'wp_invoice_add_pages'));
-		add_action('wp_head', 'wp_invoice_frontend_header'); 
+		//add_action('wp_head', 'wp_invoice_frontend_header'); 
  		add_action('admin_init', array($this, 'admin_init'));
 
 		add_action('deleted_post', 'wp_invoice_delete_post');
@@ -131,14 +131,14 @@ class WP_Invoice {
 		}
 
 		//Make Payment Page Metaboxes
-		add_meta_box('wp_invoice_metabox_invoice_details', __('Invoice Details',WP_INVOICE_TRANS_DOMAIN), 'wp_invoice_metabox_invoice_details', 'admin_page_make_payment', 'normal', 'high');
-		add_meta_box('wp_invoice_metabox_billing_details', __('Billing Details',WP_INVOICE_TRANS_DOMAIN), 'wp_invoice_metabox_billing_details', 'admin_page_make_payment', 'normal', 'high');
-		add_meta_box('wp_invoice_metabox_payee_details', __('Payment Recipient',WP_INVOICE_TRANS_DOMAIN), 'wp_invoice_metabox_payee_details','admin_page_make_payment', 'side', 'default');
+		add_meta_box('wp_invoice_metabox_invoice_details', __('Invoice Details','prospress'), 'wp_invoice_metabox_invoice_details', 'admin_page_make_payment', 'normal', 'high');
+		add_meta_box('wp_invoice_metabox_billing_details', __('Billing Details','prospress'), 'wp_invoice_metabox_billing_details', 'admin_page_make_payment', 'normal', 'high');
+		add_meta_box('wp_invoice_metabox_payee_details', __('Payment Recipient','prospress'), 'wp_invoice_metabox_payee_details','admin_page_make_payment', 'side', 'default');
 
 		//Send Payment Page Metaboxes
-		add_meta_box('wp_invoice_metabox_history', __('Invoice History',WP_INVOICE_TRANS_DOMAIN), 'wp_invoice_metabox_history','admin_page_send_invoice', 'normal', 'default');
-		add_meta_box('wp_invoice_metabox_invoice_details', __('Invoice Details',WP_INVOICE_TRANS_DOMAIN), 'wp_invoice_metabox_invoice_details','admin_page_send_invoice', 'normal', 'default');
-  		add_meta_box('wp_invoice_metabox_payer_details', __('Recipient',WP_INVOICE_TRANS_DOMAIN), 'wp_invoice_metabox_payer_details','admin_page_send_invoice', 'side', 'default');
+		add_meta_box('wp_invoice_metabox_history', __('Invoice History','prospress'), 'wp_invoice_metabox_history','admin_page_send_invoice', 'normal', 'default');
+		add_meta_box('wp_invoice_metabox_invoice_details', __('Invoice Details','prospress'), 'wp_invoice_metabox_invoice_details','admin_page_send_invoice', 'normal', 'default');
+  		add_meta_box('wp_invoice_metabox_payer_details', __('Recipient','prospress'), 'wp_invoice_metabox_payer_details','admin_page_send_invoice', 'side', 'default');
 
 		add_filter('screen_layout_columns', array(&$this, 'on_screen_layout_columns'), 10, 2);		
 
@@ -479,7 +479,7 @@ class WP_Invoice {
 	function admin_init() {
 
 		// Admin Redirections. Has to go here to load before headers
-		if( $_REQUEST['wp_invoice_action'] == __('Continue Editing', WP_INVOICE_TRANS_DOMAIN)) {		
+		if( $_REQUEST['wp_invoice_action'] == __('Continue Editing', 'prospress')) {		
 			wp_redirect(admin_url("admin.php?page=new_invoice&wp_invoice_action=doInvoice&invoice_id={$_REQUEST['invoice_id']}"));
 			die();
 		}
@@ -533,11 +533,6 @@ class WP_Invoice {
 				$this->unsent_invoices[$outgoing_id] = true;
 
 		}
-
-		if (version_compare($wp_version, '2.6', '<')) // Using old WordPress
-        	load_plugin_textdomain(WP_INVOICE_TRANS_DOMAIN, PLUGINDIR.'/'.dirname(plugin_basename(__FILE__)).'/languages');
-        else
-        	load_plugin_textdomain(WP_INVOICE_TRANS_DOMAIN, PLUGINDIR.'/'.dirname(plugin_basename(__FILE__)).'/languages', dirname(plugin_basename(__FILE__)).'/languages');
 
 			// Make sure proper MD5 is being passed (32 chars), and strip of everything but numbers and letters
 			if(isset($_GET['invoice_id']) && strlen($_GET['invoice_id']) != 32) unset($_GET['invoice_id']); 

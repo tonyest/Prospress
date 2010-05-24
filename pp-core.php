@@ -26,6 +26,7 @@ if( !defined( 'PP_CORE_DIR' ) )
 if( !defined( 'PP_CORE_URL' ) )
 	define( 'PP_CORE_URL', PP_PLUGIN_URL . '/pp-core' );
 
+load_plugin_textdomain( 'prospress', PP_PLUGIN_DIR . '/languages', dirname( plugin_basename(__FILE__) ) . '/languages' );
 
 function pp_remove_wp_dashboard_widgets() {
 	global $wp_meta_boxes;
@@ -59,7 +60,7 @@ add_action( 'admin_menu', 'pp_add_core_admin_menu' );
 
 function pp_add_icon_css() {
 
-	if ( strpos( $_SERVER['REQUEST_URI'], 'Prospress' ) !== false ||  strpos( $_SERVER['REQUEST_URI'], 'custom_taxonomy_manage' ) !== false ) {
+	if ( strpos( $_SERVER['REQUEST_URI'], 'Prospress' ) !== false || strpos( $_SERVER['REQUEST_URI'], 'custom_taxonomy_manage' ) !== false || strpos( $_SERVER['REQUEST_URI'], 'invoice_settings' ) !== false ) {
 		echo "<style type='text/css'>";
 		echo "#icon-prospress{background: url(" . PP_PLUGIN_URL . "/images/prospress-35x35.png) no-repeat center transparent}";
 		echo "</style>";

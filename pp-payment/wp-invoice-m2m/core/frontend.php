@@ -129,7 +129,7 @@ jQuery('#wp_invoice_process_wait span').html('<img src="<?php echo WP_Invoice::f
 
 			var explode = html.toString().split('\n');
 			var shown = false;
-			var msg = '<b><?php _e('There are problems with your transaction:', WP_INVOICE_TRANS_DOMAIN); ?></b><ol>';
+			var msg = '<b><?php _e('There are problems with your transaction:', 'prospress'); ?></b><ol>';
 
 			for ( var i in explode )
 			{
@@ -156,10 +156,10 @@ jQuery('#wp_invoice_process_wait span').html('<img src="<?php echo WP_Invoice::f
 
 				jQuery('.online_payment_form').fadeOut("slow");
 				jQuery('#wp_cc_response').fadeIn("slow");
-				jQuery('#wp_cc_response').html("<?php _e('Thank you! <br />Payment processed successfully!', WP_INVOICE_TRANS_DOMAIN); ?>");
+				jQuery('#wp_cc_response').html("<?php _e('Thank you! <br />Payment processed successfully!', 'prospress'); ?>");
 				jQuery("#credit_card_information").hide(); 
 
-				jQuery("#welcome_message").html('<?php _e('Invoice Paid!', WP_INVOICE_TRANS_DOMAIN); ?>');
+				jQuery("#welcome_message").html('<?php _e('Invoice Paid!', 'prospress'); ?>');
 				jQuery('#' + link_id).show();
 				}
 			}
