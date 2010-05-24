@@ -80,7 +80,7 @@ class wp_invoice_get {
 		
 		if(!empty($this->data->tax))
 			$this->data->amount = $this->data->amount + ($this->data->amount * ($this->data->tax / 100));
-		
+
 		$this->data->display_amount = wp_invoice_currency_symbol($this->data->currency_code) . wp_invoice_currency_format($this->data->amount);
 		
 		// Fix amount

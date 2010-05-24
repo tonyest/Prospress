@@ -68,12 +68,17 @@
 }
 
 
-#wp_invoice_metabox_billing_details label {
+#wp_invoice_metabox_billing_details label,
+.draft_isntructions {
 	width: 220px;
 	float: left;
-
 	}
-	
+
+#draft_message{
+	float:left;
+	margin-bottom:1em;
+}
+
 #wp_invoice_metabox_billing_details .input_field{
 	width: 200px;
 	float: left;
@@ -245,7 +250,6 @@ border-color:#DFDFDF;
 padding-bottom: 15px;
 }
 
-
 .wp_invoice_tabbed_content ul a:hover {
   }
 
@@ -258,20 +262,11 @@ padding-bottom: 15px;
 }
 
 .wp_invoice_tabbed_content div {
-  padding:10px 10px 20px 10px;
-  *padding-top:3px;
-  *margin-top:-15px;
   clear:left;
 }
 .wp_invoice_tabbed_content .wrap {
 	padding:0;
 }
-
-
-
-
-
-
 
 #wp_invoice_email_message_content {
 border:1px dotted #000000;

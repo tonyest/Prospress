@@ -92,38 +92,38 @@
  	<fieldset id="credit_card_information" class="clearfix">
 		<ol>
 	<li>
-		<label for="first_name"><?php _e('First Name', WP_INVOICE_TRANS_DOMAIN); ?></label>
+		<label for="first_name"><?php _e('First Name', 'prospress'); ?></label>
 		<?php echo wp_invoice_draw_inputfield("first_name",$invoice->payer_class->first_name); ?>
 		</li>
 
 		<li>
-		<label for="last_name"><?php _e('Last Name', WP_INVOICE_TRANS_DOMAIN); ?></label>
+		<label for="last_name"><?php _e('Last Name', 'prospress'); ?></label>
 		<?php echo wp_invoice_draw_inputfield("last_name",$invoice->payer_class->last_name); ?>
 		</li>
 
 		<li>
-		<label for="email"><?php _e('Email Address', WP_INVOICE_TRANS_DOMAIN); ?></label>
+		<label for="email"><?php _e('Email Address', 'prospress'); ?></label>
 		<?php echo wp_invoice_draw_inputfield("email_address",$invoice->payer_class->user_email); ?>
 		</li>
 
 		<li>
-		<label class="inputLabel" for="phonenumber"><?php _e('Phone Number', WP_INVOICE_TRANS_DOMAIN); ?></label>
+		<label class="inputLabel" for="phonenumber"><?php _e('Phone Number', 'prospress'); ?></label>
 		<input name="phonenumber" class="input_field"  type="text" id="phonenumber" size="40" maxlength="50" value="<?php print $invoice->payer_class->phonenumber; ?>" />
 		</li>
 
 		<li>
-		<label for="address"><?php _e('Address', WP_INVOICE_TRANS_DOMAIN); ?></label>
+		<label for="address"><?php _e('Address', 'prospress'); ?></label>
 		<?php echo wp_invoice_draw_inputfield("address",$invoice->payer_class->streetaddress); ?>
 		</li>
 
 		<li>
-		<label for="city"><?php _e('City', WP_INVOICE_TRANS_DOMAIN); ?></label>
+		<label for="city"><?php _e('City', 'prospress'); ?></label>
 		<?php echo wp_invoice_draw_inputfield("city",$invoice->payer_class->city); ?>
 		</li>
 
 	<?php if(get_option('wp_invoice_fe_state_selection') != 'Hide') { ?>
 		<li id="state_field">
-		<label for="state"><?php _e('State', WP_INVOICE_TRANS_DOMAIN); ?></label>
+		<label for="state"><?php _e('State', 'prospress'); ?></label>
 	<?php if(get_option('wp_invoice_fe_state_selection') == 'Dropdown') { ?>
 		<?php print wp_invoice_draw_select('state',wp_invoice_state_array(),$invoice->payer_class->state);  ?>
 	<?php } ?>
@@ -134,17 +134,17 @@
 		<?php } ?>
 
 		<li>
-		<label for="zip"><?php _e('Zip Code', WP_INVOICE_TRANS_DOMAIN); ?></label>
+		<label for="zip"><?php _e('Zip Code', 'prospress'); ?></label>
 		<?php echo wp_invoice_draw_inputfield("zip",$invoice->payer_class->zip); ?>
 		</li>
 
 		<li>
-		<label for="country"><?php _e('Country', WP_INVOICE_TRANS_DOMAIN); ?></label>
+		<label for="country"><?php _e('Country', 'prospress'); ?></label>
 		<?php echo wp_invoice_draw_select('country',wp_invoice_country_array(),$invoice->payer_class->country); ?>
 		</li>
 
 		<li class="hide_after_success">
-		<label class="inputLabel" for="card_num"><?php _e('Credit Card Number', WP_INVOICE_TRANS_DOMAIN); ?></label>
+		<label class="inputLabel" for="card_num"><?php _e('Credit Card Number', 'prospress'); ?></label>
 		<input name="card_num" autocomplete="off" onkeyup="cc_card_pick();"  id="card_num" class="credit_card_number input_field"  type="text"  size="22"  maxlength="22" />
 		</li>
 
@@ -152,13 +152,13 @@
 		</li>
 
 		<li class="hide_after_success">
-		<label class="inputLabel" for="exp_month"><?php _e('Expiration Date', WP_INVOICE_TRANS_DOMAIN); ?></label>
-		<?php _e('Month', WP_INVOICE_TRANS_DOMAIN); ?> <?php echo wp_invoice_draw_select('exp_month',wp_invoice_month_array()); ?>
-		<?php _e('Year', WP_INVOICE_TRANS_DOMAIN); ?> <select name="exp_year" id="exp_year"><?php print wp_invoice_printYearDropdown(); ?></select>
+		<label class="inputLabel" for="exp_month"><?php _e('Expiration Date', 'prospress'); ?></label>
+		<?php _e('Month', 'prospress'); ?> <?php echo wp_invoice_draw_select('exp_month',wp_invoice_month_array()); ?>
+		<?php _e('Year', 'prospress'); ?> <select name="exp_year" id="exp_year"><?php print wp_invoice_printYearDropdown(); ?></select>
 		</li>
 
 		<li class="hide_after_success">
-		<label class="inputLabel" for="card_code"><?php _e('Security Code', WP_INVOICE_TRANS_DOMAIN); ?></label>
+		<label class="inputLabel" for="card_code"><?php _e('Security Code', 'prospress'); ?></label>
 		<input id="card_code" autocomplete="off"  name="card_code" class="input_field"  style="width: 70px;" type="text" size="4" maxlength="4" />
 		</li>
 		

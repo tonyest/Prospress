@@ -66,7 +66,7 @@ function wp_invoice_lookup() {  ?>
 
 		// Days Since Sent
 		if($invoice->is_paid) { 
-			$days_since = "<span style='display:none;'>-1</span>".__(' Paid', WP_INVOICE_TRANS_DOMAIN); }
+			$days_since = "<span style='display:none;'>-1</span>".__(' Paid', 'prospress'); }
 		else { 
 			if($invoice->sent_date) {
 
@@ -74,12 +74,12 @@ function wp_invoice_lookup() {  ?>
 			$date2 = date("Y-m-d", time());
 			$difference = abs(strtotime($date2) - strtotime($date1));
 			$days = round(((($difference/60)/60)/24), 0);
-			if($days == 0) { $days_since = "<span style='display:none;'>$days</span>".__('Sent Today. ', WP_INVOICE_TRANS_DOMAIN); }
-			elseif($days == 1) { $days_since = "<span style='display:none;'>$days</span>".__('Sent Yesterday. ', WP_INVOICE_TRANS_DOMAIN); }
-			elseif($days > 1) { $days_since = "<span style='display:none;'>$days</span>".sprintf(__('Sent %s days ago. ', WP_INVOICE_TRANS_DOMAIN),$days); }
+			if($days == 0) { $days_since = "<span style='display:none;'>$days</span>".__('Sent Today. ', 'prospress'); }
+			elseif($days == 1) { $days_since = "<span style='display:none;'>$days</span>".__('Sent Yesterday. ', 'prospress'); }
+			elseif($days > 1) { $days_since = "<span style='display:none;'>$days</span>".sprintf(__('Sent %s days ago. ', 'prospress'),$days); }
 			}
 			else {
-			$days_since ="<span style='display:none;'>999</span>".__('Not Sent', WP_INVOICE_TRANS_DOMAIN);	}
+			$days_since ="<span style='display:none;'>999</span>".__('Not Sent', 'prospress');	}
 		}
 
 		// Setup row actions
@@ -725,7 +725,7 @@ function wp_invoice_draw_user_selection_form($user_id) {
  		$values_array = unserialize($values);
 
 		if($values == 'yon') {
-			$values_array = array("yes" => __("Yes", WP_INVOICE_TRANS_DOMAIN),"no" => __("No", WP_INVOICE_TRANS_DOMAIN));
+			$values_array = array("yes" => __("Yes", 'prospress'),"no" => __("No", 'prospress'));
 		}
 
 		if($values == 'us_states') {

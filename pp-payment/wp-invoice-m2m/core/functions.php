@@ -1227,16 +1227,9 @@ function wp_invoice_currency_array() {
 }
 
 function wp_invoice_currency_symbol($currency = "USD" ) {
+	global $currency_symbol;
 
-	$currency_list = array(
-	'CAD'=> '$',
-	'EUR'=> '&#8364;',
-	'GBP'=> '&pound;',
-	'JPY'=> '&yen;',
-	'USD'=> '$');
-
-	return $currency_list[$currency];
-
+	return $currency_symbol;
 }
 
 function wp_invoice_contextual_help_list($content) {
@@ -1847,7 +1840,9 @@ function wp_invoice_load_email_template_content() {
 		update_option('wp_invoice_email_send_invoice_content',
 "Dear %recipient%, 
 
-%business_name% has sent you a %recurring% web invoice in the amount of %amount%.
+%business_name% has sent you an invoice in the amount of %amount% for:
+
+%subject%
 
 %description%
 
@@ -1862,7 +1857,9 @@ Best regards,
 		update_option('wp_invoice_email_send_reminder_content',
 "Dear %recipient%, 
 
-%business_name% has ent you a reminder for the %recurring% web invoice in the amount of %amount%.
+%business_name% has sent you a reminder for the invoice in the amount of %amount% for:
+
+%subject%
 
 %description%
 
@@ -1877,9 +1874,11 @@ Best regards,
 		update_option('wp_invoice_email_send_receipt_content',
 "Dear %recipient%, 
 
-%business_name% has received your payment for the %recurring% web invoice in the amount of %amount%.
+%business_name% has received your payment for the invoice in the amount of %amount% for:
 
-Thank you very much for your patronage.
+%subject%.
+
+Thank you very much for your payment.
 
 Best regards,
 %business_name% ( %business_email% )");

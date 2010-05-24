@@ -41,7 +41,7 @@
 		<div id="side-info-column" class="inner-sidebar">
 			<?php 
 			if(!$invoice->is_paid)
-				add_meta_box('wp_invoice_metabox_submit_payment', __('Payment Details',WP_INVOICE_TRANS_DOMAIN), 'wp_invoice_metabox_submit_payment', 'admin_page_make_payment', 'side', 'high');
+				add_meta_box('wp_invoice_metabox_submit_payment', __('Payment Details','prospress'), 'wp_invoice_metabox_submit_payment', 'admin_page_make_payment', 'side', 'high');
 				
 			do_meta_boxes('admin_page_make_payment', 'side', $invoice); ?>				
 		</div>

@@ -49,9 +49,6 @@
 		<th><?php _e("<b>Receipt</b> Content", 'prospress') ?></th>
 		<td><?php echo wp_invoice_draw_textarea('wp_invoice_email_send_receipt_content', get_option('wp_invoice_email_send_receipt_content')); ?></td>
 	</tr>
-	<tr>
-		<td colspan="2"><input type="checkbox" id="wp_invoice_load_original_email_templates" name="wp_invoice_load_original_email_templates"> <label for="wp_invoice_load_original_email_templates"><?php _e( 'Load Original Templates', 'prospress' ); ?></label></td>
-	</tr>
 </table>
 <div class="clear"></div>
 <input type="submit" value="Save Settings" class="button-primary">
