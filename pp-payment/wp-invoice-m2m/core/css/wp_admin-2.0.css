@@ -185,6 +185,10 @@ dl.payee_details
 	margin: 0;
 }
 
+#wp_invoice_metabox_publish td{
+	width:70%;
+}
+
 #wp_new_invoice_div {
 	margin-top: 30px;
 }
