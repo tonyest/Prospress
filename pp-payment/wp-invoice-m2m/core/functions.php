@@ -621,11 +621,6 @@ function wp_invoice_format_phone($phone) {
 		return $phone;
 }
 
-function wp_invoice_deactivation($confirm=false)  {
-	global $wpdb;
-
-}
-
 function wp_invoice_complete_removal()  {
 	// Run regular deactivation, but also delete the main table - all invoice data is gone
 	global $wpdb;

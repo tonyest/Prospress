@@ -195,7 +195,7 @@ class WP_Invoice {
 		$invoice_id = $_REQUEST['invoice_id'];
 		$has_invoice_permissions = wp_invoice_user_has_permissions($invoice_id, $user_id);
 
-		if($has_invoice_permissions) {
+		if( $has_invoice_permissions ) {
 			$invoice_class = new wp_invoice_get($invoice_id);
 			$errors = $invoice_class->error;
 			$invoice = $invoice_class->data;
@@ -222,8 +222,12 @@ class WP_Invoice {
 				remove_meta_box('wp_invoice_metabox_billing_details', $wp_invoice_page_names['make_payment'], 'normal');
  			}
 
-			include WP_INVOICE_UI_PATH . 'metaboxes/send_invoice.php';			
-			include WP_INVOICE_UI_PATH . 'send_invoice.php';		
+			include WP_INVOICE_UI_PATH . 'metaboxes/send_invoice.php';	
+
+			$page_title = ( $invoice->is_paid ) ? __( 'View Invoice', 'prospress' ) : $page_title = __( 'Send Invoice', 'prospress' );
+
+			include WP_INVOICE_UI_PATH . 'send_invoice.php';
+
 		} else {
 			wp_invoice_backend_wrap("Error", "You are not allowed to view this invoice.");
 		}
@@ -232,6 +236,7 @@ class WP_Invoice {
 
 	function make_payment() {
 		global $user_ID, $wpdb, $page_now, $wp_invoice_page_names, $screen_layout_columns;
+
 		echo $page_now;
 		$invoice_id = $_REQUEST['invoice_id'];
 		$has_invoice_permissions = wp_invoice_user_has_permissions($invoice_id, $user_id);
@@ -354,7 +359,6 @@ class WP_Invoice {
 	function outgoing_invoices() {		
 
 		$needs_to_setup_billing = wp_invoice_user_settings('all');
-		//wpi_qc($_REQUEST);
 
 		// Bulk options
 		if(isset($_REQUEST['wp_invoice_action'])) {
@@ -394,7 +398,7 @@ class WP_Invoice {
 
 			if($_REQUEST['wp_invoice_action'] == 'Save for Later') {			
 				// Do nothing, invoice was already by visiting the save_and_preview page
-			}		
+			}
 		}
 
 		global $wpdb, $user_ID, $wp_invoice_page_names;
@@ -406,8 +410,6 @@ class WP_Invoice {
 		global $user_ID;
 
 		$user_settings = wp_invoice_user_settings('all', $user_ID);
-		//wpi_qc($_REQUEST[wp_invoice_user_settings]);
-		//wpi_qc($user_settings);
 
 		// Save settings
 		if(count($_REQUEST[wp_invoice_user_settings]) > 1) {
@@ -558,43 +560,46 @@ class WP_Invoice {
 
 			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
+			if ( !empty( $wpdb->charset ) )
+				$charset_collate = "DEFAULT CHARACTER SET $wpdb->charset";
+
 			if($wpdb->get_var("SHOW TABLES LIKE '". $wpdb->payments ."'") != $wpdb->payments || $current_db_version < PP_PAYMENTS_DB_VERSION ) {
 				$sql_main = "CREATE TABLE $wpdb->payments (
-						id int(11) NOT NULL auto_increment,
+						id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 						post_id bigint(20) NOT NULL,
 						payer_id bigint(20) NOT NULL,
 						payee_id bigint(20) NOT NULL,
 						amount float(16,6) default '0',
-						status int(255) NOT NULL,
+						status varchar(20) NOT NULL,
 						type varchar(255) NOT NULL,
 						blog_id int(11) NOT NULL,
-						PRIMARY KEY (id));";
-				//error_log('$sql_main = ' . $sql_main );
+				    	KEY post_id (post_id),
+				    	KEY payer_id (payer_id),
+			    		KEY payee_id (payee_id)
+						) {$charset_collate};";
 				dbDelta($sql_main);
 			}
 
 			if($wpdb->get_var("SHOW TABLES LIKE '". $wpdb->paymentsmeta ."'") != $wpdb->paymentsmeta || $current_db_version < PP_PAYMENTS_DB_VERSION ) {
 				$sql_meta= "CREATE TABLE $wpdb->paymentsmeta (
-					meta_id bigint(20) NOT NULL AUTO_INCREMENT,
+					meta_id bigint(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 					invoice_id bigint(20) NOT NULL default '0',
 					meta_key varchar(255) default NULL,
 					meta_value longtext,
-					PRIMARY KEY (meta_id)
-					);";
-				//error_log('$sql_meta = ' . $sql_meta );
+		    		KEY invoice_id (invoice_id)
+					) {$charset_collate};";
 				dbDelta($sql_meta);
 			}
 
 			if($wpdb->get_var("SHOW TABLES LIKE '". $wpdb->payments_log ."'") != $wpdb->payments_log || $current_db_version < PP_PAYMENTS_DB_VERSION ) {
 				$sql_log = "CREATE TABLE $wpdb->payments_log (
-					id bigint(20) NOT NULL auto_increment,
+					id bigint(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 					invoice_id int(11) NOT NULL default '0',
 					action_type varchar(255) NOT NULL,
 					value longtext NOT NULL,
 					time_stamp timestamp NOT NULL,
-					PRIMARY KEY (id)
-					);";
-				//error_log('$sql_log = ' . $sql_log );
+		    		KEY invoice_id (invoice_id)
+					) {$charset_collate};";
 				dbDelta($sql_log);
 			}
 
@@ -672,7 +677,7 @@ class WP_Invoice_GetInfo {
 		}
 
 		if (!$this->_row_cache) {
-			$this->_setRowCache($wpdb->get_row("SELECT * FROM ".WP_Invoice::tablename('main')." WHERE invoice_num = '{$this->id}'"));
+			$this->_setRowCache($wpdb->get_row("SELECT * FROM " . $wpdb->payments . " WHERE id = '{$this->id}'"));
 		}
 		}
 
@@ -692,12 +697,12 @@ class WP_Invoice_GetInfo {
 		global $wpdb;
 		
 		if (!$this->_row_cache) {
-			$this->_setRowCache($wpdb->get_row("SELECT * FROM ".WP_Invoice::tablename('main')." WHERE invoice_num = '{$this->id}'"));
+			$this->_setRowCache($wpdb->get_row("SELECT * FROM " . $wpdb->payments . " WHERE id = '{$this->id}'"));
 		}
 
 		if ($this->_row_cache) {
 			$uid = $this->_row_cache->user_id;
-			$user_email = $wpdb->get_var("SELECT user_email FROM ". $wpdb->prefix . "users WHERE id=".$uid);
+			$user_email = $wpdb->get_var("SELECT user_email FROM " . $wpdb->prefix . "users WHERE id=".$uid);
 		} else {
 			$uid = false;
 			$user_email = false;
@@ -772,7 +777,7 @@ class WP_Invoice_GetInfo {
 		global $wpdb;	
 		
 		if (!$this->_row_cache) {
-			$this->_setRowCache($wpdb->get_row("SELECT * FROM ".WP_Invoice::tablename('main')." WHERE invoice_num = '{$this->id}'"));
+			$this->_setRowCache($wpdb->get_row("SELECT * FROM " . $wpdb->payments . " WHERE id = '{$this->id}'"));
 		}
 
 		$invoice_info = $this->_row_cache ;		
@@ -788,7 +793,6 @@ class WP_Invoice_GetInfo {
 				return get_option('wp_invoice_client_change_payment_method');	
 			break;
 
-			
 			case 'wp_invoice_paypal_allow':
 				if(wp_invoice_meta($this->id,'wp_invoice_paypal_allow') == 'yes' ) return  'yes';
 				if(wp_invoice_meta($this->id,'wp_invoice_paypal_allow') == 'no' ) return 'no';
@@ -796,13 +800,13 @@ class WP_Invoice_GetInfo {
 				if(get_option('wp_invoice_paypal_allow') == 'no') return 'no';
 				return false;
 			break;	
+
 			case 'wp_invoice_paypal_address':
 				if(wp_invoice_meta($this->id,'wp_invoice_paypal_address')) return wp_invoice_meta($this->id,'wp_invoice_paypal_address');
 				if(get_option('wp_invoice_paypal_address') != '') return get_option('wp_invoice_paypal_address');	
 				return false;
 			break;
 
-				
 			case 'wp_invoice_cc_allow':
 				if(wp_invoice_meta($this->id,'wp_invoice_cc_allow') == 'yes' ) return  'yes';
 				if(wp_invoice_meta($this->id,'wp_invoice_cc_allow') == 'no' ) return 'no';
@@ -811,31 +815,35 @@ class WP_Invoice_GetInfo {
 				return false;
 
 			break;	
+
 			case 'wp_invoice_gateway_username':
 				if(wp_invoice_meta($this->id,'wp_invoice_gateway_username')) return wp_invoice_meta($this->id,'wp_invoice_gateway_username');
 				if(get_option('wp_invoice_gateway_username') != '') return get_option('wp_invoice_gateway_username');	
 				return false;	
 			break;
+
 			case 'wp_invoice_is_merchant':
 				if(wp_invoice_meta($this->id,'wp_invoice_gateway_tran_key') && wp_invoice_meta($this->id,'wp_invoice_gateway_username')) return true;
 				if(get_option('wp_invoice_gateway_username') == '' || get_option('wp_invoice_gateway_tran_key') == '') return true;
 			break;
+
 			case 'wp_invoice_gateway_tran_key':
 				if(wp_invoice_meta($this->id,'wp_invoice_gateway_tran_key')) return wp_invoice_meta($this->id,'wp_invoice_gateway_tran_key');
 				return get_option('wp_invoice_gateway_tran_key');		
 			break;
+
 			case 'wp_invoice_gateway_url':
 				if(wp_invoice_meta($this->id,'wp_invoice_gateway_url')) return wp_invoice_meta($this->id,'wp_invoice_gateway_url');
 				// if no custom paypal address is set, use default
 				return get_option('wp_invoice_gateway_url');		
 			break;
+
 			case 'wp_invoice_recurring_gateway_url':
 				if(wp_invoice_meta($this->id,'wp_invoice_recurring_gateway_url')) return wp_invoice_meta($this->id,'wp_invoice_recurring_gateway_url');
 				// if no custom paypal address is set, use default
 				return get_option('wp_invoice_recurring_gateway_url');		
-			break;			
-			
-			
+			break;
+
 			case 'wp_invoice_moneybookers_allow':
 				if(wp_invoice_meta($this->id,'wp_invoice_moneybookers_allow') == 'yes' ) return  'yes';
 				if(wp_invoice_meta($this->id,'wp_invoice_moneybookers_allow') == 'no' ) return 'no';
@@ -844,20 +852,22 @@ class WP_Invoice_GetInfo {
 				return false;
 
 			break;	
+
 			case 'wp_invoice_moneybookers_ip':
 				if(wp_invoice_meta($this->id,'wp_invoice_moneybookers_ip')) return wp_invoice_meta($this->id,'wp_invoice_moneybookers_ip');	
 				return false;
 			break;	
+
 			case 'wp_invoice_moneybookers_secret':
 				if(wp_invoice_meta($this->id,'wp_invoice_moneybookers_secret')) return wp_invoice_meta($this->id,'wp_invoice_moneybookers_secret');	
 				return false;
 			break;	
+
 			case 'wp_invoice_moneybookers_address':
 				if(wp_invoice_meta($this->id,'wp_invoice_moneybookers_address')) return wp_invoice_meta($this->id,'wp_invoice_moneybookers_address');
 				if(get_option('wp_invoice_moneybookers_address') != '') return get_option('wp_invoice_moneybookers_address');	
 				return false;		
 			break;	
-
 	
 			case 'wp_invoice_alertpay_allow':
 				if(wp_invoice_meta($this->id,'wp_invoice_alertpay_allow') == 'yes' ) return 'yes';
@@ -865,26 +875,23 @@ class WP_Invoice_GetInfo {
 				if(get_option('wp_invoice_alertpay_allow') == 'yes') return  'yes';
 				if(get_option('wp_invoice_alertpay_allow') == 'no') return  'no';
 				return false;
-
 			break;	
+
 			case 'wp_invoice_alertpay_address':
 				if(wp_invoice_meta($this->id,'wp_invoice_alertpay_address')) return wp_invoice_meta($this->id,'wp_invoice_alertpay_address');	
 				return false;
 			break;		
+
 			case 'wp_invoice_alertpay_secret':
 				if(wp_invoice_meta($this->id,'wp_invoice_alertpay_secret')) return wp_invoice_meta($this->id,'wp_invoice_alertpay_secret');	
 				return false;
 			break;	
-
-
 
 			case 'wp_invoice_googlecheckout_address':
 				if(wp_invoice_meta($this->id,'wp_invoice_googlecheckout_address')) return wp_invoice_meta($this->id,'wp_invoice_googlecheckout_address');
 				if(get_option('wp_invoice_googlecheckout_address') != '') return get_option('wp_invoice_googlecheckout_address');	
 				return false;		
 			break;
-
-
 
 			case 'log_status':
 				if($status_update = $wpdb->get_row("SELECT * FROM ".WP_Invoice::tablename('log')." WHERE invoice_id = ".$this->id ." ORDER BY ".WP_Invoice::tablename('log').".time_stamp DESC LIMIT 0 , 1"))
@@ -952,7 +959,7 @@ class WP_Invoice_GetInfo {
 					if($length > '1') return "every $length months $occurances times";
 				}
 			break;
-			
+
 			case 'link':
 				$link_to_page = get_permalink(get_option('wp_invoice_web_invoice_page'));
 				$hashed = md5($this->id);
@@ -963,7 +970,7 @@ class WP_Invoice_GetInfo {
 			case 'hash':
 				return md5($this->id);
 			break;
-			
+
 			case 'currency':
 				if(wp_invoice_meta($this->id,'wp_invoice_currency_code') != '') {
 					$currency_code = wp_invoice_meta($this->id,'wp_invoice_currency_code');
@@ -974,7 +981,7 @@ class WP_Invoice_GetInfo {
 				}
 				return $currency_code;	
 			break;
-			
+
 			case 'display_id':
 				$wp_invoice_custom_invoice_id = wp_invoice_meta($this->id,'wp_invoice_custom_invoice_id');
 				if(empty($wp_invoice_custom_invoice_id)) { return $this->id; }	else { return $wp_invoice_custom_invoice_id; }	

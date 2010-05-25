@@ -15,7 +15,7 @@ Author URI: http://brentshepherd.com/
 */
 
 if ( !defined( 'PP_PAYMENTS_DB_VERSION'))
-	define ( 'PP_PAYMENTS_DB_VERSION', '0001' );
+	define ( 'PP_PAYMENTS_DB_VERSION', '0003' );
 
 if( !defined( 'PP_PAYMENT_DIR' ) )
 	define( 'PP_PAYMENT_DIR', PP_PLUGIN_DIR . '/pp-payment' );
@@ -38,7 +38,6 @@ if ( !isset($wpdb->payments_log) || empty($wpdb->payments_log))
 require_once( PP_INVOICE_DIR . '/WP-Invoice.php' );
 
 register_activation_hook(__FILE__, array( $WP_Invoice, 'install' ) );
-//register_deactivation_hook(__FILE__, "wp_invoice_deactivation");
 
 /**
  * Adds the "Make Payment" & "Send Invoice" actions to ended posts. 
@@ -56,24 +55,31 @@ function pp_add_payment_action( $actions, $post_id ) {
 		return $actions;
 
 	$invoice_id = $wpdb->get_var( "SELECT id FROM $wpdb->payments WHERE post_id = $post_id" );
-	//$invoice_info = new WP_Invoice_GetInfo($invoice_id);
-	//error_log( '*** WP_Invoice_GetInfo = ' . print_r( $invoice_info, true ) );
+	$invoice_info = new WP_Invoice_GetInfo($invoice_id);
+	error_log( '*** WP_Invoice_GetInfo = ' . print_r( $invoice_info, true ) );
+	error_log( '************************************************************' );
+	error_log( '************************************************************' );
+	error_log( '************************************************************' );
+	error_log( '************************************************************' );
+	error_log( '************************************************************' );
 	$invoice_class = new wp_invoice_get($invoice_id);
 	error_log( '*** wp_invoice_get = ' . print_r( $invoice_class, true ) );
+
+	$errors = $invoice_class->error;
+	$invoice = $invoice_class->data;
 
 	$make_payment_url = 'admin.php?page=make_payment';
 	$send_invoice_url = 'admin.php?page=send_invoice';
 
-	if ( false ) { // Invoice status is == paid
-		//view payment
-	} else if ( $is_winning_bidder ) { // Make payment on post if payment isn't already made
+	if ( $is_winning_bidder && !$invoice->is_paid ) { // Make payment on post if payment isn't already made
 		$actions[ 'make-payment' ] = array( 'label' => __( 'Make Payment', 'prospress' ), 
 											'url' => add_query_arg( array( 'invoice_id' => $invoice_id ), $make_payment_url ) );
-	} else if ( $user_ID == $post->post_author  ) { // Send Invoice if invoice hasn't been sent & payment hasn't been made
+	} else if ( $user_ID == $post->post_author && !$invoice->is_paid ) { // Send Invoice if invoice hasn't been sent & payment hasn't been made
 		$actions[ 'send-invoice' ] = array('label' => __( 'Send Invoice', 'prospress' ),
 											'url' => add_query_arg( array( 'invoice_id' => $invoice_id ), $send_invoice_url ) );
 	} else {
-		//view payment...
+		$actions[ 'view-invoice' ] = array('label' => __( 'View Payment Details', 'prospress' ),
+											'url' => add_query_arg( array( 'invoice_id' => $invoice_id ), $send_invoice_url ) );
 	}
 
 	return $actions;

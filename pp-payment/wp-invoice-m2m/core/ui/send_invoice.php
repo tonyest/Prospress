@@ -1,5 +1,5 @@
 <div class='wrap'>
-	<h2>Send Invoice</h2>
+	<h2><?php echo $page_title; ?></h2>
 
 	<div class="wp_invoice_error_wrapper">
 	<?php if(count($errors) > 0): ?>
