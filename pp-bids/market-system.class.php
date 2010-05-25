@@ -682,8 +682,8 @@ class PP_Market_System {
 									$actions = apply_filters( 'winning_bid_actions', array(), $post->ID );
 									echo '<td>';
 									if( is_array( $actions ) && !empty( $actions ) ){
-									?><div id="prospress-actions">
-										<ul id="completed-actions">
+									?><div class="prospress-actions">
+										<ul class="completed-actions">
 											<li class="base"><?php _e( 'Take action:', 'prospress' ) ?></li>
 										<?php foreach( $actions as $action => $attributes )
 											echo "<li class='completed-action'><a href='" . add_query_arg ( array( 'action' => $action, 'post' => $post_id ) , $attributes['url'] ) . "'>" . $attributes['label'] . "</a></li>";

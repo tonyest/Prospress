@@ -15,7 +15,7 @@ class wp_invoice_get {
 	function wp_invoice_get($invoice_id) {
 		global $wpdb, $user_ID;
 		$this->invoice_id = $invoice_id;
-		
+
 		if(empty($this->invoice_id))
 			return false;
 		
@@ -86,20 +86,6 @@ class wp_invoice_get {
 		// Fix amount
 		$this->data->amount = wp_invoice_currency_format($this->data->amount);
 
-		return $this->data;
-
-		/*
-			Values used by system existance of which needs to be double checked:
-			is_paid
-			is_archived
-			sent_date
-			currency_code
-			due_date_month
-			due_date_day
-			due_date_year
-			tax_total (for paypal)
-		*/
-		
+		return $this->data;		
 	}
-
 }

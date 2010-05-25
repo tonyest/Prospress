@@ -1,8 +1,8 @@
-#prospress-actions{
+.prospress-actions{
 	height: 2.5em;
 }
 
-#completed-actions {
+.completed-actions {
 	margin: 0;
 	padding: 0;
 	list-style: none;
@@ -12,27 +12,27 @@
 	-webkit-border-radius: 4px;
 	}
 
-#completed-actions:hover {
+.completed-actions:hover {
 	-moz-border-radius-bottomright: 0px;
 	-moz-border-radius-bottomleft: 0px;
 	-webkit-border-bottom-left-radius: 0px;
 	-webkit-border-bottom-right-radius: 0px;
 	}
 
-#completed-actions li {
+.completed-actions li {
 	margin: 0;
 	text-decoration: none;
 	padding: 4px 5px;
 	}
 
-#completed-actions li.base {
+.completed-actions li.base {
 	display: block;
 	text-decoration: none;
 	padding-right: 2.6em;
 	background: transparent url('../images/down-arrow.gif') no-repeat 95% center;
 	}
 
-#completed-actions:hover li {
+.completed-actions:hover li {
 	}
 
 li.completed-action {
@@ -42,7 +42,7 @@ li.completed-action {
 	z-index: 2;
 	}
 
-#completed-actions:hover li.completed-action {
+.completed-actions:hover li.completed-action {
 	display: block;
 	}
 

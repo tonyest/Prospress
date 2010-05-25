@@ -42,3 +42,42 @@ $WP_Invoice = new WP_Invoice();
 register_activation_hook(__FILE__, array( $WP_Invoice, 'install' ) );
 //register_activation_hook(__FILE__, $WP_Invoice->install() );
 //register_deactivation_hook(__FILE__, "wp_invoice_deactivation");
+
+/**
+ * Adds the "Make Payment" & "Send Invoice" actions to ended posts. 
+ * 
+ **/
+
+function pp_add_payment_action( $actions, $post_id ) {
+	global $user_ID, $market_system, $blog_id, $wpdb;
+ 
+	$post = get_post( $post_id );
+
+	$is_winning_bidder = $market_system->is_winning_bidder( $user_ID, $post_id );
+
+	if ( $post->post_status != 'completed' || $market_system->get_bid_count( $post_id ) == false || ( !$is_winning_bidder && $user_ID != $post->post_author ) ) 
+		return $actions;
+
+	$invoice_id = $wpdb->get_var( "SELECT id FROM $wpdb->payments WHERE post_id = $post_id" );
+	//$invoice_info = new WP_Invoice_GetInfo($invoice_id);
+	//error_log( '*** WP_Invoice_GetInfo = ' . print_r( $invoice_info, true ) );
+	$invoice_class = new wp_invoice_get($invoice_id);
+	error_log( '*** wp_invoice_get = ' . print_r( $invoice_class, true ) );
+
+	$make_payment_url = 'admin.php?page=make_payment';
+	$send_invoice_url = 'admin.php?page=send_invoice';
+
+	if ( $is_winning_bidder ) { // Make payment on post if payment isn't already made, else view payment
+		$actions[ 'make-payment' ] = array( 'label' => __( 'Make Payment', 'prospress' ), 
+											'url' => add_query_arg( array( 'invoice_id' => $invoice_id ), $make_payment_url ) );
+	} else if ( $user_ID == $post->post_author  ) { // Send Invoice if invoice hasn't been sent & payment hasn't been made, else view payment
+		$actions[ 'send-invoice' ] = array('label' => __( 'Send Invoice', 'prospress' ),
+											'url' => add_query_arg( array( 'invoice_id' => $invoice_id ), $send_invoice_url ) );
+	} else {
+		//view payment
+	}
+
+	return $actions;
+}
+add_filter( 'completed_post_actions', 'pp_add_payment_action', 10, 2 );
+add_filter( 'winning_bid_actions', 'pp_add_payment_action', 10, 2 );

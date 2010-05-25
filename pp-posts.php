@@ -46,6 +46,8 @@ include( PP_POSTS_DIR . '/pp-posts-templatetags.php');
  */
 include( PP_POSTS_DIR . '/pp-custom-taxonomy.php');
 
+global $market_system;
+
 function pp_posts_install(){
 	global $wpdb, $market_system, $wp_rewrite;
 
@@ -343,6 +345,7 @@ function pp_posts_admin_head() {
 }
 add_action('admin_menu', 'pp_posts_admin_head');
 
+
 //**************************************************************************************************//
 // Customise columns on table of posts shown on edit.php
 //**************************************************************************************************//
@@ -352,7 +355,7 @@ function pp_post_columns( $column_headings ) {
 	if( !is_pp_post_admin_page() )
 		return $column_headings;
 
-	unset( $column_headings[ 'tags' ] );
+	//unset( $column_headings[ 'tags' ] );
 
 	if( strpos( $_SERVER['REQUEST_URI'], 'completed' ) !== false ) {
 		$column_headings[ 'end_date' ] = __( 'Ended', 'prospress' );
@@ -365,7 +368,8 @@ function pp_post_columns( $column_headings ) {
 
 	return $column_headings;
 }
-add_filter( 'manage_posts_columns', 'pp_post_columns' );
+//add_filter( 'manage_posts_columns', 'pp_post_columns' );
+add_filter( 'manage_' . $market_system->name . '_posts_columns', 'pp_post_columns' );
 
 function pp_post_columns_custom( $column_name, $post_id ) {
 	global $wpdb;
@@ -390,7 +394,7 @@ function pp_post_columns_custom( $column_name, $post_id ) {
 	if( $column_name == 'post_actions' ) {
 		$actions = apply_filters( 'completed_post_actions', array(), $post_id );
 		if( is_array( $actions ) && !empty( $actions ) ){?>
-			<ul id="completed-actions">
+			<ul class="completed-actions">
 				<li class="base"><?php _e( 'Take action:', 'prospress' ) ?></li>
 			<?php foreach( $actions as $action => $attributes )
 				echo "<li class='completed-action'><a href='" . add_query_arg ( array( 'action' => $action, 'post' => $post_id ) , $attributes['url'] ) . "'>" . $attributes['label'] . "</a></li>";
@@ -482,7 +486,6 @@ function pp_add_sidebars_widgets(){
 		array_push( $sidebars_widgets[ $market_system->name() . '-sidebar' ], 'pp-sort-0' );
 	}
 
-	//$filter_widget = get_option( 'widget_bid-filter' );
 	$filter_widget = '';
 	error_log( '$filter_widget = ' . print_r( $filter_widget, true ) );
 	if( empty( $filter_widget ) ){
@@ -550,7 +553,7 @@ add_filter( 'pp_sort_options', 'pp_post_sort_options' );
 function is_pp_post_admin_page(){
 	global $market_system;
 
-	if( !( ( $_GET[ 'post_type' ] == $market_system->name() ) || ( get_post_type( $_GET[ 'post' ] ) ==  $market_system->name() ) ) )
+	if( !( ( strtolower( $_GET[ 'post_type' ] ) == strtolower( $market_system->name() ) ) || ( get_post_type( $_GET[ 'post' ] ) ==  $market_system->name() ) ) )
 		return false;
 	else
 		return true;
