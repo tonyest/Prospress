@@ -78,7 +78,9 @@ class PP_Market_System {
 		
 	}
 
-	// Member functions that you must override.
+	/************************************************************************************************
+	 * Member functions that you must override.
+	 ************************************************************************************************/
 
 	// The fields that make up the bid form.
 	// The <form> tag and a bid form header and footer are automatically generated for the class.
@@ -98,7 +100,21 @@ class PP_Market_System {
 	}
 
 
-	// Functions that you may override, but you don't need changes to make a new market system, unless you're doing something really tricky.
+	/************************************************************************************************
+	 * Functions that you may override, but shouldn't need to be changed to create a new market system.
+	 ************************************************************************************************/
+
+	/**
+	 * A getter for the market system's name. This is called from various places to refer to the both the market system and
+	 * posts within that market system. 
+	 * 
+	 * By default this function returns the name of the marketplace system, as stored in the $name member variables, with an 
+	 * upper case first letter; however, other market systems require additional words or operations performed on the name 
+	 * member variable.
+	 **/
+	function name() {
+		return ucfirst( $this->name );
+	}
 
 	// The function that brings all the bid form elements together.
 	function bid_form( $post_id = NULL ) {
@@ -444,9 +460,9 @@ class PP_Market_System {
 	}
 
 
-	// *******************************************************************************************************************
-	// Private Functions. Don't worry about these, unless you want to get really tricky
-	// *******************************************************************************************************************
+	/************************************************************************************************
+	 * Private Functions. Don't worry about these, unless you want to get really tricky
+	 ************************************************************************************************/
 
 	/**
 	 * 	Adds bid pages to admin menu

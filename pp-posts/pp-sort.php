@@ -13,7 +13,7 @@ class PP_Sort_Query {
 		global $market_system;
 
 		// Don't touch the main query or queries for non-Prospress posts
-		if ( $GLOBALS['wp_query'] == $obj || $obj->query_vars['post_type'] != $market_system->name )
+		if ( $GLOBALS['wp_query'] == $obj || $obj->query_vars['post_type'] != $market_system->name() )
 			return;
 
 		add_filter('posts_orderby', array(__CLASS__, 'posts_orderby'));
@@ -80,7 +80,7 @@ class PP_Sort_Widget extends WP_Widget {
 	function PP_Sort_Widget() {
 		global $market_system; 
 		/* Widget settings. */
-		$widget_ops = array( 'classname' => 'pp-sort', 'description' => sprintf( __('Sort %s in your marketplace.', 'prospress' ), ucfirst( $market_system->name ) ) );
+		$widget_ops = array( 'classname' => 'pp-sort', 'description' => sprintf( __('Sort %s in your marketplace.', 'prospress' ), $market_system->name() ) );
 
 		/* Widget control settings. */
 		$control_ops = array( 'id_base' => 'pp-sort' );

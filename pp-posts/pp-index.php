@@ -27,7 +27,7 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 
 		<?php endwhile; ?>
 
-		<?php $pp_loop = new WP_Query( array( 'post_type' => $market_system->name ) ); ?>
+		<?php $pp_loop = new WP_Query( array( 'post_type' => $market_system->name() ) ); ?>
 
 		<?php if ( $pp_loop->have_posts() ) : while ( $pp_loop->have_posts() ) : $pp_loop->the_post(); ?>
 
@@ -60,7 +60,7 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 
 	<div id="sidebar" class="prospress-sidebar">
 		<ul class="xoxo">
-			<?php dynamic_sidebar( $market_system->name . '-index-sidebar' ); ?>
+			<?php dynamic_sidebar( $market_system->name() . '-index-sidebar' ); ?>
 		</ul>
 	</div>
 <?php get_footer(); ?>

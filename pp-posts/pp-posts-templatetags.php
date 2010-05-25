@@ -9,7 +9,7 @@
 function pp_get_index_permalink( $echo = 'echo' ){
 	global $market_system, $wpdb;
 	
-	$pp_index_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '$market_system->name'" );
+	$pp_index_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . $market_system->name() . "'" );
 
 	if( !$pp_index_id )
 		return false;

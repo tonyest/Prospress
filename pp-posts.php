@@ -53,12 +53,12 @@ function pp_posts_install(){
 
 	error_log('activation hook being called.');
 
-	if( !$wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '$market_system->name'" ) ){
+	if( !$wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . $market_system->name() . "'" ) ){
 		$index_page = array();
-		$index_page['post_title'] = ucfirst( $market_system->name );
-		$index_page['post_name'] = $market_system->name;
+		$index_page['post_title'] = $market_system->name();
+		$index_page['post_name'] = $market_system->name();
 		$index_page['post_status'] = 'publish';
-		$index_page['post_content'] = 'This is the index for ' . $market_system->name. ' posts.';
+		$index_page['post_content'] = __( 'This is the index for your ' . $market_system->name() . ' posts.' );
 		$index_page['post_type'] = 'page';
 
 		error_log('Creating page = ' . print_r( $index_page, true ) );
@@ -438,14 +438,14 @@ add_action( 'admin_head', 'pp_remove_classes' );
 function pp_template_redirects() {
 	global $post, $market_system;
 
-	if( $post->post_name == $market_system->name ){
+	if( $post->post_name == $market_system->name() ){
 		do_action( 'pp_index_template_redirect' );
 		if( file_exists( TEMPLATEPATH . '/pp-index.php' ) )
 			include( TEMPLATEPATH . '/pp-index.php');
 		else
 			include( PP_POSTS_DIR . '/pp-index.php');
 		exit;
-	} elseif ( $post->post_type == $market_system->name && !isset( $_GET[ 's' ] ) ) {
+	} elseif ( $post->post_type == $market_system->name() && !isset( $_GET[ 's' ] ) ) {
 		do_action( 'pp_single_template_redirect' );
 		if( file_exists( TEMPLATEPATH . '/pp-single.php' ) )
 			include( TEMPLATEPATH . '/pp-single.php');
@@ -461,8 +461,8 @@ function pp_add_sidebars_widgets(){
 
 	$sidebars_widgets = get_option( 'sidebars_widgets' );
 
-	if( !isset( $sidebars_widgets[ $market_system->name . '-sidebar' ] ) )
-		$sidebars_widgets[ $market_system->name . '-sidebar' ] = array();
+	if( !isset( $sidebars_widgets[ $market_system->name() . '-sidebar' ] ) )
+		$sidebars_widgets[ $market_system->name() . '-sidebar' ] = array();
 
 	$sort_widget = get_option( 'widget_pp-sort' );
 	if( empty( $sort_widget ) ){
@@ -479,7 +479,7 @@ function pp_add_sidebars_widgets(){
 
 		$sort_widget['_multiwidget'] = 1;
 		update_option( 'widget_pp-sort',$sort_widget );
-		array_push( $sidebars_widgets[ $market_system->name . '-sidebar' ], 'pp-sort-0' );
+		array_push( $sidebars_widgets[ $market_system->name() . '-sidebar' ], 'pp-sort-0' );
 	}
 
 	//$filter_widget = get_option( 'widget_bid-filter' );
@@ -491,7 +491,7 @@ function pp_add_sidebars_widgets(){
 
 		$filter_widget['_multiwidget'] = 1;
 		update_option( 'widget_bid-filter', $filter_widget );
-		array_push( $sidebars_widgets[ $market_system->name . '-sidebar' ], 'bid-filter-0' );
+		array_push( $sidebars_widgets[ $market_system->name() . '-sidebar' ], 'bid-filter-0' );
 	}
 
 	update_option( 'sidebars_widgets', $sidebars_widgets );
@@ -505,8 +505,8 @@ function pp_posts_uninstall(){
 	
 	$sidebars_widgets = get_option( 'sidebars_widgets' );
 
-	if( isset( $sidebars_widgets[ $market_system->name . '-sidebar' ] ) ){
-		unset( $sidebars_widgets[ $market_system->name . '-sidebar' ] );
+	if( isset( $sidebars_widgets[ $market_system->name() . '-sidebar' ] ) ){
+		unset( $sidebars_widgets[ $market_system->name() . '-sidebar' ] );
 		update_option( 'sidebars_widgets', $sidebars_widgets );
 	}
 }
@@ -516,8 +516,8 @@ function pp_add_sidebars(){
 	global $market_system;
 
 	register_sidebar( array (
-		'name' => ucfirst( $market_system->name ) . ' ' . __( 'Index Sidebar', 'prospress' ),
-		'id' => $market_system->name . '-index-sidebar',
+		'name' => $market_system->name() . ' ' . __( 'Index Sidebar', 'prospress' ),
+		'id' => $market_system->name() . '-index-sidebar',
 		'description' => __( "The sidebar on your Prospress posts.", 'prospress' ),
 		'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
 		'after_widget' => "</li>",
@@ -525,8 +525,8 @@ function pp_add_sidebars(){
 		'after_title' => '</h3>',
 	) );
 	register_sidebar( array (
-		'name' => ucfirst( $market_system->name ) . ' ' . __( 'Single Sidebar', 'prospress' ),
-		'id' => $market_system->name . '-single-sidebar',
+		'name' => $market_system->name() . ' ' . __( 'Single Sidebar', 'prospress' ),
+		'id' => $market_system->name() . '-single-sidebar',
 		'description' => __( "The sidebar on your Prospress posts.", 'prospress' ),
 		'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
 		'after_widget' => "</li>",
@@ -550,7 +550,7 @@ add_filter( 'pp_sort_options', 'pp_post_sort_options' );
 function is_pp_post_admin_page(){
 	global $market_system;
 
-	if( !( ( $_GET[ 'post_type' ] == $market_system->name ) || ( get_post_type( $_GET[ 'post' ] ) ==  $market_system->name ) ) )
+	if( !( ( $_GET[ 'post_type' ] == $market_system->name() ) || ( get_post_type( $_GET[ 'post' ] ) ==  $market_system->name() ) ) )
 		return false;
 	else
 		return true;
@@ -561,7 +561,7 @@ function pp_remove_index( $search ){
 	global $wpdb, $market_system;
 
 	if ( isset( $_GET['s'] ) ) // only remove posts from search results
-		$search .= "AND ID NOT IN (SELECT ID FROM $wpdb->posts WHERE post_name = '$market_system->name')";
+		$search .= "AND ID NOT IN (SELECT ID FROM $wpdb->posts WHERE post_name = '" . $market_system->name() . "')";
 
 	return $search;
 }

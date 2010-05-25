@@ -36,20 +36,20 @@ function pp_post_type() {
 	);
 
 	$market_system_capabilities = array(
-		'edit_post' => 'edit_' . $market_system->name,
-		'edit_posts' => 'edit_' . $market_system->name,
-		'publish_posts' => 'publish_' . $market_system->name,
-		'delete_post' => 'delete_' . $market_system->name 
+		'edit_post' => 'edit_' . $market_system->name(),
+		'edit_posts' => 'edit_' . $market_system->name(),
+		'publish_posts' => 'publish_' . $market_system->name(),
+		'delete_post' => 'delete_' . $market_system->name() 
 		);
 
 	$capabilities = array_merge( $default_capabilities, $market_system_capabilities );
 	error_log( 'capabilities = ' . print_r( $capabilities, true ) );
 	*/
 	$args = array(
-			'label' => ucfirst( $market_system->name ),
+			'label' => $market_system->name(),
 			'public' => true,
 			'show_ui' => true,
-			'rewrite' => array( 'slug' => $market_system->name, 'with_front' => false ),
+			'rewrite' => array( 'slug' => $market_system->name(), 'with_front' => false ),
 			'capability_type' => 'post',
 			//'capabilities' => $capabilities, @TODO when WP3.0 bugs are fixed come back to this.
             'supports' => array(
@@ -61,7 +61,7 @@ function pp_post_type() {
 							'revisions'),
 					);
 
-	register_post_type( $market_system->name, $args );
+	register_post_type( $market_system->name(), $args );
 
 	// Get the subscriber role & add capabilities to it
 	/*

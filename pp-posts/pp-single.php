@@ -32,7 +32,7 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 			</div>
 
 			<div id="nav-below" class="navigation">
-				<div class="nav-index"><a href="<?php pp_get_index_permalink(); ?>"><?php printf( __("&larr; Return to %s Index", 'Prospress'), ucfirst( $market_system->name ) ); ?></a></div>
+				<div class="nav-index"><a href="<?php pp_get_index_permalink(); ?>"><?php printf( __("&larr; Return to %s Index", 'Prospress'), $market_system->name() ); ?></a></div>
 			</div>
 
 			<?php comments_template( '', true ); ?>
@@ -43,7 +43,7 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 
 	<div id="sidebar" class="prospress-sidebar">
 		<ul class="xoxo">
-			<?php dynamic_sidebar( $market_system->name . '-single-sidebar' ); ?>
+			<?php dynamic_sidebar( $market_system->name() . '-single-sidebar' ); ?>
 		</ul>
 	</div>
 <?php get_footer(); ?>
