@@ -37,10 +37,7 @@ if ( !isset($wpdb->payments_log) || empty($wpdb->payments_log))
 // The engine behind the payment system - TwinCitiesTech's WP Invoice
 require_once( PP_INVOICE_DIR . '/WP-Invoice.php' );
 
-$WP_Invoice = new WP_Invoice();	
-
 register_activation_hook(__FILE__, array( $WP_Invoice, 'install' ) );
-//register_activation_hook(__FILE__, $WP_Invoice->install() );
 //register_deactivation_hook(__FILE__, "wp_invoice_deactivation");
 
 /**
@@ -67,14 +64,16 @@ function pp_add_payment_action( $actions, $post_id ) {
 	$make_payment_url = 'admin.php?page=make_payment';
 	$send_invoice_url = 'admin.php?page=send_invoice';
 
-	if ( $is_winning_bidder ) { // Make payment on post if payment isn't already made, else view payment
+	if ( false ) { // Invoice status is == paid
+		//view payment
+	} else if ( $is_winning_bidder ) { // Make payment on post if payment isn't already made
 		$actions[ 'make-payment' ] = array( 'label' => __( 'Make Payment', 'prospress' ), 
 											'url' => add_query_arg( array( 'invoice_id' => $invoice_id ), $make_payment_url ) );
-	} else if ( $user_ID == $post->post_author  ) { // Send Invoice if invoice hasn't been sent & payment hasn't been made, else view payment
+	} else if ( $user_ID == $post->post_author  ) { // Send Invoice if invoice hasn't been sent & payment hasn't been made
 		$actions[ 'send-invoice' ] = array('label' => __( 'Send Invoice', 'prospress' ),
 											'url' => add_query_arg( array( 'invoice_id' => $invoice_id ), $send_invoice_url ) );
 	} else {
-		//view payment
+		//view payment...
 	}
 
 	return $actions;

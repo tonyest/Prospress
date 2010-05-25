@@ -18,7 +18,7 @@ require_once("core/display.php");
 require_once("core/frontend.php");
 require_once("core/invoice_class.php");
 
-$wp_invoice_debug = false;
+$WP_Invoice = new WP_Invoice();	
 
 class WP_Invoice {
 
@@ -654,5 +654,373 @@ class WP_Invoice {
 
 			wp_invoice_load_email_template_content();
 	}
+}
 
+global $_wp_invoice_getinfo;
+
+class WP_Invoice_GetInfo {
+	var $id;
+	var $_row_cache;
+
+	function __construct($invoice_id) {
+		global $_wp_invoice_getinfo, $wpdb;
+
+		$this->id = $invoice_id;
+	
+		if (isset($_wp_invoice_getinfo[$this->id]) && $_wp_invoice_getinfo[$this->id]) {
+			$this->_row_cache = $_wp_invoice_getinfo[$this->id];
+		}
+
+		if (!$this->_row_cache) {
+			$this->_setRowCache($wpdb->get_row("SELECT * FROM ".WP_Invoice::tablename('main')." WHERE invoice_num = '{$this->id}'"));
+		}
+		}
+
+	function _setRowCache($row) {
+		global $_wp_invoice_getinfo;
+
+		if (!$row) {
+			$this->id = null;
+			return;
+		}
+
+		$this->_row_cache = $row;
+		$_wp_invoice_getinfo[$this->id] = $this->_row_cache;
+	}
+	
+	function recipient($what) {
+		global $wpdb;
+		
+		if (!$this->_row_cache) {
+			$this->_setRowCache($wpdb->get_row("SELECT * FROM ".WP_Invoice::tablename('main')." WHERE invoice_num = '{$this->id}'"));
+		}
+
+		if ($this->_row_cache) {
+			$uid = $this->_row_cache->user_id;
+			$user_email = $wpdb->get_var("SELECT user_email FROM ". $wpdb->prefix . "users WHERE id=".$uid);
+		} else {
+			$uid = false;
+			$user_email = false;
+		}
+
+		$invoice_info = $this->_row_cache;
+		
+		switch ($what) {
+			case 'callsign':
+				$first_name = $this->recipient('first_name');
+				$last_name = $this->recipient('last_name');
+				$company_name = $this->recipient('company_name');
+
+				if(!empty($company_name) && empty($first_name) || empty($last_name)) return $company_name; 
+				if(empty ($company_name) && empty($first_name) || empty($last_name)) return $user_email; 
+
+				return $first_name . " " . $last_name;
+			break;
+			
+			case 'user_id':
+				return $uid;
+			break;	
+			
+			case 'email_address':
+					return $user_email;
+			break;
+
+			case 'first_name':
+				return get_usermeta($uid,'first_name');
+			break;
+			
+			case 'last_name':
+				return get_usermeta($uid,'last_name');
+			break;
+			
+			case 'company_name':
+				return get_usermeta($uid,'company_name');
+			break;
+			
+			case 'phonenumber':
+				return wp_invoice_format_phone(get_usermeta($uid,'phonenumber'));
+			break;
+			
+			case 'paypal_phonenumber':
+				return get_usermeta($uid,'phonenumber');
+			break;
+			
+			case 'streetaddress':
+				return get_usermeta($uid,'streetaddress');	
+			break;
+			
+			case 'state':
+				return strtoupper(get_usermeta($uid,'state'));
+			break;
+			
+			case 'city':
+				return get_usermeta($uid,'city');
+			break;
+			
+			case 'zip':
+				return get_usermeta($uid,'zip');
+			break;
+			
+			case 'country':
+				if(get_usermeta($uid,'country')) return get_usermeta($uid,'country');  else  return "US";
+			break;	
+		}
+		
+	}
+	
+	function display($what) {
+		global $wpdb;	
+		
+		if (!$this->_row_cache) {
+			$this->_setRowCache($wpdb->get_row("SELECT * FROM ".WP_Invoice::tablename('main')." WHERE invoice_num = '{$this->id}'"));
+		}
+
+		$invoice_info = $this->_row_cache ;		
+
+		switch ($what) {
+			case 'wp_invoice_payment_method':
+				if(wp_invoice_meta($this->id,'wp_invoice_payment_method')) return wp_invoice_meta($this->id,'wp_invoice_payment_method');
+				return get_option('wp_invoice_payment_method');	
+			break;
+
+			case 'wp_invoice_client_change_payment_method':
+				if(wp_invoice_meta($this->id,'wp_invoice_client_change_payment_method')) return wp_invoice_meta($this->id,'wp_invoice_client_change_payment_method');
+				return get_option('wp_invoice_client_change_payment_method');	
+			break;
+
+			
+			case 'wp_invoice_paypal_allow':
+				if(wp_invoice_meta($this->id,'wp_invoice_paypal_allow') == 'yes' ) return  'yes';
+				if(wp_invoice_meta($this->id,'wp_invoice_paypal_allow') == 'no' ) return 'no';
+				if(get_option('wp_invoice_paypal_allow') == 'yes') return  'yes';
+				if(get_option('wp_invoice_paypal_allow') == 'no') return 'no';
+				return false;
+			break;	
+			case 'wp_invoice_paypal_address':
+				if(wp_invoice_meta($this->id,'wp_invoice_paypal_address')) return wp_invoice_meta($this->id,'wp_invoice_paypal_address');
+				if(get_option('wp_invoice_paypal_address') != '') return get_option('wp_invoice_paypal_address');	
+				return false;
+			break;
+
+				
+			case 'wp_invoice_cc_allow':
+				if(wp_invoice_meta($this->id,'wp_invoice_cc_allow') == 'yes' ) return  'yes';
+				if(wp_invoice_meta($this->id,'wp_invoice_cc_allow') == 'no' ) return 'no';
+				if(get_option('wp_invoice_cc_allow') == 'yes') return  'yes';
+				if(get_option('wp_invoice_cc_allow') == 'no') return 'no';
+				return false;
+
+			break;	
+			case 'wp_invoice_gateway_username':
+				if(wp_invoice_meta($this->id,'wp_invoice_gateway_username')) return wp_invoice_meta($this->id,'wp_invoice_gateway_username');
+				if(get_option('wp_invoice_gateway_username') != '') return get_option('wp_invoice_gateway_username');	
+				return false;	
+			break;
+			case 'wp_invoice_is_merchant':
+				if(wp_invoice_meta($this->id,'wp_invoice_gateway_tran_key') && wp_invoice_meta($this->id,'wp_invoice_gateway_username')) return true;
+				if(get_option('wp_invoice_gateway_username') == '' || get_option('wp_invoice_gateway_tran_key') == '') return true;
+			break;
+			case 'wp_invoice_gateway_tran_key':
+				if(wp_invoice_meta($this->id,'wp_invoice_gateway_tran_key')) return wp_invoice_meta($this->id,'wp_invoice_gateway_tran_key');
+				return get_option('wp_invoice_gateway_tran_key');		
+			break;
+			case 'wp_invoice_gateway_url':
+				if(wp_invoice_meta($this->id,'wp_invoice_gateway_url')) return wp_invoice_meta($this->id,'wp_invoice_gateway_url');
+				// if no custom paypal address is set, use default
+				return get_option('wp_invoice_gateway_url');		
+			break;
+			case 'wp_invoice_recurring_gateway_url':
+				if(wp_invoice_meta($this->id,'wp_invoice_recurring_gateway_url')) return wp_invoice_meta($this->id,'wp_invoice_recurring_gateway_url');
+				// if no custom paypal address is set, use default
+				return get_option('wp_invoice_recurring_gateway_url');		
+			break;			
+			
+			
+			case 'wp_invoice_moneybookers_allow':
+				if(wp_invoice_meta($this->id,'wp_invoice_moneybookers_allow') == 'yes' ) return  'yes';
+				if(wp_invoice_meta($this->id,'wp_invoice_moneybookers_allow') == 'no' ) return 'no';
+				if(get_option('wp_invoice_moneybookers_allow') == 'yes') return  'yes';
+				if(get_option('wp_invoice_moneybookers_allow') == 'no') return 'no';
+				return false;
+
+			break;	
+			case 'wp_invoice_moneybookers_ip':
+				if(wp_invoice_meta($this->id,'wp_invoice_moneybookers_ip')) return wp_invoice_meta($this->id,'wp_invoice_moneybookers_ip');	
+				return false;
+			break;	
+			case 'wp_invoice_moneybookers_secret':
+				if(wp_invoice_meta($this->id,'wp_invoice_moneybookers_secret')) return wp_invoice_meta($this->id,'wp_invoice_moneybookers_secret');	
+				return false;
+			break;	
+			case 'wp_invoice_moneybookers_address':
+				if(wp_invoice_meta($this->id,'wp_invoice_moneybookers_address')) return wp_invoice_meta($this->id,'wp_invoice_moneybookers_address');
+				if(get_option('wp_invoice_moneybookers_address') != '') return get_option('wp_invoice_moneybookers_address');	
+				return false;		
+			break;	
+
+	
+			case 'wp_invoice_alertpay_allow':
+				if(wp_invoice_meta($this->id,'wp_invoice_alertpay_allow') == 'yes' ) return 'yes';
+				if(wp_invoice_meta($this->id,'wp_invoice_alertpay_allow') == 'no' ) return 'no';
+				if(get_option('wp_invoice_alertpay_allow') == 'yes') return  'yes';
+				if(get_option('wp_invoice_alertpay_allow') == 'no') return  'no';
+				return false;
+
+			break;	
+			case 'wp_invoice_alertpay_address':
+				if(wp_invoice_meta($this->id,'wp_invoice_alertpay_address')) return wp_invoice_meta($this->id,'wp_invoice_alertpay_address');	
+				return false;
+			break;		
+			case 'wp_invoice_alertpay_secret':
+				if(wp_invoice_meta($this->id,'wp_invoice_alertpay_secret')) return wp_invoice_meta($this->id,'wp_invoice_alertpay_secret');	
+				return false;
+			break;	
+
+
+
+			case 'wp_invoice_googlecheckout_address':
+				if(wp_invoice_meta($this->id,'wp_invoice_googlecheckout_address')) return wp_invoice_meta($this->id,'wp_invoice_googlecheckout_address');
+				if(get_option('wp_invoice_googlecheckout_address') != '') return get_option('wp_invoice_googlecheckout_address');	
+				return false;		
+			break;
+
+
+
+			case 'log_status':
+				if($status_update = $wpdb->get_row("SELECT * FROM ".WP_Invoice::tablename('log')." WHERE invoice_id = ".$this->id ." ORDER BY ".WP_Invoice::tablename('log').".time_stamp DESC LIMIT 0 , 1"))
+				return $status_update->value . " - " . wp_invoice_Date::convert($status_update->time_stamp, 'Y-m-d H', 'M d Y');
+			break;
+			
+			case 'paid_date':
+				$paid_date = $wpdb->get_var("SELECT time_stamp FROM  ".WP_Invoice::tablename('log')." WHERE action_type = 'paid' AND invoice_id = '".$this->id."' ORDER BY time_stamp DESC LIMIT 0, 1");
+				if($paid_date) return wp_invoice_Date::convert($paid_date, 'Y-m-d H', 'M d Y');
+				//echo "SELECT time_stamp FROM  ".WP_Invoice::tablename('log')." WHERE action_type = 'paid' AND invoice_id = '".$this->id."' ORDER BY time_stamp DESC LIMIT 0, 1";
+			break;
+
+			case 'subscription_name':
+				return wp_invoice_meta($this->id,'wp_invoice_subscription_name'); 
+			break;
+			
+			case 'interval_length':
+				return wp_invoice_meta($this->id,'wp_invoice_subscription_length'); 
+			break;
+			
+			case 'interval_unit':
+				return wp_invoice_meta($this->id,'wp_invoice_subscription_unit'); 
+			break;
+			
+			case 'totalOccurrences':
+				return wp_invoice_meta($this->id,'wp_invoice_subscription_total_occurances'); 
+			break;
+			
+			case 'startDate':
+				$wp_invoice_subscription_start_day = wp_invoice_meta($this->id,'wp_invoice_subscription_start_day');
+				$wp_invoice_subscription_start_year = wp_invoice_meta($this->id,'wp_invoice_subscription_start_year');
+				$wp_invoice_subscription_start_month = wp_invoice_meta($this->id,'wp_invoice_subscription_start_month');
+				
+				if($wp_invoice_subscription_start_month && $wp_invoice_subscription_start_year && $wp_invoice_subscription_start_day) {
+					return $wp_invoice_subscription_start_year . "-" . $wp_invoice_subscription_start_month . "-" . $wp_invoice_subscription_start_day;
+				} else {
+					return date("Y-m-d");
+				}
+			break;
+
+			case 'endDate':
+				return date('Y-m-d', strtotime("+".($this->display('interval_length')*$this->display('totalOccurrences'))." ".$this->display('interval_unit'), strtotime($this->display('startDate'))));
+			break;
+			
+			case 'archive_status':
+				$result = $wpdb->get_col("SELECT action_type FROM  ".WP_Invoice::tablename('log')." WHERE invoice_id = '".$this->id."' ORDER BY time_stamp DESC");
+				foreach($result as $event){
+					if ($event == 'unarchive') { return ''; break; }
+					if ($event == 'archive') { return 'archive'; break; }
+				}
+			break;
+			
+			case 'display_billing_rate': 
+				$length = wp_invoice_meta($this->id,'wp_invoice_subscription_length'); 
+				$unit = wp_invoice_meta($this->id,'wp_invoice_subscription_unit'); 
+				$occurances = wp_invoice_meta($this->id,'wp_invoice_subscription_total_occurances'); 
+				// days
+				if($unit == "days") {
+					if($length == '1') return "daily for $occurances days";
+					if($length > '1') return "every $length days for a total of $occurances billing cycles";
+				}
+				//months
+				if($unit == "months"){
+					if($length == '1') return "monthly for $occurances months";
+					if($length > '1') return "every $length months $occurances times";
+				}
+			break;
+			
+			case 'link':
+				$link_to_page = get_permalink(get_option('wp_invoice_web_invoice_page'));
+				$hashed = md5($this->id);
+				if(get_option("permalink_structure")) { return $link_to_page . "?invoice_id=" .$hashed; } 
+				else { return  $link_to_page . "&invoice_id=" . $hashed; } 		
+			break;
+			
+			case 'hash':
+				return md5($this->id);
+			break;
+			
+			case 'currency':
+				if(wp_invoice_meta($this->id,'wp_invoice_currency_code') != '') {
+					$currency_code = wp_invoice_meta($this->id,'wp_invoice_currency_code');
+				} else if (get_option('wp_invoice_default_currency_code') != '') {
+					$currency_code = get_option('wp_invoice_default_currency_code');
+				} else {
+					$currency_code = "USD";
+				}
+				return $currency_code;	
+			break;
+			
+			case 'display_id':
+				$wp_invoice_custom_invoice_id = wp_invoice_meta($this->id,'wp_invoice_custom_invoice_id');
+				if(empty($wp_invoice_custom_invoice_id)) { return $this->id; }	else { return $wp_invoice_custom_invoice_id; }	
+			break;
+			
+			case 'due_date':
+				$wp_invoice_due_date_month = wp_invoice_meta($this->id,'wp_invoice_due_date_month');
+				$wp_invoice_due_date_year = wp_invoice_meta($this->id,'wp_invoice_due_date_year');
+				$wp_invoice_due_date_day = wp_invoice_meta($this->id,'wp_invoice_due_date_day');
+				if(!empty($wp_invoice_due_date_month) && !empty($wp_invoice_due_date_year) && !empty($wp_invoice_due_date_day)) return "$wp_invoice_due_date_year/$wp_invoice_due_date_month/$wp_invoice_due_date_day";	
+			break;
+			
+			case 'amount':
+				return $invoice_info->amount;	
+			break;
+			
+			case 'tax_percent':
+				if(wp_invoice_meta($this->id,'wp_invoice_tax') != "") return wp_invoice_meta($this->id,'wp_invoice_tax');	
+				return wp_invoice_meta($this->id,'tax_value');	
+			break;	
+			
+			case 'tax_total':
+				if(wp_invoice_meta($this->id,'wp_invoice_tax') != "") return  wp_invoice_meta($this->id,'wp_invoice_tax') * $invoice_info->amount;	
+				return  wp_invoice_meta($this->id,'tax_value') * $invoice_info->amount;	
+			break;	
+			
+			case 'subject':
+				return $invoice_info->subject;	
+			break;
+			
+			case 'wp_invoice_email_message_content':
+				return wp_invoice_meta($this->id,'wp_invoice_email_message_content');
+			break;
+			
+			case 'display_amount':
+				if(!strpos($invoice_info->amount,'.')) $amount = $invoice_info->amount . ".00"; else $amount = $invoice_info->amount;
+				return wp_invoice_currency_symbol($this->display('currency')).wp_invoice_currency_format($amount);
+			break;
+			
+			case 'description':
+				return  str_replace("\n", "<br />", $invoice_info->description);
+			break;
+
+			case 'itemized':
+				return unserialize(urldecode($invoice_info->itemized));
+			break;
+		}
+	}
 }
