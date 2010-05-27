@@ -369,7 +369,7 @@ function pp_post_columns( $column_headings ) {
 	return $column_headings;
 }
 //add_filter( 'manage_posts_columns', 'pp_post_columns' );
-add_filter( 'manage_' . $market_system->name . '_posts_columns', 'pp_post_columns' );
+add_filter( 'manage_' . $market_system->name() . '_posts_columns', 'pp_post_columns' );
 
 function pp_post_columns_custom( $column_name, $post_id ) {
 	global $wpdb;
@@ -552,11 +552,16 @@ add_filter( 'pp_sort_options', 'pp_post_sort_options' );
 
 function is_pp_post_admin_page(){
 	global $market_system;
+	
+	//error_log( '$_GET[ post_type ] = ' . $_GET[ 'post_type' ] );
+	//error_log( '$_GET[ post ] = ' . $_GET[ 'post' ] );
+	//error_log( '$market_system->name() = ' . $market_system->name() );
 
-	if( !( ( strtolower( $_GET[ 'post_type' ] ) == strtolower( $market_system->name() ) ) || ( get_post_type( $_GET[ 'post' ] ) ==  $market_system->name() ) ) )
-		return false;
-	else
+	if( $_GET[ 'post_type' ] == $market_system->name() || $_GET[ 'post' ] ==  $market_system->name() ){ //get_post_type( $_GET[ 'post' ] ) ==  $market_system->name() )
+		error_log('returning true');
 		return true;
+	} else
+		return false;
 }
 
 //Removes the Prospress index page from the search results
