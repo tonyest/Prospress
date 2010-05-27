@@ -85,7 +85,11 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		$post_max_bid		= $this->get_max_bid( $post_id );
 		$bidders_max_bid	= $this->get_users_max_bid( $bidder_id, $post_id );
 
-		if ( empty( $bid_value ) || $bid_value === NULL || !preg_match( '/^[0-9]*\.?[0-9]*$/', $bid_value ) ) {
+		if ( $bidder_id == get_post( $post_id )->post_author ) {
+			error_log('INVALID: Invalid bidder same as author...');
+			$bid_msg = 11;
+			$bid_status = 'invalid';
+		} else if ( empty( $bid_value ) || $bid_value === NULL || !preg_match( '/^[0-9]*\.?[0-9]*$/', $bid_value ) ) {
 			error_log('INVALID: Invalid bid...');
 			$bid_msg = 7;
 			$bid_status = 'invalid';

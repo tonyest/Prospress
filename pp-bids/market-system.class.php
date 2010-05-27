@@ -57,8 +57,8 @@ class PP_Market_System {
 		if( !empty( $this->post_table_columns ) && is_array( $this->post_table_columns ) ){
 			add_filter( 'manage_posts_columns', array( &$this, 'add_post_column_headings' ) );
 			add_action( 'manage_posts_custom_column', array( &$this, 'add_post_column_contents' ), 10, 2 );
-			//add_filter( 'manage_' . $this->name . '_columns', array( &$this, 'add_post_column_headings' ) );
-			//add_action( 'manage_' . $this->name . '_custom_column', array( &$this, 'add_post_column_contents' ), 10, 2 );
+			//add_filter( 'manage_' . $this->name() . '_columns', array( &$this, 'add_post_column_headings' ) );
+			//add_action( 'manage_' . $this->name() . '_custom_column', array( &$this, 'add_post_column_contents' ), 10, 2 );
 		}
 
 		// Determine if bid form submission function should be called
@@ -412,6 +412,7 @@ class PP_Market_System {
 	function get_bid_message(){
 		global $pp_bid_status;
 
+		// Avoid showing messages passed in latent url parameters
 		if ( !is_user_logged_in() ) //|| !isset( $pp_bid_status ) )//|| !isset( $_GET[ 'bid_msg' ] ) )
 			return;
 
@@ -452,6 +453,9 @@ class PP_Market_System {
 					break;
 				case 10:
 					$message = __("Bid submitted.", 'prospress' );
+					break;
+				case 11:
+					$message = __("You cannot bid on your own post.", 'prospress' );
 					break;
 			}
 			$message = apply_filters( 'bid_message', $message );
