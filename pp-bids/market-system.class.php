@@ -57,8 +57,8 @@ class PP_Market_System {
 		if( !empty( $this->post_table_columns ) && is_array( $this->post_table_columns ) ){
 			add_filter( 'manage_posts_columns', array( &$this, 'add_post_column_headings' ) );
 			add_action( 'manage_posts_custom_column', array( &$this, 'add_post_column_contents' ), 10, 2 );
-			//add_filter( 'manage_' . $this->name . '_columns', array( &$this, 'add_post_column_headings' ) );
-			//add_action( 'manage_' . $this->name . '_custom_column', array( &$this, 'add_post_column_contents' ), 10, 2 );
+			//add_filter( 'manage_' . $this->name() . '_columns', array( &$this, 'add_post_column_headings' ) );
+			//add_action( 'manage_' . $this->name() . '_custom_column', array( &$this, 'add_post_column_contents' ), 10, 2 );
 		}
 
 		// Determine if bid form submission function should be called
@@ -68,7 +68,7 @@ class PP_Market_System {
 		add_action( 'admin_menu', array( &$this, 'add_admin_pages' ) );
 
 		// Adds columns for printing bid history table
-		add_filter( 'manage_' . $this->name . '_columns', array( &$this, 'get_column_headings' ) );
+		add_filter( 'manage_' . $this->name() . '_columns', array( &$this, 'get_column_headings' ) );
 
 		// For adding Ajax & other scripts
 		add_action('wp_print_scripts', array( &$this, 'enqueue_bid_form_scripts' ) );
@@ -155,7 +155,7 @@ class PP_Market_System {
 	// This function is hooked in the constructor and is only called if post fields is defined. 
 	function post_fields_meta_box(){
 		if( function_exists( 'add_meta_box' )) {
-			add_meta_box('pp-bidding-options', __('Bidding Options', 'prospress' ), array(&$this, 'post_fields'), $this->name, 'normal', 'core');
+			add_meta_box('pp-bidding-options', __('Bidding Options', 'prospress' ), array(&$this, 'post_fields'), $this->name(), 'normal', 'core');
 		}
 	}
 
@@ -412,6 +412,7 @@ class PP_Market_System {
 	function get_bid_message(){
 		global $pp_bid_status;
 
+		// Avoid showing messages passed in latent url parameters
 		if ( !is_user_logged_in() ) //|| !isset( $pp_bid_status ) )//|| !isset( $_GET[ 'bid_msg' ] ) )
 			return;
 
@@ -452,6 +453,9 @@ class PP_Market_System {
 					break;
 				case 10:
 					$message = __("Bid submitted.", 'prospress' );
+					break;
+				case 11:
+					$message = __("You cannot bid on your own post.", 'prospress' );
 					break;
 			}
 			$message = apply_filters( 'bid_message', $message );
@@ -657,7 +661,7 @@ class PP_Market_System {
 			<table class="widefat fixed" cellspacing="0">
 				<thead>
 					<tr class="thead">
-						<?php print_column_headers( $this->name ); ?>
+						<?php print_column_headers( $this->name() ); ?>
 					</tr>
 				</thead>
 				<tbody id="bids" class="list:user user-list">
@@ -707,7 +711,7 @@ class PP_Market_System {
 				</tbody>
 				<tfoot>
 					<tr class="thead">
-						<?php print_column_headers( $this->name ); ?>
+						<?php print_column_headers( $this->name() ); ?>
 					</tr>
 				</tfoot>
 			</table>
@@ -727,8 +731,8 @@ class PP_Market_System {
 
 	// Add market system columns to tables of posts
 	function add_post_column_headings( $column_headings ) {
-		
-		if( !( ( $_GET[ 'post_type' ] == $this->name ) || ( get_post_type( $_GET[ 'post' ] ) ==  $this->name ) ) )
+
+		if( !( ( $_GET[ 'post_type' ] == $this->name() ) || ( get_post_type( $_GET[ 'post' ] ) ==  $this->name() ) ) )
 			return $column_headings;
 
 		foreach( $this->post_table_columns as $key => $column )

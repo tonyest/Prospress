@@ -23,6 +23,12 @@ Index & Single Page Layouts
 	float:left;
 	width:70%;
 }
+.prospress-title{
+	
+}
+.prospress-content{
+	clear:both;
+}
 .pp-price,.pp-end{
 	float:right;
 	width:12%;
@@ -55,7 +61,7 @@ Index & Single Page Layouts
 .prospress-sidebar{
 	float: right;
 	overflow: hidden;
-	/*width: 220px;*/
+	width: 220px;
 	padding-left: 15px;
 	border-left: 1px solid #ccc;
 }
