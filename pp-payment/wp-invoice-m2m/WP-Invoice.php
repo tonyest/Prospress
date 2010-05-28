@@ -224,7 +224,7 @@ class WP_Invoice {
 
 			include WP_INVOICE_UI_PATH . 'metaboxes/send_invoice.php';	
 
-			$page_title = ( $invoice->is_paid ) ? __( 'View Invoice', 'prospress' ) : $page_title = __( 'Send Invoice', 'prospress' );
+			$page_title = ( $invoice->is_paid ) ? __( 'Invoice Details', 'prospress' ) : $page_title = __( 'Send Invoice', 'prospress' );
 
 			include WP_INVOICE_UI_PATH . 'send_invoice.php';
 

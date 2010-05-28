@@ -257,15 +257,11 @@ class PP_Auction_Bid_System extends PP_Market_System {
 
 		$actions[ 'increase-bid' ] = array('label' => __( 'Increase Bid', 'prospress' ),
 												'url' => $permalink );
-
-		error_log('add_increase_bid_action being called');
 		return $actions;
 	}
 }
 
-
-
-// Runs a suite of tests on the auction bid system.
+// Runs a suite of tests on the auction market system.
 function auction_test(){
 	//global $market_system, $wpdb;
 
