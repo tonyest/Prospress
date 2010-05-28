@@ -50,7 +50,9 @@ function pp_post_type() {
 			'public' => true,
 			'show_ui' => true,
 			'rewrite' => array( 'slug' => $market_system->name(), 'with_front' => false ),
-			'capability_type' => 'post',
+			'capability_type' => 'Auction',
+			//'capability_type' => $market_system->name(),
+			//'capability_type' => 'post',
 			//'capabilities' => $capabilities, @TODO when WP3.0 bugs are fixed come back to this.
             'supports' => array(
 							'title',

@@ -8,7 +8,7 @@ class PP_Market_System {
 	var $post_fields;			// Array of flags representing the fields which the market system implements e.g. array( 'post_fields' )
 	var $post_table_columns;	// Array of arrays, each array is used to create a column in the post tables. By default it adds two columns, 
 								// one for number of bids on the post and the other for the current winning bid on the post 
-								// e.g. 'current_bid' => array( 'title' => 'Winning Bid', 'function' => 'get_winning_bid'), 'bid_count' => array( 'title => 'Number of Bids', 'function' => 'get_bid_count')
+								// e.g. 'current_bid' => array( 'title' => 'Winning Bid', 'function' => 'get_winning_bid' ), 'bid_count' => array( 'title => 'Number of Bids', 'function' => 'get_bid_count' )
 	var $bid_table_headings;	// Array of name/value pairs to be used as column headings when printing table of bids. 
 								// e.g. 'bid_id' => 'Bid ID', 'post_id' => 'Post', 'bid_value' => 'Amount', 'bid_date' => 'Date'
 
@@ -71,11 +71,14 @@ class PP_Market_System {
 		add_filter( 'manage_' . $this->name() . '_columns', array( &$this, 'get_column_headings' ) );
 
 		// For adding Ajax & other scripts
-		add_action('wp_print_scripts', array( &$this, 'enqueue_bid_form_scripts' ) );
-		add_action('admin_menu', array( &$this, 'enqueue_bid_admin_scripts' ) );
+		add_action( 'wp_print_scripts', array( &$this, 'enqueue_bid_form_scripts' ) );
+		add_action( 'admin_menu', array( &$this, 'enqueue_bid_admin_scripts' ) );
 		
 		add_filter( 'pp_sort_options', array( &$this, 'add_sort_options' ) );
-		
+
+		// Allow admin to determine capabilities for marketplace posts
+		add_action( 'pp_core_settings_page', array( $this, 'capabilities_settings_page' ) );
+		add_filter( 'pp_options_whitelist', array( $this, 'capabilities_whitelist' ) );
 	}
 
 	/************************************************************************************************
@@ -86,17 +89,17 @@ class PP_Market_System {
 	// The <form> tag and a bid form header and footer are automatically generated for the class.
 	// You only need to enter the tags to capture information required by your market system.
 	function bid_form_fields( $post_id = NULL ) {
-		die('function PP_Market_System::bid_form_fields() must be over-ridden in a sub-class.');
+		die( 'function PP_Market_System::bid_form_fields() must be over-ridden in a sub-class.' );
 	}
 
 	// Process the bid form fields upon submission.
 	function bid_form_submit( $post_id = NULL, $bid_value = NULL, $bidder_id = NULL ){
-		die('function PP_Market_System::bid_form_submit() must be over-ridden in a sub-class.');
+		die( 'function PP_Market_System::bid_form_submit() must be over-ridden in a sub-class.' );
 	}
 
 	// Validate a bid when the bid form.
 	function bid_form_validate(){
-		die('function PP_Market_System::bid_form_validate() must be over-ridden in a sub-class.');
+		die( 'function PP_Market_System::bid_form_validate() must be over-ridden in a sub-class.' );
 	}
 
 
@@ -155,7 +158,7 @@ class PP_Market_System {
 	// This function is hooked in the constructor and is only called if post fields is defined. 
 	function post_fields_meta_box(){
 		if( function_exists( 'add_meta_box' )) {
-			add_meta_box('pp-bidding-options', __('Bidding Options', 'prospress' ), array(&$this, 'post_fields'), $this->name(), 'normal', 'core');
+			add_meta_box( 'pp-bidding-options', __( 'Bidding Options', 'prospress' ), array(&$this, 'post_fields' ), $this->name(), 'normal', 'core' );
 		}
 	}
 
@@ -172,15 +175,15 @@ class PP_Market_System {
 
 		/** @TODO Have a more graceful failure on varied post status */
 		if ( $post_status === NULL ) {
-			do_action('bid_post_not_found', $post_id);
+			do_action( 'bid_post_not_found', $post_id);
 			wp_die( __( 'Sorry, this post can not be found.' ) );
 			exit;
-		} elseif ( in_array($post_status, array('draft', 'pending') ) ) {
-			do_action('bid_on_draft', $post_id);
+		} elseif ( in_array( $post_status, array( 'draft', 'pending' ) ) ) {
+			do_action( 'bid_on_draft', $post_id);
 			wp_die( __( 'Sorry, but you can not bid on a draft or pending post.' ) );
 			exit;
-		} elseif ($post_status == 'ended'){ // || $bid_date_gmt < post_end_date_gmt
-			do_action('bid_on_ended', $post_id);
+		} elseif ( $post_status == 'ended' ){ // || $bid_date_gmt < post_end_date_gmt
+			do_action( 'bid_on_ended', $post_id);
 			wp_die( __( 'Sorry, this post has ended.' ) );
 			exit;
 		}
@@ -368,7 +371,7 @@ class PP_Market_System {
 	function the_users_max_bid_value( $user_id = '', $post_id = '', $echo = true ) {
 		$users_max_bid = get_users_max_bid( $user_id, $post_id );
 
-		$users_max_bid = ( $users_max_bid->bid_value ) ? $users_max_bid->bid_value : __('No Bids.', 'prospress' );
+		$users_max_bid = ( $users_max_bid->bid_value ) ? $users_max_bid->bid_value : __( 'No Bids.', 'prospress' );
 
 		if ( $echo ) 
 			echo $users_max_bid;
@@ -481,7 +484,7 @@ class PP_Market_System {
 
 		$base_page = "bids";
 
-		$bids_title = apply_filters( 'bids_admin_title', __('Bids', 'prospress' ) );
+		$bids_title = apply_filters( 'bids_admin_title', __( 'Bids', 'prospress' ) );
 
 		if ( function_exists( 'add_object_page' ) ) {
 			add_object_page( $bids_title, $bids_title, 'read', $base_page, '', WP_PLUGIN_URL . '/prospress/images/bid-16x16.png' );
@@ -489,11 +492,11 @@ class PP_Market_System {
 			add_menu_page( $bids_title, $bids_title, 'read', $base_page, '', WP_PLUGIN_URL . '/prospress/images/bid-16x16.png' );
 		}
 
-		$winning_bids_title = apply_filters( 'winning_bids_title', __('Winning Bids', 'prospress' ) );
-		$bid_history_title = apply_filters( 'bid_history_title', __('Bid History', 'prospress' ) );
+		$winning_bids_title = apply_filters( 'winning_bids_title', __( 'Winning Bids', 'prospress' ) );
+		$bid_history_title = apply_filters( 'bid_history_title', __( 'Bid History', 'prospress' ) );
 
 	    // Add submenu items to the bids top-level menu
-		if (function_exists('add_submenu_page')){
+		if (function_exists( 'add_submenu_page' )){
 		    add_submenu_page( $base_page, $winning_bids_title, $winning_bids_title, 'read', $base_page, array( &$this, 'winning_history' ) );
 		    add_submenu_page( $base_page, $bid_history_title, $bid_history_title, 'read', 'bid-history', array( &$this, 'admin_history' ) );
 		}
@@ -508,17 +511,17 @@ class PP_Market_System {
 		$order_by = 'bid_date_gmt';
 		$query = $this->create_bid_page_query();
 
-		error_log('In admin_history, post create query');
+		error_log( 'In admin_history, post create query' );
 
 		$bids = $wpdb->get_results( $query, ARRAY_A );
 
-		error_log('In admin_history, post get results');
+		error_log( 'In admin_history, post get results' );
 
 		$bids = apply_filters( 'admin_history_bids', $bids );
 		
-		error_log('In admin_history');
+		error_log( 'In admin_history' );
 
-		$this->print_admin_bids_table( $bids, __('Bid History', 'prospress' ), 'bid-history' );
+		$this->print_admin_bids_table( $bids, __( 'Bid History', 'prospress' ), 'bid-history' );
 	}
 
 	function winning_history() {
@@ -532,7 +535,7 @@ class PP_Market_System {
 
 		$bids = apply_filters( 'winning_history_bids', $bids );
 
-		$this->print_admin_bids_table( $bids, __('Winning Bids', 'prospress' ), 'bids' );
+		$this->print_admin_bids_table( $bids, __( 'Winning Bids', 'prospress' ), 'bids' );
 	}
 
 	function create_bid_page_query( $bid_status = '' ){
@@ -619,15 +622,15 @@ class PP_Market_System {
 							$arc_query = $wpdb->prepare("SELECT DISTINCT YEAR(bid_date) AS yyear, MONTH(bid_date) AS mmonth FROM $wpdb->bids WHERE bidder_id = %d ORDER BY bid_date DESC", $user_ID );
 						error_log( "title = $title and arc_query = $arc_query" );
 						$arc_result = $wpdb->get_results( $arc_query );
-						$month_count = count($arc_result);
+						$month_count = count( $arc_result);
 
 						if ( $month_count && !( 1 == $month_count && 0 == $arc_result[0]->mmonth ) ) {
-							$m = isset($_GET['m']) ? (int)$_GET['m'] : 0;
+							$m = isset( $_GET['m' ] ) ? (int)$_GET['m' ] : 0;
 						?>
 						<select name='m'>
-						<option<?php selected( $m, 0 ); ?> value='0'><?php _e('Show all dates', 'prospress' ); ?></option>
+						<option<?php selected( $m, 0 ); ?> value='0'><?php _e( 'Show all dates', 'prospress' ); ?></option>
 						<?php
-						foreach ($arc_result as $arc_row) {
+						foreach ( $arc_result as $arc_row) {
 							if ( $arc_row->yyear == 0 )
 								continue;
 							$arc_row->mmonth = zeroise( $arc_row->mmonth, 2 );
@@ -638,7 +641,7 @@ class PP_Market_System {
 								$default = '';
 
 							echo "<option$default value='" . esc_attr("$arc_row->yyear$arc_row->mmonth") . "'>";
-							echo $wp_locale->get_month($arc_row->mmonth) . " $arc_row->yyear";
+							echo $wp_locale->get_month( $arc_row->mmonth) . " $arc_row->yyear";
 							echo "</option>\n";
 						}
 						?>
@@ -647,11 +650,11 @@ class PP_Market_System {
 						<input type="submit" value="Filter" id="filter_action" class="button-secondary action" />
 
 						<select name='sort'>
-							<option<?php selected( $sort, 0 ); ?> value='0'><?php _e('Sort by', 'prospress' ); ?></option>
-							<option<?php selected( $sort, 1 ); ?> value='1'><?php _e('Bid Value', 'prospress' ); ?></option>
-							<option<?php selected( $sort, 2 ); ?> value='2'><?php _e('Post', 'prospress' ); ?></option>
-							<option<?php selected( $sort, 3 ); ?> value='3'><?php _e('Bid Status', 'prospress' ); ?></option>
-							<option<?php selected( $sort, 4 ); ?> value='5'><?php _e('Bid Date', 'prospress' ); ?></option>
+							<option<?php selected( $sort, 0 ); ?> value='0'><?php _e( 'Sort by', 'prospress' ); ?></option>
+							<option<?php selected( $sort, 1 ); ?> value='1'><?php _e( 'Bid Value', 'prospress' ); ?></option>
+							<option<?php selected( $sort, 2 ); ?> value='2'><?php _e( 'Post', 'prospress' ); ?></option>
+							<option<?php selected( $sort, 3 ); ?> value='3'><?php _e( 'Bid Status', 'prospress' ); ?></option>
+							<option<?php selected( $sort, 4 ); ?> value='5'><?php _e( 'Bid Date', 'prospress' ); ?></option>
 						</select>
 						<input type="submit" value="Sort" id="sort_action" class="button-secondary action" />
 					</div>
@@ -682,7 +685,7 @@ class PP_Market_System {
 								<td><?php echo ucfirst( $bid[ 'bid_status' ] ); ?></td>
 								<td><?php echo mysql2date( __( 'g:ia d M Y' , 'prospress' ), $bid[ 'bid_date' ] ); ?></td>
 								<td><?php echo mysql2date( __( 'g:ia d M Y' , 'prospress' ), $post_end_date ); ?></td>
-								<?php if( strpos( $_SERVER['REQUEST_URI'], 'bids' ) !== false ){
+								<?php if( strpos( $_SERVER['REQUEST_URI' ], 'bids' ) !== false ){
 									$actions = apply_filters( 'winning_bid_actions', array(), $post->ID );
 									echo '<td>';
 									if( is_array( $actions ) && !empty( $actions ) ){
@@ -690,13 +693,13 @@ class PP_Market_System {
 										<ul class="completed-actions">
 											<li class="base"><?php _e( 'Take action:', 'prospress' ) ?></li>
 										<?php foreach( $actions as $action => $attributes )
-											echo "<li class='completed-action'><a href='" . add_query_arg ( array( 'action' => $action, 'post' => $post_id ) , $attributes['url'] ) . "'>" . $attributes['label'] . "</a></li>";
+											echo "<li class='completed-action'><a href='" . add_query_arg ( array( 'action' => $action, 'post' => $post_id ) , $attributes['url' ] ) . "'>" . $attributes['label' ] . "</a></li>";
 										 ?>
 										</ul>
 									</div>
 									<?php
 									} else {
-										_e('No action can be taken.', 'prospress' );
+										_e( 'No action can be taken.', 'prospress' );
 									}
 									echo '</td>';
 								}?>
@@ -705,7 +708,7 @@ class PP_Market_System {
 							$style = ( 'alternate' == $style ) ? '' : 'alternate';
 						}
 					} else {
-						echo '<tr><td colspan="5">' . __('No bids.', 'prospress' ) . '</td></tr>';
+						echo '<tr><td colspan="5">' . __( 'No bids.', 'prospress' ) . '</td></tr>';
 					}
 				?>
 				</tbody>
@@ -723,7 +726,7 @@ class PP_Market_System {
 	function get_column_headings(){
 		$column_headings = $this->bid_table_headings;
 		
-		if( strpos( $_SERVER['REQUEST_URI'], 'bids' ) !== false )
+		if( strpos( $_SERVER['REQUEST_URI' ], 'bids' ) !== false )
 			$column_headings[ 'bid_actions' ] = __( 'Action', 'prospress' );
 
 		return $column_headings;
@@ -754,11 +757,11 @@ class PP_Market_System {
 	function enqueue_bid_form_scripts(){
   		wp_enqueue_script( 'bid-form-ajax', PP_BIDS_URL . '/bid-form-ajax.js', array( 'jquery' ) );
 		wp_localize_script( 'bid-form-ajax', 'pppostL10n', array(
-			'endedOn' => __('Ended on:', 'prospress' ),
-			'endOn' => __('End on:', 'prospress' ),
-			'end' => __('End', 'prospress' ),
-			'update' => __('Update', 'prospress' ),
-			'repost' => __('Repost', 'prospress' ),
+			'endedOn' => __( 'Ended on:', 'prospress' ),
+			'endOn' => __( 'End on:', 'prospress' ),
+			'end' => __( 'End', 'prospress' ),
+			'update' => __( 'Update', 'prospress' ),
+			'repost' => __( 'Repost', 'prospress' ),
 			));
 	}
 
@@ -767,10 +770,106 @@ class PP_Market_System {
 	}
 
 	function add_sort_options( $pp_sort_options ){
-		$pp_sort_options['price-asc'] = __( 'Price: low to high', 'prospress' );
-		$pp_sort_options['price-desc'] = __( 'Price: high to low', 'prospress' );
+		$pp_sort_options['price-asc' ] = __( 'Price: low to high', 'prospress' );
+		$pp_sort_options['price-desc' ] = __( 'Price: high to low', 'prospress' );
 
 		return $pp_sort_options;
+	}
+
+	// Allow admins to choose what capabilities are required for handling marketplace posts.
+	function capabilities_settings_page() { 
+		global $wp_roles, $market_system;
+
+		$role_names = $wp_roles->get_names();
+		$roles = array();
+
+		foreach ( $role_names as $key => $value ) {
+			$roles[ $key] = get_role( $key);
+			$roles[ $key]->display_name = $value;
+		}
+		?>
+
+	    <?php wp_nonce_field( 'pp_capabilities_settings' ); ?>
+	    <div class="prospress-capabilities">
+	      <h3><?php _e( 'Capabilities', 'prospress' ); ?></h3>
+	      <p>Select which roles will have the following capabilities:</p>
+	      <div class="prospress-capabilitiy create">
+	        <h4><?php printf( __( "Publish %s", 'prospress' ), $market_system->name() ); ?></h4>
+	        <?php foreach ( $roles as $role ): ?>
+	          <label for="<?php echo $role->name; ?>-create">
+	            <input type="checkbox" id="<?php echo $role->name; ?>-publish" name="<?php echo $role->name; ?>-publish"<?php checked( $role->capabilities['publish_' . $market_system->name() ], 1 ); ?> />
+	            <?php echo $role->display_name; ?>
+	          </label>
+	        <?php endforeach; ?>
+	      </div>
+	      <div class="prospress-capability edit">
+	        <h4><?php printf( __( "Edit %s", 'prospress' ), $market_system->name() ); ?></h4>
+	        <?php foreach ( $roles as $role ): ?>
+	          <label for="<?php echo $role->name; ?>-edit">
+	            <input type="checkbox" id="<?php echo $role->name; ?>-edit" name="<?php echo $role->name; ?>-edit"<?php checked( $role->capabilities['edit_' . $market_system->name() ], 1 ); ?> />
+	            <?php echo $role->display_name; ?>
+	          </label>
+	        <?php endforeach; ?>
+	      </div>
+	      <div class="prospress-capability delete">
+	        <h4><?php printf( __( "Delete %s", 'prospress' ), $market_system->name() ); ?></h4>
+	        <?php foreach ( $roles as $role ): ?>
+	          <label for="<?php echo $role->name; ?>-delete">
+	            <input type="checkbox" id="<?php echo $role->name; ?>-delete" name="<?php echo $role->name; ?>-delete"<?php checked( $role->capabilities[ 'delete_' . $market_system->name() ], 1 ) ?> />
+	            <?php echo $role->display_name; ?>
+	          </label>
+	        <?php endforeach; ?>
+	      </div>
+	    </div>
+	<?php
+	}
+
+	function capabilities_whitelist( $whitelist_options ) {
+		global $wp_roles, $market_system;
+
+	    if ( $_POST['_wpnonce' ] && check_admin_referer( 'pp_capabilities_settings' ) && current_user_can( 'manage_options' ) ){
+
+			$role_names = $wp_roles->get_names();
+			$roles = array();
+
+			foreach ( $role_names as $key=>$value ) {
+				$roles[ $key] = get_role( $key);
+				$roles[ $key]->display_name = $value;
+			}
+
+			foreach ( $roles as $key => $role ) {
+				if ( isset( $_POST[ $key.'-publish' ] )  && $_POST[ $key.'-publish' ] == 'on' ) {
+					$role->add_cap( 'publish_' . $market_system->name());
+				} else {
+					$role->remove_cap( 'publish_' . $market_system->name());
+				}
+
+				if ( isset( $_POST[ $key.'-edit' ] )  && $_POST[ $key.'-edit' ] == 'on' ) {
+					$role->add_cap( 'edit_Auction' );
+					$role->add_cap( 'edit_' . $market_system->name());
+					//$role->add_cap( 'edit_others_' . $market_system->name());
+				} else {
+					$role->remove_cap( 'edit_Auction' );
+					$role->remove_cap( 'edit_' . $market_system->name());
+					//$role->remove_cap( 'edit_others_' . $market_system->name());
+		        }
+
+				if ( isset( $_POST[ $key.'-delete' ] )  && $_POST[ $key.'-delete' ] == 'on' ) {
+					$role->add_cap( 'delete_' . $market_system->name() );
+				} else {
+					$role->remove_cap( 'delete_' . $market_system->name() );
+				}
+
+				if( $role == 'administrator' ){
+					//$role->add_cap( 'edit_others_' . $market_system->name() );
+					$role->remove_cap( 'edit_others_' . $market_system->name() );
+					//$role->add_cap( 'delete_' . $market_system->name() );
+				}
+			}
+	      $this->updated_message = 'Settings saved';
+	    }
+
+		return $whitelist_options;
 	}
 
 	// Called with init hook to determine if a bid has been submitted. If it has, bid_form_submit is called.
@@ -781,9 +880,9 @@ class PP_Market_System {
 		//Is user trying to submit bid
 		if( !isset( $_REQUEST[ 'bid_submit' ] ) )
 			return;
-		error_log('********************************** $_REQUEST[ bid_submit ] set **********************************');
-		error_log('in bid_controller _GET = ' . print_r($_GET, true));
-		error_log('in bid_controller _POST = ' . print_r($_POST, true));
+		error_log( '********************************** $_REQUEST[ bid_submit ] set **********************************' );
+		error_log( 'in bid_controller _GET = ' . print_r( $_GET, true));
+		error_log( 'in bid_controller _POST = ' . print_r( $_POST, true));
 
 		// If bidder is not logged in, redirect to login page
 		if ( !is_user_logged_in() ){ 
@@ -791,11 +890,11 @@ class PP_Market_System {
 
 			$redirect = wp_get_referer();
 			$redirect = add_query_arg( urlencode_deep( $_POST ), $redirect );
-			$redirect = add_query_arg('bid_redirect', wp_get_referer(), $redirect );
+			$redirect = add_query_arg( 'bid_redirect', wp_get_referer(), $redirect );
 			$redirect = wp_login_url( $redirect );
 			$redirect = apply_filters( 'bid_login_redirect', $redirect );
 
-			error_log('!is_user_logged_in(), $redirect = ' . $redirect);
+			error_log( '!is_user_logged_in(), $redirect = ' . $redirect);
 			//if( isset( $_REQUEST[ 'ajax_bid' ] ) ){
 			if( $_REQUEST[ 'bid_submit' ] == 'ajax' ){
 				error_log("*** AJAX BID: returning $redirect ***");
@@ -806,21 +905,21 @@ class PP_Market_System {
 				wp_safe_redirect( $redirect );
 				exit();
 			}
-			error_log('in !is_user_logged_in() even after exit');
+			error_log( 'in !is_user_logged_in() even after exit' );
 		}
 
 		// Verify bid nonce if bid is not coming from a login redirect
-		if ( !isset( $_REQUEST[ 'bid_redirect' ] ) && ( !isset( $_REQUEST[ 'bid_nonce' ] ) || !wp_verify_nonce( $_REQUEST['bid_nonce'], __FILE__) ) ) {
+		if ( !isset( $_REQUEST[ 'bid_redirect' ] ) && ( !isset( $_REQUEST[ 'bid_nonce' ] ) || !wp_verify_nonce( $_REQUEST['bid_nonce' ], __FILE__) ) ) {
 			if ( !isset( $_REQUEST[ 'bid_nonce' ] ))
-				error_log('$_REQUEST[ bid_nonce ] not set' );
-			if ( !wp_verify_nonce( $_REQUEST['bid_nonce'], __FILE__) )
-				error_log('$_REQUEST[ bid_nonce ] not valid' );
+				error_log( '$_REQUEST[ bid_nonce ] not set' );
+			if ( !wp_verify_nonce( $_REQUEST['bid_nonce' ], __FILE__) )
+				error_log( '$_REQUEST[ bid_nonce ] not valid' );
 			$bid_status = 8;
 		} elseif ( isset( $_GET[ 'bid_redirect' ] ) ) {
-			error_log('in bid_controller, using _GET for bid_form_submit' );
+			error_log( 'in bid_controller, using _GET for bid_form_submit' );
 			$bid_status = $this->bid_form_submit( $_GET[ 'post_ID' ], $_GET[ 'bid_value' ] );
 		} else {
-			error_log('in bid_controller, using _POST for bid_form_submit' );
+			error_log( 'in bid_controller, using _POST for bid_form_submit' );
 			$bid_status = $this->bid_form_submit( $_POST[ 'post_ID' ], $_POST[ 'bid_value' ] );
 		}
 
@@ -829,7 +928,7 @@ class PP_Market_System {
 			//$location = wp_get_referer();
 			error_log("** REDIRECT USER BACK TO POST **");
 			$location = $_REQUEST[ 'bid_redirect' ];
-			error_log('location equalling _REQUEST[ \'bid_redirect\' ] = ' . $location );
+			error_log( 'location equalling _REQUEST[ \'bid_redirect\' ] = ' . $location );
 			$location = add_query_arg( 'bid_msg', $bid_status, $location );
 			error_log("location after adding bid_msg = $location");
 			$location = add_query_arg( 'bid_nonce', wp_create_nonce( __FILE__ ), $location );
@@ -854,9 +953,9 @@ class PP_Market_System {
 		if( isset( $_GET[ 'bid_msg' ] ) && isset( $_GET[ 'bid_nonce' ] ) && !wp_verify_nonce( $_GET[ 'bid_nonce' ], __FILE__ ) ){
 			error_log( '********* USER ENTERING A URL WITH BS FOR A BID THEY DIDNT MAKE *********' );
 			if ( !isset( $_GET[ 'bid_nonce' ] ))
-				error_log('$_GET[ bid_nonce ] not set' );
-			if ( !wp_verify_nonce( $_GET['bid_nonce'], __FILE__) )
-				error_log('$_GET[ bid_nonce ] not valid' );
+				error_log( '$_GET[ bid_nonce ] not set' );
+			if ( !wp_verify_nonce( $_GET['bid_nonce' ], __FILE__) )
+				error_log( '$_GET[ bid_nonce ] not valid' );
 
 			$redirect = remove_query_arg( 'bid_nonce' );
 			$redirect = remove_query_arg( 'bid_msg', $redirect );

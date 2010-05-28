@@ -463,7 +463,7 @@ function pp_feedback_rows($feedback = ''){
 // Displays the fields for handling feedback options in the Core Prospress Settings admin page.
 function pp_feedback_settings_section() { ?>
 	<h3><?php _e( 'Feedback' , 'prospress' )?></h3>
-	<p><?php _e( 'You can allow a trader to modify feedback items she has imparted. Allowing feedback to be modified helps make feedback more accurate, as circumstances change and mistakes are made, even after feedback has been provided.' , 'prospress' ); ?></p>
+	<p><?php _e( 'Allowing feedback to be modified helps make feedback more accurate. Circumstances change, even after feedback has been provided.' , 'prospress' ); ?></p>
 	<table class='form-table'>
 		<tr>
 			<th scope="row"><?php echo _e('Allow feedback to be edited' , 'prospress' );?>:</th>

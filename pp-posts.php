@@ -569,3 +569,4 @@ function pp_remove_index( $search ){
 	return $search;
 }
 add_filter( 'posts_search', 'pp_remove_index' );
+
