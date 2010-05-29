@@ -209,6 +209,7 @@ function pp_register_settings() {
 	$pp_new_tax[ 'show_ui' ] 		= true;
 	$pp_new_tax[ 'query_var' ] 		= $pp_tax_name;
 	$pp_new_tax[ 'rewrite' ] 		= $pp_tax_name;
+	$pp_new_tax[ 'capabilities' ] 	= array( 'assign_terms' => 'edit_prospress_posts' );
 	$pp_new_tax[ 'labels' ] 		= array();
 	$pp_new_tax[ 'labels' ][ 'singular_label' ]	= ( !$_POST[ 'singular_label' ] ) ? $pp_tax_name : strip_tags( $_POST[ 'singular_label' ] );
 	$pp_new_tax[ 'labels' ][ 'search_items' ] 	= $pp_new_tax[ 'label' ];
@@ -235,6 +236,7 @@ function pp_register_settings() {
 add_action( 'admin_init', 'pp_register_settings' );
 
 function pp_create_custom_taxonomies() {
+	global $market_system;
 
 	$pp_tax_types = get_option('pp_custom_taxonomies');
 

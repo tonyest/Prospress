@@ -543,15 +543,6 @@ function pp_add_sidebars(){
 		'before_title' => '<h3 class="widget-title">',
 		'after_title' => '</h3>',
 	) );
-	register_sidebar( array (
-		'name' => $market_system->display_name() . ' ' . __( 'Single Sidebar', 'prospress' ),
-		'id' => $market_system->name() . '-single-sidebar',
-		'description' => __( "The sidebar on your Prospress posts.", 'prospress' ),
-		'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
-		'after_widget' => "</li>",
-		'before_title' => '<h3 class="widget-title">',
-		'after_title' => '</h3>',
-	) );
 }
 add_action( 'init', 'pp_add_sidebars' );
 

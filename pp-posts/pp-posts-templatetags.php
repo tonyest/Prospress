@@ -25,7 +25,18 @@ function pp_get_index_permalink( $echo = 'echo' ){
  * @param string $echo Optional, default 'echo'. If set to "echo" the function echo's the permalink, else, returns the permalink as a string. 
  * @return returns false if no index page set, true if echod the permalink or a string representing the permalink if 'echo' not set.
  */
-function pp_the_post_meta(){
+function pp_get_the_term_list(){
+
+	$pp_tax_types = get_option('pp_custom_taxonomies');
+
+	if ( empty( $pp_tax_types ) )
+		return;
+
+	foreach( $pp_tax_types as $pp_tax_name => $pp_tax_type ){
+		echo '<div class="pp-tax">';
+		echo get_the_term_list( $post->ID, $pp_tax_name, $pp_tax_type[ 'labels' ][ 'singular_label' ] . ': ', ', ', '' );		
+		echo '</div>';
+	}
 	
 }
 

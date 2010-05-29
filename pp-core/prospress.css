@@ -46,16 +46,17 @@ Index & Single Page Layouts
 	clear:both;
 }
 .pp-publish-date{
-	float:left;
 }
 .pp-end-date{
-	float:right;
-	text-align:right;
 }
-.pp-publish-date,.pp-end-date{
-	width:50%;
+.pp-author,.pp-publish-date,.pp-end-date,.pp-tax{
+	float:left;
+	clear:both;
+	margin: 0.5em 0;
 }
-
+.pp-tax{
+	
+}
 /* Side bar & Widget Styles 
 -------------------------------------------------------------- */
 .prospress-sidebar{

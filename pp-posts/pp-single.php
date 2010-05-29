@@ -20,11 +20,6 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 		<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 			<h2 class="pp-title entry-title"><?php the_title();?></h2>
 
-			<p class="pp-content">
-				<div class="pp-publish-date"><?php _e('Published: ', 'prospress' );  the_time('F jS, Y'); _e(' by '); the_author() ?></div>
-				<div class="pp-end-date"><?php _e('Ending: ', 'prospress' ); the_post_end_date(); ?></div>
-			</p>
-
 			<?php the_bid_form(); ?>
 
 			<div class="pp-content">
@@ -42,8 +37,20 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 	</div>
 
 	<div id="sidebar" class="prospress-sidebar">
-		<ul class="xoxo">
-			<?php dynamic_sidebar( $market_system->name() . '-single-sidebar' ); ?>
-		</ul>
+		<h3><?php _e( 'Details', 'prospress' ); ?></h3>
+		<div class="pp-publish-date">
+			<?php _e('Published: ', 'prospress' ); ?>
+			<?php the_time('F jS, Y'); ?></div>
+		<div class="pp-end-date">
+			<?php _e('Ending: ', 'prospress' ); ?>
+			<?php the_post_end_countdown(); ?>
+		</div>
+		<div class="pp-taxonomies">
+			<?php pp_get_the_term_list(); ?>
+		</div>
+		<div class="pp-author">
+			<?php _e('Seller: ', 'prospress' ); ?>
+			<?php the_author() ?>
+		</div>
 	</div>
 <?php get_footer(); ?>
