@@ -4,7 +4,6 @@
  * @subpackage Feedback
  */
 
-
 /**
  * Determines if a user has already given feedback on a post. 
  * 
@@ -111,7 +110,7 @@ function pp_users_positive_feedback( $user_id, $filter = '' ){
 	else if( $filter == 'received' )
 		return $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(feedback_id) FROM $wpdb->feedback WHERE feedback_status = 'publish' AND for_user_id = %d AND feedback_score = 2", $user_id ) );
 	else
-		return $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(feedback_id) FROM $wpdb->feedback WHERE feedback_status = 'publish' AND feedback_score = 2  AND ( for_user_id = %d OR from_user_id = %d )", $user_id, $user_id ) );
+		return $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(feedback_id) FROM $wpdb->feedback WHERE feedback_status = 'publish' AND feedback_score = 2 AND ( for_user_id = %d OR from_user_id = %d )", $user_id, $user_id ) );
 }
 
 
@@ -147,5 +146,3 @@ function pp_users_feedback_percent( $user_id, $filter = '' ){
 	$postitive_feedback = pp_users_feedback_count( $user_id, $filter ) - pp_users_negative_feedback( $user_id, $filter );
 	return (int)( $postitive_feedback / $all_feedback * 100 );
 }
-
-?>

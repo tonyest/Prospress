@@ -49,7 +49,7 @@ Index & Single Page Layouts
 }
 .pp-end-date{
 }
-.pp-author,.pp-publish-date,.pp-end-date,.pp-tax{
+.pp-publish-date,.pp-end-date,.pp-tax,.pp-author,.pp-author-feedback{
 	float:left;
 	clear:both;
 	margin: 0.5em 0;

@@ -52,5 +52,9 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 			<?php _e('Seller: ', 'prospress' ); ?>
 			<?php the_author() ?>
 		</div>
+		<div class="pp-author-feedback">
+			<?php _e( 'Feedback: ', 'prospress' ); ?>
+			<?php the_authors_feedback_list(); ?>
+		</div>
 	</div>
 <?php get_footer(); ?>

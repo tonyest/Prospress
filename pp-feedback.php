@@ -20,8 +20,9 @@ if ( !defined( 'PP_FEEDBACK_DIR'))
 if ( !defined( 'PP_FEEDBACK_URL'))
 	define( 'PP_FEEDBACK_URL', WP_PLUGIN_URL . '/prospress/pp-feedback' );
 
-if ( file_exists( PP_FEEDBACK_DIR . '/feedback-functions.php' ) )
-	require_once ( PP_FEEDBACK_DIR . '/feedback-functions.php' );
+require_once ( PP_FEEDBACK_DIR . '/feedback-functions.php' );
+require_once ( PP_FEEDBACK_DIR . '/feedback-templatetags.php' );
+
 
 // For testing
 //include_once ( PP_FEEDBACK_DIR . '/feedback-tests.php' );
