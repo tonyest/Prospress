@@ -55,12 +55,13 @@ function pp_posts_install(){
 
 	error_log('activation hook being called.');
 
+	// Create a page to be used as the index for Prospress posts
 	if( !$wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . $market_system->name() . "'" ) ){
 		$index_page = array();
-		$index_page['post_title'] = $market_system->name();
+		$index_page['post_title'] = $market_system->display_name();
 		$index_page['post_name'] = $market_system->name();
 		$index_page['post_status'] = 'publish';
-		$index_page['post_content'] = __( 'This is the index for your ' . $market_system->name() . ' posts.' );
+		$index_page['post_content'] = __( 'This is the index for your ' . $market_system->display_name() . '.' );
 		$index_page['post_type'] = 'page';
 
 		error_log('Creating page = ' . print_r( $index_page, true ) );
@@ -235,7 +236,6 @@ function pp_post_submit_meta_box() {
 	if ( !isset( $end_date ) ) {
 		$end_date = date_i18n( $datef, strtotime( gmdate( 'Y-m-d H:i:s', ( time() + 604800 + ( get_option( 'gmt_offset' ) * 3600 ) ) ) ) );
 	}
-
 ?>
 	<div class="misc-pub-section curtime misc-pub-section-last">
 		<span id="endtimestamp">
@@ -327,12 +327,11 @@ function touch_end_time( $edit = 1, $tab_index = 0, $multi = 0 ) {
 }
 
 function pp_posts_admin_head() {
-	
+
 	if( !is_pp_post_admin_page() )
 		return;
 
 	if( strpos( $_SERVER['REQUEST_URI'], 'post.php' ) !== false || strpos( $_SERVER['REQUEST_URI'], 'post-new.php' ) !== false ) {
-		wp_enqueue_style( 'prospress-post',  PP_POSTS_URL . '/pp-post.css' );
 		wp_enqueue_script( 'prospress-post', PP_POSTS_URL . '/pp-post.dev.js', array('jquery') );
 		wp_localize_script( 'prospress-post', 'ppPostL10n', array(
 			'endedOn' => __('Ended on:', 'prospress' ),
@@ -341,10 +340,53 @@ function pp_posts_admin_head() {
 			'update' => __('Update', 'prospress' ),
 			'repost' => __('Repost', 'prospress' ),
 			));
+		wp_enqueue_style( 'prospress-post',  PP_POSTS_URL . '/pp-post.css' );
+	}
+
+	if ( strpos( $_SERVER['REQUEST_URI'], 'completed' ) !== false ){
+		wp_enqueue_script( 'inline-edit-post' );
+	}
+
+	// @TODO replace this quick and dirty hack with a server side way to remove styles on these tables.
+	if ( strpos( $_SERVER['REQUEST_URI'], 'edit.php' ) !== false ||  strpos( $_SERVER['REQUEST_URI'], 'completed' ) !== false ) {
+		echo '<script type="text/javascript">';
+		echo 'jQuery(document).ready( function($) {';
+		echo '$("#author").removeClass("column-author");';
+		echo '$("#categories").removeClass("column-categories");';
+		echo '$("#tags").removeClass("column-tags");';
+		echo '});</script>';
 	}
 }
-add_action('admin_menu', 'pp_posts_admin_head');
+add_action( 'admin_enqueue_scripts', 'pp_posts_admin_head' );
 
+//**************************************************************************************************//
+// ADD ADMIN MENU FOR POSTS THAT HAVE ENDED
+//**************************************************************************************************//
+/*
+function pp_posts_add_admin_pages() {
+	if ( strpos( $_SERVER['REQUEST_URI'], 'completed' ) !== false ){
+		wp_enqueue_script( 'inline-edit-post' );
+	}
+}
+add_action( 'admin_enqueue_scripts', 'pp_posts_add_admin_pages' );
+
+// @TODO replace this quick and dirty hack with a server side way to remove styles on these tables.
+function pp_remove_classes() {
+	
+	if( !is_pp_post_admin_page() )
+		return;
+
+	if ( strpos( $_SERVER['REQUEST_URI'], 'edit.php' ) !== false ||  strpos( $_SERVER['REQUEST_URI'], 'completed' ) !== false ) {
+		echo '<script type="text/javascript">';
+		echo 'jQuery(document).ready( function($) {';
+		echo '$("#author").removeClass("column-author");';
+		echo '$("#categories").removeClass("column-categories");';
+		echo '$("#tags").removeClass("column-tags");';
+		echo '});</script>';
+	}
+}
+add_action( 'admin_enqueue_scripts', 'pp_remove_classes' );
+*/
 
 //**************************************************************************************************//
 // Customise columns on table of posts shown on edit.php
@@ -354,8 +396,6 @@ function pp_post_columns( $column_headings ) {
 
 	if( !is_pp_post_admin_page() )
 		return $column_headings;
-
-	//unset( $column_headings[ 'tags' ] );
 
 	if( strpos( $_SERVER['REQUEST_URI'], 'completed' ) !== false ) {
 		$column_headings[ 'end_date' ] = __( 'Ended', 'prospress' );
@@ -368,7 +408,6 @@ function pp_post_columns( $column_headings ) {
 
 	return $column_headings;
 }
-//add_filter( 'manage_posts_columns', 'pp_post_columns' );
 add_filter( 'manage_' . $market_system->name() . '_posts_columns', 'pp_post_columns' );
 
 function pp_post_columns_custom( $column_name, $post_id ) {
@@ -408,32 +447,6 @@ function pp_post_columns_custom( $column_name, $post_id ) {
 }
 add_action( 'manage_posts_custom_column', 'pp_post_columns_custom', 10, 2 );
 
-//**************************************************************************************************//
-// ADD ADMIN MENU FOR POSTS THAT HAVE ENDED
-//**************************************************************************************************//
-function pp_posts_add_admin_pages() {
-	if ( strpos( $_SERVER['REQUEST_URI'], 'completed' ) !== false ){
-		wp_enqueue_script( 'inline-edit-post' );
-	}
-}
-add_action( 'admin_menu', 'pp_posts_add_admin_pages' );
-
-// @TODO clean up this quick and dirty hack: find a server side way to better style these tables.
-function pp_remove_classes() {
-	
-	if( !is_pp_post_admin_page() )
-		return;
-
-	if ( strpos( $_SERVER['REQUEST_URI'], 'edit.php' ) !== false ||  strpos( $_SERVER['REQUEST_URI'], 'completed' ) !== false ) {
-		echo '<script type="text/javascript">';
-		echo 'jQuery(document).ready( function($) {';
-		echo '$("#author").removeClass("column-author");';
-		echo '$("#categories").removeClass("column-categories");';
-		echo '$("#tags").removeClass("column-tags");';
-		echo '});</script>';
-	}
-}
-add_action( 'admin_head', 'pp_remove_classes' );
 
 //**************************************************************************************************//
 // CUSTOM POST TYPE & TEMPLATE REDIRECTS
@@ -465,36 +478,35 @@ function pp_add_sidebars_widgets(){
 
 	$sidebars_widgets = get_option( 'sidebars_widgets' );
 
-	if( !isset( $sidebars_widgets[ $market_system->name() . '-sidebar' ] ) )
-		$sidebars_widgets[ $market_system->name() . '-sidebar' ] = array();
+	if( !isset( $sidebars_widgets[ $market_system->name() . '-index-sidebar' ] ) )
+		$sidebars_widgets[ $market_system->name() . '-index-sidebar' ] = array();
 
 	$sort_widget = get_option( 'widget_pp-sort' );
 	if( empty( $sort_widget ) ){
 
 		$sort_widget[] = array(
 							'title' => __( 'Sort by:', 'prospress' ),
-				            'post-desc' => 'on',
-				            'post-asc' => 'on',
-				            'end-asc' => 'on',
-				            'end-desc' => 'on',
-				            'price-asc' => 'on',
-				            'price-desc' => 'on'
+							'post-desc' => 'on',
+							'post-asc' => 'on',
+							'end-asc' => 'on',
+							'end-desc' => 'on',
+							'price-asc' => 'on',
+							'price-desc' => 'on'
 							);
 
 		$sort_widget['_multiwidget'] = 1;
 		update_option( 'widget_pp-sort',$sort_widget );
-		array_push( $sidebars_widgets[ $market_system->name() . '-sidebar' ], 'pp-sort-0' );
+		array_push( $sidebars_widgets[ $market_system->name() . '-index-sidebar' ], 'pp-sort-0' );
 	}
 
 	$filter_widget = '';
-	error_log( '$filter_widget = ' . print_r( $filter_widget, true ) );
 	if( empty( $filter_widget ) ){
 
 		$filter_widget[] = array( 'title' => __( 'Price:', 'prospress' ) );
 
 		$filter_widget['_multiwidget'] = 1;
 		update_option( 'widget_bid-filter', $filter_widget );
-		array_push( $sidebars_widgets[ $market_system->name() . '-sidebar' ], 'bid-filter-0' );
+		array_push( $sidebars_widgets[ $market_system->name() . '-index-sidebar' ], 'bid-filter-0' );
 	}
 
 	update_option( 'sidebars_widgets', $sidebars_widgets );
@@ -508,8 +520,12 @@ function pp_posts_uninstall(){
 	
 	$sidebars_widgets = get_option( 'sidebars_widgets' );
 
-	if( isset( $sidebars_widgets[ $market_system->name() . '-sidebar' ] ) ){
-		unset( $sidebars_widgets[ $market_system->name() . '-sidebar' ] );
+	if( isset( $sidebars_widgets[ $market_system->name() . '-index-sidebar' ] ) ){
+		unset( $sidebars_widgets[ $market_system->name() . '-index-sidebar' ] );
+		update_option( 'sidebars_widgets', $sidebars_widgets );
+	}
+	if( isset( $sidebars_widgets[ $market_system->name() . '-single-sidebar' ] ) ){
+		unset( $sidebars_widgets[ $market_system->name() . '-single-sidebar' ] );
 		update_option( 'sidebars_widgets', $sidebars_widgets );
 	}
 }
@@ -519,7 +535,7 @@ function pp_add_sidebars(){
 	global $market_system;
 
 	register_sidebar( array (
-		'name' => $market_system->name() . ' ' . __( 'Index Sidebar', 'prospress' ),
+		'name' => $market_system->display_name() . ' ' . __( 'Index Sidebar', 'prospress' ),
 		'id' => $market_system->name() . '-index-sidebar',
 		'description' => __( "The sidebar on your Prospress posts.", 'prospress' ),
 		'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
@@ -528,7 +544,7 @@ function pp_add_sidebars(){
 		'after_title' => '</h3>',
 	) );
 	register_sidebar( array (
-		'name' => $market_system->name() . ' ' . __( 'Single Sidebar', 'prospress' ),
+		'name' => $market_system->display_name() . ' ' . __( 'Single Sidebar', 'prospress' ),
 		'id' => $market_system->name() . '-single-sidebar',
 		'description' => __( "The sidebar on your Prospress posts.", 'prospress' ),
 		'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
@@ -551,9 +567,9 @@ function pp_post_sort_options( $pp_sort_options ){
 add_filter( 'pp_sort_options', 'pp_post_sort_options' );
 
 function is_pp_post_admin_page(){
-	global $market_system;
-	
-	if( $_GET[ 'post_type' ] == $market_system->name() || $_GET[ 'post' ] ==  $market_system->name() ) //get_post_type( $_GET[ 'post' ] ) ==  $market_system->name() )
+	global $market_system, $post;
+
+	if( $_GET[ 'post_type' ] == $market_system->name() || $_GET[ 'post' ] == $market_system->name() || $post->post_type == $market_system->name() ) //get_post_type( $_GET[ 'post' ] ) ==  $market_system->name() )
 		return true;
 	else
 		return false;
@@ -563,10 +579,120 @@ function is_pp_post_admin_page(){
 function pp_remove_index( $search ){
 	global $wpdb, $market_system;
 
-	if ( isset( $_GET['s'] ) ) // only remove posts from search results
+	if ( isset( $_GET['s'] ) ) // only remove post from search results
 		$search .= "AND ID NOT IN (SELECT ID FROM $wpdb->posts WHERE post_name = '" . $market_system->name() . "')";
 
 	return $search;
 }
 add_filter( 'posts_search', 'pp_remove_index' );
 
+// Allow site admin to choose which roles can do what to marketplace posts.
+function pp_capabilities_settings_page() { 
+	global $wp_roles, $market_system;
+
+	$role_names = $wp_roles->get_names();
+	$roles = array();
+
+	foreach ( $role_names as $key => $value ) {
+		$roles[ $key] = get_role( $key);
+		$roles[ $key]->display_name = $value;
+	}
+	?>
+
+	<?php wp_nonce_field( 'pp_capabilities_settings' ); ?>
+	<div class="prospress-capabilities">
+		<h3><?php _e( 'Capabilities', 'prospress' ); ?></h3>
+		<p><?php printf( __( 'You can restrict interaction with %s to certain roles. Please choose which roles have the following capabilities:', 'prospress' ), $market_system->display_name() ); ?></p>
+		<div class="prospress-capabilitiy create">
+			<h4><?php printf( __( "Publish %s", 'prospress' ), $market_system->display_name() ); ?></h4>
+			<?php foreach ( $roles as $role ): if( $role->name == 'administrator' ) continue; ?>
+			<?php //error_log( 'role = ' . print_r( $role, true ) ); ?>
+
+			<label for="<?php echo $role->name; ?>-create">
+				<input type="checkbox" id="<?php echo $role->name; ?>-publish" name="<?php echo $role->name; ?>-publish"<?php checked( $role->capabilities[ 'publish_prospress_posts' ], 1 ); ?> />
+				<?php echo $role->display_name; ?>
+			</label>
+			<?php endforeach; ?>
+		</div>
+		<div class="prospress-capability edit">
+			<h4><?php printf( __( "Edit %s", 'prospress' ), $market_system->display_name() ); ?></h4>
+			<?php foreach ( $roles as $role ): if( $role->name == 'administrator' ) continue; ?>
+			<label for="<?php echo $role->name; ?>-edit">
+			  	<input type="checkbox" id="<?php echo $role->name; ?>-edit" name="<?php echo $role->name; ?>-edit"<?php checked( $role->capabilities[ 'edit_prospress_post' ], 1 ); ?> />
+				<?php echo $role->display_name; ?>
+			</label>
+			<?php endforeach; ?>
+		</div>
+		<div class="prospress-capability edit">
+			<h4><?php printf( __( "Edit Other's %s", 'prospress' ), $market_system->display_name() ); ?></h4>
+			<?php foreach ( $roles as $role ): if( $role->name == 'administrator' ) continue; ?>
+			<label for="<?php echo $role->name; ?>-edit-others">
+				<input type="checkbox" id="<?php echo $role->name; ?>-edit-others" name="<?php echo $role->name; ?>-edit-others"<?php checked( $role->capabilities[ 'edit_others_prospress_posts' ], 1 ); ?> />
+				<?php echo $role->display_name; ?>
+			</label>
+			<?php endforeach; ?>
+		</div>
+		<div class="prospress-capability delete">
+			<h4><?php printf( __( "Delete %s", 'prospress' ), $market_system->display_name() ); ?></h4>
+			<?php foreach ( $roles as $role ): if( $role->name == 'administrator' ) continue; ?>
+			<label for="<?php echo $role->name; ?>-delete">
+				<input type="checkbox" id="<?php echo $role->name; ?>-delete" name="<?php echo $role->name; ?>-delete"<?php checked( $role->capabilities[ 'delete_prospress_posts' ], 1 ) ?> />
+				<?php echo $role->display_name; ?>
+			</label>
+			<?php endforeach; ?>
+		</div>
+	</div>
+<?php
+}
+add_action( 'pp_core_settings_page', 'pp_capabilities_settings_page' );
+
+// Save settings from capabiltiies page... as they don't need to be stored in the database, they're not added to the whitelist, instead they're added to the appropriate role
+function pp_capabilities_whitelist( $whitelist_options ) {
+	global $wp_roles, $market_system;
+
+    if ( $_POST['_wpnonce' ] && check_admin_referer( 'pp_capabilities_settings' ) && current_user_can( 'manage_options' ) ){
+
+		$role_names = $wp_roles->get_names();
+		$roles = array();
+
+		foreach ( $role_names as $key=>$value ) {
+			$roles[ $key ] = get_role( $key );
+			$roles[ $key ]->display_name = $value;
+		}
+
+		foreach ( $roles as $key => $role ) {
+
+			if( $role->name == 'administrator' )
+				continue;
+
+			if ( isset( $_POST[ $key . '-publish' ] )  && $_POST[ $key . '-publish' ] == 'on' ) {
+				$role->add_cap( 'publish_prospress_posts' );
+			} else {
+				$role->remove_cap( 'publish_prospress_posts' );
+			}
+
+			if ( isset( $_POST[ $key . '-edit' ] )  && $_POST[ $key . '-edit' ] == 'on' ) {
+				$role->add_cap( 'edit_prospress_post' );
+				$role->add_cap( 'edit_prospress_posts' );
+			} else {
+				$role->remove_cap( 'edit_prospress_post' );
+				$role->remove_cap( 'edit_prospress_posts' );
+			}
+
+			if ( isset( $_POST[ $key . '-edit-others' ] )  && $_POST[ $key . '-edit-others' ] == 'on' ) {
+				$role->add_cap( 'edit_others_prospress_posts' );
+			} else {
+				$role->remove_cap( 'edit_others_prospress_posts' );
+	        }
+
+			if ( isset( $_POST[ $key . '-delete' ] )  && $_POST[ $key . '-delete' ] == 'on' ) {
+				$role->add_cap( 'delete_prospress_post' );
+			} else {
+				$role->remove_cap( 'delete_prospress_post' );
+			}
+		}
+    }
+
+	return $whitelist_options;
+}
+add_filter( 'pp_options_whitelist', 'pp_capabilities_whitelist' );

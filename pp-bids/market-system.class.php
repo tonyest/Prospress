@@ -3,6 +3,7 @@
 class PP_Market_System {
 
 	var $name;					// Public name of the market system e.g. "Auction".
+	var $singular_name;			// Public name of the market system e.g. "Auction".
 	var $bid_form_title;		// Title for the bid form.
 	var $bid_button_value;		// Text used on the submit button of the bid form.
 	var $post_fields;			// Array of flags representing the fields which the market system implements e.g. array( 'post_fields' )
@@ -12,16 +13,12 @@ class PP_Market_System {
 	var $bid_table_headings;	// Array of name/value pairs to be used as column headings when printing table of bids. 
 								// e.g. 'bid_id' => 'Bid ID', 'post_id' => 'Post', 'bid_value' => 'Amount', 'bid_date' => 'Date'
 
-	// Constructors
-	function PP_Market_System( $name, $bid_form_title = "", $bid_button_value = "", $post_fields = array(), $post_table_columns = array(), $bid_table_headings = array() ) {
-		$this->__construct( $name, $bid_form_title, $bid_button_value, $post_fields, $post_table_columns, $bid_table_headings );
-	}
+	function __construct( $name, $singular_name, $bid_form_title = "", $bid_button_value = "", $post_fields = array(), $post_table_columns = array(), $bid_table_headings = array() ) {
 
-	function __construct( $name, $bid_form_title = "", $bid_button_value = "", $post_fields = array(), $post_table_columns = array(), $bid_table_headings = array() ) {
-
-		$this->name = (string)$name;
-		$this->bid_form_title = empty( $bid_form_title ) ? __("Make a bid", 'prospress' ) : $bid_form_title;
-		$this->bid_button_value = empty( $bid_button_value ) ? __("Bid now!", 'prospress' ) : $bid_button_value;
+		$this->name 			= (string)$name;
+		$this->singular_name 	= (string)$singular_name;
+		$this->bid_form_title 	= empty( $bid_form_title ) ? __("Make a bid", 'prospress' ) : $bid_form_title;
+		$this->bid_button_value	= empty( $bid_button_value ) ? __("Bid now!", 'prospress' ) : $bid_button_value;
 
 		if( empty( $post_table_columns ) || !is_array( $post_table_columns ) ){
 			$this->post_table_columns = array (	'current_bid' => array( 'title' => 'Price', 'function' => 'the_winning_bid_value' ),
@@ -76,9 +73,6 @@ class PP_Market_System {
 		
 		add_filter( 'pp_sort_options', array( &$this, 'add_sort_options' ) );
 
-		// Allow admin to determine capabilities for marketplace posts
-		add_action( 'pp_core_settings_page', array( $this, 'capabilities_settings_page' ) );
-		add_filter( 'pp_options_whitelist', array( $this, 'capabilities_whitelist' ) );
 	}
 
 	/************************************************************************************************
@@ -116,6 +110,14 @@ class PP_Market_System {
 	 * member variable.
 	 **/
 	function name() {
+		return $this->name;
+	}
+
+	function singular_name() {
+		return ucfirst( $this->singular_name );
+	}
+
+	function display_name() {
 		return ucfirst( $this->name );
 	}
 
@@ -774,102 +776,6 @@ class PP_Market_System {
 		$pp_sort_options['price-desc' ] = __( 'Price: high to low', 'prospress' );
 
 		return $pp_sort_options;
-	}
-
-	// Allow admins to choose what capabilities are required for handling marketplace posts.
-	function capabilities_settings_page() { 
-		global $wp_roles, $market_system;
-
-		$role_names = $wp_roles->get_names();
-		$roles = array();
-
-		foreach ( $role_names as $key => $value ) {
-			$roles[ $key] = get_role( $key);
-			$roles[ $key]->display_name = $value;
-		}
-		?>
-
-	    <?php wp_nonce_field( 'pp_capabilities_settings' ); ?>
-	    <div class="prospress-capabilities">
-	      <h3><?php _e( 'Capabilities', 'prospress' ); ?></h3>
-	      <p>Select which roles will have the following capabilities:</p>
-	      <div class="prospress-capabilitiy create">
-	        <h4><?php printf( __( "Publish %s", 'prospress' ), $market_system->name() ); ?></h4>
-	        <?php foreach ( $roles as $role ): ?>
-	          <label for="<?php echo $role->name; ?>-create">
-	            <input type="checkbox" id="<?php echo $role->name; ?>-publish" name="<?php echo $role->name; ?>-publish"<?php checked( $role->capabilities['publish_' . $market_system->name() ], 1 ); ?> />
-	            <?php echo $role->display_name; ?>
-	          </label>
-	        <?php endforeach; ?>
-	      </div>
-	      <div class="prospress-capability edit">
-	        <h4><?php printf( __( "Edit %s", 'prospress' ), $market_system->name() ); ?></h4>
-	        <?php foreach ( $roles as $role ): ?>
-	          <label for="<?php echo $role->name; ?>-edit">
-	            <input type="checkbox" id="<?php echo $role->name; ?>-edit" name="<?php echo $role->name; ?>-edit"<?php checked( $role->capabilities['edit_' . $market_system->name() ], 1 ); ?> />
-	            <?php echo $role->display_name; ?>
-	          </label>
-	        <?php endforeach; ?>
-	      </div>
-	      <div class="prospress-capability delete">
-	        <h4><?php printf( __( "Delete %s", 'prospress' ), $market_system->name() ); ?></h4>
-	        <?php foreach ( $roles as $role ): ?>
-	          <label for="<?php echo $role->name; ?>-delete">
-	            <input type="checkbox" id="<?php echo $role->name; ?>-delete" name="<?php echo $role->name; ?>-delete"<?php checked( $role->capabilities[ 'delete_' . $market_system->name() ], 1 ) ?> />
-	            <?php echo $role->display_name; ?>
-	          </label>
-	        <?php endforeach; ?>
-	      </div>
-	    </div>
-	<?php
-	}
-
-	function capabilities_whitelist( $whitelist_options ) {
-		global $wp_roles, $market_system;
-
-	    if ( $_POST['_wpnonce' ] && check_admin_referer( 'pp_capabilities_settings' ) && current_user_can( 'manage_options' ) ){
-
-			$role_names = $wp_roles->get_names();
-			$roles = array();
-
-			foreach ( $role_names as $key=>$value ) {
-				$roles[ $key] = get_role( $key);
-				$roles[ $key]->display_name = $value;
-			}
-
-			foreach ( $roles as $key => $role ) {
-				if ( isset( $_POST[ $key.'-publish' ] )  && $_POST[ $key.'-publish' ] == 'on' ) {
-					$role->add_cap( 'publish_' . $market_system->name());
-				} else {
-					$role->remove_cap( 'publish_' . $market_system->name());
-				}
-
-				if ( isset( $_POST[ $key.'-edit' ] )  && $_POST[ $key.'-edit' ] == 'on' ) {
-					$role->add_cap( 'edit_Auction' );
-					$role->add_cap( 'edit_' . $market_system->name());
-					//$role->add_cap( 'edit_others_' . $market_system->name());
-				} else {
-					$role->remove_cap( 'edit_Auction' );
-					$role->remove_cap( 'edit_' . $market_system->name());
-					//$role->remove_cap( 'edit_others_' . $market_system->name());
-		        }
-
-				if ( isset( $_POST[ $key.'-delete' ] )  && $_POST[ $key.'-delete' ] == 'on' ) {
-					$role->add_cap( 'delete_' . $market_system->name() );
-				} else {
-					$role->remove_cap( 'delete_' . $market_system->name() );
-				}
-
-				if( $role == 'administrator' ){
-					//$role->add_cap( 'edit_others_' . $market_system->name() );
-					$role->remove_cap( 'edit_others_' . $market_system->name() );
-					//$role->add_cap( 'delete_' . $market_system->name() );
-				}
-			}
-	      $this->updated_message = 'Settings saved';
-	    }
-
-		return $whitelist_options;
 	}
 
 	// Called with init hook to determine if a bid has been submitted. If it has, bid_form_submit is called.

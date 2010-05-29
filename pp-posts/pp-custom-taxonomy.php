@@ -8,9 +8,8 @@ function pp_taxonomy_menus() {
 	$base_title = 'Taxonomies';
 	$base_page = "custom_taxonomy";
 
-	add_submenu_page( 'hidden', 'Add New', 'Add New', 'administrator', $base_page.'_add', 'pp_add_new_page');
-	//add_options_page( 'Prospress Taxonomies', 'Prospress Taxonomies', 'administrator', $base_page.'_manage', 'pp_manage_taxonomies');
-	add_submenu_page( 'Prospress', __( 'Custom Prospress Taxonomies', 'prospress' ), __( 'Taxonomies', 'prospress' ), 'administrator', $base_page.'_manage', 'pp_manage_taxonomies');
+	add_submenu_page( 'hidden', 'Add New', 'Add New', 'administrator', $base_page.'_add', 'pp_add_new_page' );
+	add_submenu_page( 'Prospress', __( 'Custom Prospress Taxonomies', 'prospress' ), __( 'Taxonomies', 'prospress' ), 'administrator', $base_page.'_manage', 'pp_manage_taxonomies' );
 }
 add_action('admin_menu', 'pp_taxonomy_menus');
 
@@ -22,6 +21,7 @@ function pp_manage_taxonomies() {
 		//check for success/error messages
 		if ( isset( $_GET[ 'pp_msg' ] ) ) { ?>
 		    <div id="message" class="updated">
+				<p>
 		    	<?php switch( $_GET[ 'pp_msg' ] ){
 					case 'add': 
 							_e('Taxonomy created.', 'prospress' );
@@ -33,15 +33,16 @@ function pp_manage_taxonomies() {
 							_e('Taxonomy updated.', 'prospress' );
 					        break;
 					}?>
+				</p>
 		    </div>
 		    <?php
 		}
 		screen_icon( 'prospress' );
 		?>
 		<h2><?php _e( 'Prospress Taxonomies', 'prospress' ) ?><a href="<?php echo PP_ADD_TAX_URL; ?>" class="button add-new-h2">Add New</a></h2>
-		<p><?php _e( 'Create a taxonomy to give traders in your marketplace a way to categorize their posts. A taxonomy makes it easier for visitors to find that needle in your marketplace\'s haystack.') ?></p>
-		<p><?php _e( "For example, to classify art related posts in a marketplace, one would create an \"Artistic Medium\" taxonomy and include \"Coloured Pencil\", \"Oil Paint\" or \"Lego Blocks\" as the taxonomies types." ) ?></p>
-		<p><?php printf( __( 'After creating the taxonomy here, you can add elements to it under the %s menu.'), $market_system->name() ) ?></p>
+		<p><?php printf( __( 'Taxonomies are used to classify and categorize %s. This makes it easier to find posts.' ), $market_system->name() ) ?></p>
+		<p><?php printf( __( 'For example, to classify Car %s, an <em>Colour</em> taxonomy could be created which included <em>Red</em>, <em>Blue</em> and <em>Silver</em> as the taxonomy\'s types.' ), $market_system->name() ) ?></p>
+		<p><?php printf( __( 'After creating the taxonomy here, you can add elements to it under the %s menu.' ), $market_system->name() ) ?></p>
 		<?php 
 		$pp_tax_types = get_option( 'pp_custom_taxonomies' );
 		if( !empty( $pp_tax_types ) ) { ?>
@@ -73,7 +74,7 @@ function pp_manage_taxonomies() {
 		        	<tr>
 		            	<td valign="top"><?php echo stripslashes( $tax_name ); ?></td>
 		                <td valign="top"><?php echo stripslashes( $pp_tax_type[ 'label' ] ); ?></td>
-		                <td valign="top"><?php echo stripslashes( $pp_tax_type[ 'singular_label' ] ); ?></td>
+		                <td valign="top"><?php echo stripslashes( $pp_tax_type[ 'labels' ][ 'singular_label' ] ); ?></td>
 		            	<td valign="top"><a href="<?php echo $del_url; ?>">Delete</a> / <a href="<?php echo $edit_url; ?>">Edit</a></td>
 		            </tr>
 				<?php
@@ -98,7 +99,7 @@ function pp_add_new_page() {
 		$tax_to_edit = $_GET[ 'edittax' ];
 		$pp_taxonomies = get_option( 'pp_custom_taxonomies' );
 		$pp_tax_label = $pp_taxonomies[ $tax_to_edit ][ 'label' ];
-		$pp_singular_label = $pp_taxonomies[ $tax_to_edit ][ 'singular_label' ];
+		$pp_singular_label = $pp_taxonomies[ $tax_to_edit ][ 'labels' ][ 'singular_label' ];
 		$pp_add_or_edit = 'pp_edit_tax';
 	}else{
 		$pp_tax_submit_name = __( 'Create Taxonomy', 'prospress' );
@@ -117,7 +118,7 @@ function pp_add_new_page() {
 	<?php 
 		if ( isset( $_GET['pp_error' ] ) && $_GET['pp_error'] == 2 ){
 			echo '<div class="error">';
-			echo __( 'Taxonomy name is required.', 'prospress' );
+			echo '<p>' . __( 'Taxonomy name is required.', 'prospress' ) . '<p>';
 			echo '</div>';
 		}
 	?>
@@ -201,13 +202,21 @@ function pp_register_settings() {
 		exit();
 	}
 
-	$pp_new_tax[ 'label' ] = ( !$_POST[ 'label' ] ) ? $pp_tax_name : strip_tags( $_POST[ 'label' ] );
-	$pp_new_tax[ 'singular_label' ] = ( !$_POST[ 'singular_label' ] ) ? $pp_tax_name : strip_tags( $_POST[ 'singular_label' ] );
-	$pp_new_tax[ 'object_type' ] = $market_system->name();
-	$pp_new_tax[ 'hierarchical' ] = true;
-	$pp_new_tax[ 'show_ui' ] = true;
-	$pp_new_tax[ 'query_var' ] = $pp_tax_name;
-	$pp_new_tax[ 'rewrite' ] = $pp_tax_name;
+	$pp_new_tax[ 'label' ] 			= ( !$_POST[ 'label' ] ) ? $pp_tax_name : strip_tags( $_POST[ 'label' ] );
+	$pp_new_tax[ 'object_type' ] 	= $market_system->name();
+	$pp_new_tax[ 'public' ] 		= true;
+	$pp_new_tax[ 'hierarchical' ] 	= true;
+	$pp_new_tax[ 'show_ui' ] 		= true;
+	$pp_new_tax[ 'query_var' ] 		= $pp_tax_name;
+	$pp_new_tax[ 'rewrite' ] 		= $pp_tax_name;
+	$pp_new_tax[ 'labels' ] 		= array();
+	$pp_new_tax[ 'labels' ][ 'singular_label' ]	= ( !$_POST[ 'singular_label' ] ) ? $pp_tax_name : strip_tags( $_POST[ 'singular_label' ] );
+	$pp_new_tax[ 'labels' ][ 'search_items' ] 	= $pp_new_tax[ 'label' ];
+	$pp_new_tax[ 'labels' ][ 'all_items' ] 		= $pp_new_tax[ 'label' ];
+	$pp_new_tax[ 'labels' ][ 'parent_item' ] 	= $pp_new_tax[ 'label' ];
+	$pp_new_tax[ 'labels' ][ 'update_item' ]	= $pp_new_tax[ 'label' ];
+	$pp_new_tax[ 'labels' ][ 'add_new_item' ]	= $pp_new_tax[ 'label' ];
+	$pp_new_tax[ 'labels' ][ 'new_item_name' ]	= $pp_new_tax[ 'label' ];
 
 	$pp_taxonomies = get_option( 'pp_custom_taxonomies' );
 

@@ -1,81 +1,5 @@
 <?php
 
-class PP_Sort_Query {
-	const BID_WINNING = 'winning_bid_value';
-	const START_PRICE = 'start_price';
-	const POST_END = 'post_end_date_gmt';
-
-	static function init() {
-		add_action( 'pre_get_posts', array( __CLASS__, 'add_filters' ) );
-	}
-
-	static function add_filters( $obj ) {
-		global $market_system;
-
-		// Don't touch the main query or queries for non-Prospress posts
-		if ( $GLOBALS['wp_query'] == $obj || $obj->query_vars['post_type'] != $market_system->name() )
-			return;
-
-		add_filter('posts_orderby', array(__CLASS__, 'posts_orderby'));
-	}
-
-	static function posts_orderby( $sql ) {
-		remove_filter(current_filter(), array(__CLASS__, __FUNCTION__));
-
-		global $wpdb;
-
-		if ( !$sort = trim( @$_GET[ 'pp-sort' ] ) )
-			return $sql;
-
-		list($orderby, $order) = explode('-', $sort);
-
-		if ( 'asc' == $order )
-			$order = 'ASC';
-		else
-			$order = 'DESC';
-
-		if ( 'price' == $orderby ) {
-			$meta_value = "CAST($wpdb->bidsmeta.meta_value AS decimal)";
-			$price_meta_value = "CAST($wpdb->postmeta.meta_value AS decimal)";
-
-			$sql = "COALESCE((
-						SELECT $meta_value
-						FROM $wpdb->bidsmeta
-						JOIN $wpdb->bids
-							ON $wpdb->bids.bid_id = $wpdb->bidsmeta.bid_id
-						WHERE $wpdb->bids.post_id = $wpdb->posts.ID
-						AND $wpdb->bidsmeta.meta_key = '" . self::BID_WINNING . "'
-					), (
-						SELECT $price_meta_value
-						FROM $wpdb->postmeta
-						WHERE $wpdb->postmeta.post_id = $wpdb->posts.ID
-						AND $wpdb->postmeta.meta_key = '" . self::START_PRICE . "'
-						)) $order";
-		}
-
-		if ( 'end' == $orderby ) {
-			$sql = "(
-				SELECT meta_value
-				FROM $wpdb->postmeta
-				WHERE $wpdb->postmeta.post_id = $wpdb->posts.ID
-				AND $wpdb->postmeta.meta_key = '" . self::POST_END . "'
-			) $order";
-		}
-
-		if ( 'post' == $orderby ) {
-			$sql = "$wpdb->posts.post_date $order";
-		}
-
-		error_log("posts_orderby sql = $sql");
-		return $sql;
-	}
-}
-PP_Sort_Query::init();
-
-
-/**************************************************************************************
- *************************************** WIDGET ***************************************
- **************************************************************************************/
 class PP_Sort_Widget extends WP_Widget {
 	function PP_Sort_Widget() {
 		global $market_system; 
@@ -156,9 +80,75 @@ function pp_set_sort_options(){
 }
 add_action('init', 'pp_set_sort_options');
 
-add_action( 'wp_head', 'pp_print_query' );
-function pp_print_query(){
-	global $wp_query;
 
-	//error_log("query = " . print_r($wp_query, true));
+class PP_Sort_Query {
+	const BID_WINNING = 'winning_bid_value';
+	const START_PRICE = 'start_price';
+	const POST_END = 'post_end_date_gmt';
+
+	static function init() {
+		add_action( 'pre_get_posts', array( __CLASS__, 'add_filters' ) );
+	}
+
+	static function add_filters( $obj ) {
+		global $market_system;
+
+		// Don't touch the main query or queries for non-Prospress posts
+		if ( $GLOBALS['wp_query'] == $obj || $obj->query_vars['post_type'] != $market_system->name() )
+			return;
+
+		add_filter('posts_orderby', array(__CLASS__, 'posts_orderby'));
+	}
+
+	static function posts_orderby( $sql ) {
+		remove_filter(current_filter(), array(__CLASS__, __FUNCTION__));
+
+		global $wpdb;
+
+		if ( !$sort = trim( @$_GET[ 'pp-sort' ] ) )
+			return $sql;
+
+		list($orderby, $order) = explode('-', $sort);
+
+		if ( 'asc' == $order )
+			$order = 'ASC';
+		else
+			$order = 'DESC';
+
+		if ( 'price' == $orderby ) {
+			$meta_value = "CAST($wpdb->bidsmeta.meta_value AS decimal)";
+			$price_meta_value = "CAST($wpdb->postmeta.meta_value AS decimal)";
+
+			$sql = "COALESCE((
+						SELECT $meta_value
+						FROM $wpdb->bidsmeta
+						JOIN $wpdb->bids
+							ON $wpdb->bids.bid_id = $wpdb->bidsmeta.bid_id
+						WHERE $wpdb->bids.post_id = $wpdb->posts.ID
+						AND $wpdb->bidsmeta.meta_key = '" . self::BID_WINNING . "'
+					), (
+						SELECT $price_meta_value
+						FROM $wpdb->postmeta
+						WHERE $wpdb->postmeta.post_id = $wpdb->posts.ID
+						AND $wpdb->postmeta.meta_key = '" . self::START_PRICE . "'
+						)) $order";
+		}
+
+		if ( 'end' == $orderby ) {
+			$sql = "(
+				SELECT meta_value
+				FROM $wpdb->postmeta
+				WHERE $wpdb->postmeta.post_id = $wpdb->posts.ID
+				AND $wpdb->postmeta.meta_key = '" . self::POST_END . "'
+			) $order";
+		}
+
+		if ( 'post' == $orderby ) {
+			$sql = "$wpdb->posts.post_date $order";
+		}
+
+		error_log("posts_orderby sql = $sql");
+		return $sql;
+	}
 }
+PP_Sort_Query::init();

@@ -13,17 +13,12 @@ class PP_Auction_Bid_System extends PP_Market_System {
 
 	// Constructors
 
-	// PHP4 constructor
-	function PP_Auction_Bid_System() {
-		$this->__construct();
-	}
-
 	// PHP5 constructor
 	function __construct() {
 		if ( !defined( 'BID_INCREMENT' ) )
 			define( 'BID_INCREMENT', '0.05' );
 
-		parent::__construct( __('auctions', 'prospress' ), __('Auction Bid', 'prospress' ), __('Bid!', 'prospress' ), array( 'post_fields' ) );
+		parent::__construct( __( 'auctions', 'prospress' ), __( 'auction', 'prospress' ), __( 'Auction Bid', 'prospress' ), __('Bid!', 'prospress' ), array( 'post_fields' ) );
 		add_filter( 'winning_bid_actions', array( &$this, 'add_winning_bid_actions' ), 10, 2 );
 	}
 

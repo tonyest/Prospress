@@ -8,79 +8,31 @@
 function pp_post_type() {
 	global $market_system;
 
-	$defaults = array(
-	    'label' => false,
-	    'publicly_queryable' => null,
-	    'exclude_from_search' => null,
-	    '_builtin' => false,
-	    '_edit_link' => 'post.php?post=%d',
-	    'capability_type' => 'post',
-	    'hierarchical' => false,
-	    'public' => false,
-	    'rewrite' => true,
-	    'query_var' => true,
-	    'supports' => array(),
-	    'register_meta_box_cb' => null,
-	    'taxonomies' => array(),
-	    'show_ui' => null
-	);
-	/*
-	$default_capabilities = array(
-		'edit_post' => 'edit_post',
-		'edit_posts' => 'edit_posts',
-		'edit_others_posts' => 'edit_others_posts',
-		'publish_posts' => 'publish_posts',
-		'read_post' => 'read_post',
-		'read_private_posts' => 'read_private_posts',
-		'delete_post' => 'delete_post',
-	);
-
-	$market_system_capabilities = array(
-		'edit_post' => 'edit_' . $market_system->name(),
-		'edit_posts' => 'edit_' . $market_system->name(),
-		'publish_posts' => 'publish_' . $market_system->name(),
-		'delete_post' => 'delete_' . $market_system->name() 
-		);
-
-	$capabilities = array_merge( $default_capabilities, $market_system_capabilities );
-	error_log( 'capabilities = ' . print_r( $capabilities, true ) );
-	*/
 	$args = array(
-			'label' => $market_system->name(),
-			'public' => true,
-			'show_ui' => true,
-			'rewrite' => array( 'slug' => $market_system->name(), 'with_front' => false ),
-			'capability_type' => 'Auction',
-			//'capability_type' => $market_system->name(),
-			//'capability_type' => 'post',
-			//'capabilities' => $capabilities, @TODO when WP3.0 bugs are fixed come back to this.
-            'supports' => array(
+			'label' 	=> $market_system->display_name(),
+			'public' 	=> true,
+			'show_ui' 	=> true,
+			'rewrite' 	=> array( 'slug' => $market_system->name(), 'with_front' => false ),
+			'capability_type' => 'prospress_post', //generic to cover all Prospress marketplace types
+			'show_in_nav_menus' => false,
+			'supports' 	=> array(
 							'title',
 							'editor',
 							'thumbnail',
 							'post-thumbnails',
 							'comments',
-							'revisions'),
-					);
+							'revisions' ),
+			'labels'	=> array( 'name'	=> $market_system->display_name(),
+							'singular_name'	=> $market_system->singular_name(),
+							'add_new_item'	=> sprintf( __( 'Add New %s', 'prospress' ), $market_system->singular_name() ),
+							'edit_item'		=> sprintf( __( 'Edit %s', 'prospress' ), $market_system->singular_name() ),
+							'new_item'		=> sprintf( __( 'New %s', 'prospress' ), $market_system->singular_name() ),
+							'view_item'		=> sprintf( __( 'View %s', 'prospress' ), $market_system->singular_name() ),
+							'search_items'	=> sprintf( __( 'Seach %s', 'prospress' ), $market_system->display_name() ),
+							'not_found'		=> sprintf( __( 'No %s found', 'prospress' ), $market_system->display_name() ),
+							'not_found_in_trash' => sprintf( __( 'No %s found in Trash', 'prospress' ), $market_system->display_name() ) )
+				);
 
 	register_post_type( $market_system->name(), $args );
-
-	// Get the subscriber role & add capabilities to it
-	/*
-	$role = get_role( 'subscriber' );
-
-	foreach ( $market_system_capabilities as $cap ){
-		error_log( 'cap = ' . print_r( $cap, true ) );
-		$role->add_cap( $cap );
-	}
-	error_log( 'after add_cap, role = ' . print_r( $role, true ) );
-	//$role->remove_cap( 'edit_posts' );
-	$role = get_role( 'administrator' );
-	error_log( 'role = ' . print_r( $role, true ) );
-	$role = get_role( 'editor' );
-	error_log( 'role = ' . print_r( $role, true ) );
-	$role = get_role( 'subscriber' );
-	error_log( 'role = ' . print_r( $role, true ) );
-	*/
 }
-add_action('init', 'pp_post_type');
+add_action( 'init', 'pp_post_type' );

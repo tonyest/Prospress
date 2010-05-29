@@ -70,13 +70,11 @@ add_action( 'admin_head', 'pp_add_icon_css' );
 
 function pp_settings_page(){
 	global $currencies;
-	error_log('pp_settings_page being called.');
-	error_log('POST = ' . print_r( $_POST, true ) );
+
 	if( isset( $_POST[ 'submit' ] ) && $_POST[ 'submit' ] == 'Save' ){
 
 		$pp_options_whitelist = apply_filters( 'pp_options_whitelist', array( 'general' => array( 'currency_type' ) ) );
 
-		error_log( "pp_options_whitelist = " . print_r( $pp_options_whitelist, true ) );
 		foreach ( $pp_options_whitelist[ 'general' ] as $option ) {
 			$option = trim($option);
 			$value = null;
@@ -85,33 +83,35 @@ function pp_settings_page(){
 			if ( !is_array($value) )
 				$value = trim($value);
 			$value = stripslashes_deep($value);
-			error_log( "value = " . print_r( $value, true ) );
+
 			update_option($option, $value);
 		}
+		$updated_message = __( 'Settings Updated.' );
 	}
 	?>
 	<div class="wrap">
 		<?php screen_icon( 'prospress' ); ?>
 		<h2><?php _e( 'Prospress Settings', 'prospress' ) ?></h2>
+		<?php if( isset( $updated_message ) ) { ?>
+			<div id='message' class='updated fade'>
+				<p><?php echo $updated_message; ?></p>
+			</div>
+		<?php } ?>
 		<form action="" method="post">
 			<h3><?php _e( 'Currency', 'prospress' )?></h3>
-			<p><?php _e( 'Please choose a currency for transactions in your marketplace.', 'prospress' ); ?></p>
-			<table class='form-table'>
-				<tr>
-					<th scope="row"><?php _e('Currency:', 'prospress' ); ?></th>
-					<td>
-						<select id='currency_type' name='currency_type'>
-						<?php $currency_type = get_option( 'currency_type' );
-						foreach( $currencies as $code => $currency ) {
-						?>
-							<option value='<?php echo $code; ?>' <?php selected( $currency_type, $code ); ?> >
-								<?php echo $currency[ 'currency' ]; ?> (<?php echo $code . ', ' . $currency['symbol']; ?>)
-							</option>
-				<?php	} ?>
-						</select>
-					</td>
-				</tr>
-			</table>
+			<p><?php _e( 'Please choose a default currency for all transactions in your marketplace.', 'prospress' ); ?></p>
+
+			<label for='currency_type'>
+				<?php _e('Currency:' , 'prospress' );?>
+				<select id='currency_type' name='currency_type'>
+				<?php $currency_type = get_option( 'currency_type' );
+				foreach( $currencies as $code => $currency ) { ?>
+					<option value='<?php echo $code; ?>' <?php selected( $currency_type, $code ); ?> >
+						<?php echo $currency[ 'currency' ]; ?> (<?php echo $code . ', ' . $currency['symbol']; ?>)
+					</option>
+				<?php } ?>
+				</select>
+			</label>
 		<?php do_action( 'pp_core_settings_page' ); ?>
 		<p class="submit">
 			<input type="submit" value="Save" class="button-primary" name="submit">
@@ -182,7 +182,6 @@ function pp_money_format( $number, $decimals = 2, $currency = '' ){
 	return $currency_sym . ' ' . number_format_i18n( $number, $decimals );
 }
 
-
 /************************************************************************************************************************/
 /**** MONEY FORMAT FUNCTIONS ****/
 /************************************************************************************************************************/
@@ -195,7 +194,7 @@ function pp_money_format( $number, $decimals = 2, $currency = '' ){
 function pp_core_admin_head() {
 	global $market_system;
 
-	if( is_pp_post_admin_page() || strpos( $_SERVER['REQUEST_URI'], 'bids' ) !== false )
+	if( strpos( $_SERVER['REQUEST_URI'], 'completed' ) !== false  || strpos( $_SERVER['REQUEST_URI'], 'bids' ) !== false )
 		wp_enqueue_style( 'completed-actions',  PP_CORE_URL . '/prospress-admin.css' );
 }
 add_action('admin_menu', 'pp_core_admin_head');

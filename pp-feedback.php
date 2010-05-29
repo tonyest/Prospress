@@ -461,20 +461,15 @@ function pp_feedback_rows($feedback = ''){
 }
 
 // Displays the fields for handling feedback options in the Core Prospress Settings admin page.
-function pp_feedback_settings_section() { ?>
+function pp_feedback_settings_section() { 
+	$edit_feedback = get_option( 'edit_feedback' );
+	?>
 	<h3><?php _e( 'Feedback' , 'prospress' )?></h3>
-	<p><?php _e( 'Allowing feedback to be modified helps make feedback more accurate. Circumstances change, even after feedback has been provided.' , 'prospress' ); ?></p>
-	<table class='form-table'>
-		<tr>
-			<th scope="row"><?php echo _e('Allow feedback to be edited' , 'prospress' );?>:</th>
-			<td>
-				<?php
-				$edit_feedback = get_option( 'edit_feedback' );
-				?>
-				<input type='checkbox' value='true' name='edit_feedback' id='ef1' <?php checked( (boolean)$edit_feedback ); ?> />
-			</td>
-		</tr>
-	</table>
+	<p><?php _e( 'Allowing a user to edit feedback they have left for others helps keep make feedback more accurate. Circumstances can change, even after feedback has been provided.' , 'prospress' ); ?></p>
+	<label for='edit_feedback'>
+		<input type='checkbox' value='true' name='edit_feedback' id='edit_feedback' <?php checked( (boolean)$edit_feedback ); ?> />
+		  <?php _e('Allow users to edit feedback.' , 'prospress' );?>
+	</label>
 <?php
 }
 add_action( 'pp_core_settings_page', 'pp_feedback_settings_section' );

@@ -5,7 +5,7 @@
 <form id='wp_invoice_settings_page' method='POST'>
 <table class="form-table">
 	<tr>
-		<th><a class="wp_invoice_tooltip" title="The default name for an invoice's tax item. eg. VAT, GST or Sales Tax."><?php _e('Default Tax Label:', 'prospress'); ?></a></th><td>
+		<th><a class="wp_invoice_tooltip" title="The name of tax in your country. eg. VAT, GST or Sales Tax."><?php _e('Default Tax Label:', 'prospress'); ?></a></th><td>
 		<?php echo wp_invoice_draw_inputfield('wp_invoice_custom_label_tax', get_option('wp_invoice_custom_label_tax')); ?>
 		</td>
 	</tr>		
