@@ -121,17 +121,10 @@
 		<?php echo wp_invoice_draw_inputfield("city",$invoice->payer_class->city); ?>
 		</li>
 
-	<?php if(get_option('wp_invoice_fe_state_selection') != 'Hide') { ?>
 		<li id="state_field">
 		<label for="state"><?php _e('State', 'prospress'); ?></label>
-	<?php if(get_option('wp_invoice_fe_state_selection') == 'Dropdown') { ?>
-		<?php print wp_invoice_draw_select('state',wp_invoice_state_array(),$invoice->payer_class->state);  ?>
-	<?php } ?>
-	<?php if(get_option('wp_invoice_fe_state_selection') == 'Input_Field') { ?>
 		<?php echo wp_invoice_draw_inputfield("state",$invoice->payer_class->state); ?>
-	<?php } ?>
 		</li>
-		<?php } ?>
 
 		<li>
 		<label for="zip"><?php _e('Zip Code', 'prospress'); ?></label>

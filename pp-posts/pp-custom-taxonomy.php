@@ -25,6 +25,9 @@ function pp_manage_taxonomies() {
 		    	<?php switch( $_GET[ 'pp_msg' ] ){
 					case 'add': 
 							_e('Taxonomy created.', 'prospress' );
+							$edit_tax_url = admin_url( 'edit-tags.php' );
+							$edit_tax_url = '<a href="' . add_query_arg( array( 'post_type' => $market_system->name(), 'taxonomy' => $_GET[ 'taxonomy' ] ), $edit_tax_url ) . '">' . $market_system->display_name() . '</a>';
+							printf( __( 'Taxonomy created. You can add elements to it under the %s menu.', 'prospress' ), $edit_tax_url );
 					        break;
 					case 'del': 
 							_e('Taxonomy deleted.', 'prospress' );
@@ -39,10 +42,9 @@ function pp_manage_taxonomies() {
 		}
 		screen_icon( 'prospress' );
 		?>
-		<h2><?php _e( 'Prospress Taxonomies', 'prospress' ) ?><a href="<?php echo PP_ADD_TAX_URL; ?>" class="button add-new-h2">Add New</a></h2>
-		<p><?php printf( __( 'Taxonomies are used to classify and categorize %s. This makes it easier to find posts.' ), $market_system->name() ) ?></p>
-		<p><?php printf( __( 'For example, to classify Car %s, an <em>Colour</em> taxonomy could be created which included <em>Red</em>, <em>Blue</em> and <em>Silver</em> as the taxonomy\'s types.' ), $market_system->name() ) ?></p>
-		<p><?php printf( __( 'After creating the taxonomy here, you can add elements to it under the %s menu.' ), $market_system->name() ) ?></p>
+		<h2><?php echo $market_system->singular_name() . ' '; _e( 'Taxonomies', 'prospress' ) ?><a href="<?php echo PP_ADD_TAX_URL; ?>" class="button add-new-h2">Add New</a></h2>
+		<p><?php printf( __( 'Taxonomies are used to classify and categorize %s. They can be used to group %s with similar characteristics and make it easier to find %s with a certain characteristic.', 'prospress' ), $market_system->display_name(), $market_system->display_name(), $market_system->display_name() ) ?></p>
+		<p><?php printf( __( 'For example, to classify Motorcyle %s, an <em>Engine Size</em> taxonomy could be created to include <em>Less than 250cc</em>, <em>251 to 600cc</em> and <em>Greater than 600cc</em> categories.', 'prospress' ), $market_system->display_name() ) ?></p>
 		<?php 
 		$pp_tax_types = get_option( 'pp_custom_taxonomies' );
 		if( !empty( $pp_tax_types ) ) { ?>
@@ -52,7 +54,7 @@ function pp_manage_taxonomies() {
 		            	<th><strong><?php _e('Name', 'prospress' );?></strong></th>
 		                <th><strong><?php _e('Label', 'prospress' );?></strong></th>
 		                <th><strong><?php _e('Singular Label', 'prospress' );?></strong></th>
-		            	<th><strong><?php _e('Action', 'prospress' );?></strong></th>
+		            	<th><strong><?php _e('Actions', 'prospress' );?></strong></th>
 		            </tr>
 				</thead>
 				<tfoot>
@@ -60,23 +62,33 @@ function pp_manage_taxonomies() {
 		            	<th><strong><?php _e('Name', 'prospress' );?></strong></th>
 		                <th><strong><?php _e('Label', 'prospress' );?></strong></th>
 		                <th><strong><?php _e('Singular Label', 'prospress' );?></strong></th>
-		            	<th><strong><?php _e('Action', 'prospress' );?></strong></th>
+		            	<th><strong><?php _e('Actions', 'prospress' );?></strong></th>
 		            </tr>
 				</tfoot>
 				<tbody>
 		        <?php
-				foreach ($pp_tax_types as $tax_name => $pp_tax_type) {
+				foreach ($pp_tax_types as $tax_name => $pp_tax_type ) {
 					$del_url = add_query_arg( 'deltax', $tax_name, PP_TAX_URL );
 					$del_url = ( function_exists('wp_nonce_url') ) ? wp_nonce_url( $del_url, 'pp_delete_tax' ) : $del_url;
 					$edit_url = add_query_arg( 'edittax', $tax_name, PP_ADD_TAX_URL );
 					$edit_url = ( function_exists('wp_nonce_url') ) ? wp_nonce_url( $edit_url, 'pp_edit_tax' ) : $edit_url;
+					$edit_types_url = add_query_arg( array( 'post_type' => $market_system->name(), 'taxonomy' => $tax_name ), $edit_tax_url );
 				?>
 		        	<tr>
 		            	<td valign="top"><?php echo stripslashes( $tax_name ); ?></td>
 		                <td valign="top"><?php echo stripslashes( $pp_tax_type[ 'label' ] ); ?></td>
 		                <td valign="top"><?php echo stripslashes( $pp_tax_type[ 'labels' ][ 'singular_label' ] ); ?></td>
-		            	<td valign="top"><a href="<?php echo $del_url; ?>">Delete</a> / <a href="<?php echo $edit_url; ?>">Edit</a></td>
-		            </tr>
+		            	<td valign="top">
+							<div class="prospress-actions">
+								<ul class="actions-list">
+									<li class="base"><?php _e( 'Take Action:', 'prospress' );?></li>
+									<li class="action"><a href="<?php echo $edit_url; ?>"><?php _e( 'Edit Taxonomy', 'prospress' );?></a></li>
+									<li class="action"><a href="<?php echo $del_url; ?>"><?php _e( 'Delete Taxonomy', 'prospress' );?></a></li>
+									<li class="action"><a href="<?php echo $edit_types_url; ?>"><?php printf( __( 'Add New %s', 'prospress' ), $pp_tax_type[ 'labels' ][ 'singular_label' ] );?></a></li>
+								</ul>
+							</div>	
+		            	</td>
+					</tr>
 				<?php
 				} ?>
 				</tbody>
@@ -138,7 +150,7 @@ function pp_add_new_page() {
 							<th scope="row"><?php _e( 'Taxonomy Name', 'prospress' ) ?> <span style="color:red;">*</span></th>
 							<td>
 								<input type="text" name="pp_custom_tax" tabindex="21" value="<?php echo esc_attr( $tax_to_edit ); ?>" />
-								<label><?php _e( "Used to define the taxonomy. Make it short and sweet. e.g. medium", 'prospress' ); ?></label>
+								<label><?php _e( 'Used to define the taxonomy. Make it short and sweet. e.g. size', 'prospress' ); ?></label>
 							</td>
 						</tr>
 
@@ -146,7 +158,7 @@ function pp_add_new_page() {
 							<th scope="row"><?php _e( 'Plural Label', 'prospress' ) ?></th>
 							<td>
 								<input type="text" name="label" tabindex="22" value="<?php echo esc_attr( $pp_tax_label ); ?>" />
-								<label><?php _e("Taxonomy label.  Used in the admin menu for displaying custom taxonomy. e.g. Artistic Mediums", 'prospress' ); ?></label>
+								<label><?php _e( 'Used to refer to multiple items of this type. e.g. Engine Sizes', 'prospress' ); ?></label>
 							</td>
 						</tr>
 
@@ -154,7 +166,7 @@ function pp_add_new_page() {
 							<th scope="row"><?php _e( 'Singular Label', 'prospress' ) ?></th>
 							<td>
 								<input type="text" name="singular_label" tabindex="23" value="<?php echo esc_attr( $pp_singular_label ); ?>" />
-								<label><?php _e("Used when a singular label is needed. e.g. Artistic Medium", 'prospress' ); ?></label>
+								<label><?php _e( 'Used to refer to a single item of this type. e.g. Engine Size', 'prospress' ); ?></label>
 							</td>
 						</tr>
 					</table>
@@ -204,20 +216,10 @@ function pp_register_settings() {
 
 	$pp_new_tax[ 'label' ] 			= ( !$_POST[ 'label' ] ) ? $pp_tax_name : strip_tags( $_POST[ 'label' ] );
 	$pp_new_tax[ 'object_type' ] 	= $market_system->name();
-	$pp_new_tax[ 'public' ] 		= true;
-	$pp_new_tax[ 'hierarchical' ] 	= true;
-	$pp_new_tax[ 'show_ui' ] 		= true;
-	$pp_new_tax[ 'query_var' ] 		= $pp_tax_name;
-	$pp_new_tax[ 'rewrite' ] 		= $pp_tax_name;
 	$pp_new_tax[ 'capabilities' ] 	= array( 'assign_terms' => 'edit_prospress_posts' );
 	$pp_new_tax[ 'labels' ] 		= array();
 	$pp_new_tax[ 'labels' ][ 'singular_label' ]	= ( !$_POST[ 'singular_label' ] ) ? $pp_tax_name : strip_tags( $_POST[ 'singular_label' ] );
-	$pp_new_tax[ 'labels' ][ 'search_items' ] 	= $pp_new_tax[ 'label' ];
-	$pp_new_tax[ 'labels' ][ 'all_items' ] 		= $pp_new_tax[ 'label' ];
-	$pp_new_tax[ 'labels' ][ 'parent_item' ] 	= $pp_new_tax[ 'label' ];
-	$pp_new_tax[ 'labels' ][ 'update_item' ]	= $pp_new_tax[ 'label' ];
-	$pp_new_tax[ 'labels' ][ 'add_new_item' ]	= $pp_new_tax[ 'label' ];
-	$pp_new_tax[ 'labels' ][ 'new_item_name' ]	= $pp_new_tax[ 'label' ];
+	//other taxonomy args are defined dynamically to help future proof custom taxonomies
 
 	$pp_taxonomies = get_option( 'pp_custom_taxonomies' );
 
@@ -230,7 +232,7 @@ function pp_register_settings() {
 	elseif ( isset( $_POST[ 'pp_edit_tax' ] ) )
 		$msg = 'edit';
 
-	wp_redirect( add_query_arg( 'pp_msg', $msg, PP_TAX_URL ) );		
+	wp_redirect( add_query_arg( array( 'pp_msg' => $msg, 'taxonomy' => $pp_tax_name ), PP_TAX_URL ) );		
 	exit();
 }
 add_action( 'admin_init', 'pp_register_settings' );
@@ -246,6 +248,25 @@ function pp_create_custom_taxonomies() {
 	foreach( $pp_tax_types as $pp_tax_name => $pp_tax_type ) {
 		$pp_object_type = $pp_tax_type[ 'object_type' ];
 		unset( $pp_tax_type[ 'object_type' ] );
+
+		// Define taxonomy parameters dynamically to improve forward compatability
+		$pp_tax_type[ 'public' ] 		= true;
+		$pp_tax_type[ 'hierarchical' ] 	= true;
+		$pp_tax_type[ 'show_ui' ] 		= true;
+		$pp_tax_type[ 'show_tagcloud' ]	= false;
+		$pp_tax_type[ 'query_var' ] 	= $pp_tax_name;
+		$pp_tax_type[ 'rewrite' ] 		= array( 'slug' => $pp_object_type . '/' . $pp_tax_name, 'with_front' => false );
+		$pp_tax_type[ 'capabilities' ] 	= array( 'assign_terms' => 'edit_prospress_posts' );
+		$pp_tax_type[ 'labels' ][ 'search_items' ] 	= __( 'Search ', 'prospress' ) . $pp_tax_type[ 'label' ];
+		$pp_tax_type[ 'labels' ][ 'popular_items' ]	= __( 'Popular ', 'prospress' ) . $pp_tax_type[ 'label' ];
+		$pp_tax_type[ 'labels' ][ 'all_items' ] 	= __( 'All ', 'prospress' ) . $pp_tax_type[ 'label' ];
+		$pp_tax_type[ 'labels' ][ 'parent_item' ] 	= __( 'Parent ', 'prospress' ) . $pp_tax_type[ 'label' ];
+		$pp_tax_type[ 'labels' ][ 'parent_item_colon' ] 	= __( 'Parent ', 'prospress' ) . $pp_tax_type[ 'label' ] . ':';
+		$pp_tax_type[ 'labels' ][ 'edit_item' ]		= __( 'Edit ', 'prospress' ) . $pp_tax_type[ 'labels' ][ 'singular_label' ];
+		$pp_tax_type[ 'labels' ][ 'update_item' ]	= __( 'Update ', 'prospress' ) . $pp_tax_type[ 'labels' ][ 'singular_label' ];
+		$pp_tax_type[ 'labels' ][ 'add_new_item' ]	= __( 'Add New ', 'prospress' ) . $pp_tax_type[ 'labels' ][ 'singular_label' ];
+		$pp_tax_type[ 'labels' ][ 'new_item_name' ]	= __( 'New ', 'prospress' ) . $pp_tax_type[ 'labels' ][ 'singular_label' ];
+
 		register_taxonomy( $pp_tax_name,
 			$pp_object_type,
 			$pp_tax_type 

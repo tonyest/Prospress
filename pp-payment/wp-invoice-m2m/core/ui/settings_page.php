@@ -10,11 +10,6 @@
 		</td>
 	</tr>		
 	<tr>
-		<th><a class="wp_invoice_tooltip" title="What to display for states on checkout page. The dropdown list only includes states in the USA."><?php _e('State Display:', 'prospress'); ?></a></th><td>
-		<?php echo wp_invoice_draw_select('wp_invoice_fe_state_selection',array("Dropdown" => __('Dropdown', 'prospress'), "Input_Field" => __('Input Field', 'prospress'), "Hide" => __('Hide Completely', 'prospress')), get_option('wp_invoice_fe_state_selection')); ?>
-		</td>
-	</tr>
-	<tr>
 		<th><a class="wp_invoice_tooltip"  title="Special proxy must be used to process credit card transactions on GoDaddy servers.">Using Godaddy Hosting</a></th>
 		<td>
 		<?php echo wp_invoice_draw_select('wp_invoice_using_godaddy',array("yes" => __('Yes', 'prospress'), "no" => __('No', 'prospress')), get_option('wp_invoice_using_godaddy')); ?>

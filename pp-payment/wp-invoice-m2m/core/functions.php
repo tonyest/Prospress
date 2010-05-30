@@ -644,7 +644,6 @@ function wp_invoice_complete_removal()  {
 	delete_option('wp_invoice_web_invoice_page');
 	delete_option('wp_invoice_billing_meta');
 	delete_option('wp_invoice_show_quantities');
-	delete_option('wp_invoice_fe_state_selection');
 	delete_option('wp_invoice_use_css');
 	delete_option('wp_invoice_hide_page_title');
 	delete_option('wp_invoice_send_thank_you_email');
@@ -1024,7 +1023,7 @@ function wp_invoice_process_cc_transaction($cc_data = false) {
 	if(empty($_POST['phonenumber'])){$errors [ 'phonenumber' ] [] = "Please enter your phone number.";$stop_transaction = true;}
 	if(empty($_POST['address'])){$errors [ 'address' ] [] = "Please enter your address.";$stop_transaction = true;}
 	if(empty($_POST['city'])){$errors [ 'city' ] [] = "Please enter your city.";$stop_transaction = true;}
-	if(get_option('wp_invoice_fe_state_selection') != 'Hide') {  if(empty($_POST['state'])){$errors [ 'state' ] [] = "Please select your state.";$stop_transaction = true;} }
+	if(empty($_POST['state'])){$errors [ 'state' ] [] = "Please select your state.";$stop_transaction = true;}
 	if(empty($_POST['zip'])){$errors [ 'zip' ] [] = "Please enter your ZIP code.";$stop_transaction = true;}
 	if(empty($_POST['country'])){$errors [ 'country' ] [] = "Please enter your country.";$stop_transaction = true;}
 	if(empty($_POST['card_num'])) {	$errors [ 'card_num' ] []  = "Please enter your credit card number.";	$stop_transaction = true;} else { if (!wp_invoice_validate_cc_number($_POST['card_num'])){$errors [ 'card_num' ] [] = "Please enter a valid credit card number."; $stop_transaction = true; } }
@@ -1337,7 +1336,6 @@ function wp_invoice_process_settings() {
 	"wp_invoice_send_thank_you_email",
 	"wp_invoice_show_business_address",
 	"wp_invoice_show_quantities",
-	"wp_invoice_fe_state_selection",
 	"wp_invoice_use_css",
 	"wp_invoice_use_recurring",
 	"wp_invoice_user_level",

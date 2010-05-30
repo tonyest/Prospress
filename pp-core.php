@@ -54,7 +54,7 @@ function pp_add_core_admin_menu() {
 
 	/* Add the administration tab under the "Site Admin" tab for site administrators */
 	$pp_core_admin_page = add_menu_page( __( 'Prospress', 'prospress' ), __( 'Prospress', 'prospress' ), 10, 'Prospress', '', PP_PLUGIN_URL . '/images/prospress-16x16.png', 3 );
-	$pp_core_settings_page = add_submenu_page( 'Prospress', __( 'Prospress Settings', 'prospress' ), __( 'Settings', 'prospress' ), 10, 'Prospress', 'pp_settings_page' );
+	$pp_core_settings_page = add_submenu_page( 'Prospress', __( 'Prospress Settings', 'prospress' ), __( 'General Settings', 'prospress' ), 10, 'Prospress', 'pp_settings_page' );
 }
 add_action( 'admin_menu', 'pp_add_core_admin_menu' );
 
@@ -194,7 +194,7 @@ function pp_money_format( $number, $decimals = 2, $currency = '' ){
 function pp_core_admin_head() {
 	global $market_system;
 
-	if( strpos( $_SERVER['REQUEST_URI'], 'completed' ) !== false  || strpos( $_SERVER['REQUEST_URI'], 'bids' ) !== false )
-		wp_enqueue_style( 'completed-actions',  PP_CORE_URL . '/prospress-admin.css' );
+	if( strpos( $_SERVER['REQUEST_URI'], 'custom_taxonomy_manage' ) !== false  || strpos( $_SERVER['REQUEST_URI'], 'completed' ) !== false  || strpos( $_SERVER['REQUEST_URI'], 'bids' ) !== false )
+		wp_enqueue_style( 'prospress-admin',  PP_CORE_URL . '/prospress-admin.css' );
 }
 add_action('admin_menu', 'pp_core_admin_head');

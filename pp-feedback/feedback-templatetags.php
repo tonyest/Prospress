@@ -13,7 +13,6 @@
 function the_authors_feedback_list( $user_id = '' ){
 	global $authordata;
 
-	error_log( '$authordata = ' . print_r( $authordata, true ) );
 	if( $user_id == '' )
 		$user_id = $authordata->ID;
 

@@ -35,52 +35,6 @@
 		<label for="email"><?php _e('Email Address', 'prospress'); ?></label>
 		<?php echo wp_invoice_draw_inputfield("email_address",$invoice->payer_class->user_email); ?>
 		</li>
-
-	<?php
-	/*
-	
-		list($day_phone_a, $day_phone_b, $day_phone_c) = split('[/.-]', $invoice->payer_class->phonenumber);
-		?>
-		<li>
-		<label for="day_phone_a"><?php _e('Phone Number', 'prospress'); ?></label>
-		<?php echo wp_invoice_draw_inputfield("night_phone_a",$day_phone_a,' style="width:25px;" size="3" maxlength="3" '); ?>
-		<?php echo wp_invoice_draw_inputfield("night_phone_b",$day_phone_b,' style="width:25px;" size="3" maxlength="3" '); ?>
-		<?php echo wp_invoice_draw_inputfield("night_phone_c",$day_phone_c,' style="width:35px;" size="4" maxlength="4" '); ?>
-		</li>
-
-		<li>
-		<label for="address"><?php _e('Address', 'prospress'); ?></label>
-		<?php echo wp_invoice_draw_inputfield("address1",$invoice->payer_class->streetaddress); ?>
-		</li>
-
-		<li>
-		<label for="city"><?php _e('City', 'prospress'); ?></label>
-		<?php echo wp_invoice_draw_inputfield("city",$invoice->payer_class->city); ?>
-		</li>
-
-		<?php if(get_option('wp_invoice_fe_state_selection') != 'Hide') { ?>
-		<li id="state_field">
-		<label for="state"><?php _e('State', 'prospress'); ?></label>
-	<?php if(get_option('wp_invoice_fe_state_selection') == 'Dropdown') { ?>
-		<?php print wp_invoice_draw_select('state',wp_invoice_state_array(),$invoice->payer_class->state);  ?>
-	<?php } ?>
-	<?php if(get_option('wp_invoice_fe_state_selection') == 'Input_Field') { ?>
-		<?php echo wp_invoice_draw_inputfield("state",$invoice->payer_class->state); ?>
-	<?php } ?>
-		</li>
-		<?php } ?>
-
-		<li>
-		<label for="zip"><?php _e('Zip Code', 'prospress'); ?></label>
-		<?php echo wp_invoice_draw_inputfield("zip",$invoice->payer_class->zip); ?>
-		</li>
-
-		<li>
-		<label for="country"><?php _e('Country', 'prospress'); ?></label>
-		<?php echo wp_invoice_draw_select('country',wp_invoice_country_array(),$invoice->payer_class->country); ?>
-		</li>
-		*/ ?>
-
 		<br class="cb" />	
 		</ol>
 	</fieldset>

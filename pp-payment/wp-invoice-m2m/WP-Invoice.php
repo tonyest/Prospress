@@ -436,8 +436,6 @@ class WP_Invoice {
 			update_option('wp_invoice_user_level', $_REQUEST[wp_invoice_user_level]);
 		if(!empty($_REQUEST[wp_invoice_custom_label_tax]))
 			update_option('wp_invoice_custom_label_tax', $_REQUEST[wp_invoice_custom_label_tax]);
-		if(!empty($_REQUEST[wp_invoice_fe_state_selection]))
-			update_option('wp_invoice_fe_state_selection', $_REQUEST[wp_invoice_fe_state_selection]);
 		if(!empty($_REQUEST[wp_invoice_default_currency_code]))
 			update_option('wp_invoice_default_currency_code', $_REQUEST[wp_invoice_default_currency_code]);
 		if(!empty($_REQUEST[wp_invoice_using_godaddy]))
@@ -618,7 +616,6 @@ class WP_Invoice {
 
 			// Frontend Customization
 			add_option('wp_invoice_fe_paypal_link_url', "https://www.paypal.com/en_US/i/btn/btn_paynow_LG.gif");
-			add_option('wp_invoice_fe_state_selection', "Dropdown");
 
 			add_option('wp_invoice_email_address',get_bloginfo('admin_email'));
 			add_option('wp_invoice_business_name', get_bloginfo('blogname'));

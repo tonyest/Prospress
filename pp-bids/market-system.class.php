@@ -436,7 +436,7 @@ class PP_Market_System {
 					$message = __("You have been outbid.", 'prospress' );
 					break;
 				case 3:
-					$message = __("You must bid higher than the winning bid.", 'prospress' );
+					$message = __("You must bid more than the winning bid.", 'prospress' );
 					break;
 				case 4:
 					$message = __("Your maximum bid has been increased.", 'prospress' );
@@ -692,10 +692,10 @@ class PP_Market_System {
 									echo '<td>';
 									if( is_array( $actions ) && !empty( $actions ) ){
 									?><div class="prospress-actions">
-										<ul class="completed-actions">
+										<ul class="actions-list">
 											<li class="base"><?php _e( 'Take action:', 'prospress' ) ?></li>
 										<?php foreach( $actions as $action => $attributes )
-											echo "<li class='completed-action'><a href='" . add_query_arg ( array( 'action' => $action, 'post' => $post_id ) , $attributes['url' ] ) . "'>" . $attributes['label' ] . "</a></li>";
+											echo "<li class='action'><a href='" . add_query_arg ( array( 'action' => $action, 'post' => $post_id ) , $attributes['url' ] ) . "'>" . $attributes['label' ] . "</a></li>";
 										 ?>
 										</ul>
 									</div>

@@ -433,12 +433,14 @@ function pp_post_columns_custom( $column_name, $post_id ) {
 	if( $column_name == 'post_actions' ) {
 		$actions = apply_filters( 'completed_post_actions', array(), $post_id );
 		if( is_array( $actions ) && !empty( $actions ) ){?>
-			<ul class="completed-actions">
-				<li class="base"><?php _e( 'Take action:', 'prospress' ) ?></li>
-			<?php foreach( $actions as $action => $attributes )
-				echo "<li class='completed-action'><a href='" . add_query_arg ( array( 'action' => $action, 'post' => $post_id ) , $attributes['url'] ) . "'>" . $attributes['label'] . "</a></li>";
-			 ?>
-			</ul>
+			<div class="prospress-actions">
+				<ul class="actions-list">
+					<li class="base"><?php _e( 'Take action:', 'prospress' ) ?></li>
+				<?php foreach( $actions as $action => $attributes )
+					echo "<li class='action'><a href='" . add_query_arg ( array( 'action' => $action, 'post' => $post_id ) , $attributes['url'] ) . "'>" . $attributes['label'] . "</a></li>";
+				 ?>
+				</ul>
+			</div>
 		<?php
 		} else {
 			echo '<p>' . __( 'No action can be taken.', 'prospress' ) . '</p>';
@@ -455,15 +457,21 @@ add_action( 'manage_posts_custom_column', 'pp_post_columns_custom', 10, 2 );
 function pp_template_redirects() {
 	global $post, $market_system;
 
+	error_log('$post = ' . print_r( $post, true ));
 	if( $post->post_name == $market_system->name() ){
+		
 		do_action( 'pp_index_template_redirect' );
+		
 		if( file_exists( TEMPLATEPATH . '/pp-index.php' ) )
 			include( TEMPLATEPATH . '/pp-index.php');
 		else
 			include( PP_POSTS_DIR . '/pp-index.php');
 		exit;
+
 	} elseif ( $post->post_type == $market_system->name() && !isset( $_GET[ 's' ] ) ) {
+		
 		do_action( 'pp_single_template_redirect' );
+
 		if( file_exists( TEMPLATEPATH . '/pp-single.php' ) )
 			include( TEMPLATEPATH . '/pp-single.php');
 		else
