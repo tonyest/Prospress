@@ -5,14 +5,17 @@
 <form id='wp_invoice_settings_page' method='POST'>
 <table class="form-table">
 	<tr>
-		<th><a class="wp_invoice_tooltip" title="The name of tax in your country. eg. VAT, GST or Sales Tax."><?php _e('Default Tax Label:', 'prospress'); ?></a></th><td>
-		<?php echo wp_invoice_draw_inputfield('wp_invoice_custom_label_tax', get_option('wp_invoice_custom_label_tax')); ?>
+		<th><?php _e('Default Tax Label:', 'prospress'); ?></th>
+		<td>
+			<?php echo wp_invoice_draw_inputfield('wp_invoice_custom_label_tax', get_option('wp_invoice_custom_label_tax')); ?>
+			<?php _e( 'The name of tax in your country. eg. VAT, GST or Sales Tax.', 'prospress'); ?>
 		</td>
 	</tr>		
 	<tr>
-		<th><a class="wp_invoice_tooltip"  title="Special proxy must be used to process credit card transactions on GoDaddy servers.">Using Godaddy Hosting</a></th>
+		<th>Using Godaddy Hosting</th>
 		<td>
-		<?php echo wp_invoice_draw_select('wp_invoice_using_godaddy',array("yes" => __('Yes', 'prospress'), "no" => __('No', 'prospress')), get_option('wp_invoice_using_godaddy')); ?>
+			<?php echo wp_invoice_draw_select('wp_invoice_using_godaddy',array("yes" => __('Yes', 'prospress'), "no" => __('No', 'prospress')), get_option('wp_invoice_using_godaddy')); ?>
+			<?php _e( 'A special proxy must be used for credit card transactions on GoDaddy servers.', 'prospress'); ?>
 		</td>
 	</tr>
 </table>
