@@ -514,10 +514,6 @@ function wp_invoice_get_single_invoice_status($invoice_id)  {
 	return $status_update->value . " - " . wp_invoice_Date::convert($status_update->time_stamp, 'Y-m-d H', 'M d Y');
 }
 
-function wp_invoice_currency_format($amount) {
-	return number_format($amount, 2, '.', ',');
-}
-
 function wp_invoice_paid($invoice_id) {
 	global $wpdb;
 	//$wpdb->query("UPDATE  ".$wpdb->payments." SET status = 1 WHERE  id = '$invoice_id'");

@@ -80,12 +80,9 @@ class wp_invoice_get {
 		$this->data->tax_free_amount = $this->data->amount;
 		
 		if(!empty($this->data->tax))
-			$this->data->amount = $this->data->amount + ($this->data->amount * ($this->data->tax / 100));
+			$this->data->amount = $this->data->amount + ( $this->data->amount * ( $this->data->tax / 100 ) );
 
 		$this->data->display_amount = pp_money_format( $this->data->amount );
-		
-		// Fix amount
-		$this->data->amount = wp_invoice_currency_format($this->data->amount);
 
 		return $this->data;		
 	}
