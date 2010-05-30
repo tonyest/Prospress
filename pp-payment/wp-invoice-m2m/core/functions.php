@@ -419,7 +419,7 @@ function wp_invoice_mark_as_paid( $invoice_id) {
 			return sprintf( _n( "Invoice marked as paid, and thank you email sent to customer.", "%d invoices marked as paid, and thank you emails sent to customers.", $counter ), $counter );
 		}
 		else{
-			return sprintf( _n( "Invoice marked as paid.", "%d invoices marked as unpaid.", $counter ), $counter );
+			return sprintf( _n( "Invoice marked as paid.", "%d invoices marked as paid.", $counter ), $counter );
 		}
 	}
 	else {

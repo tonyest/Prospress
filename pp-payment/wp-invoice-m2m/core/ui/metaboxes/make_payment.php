@@ -7,7 +7,6 @@ function wp_invoice_metabox_submit_payment( $invoice ) {
 			<label for="post_status">Status:</label>
 			Unpaid
 		</div>
-
 		<div class="price_information">
 		<?php _e( 'Total Due: ', 'prospress' ); echo pp_money_format( $invoice->amount ); ?>
 		</div>
