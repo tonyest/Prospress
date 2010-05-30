@@ -336,7 +336,7 @@ function wp_invoice_show_receipt_email($invoice_id) {
 }
 
 function wp_invoice_draw_itemized_table($invoice_id) {
-	global $wpdb;
+	global $wpdb, $currency;
 
 	$invoice_info = $wpdb->get_row("SELECT * FROM ".$wpdb->payments." WHERE id = '".$invoice_id."'");
 	$itemized = $invoice_info->itemized;
@@ -344,9 +344,6 @@ function wp_invoice_draw_itemized_table($invoice_id) {
 
 	$wp_invoice_tax = wp_invoice_meta($invoice_id,'wp_invoice_tax');
 	if($wp_invoice_tax == '') $wp_invoice_tax = wp_invoice_meta($invoice_id,'tax_value');
-
-	// Determine currency. First we check invoice-specific, then default code, and then we settle on USD
-	$currency_code = wp_invoice_determine_currency($invoice_id);
 
 	if($wp_invoice_tax) {
 		$tax_free_amount = $amount*(100/(100+(100*($wp_invoice_tax/100))));
@@ -384,9 +381,9 @@ function wp_invoice_draw_itemized_table($invoice_id) {
 
 		//Item Price		
 		if(!$show_quantity) {
-		 $response .= "<td style=\"width: 70px; text-align: right;\">" . wp_invoice_currency_symbol($currency_code) .  wp_invoice_currency_format($itemized_item[quantity] * $itemized_item[price]) . "</td>"; 
+		 $response .= "<td style=\"width: 70px; text-align: right;\">" . pp_money_format( $itemized_item[quantity] * $itemized_item[price] ) . "</td>"; 
 		 } else {
-		 $response .= "<td style=\"width: 70px; text-align: right;\">". wp_invoice_currency_symbol($currency_code) . wp_invoice_currency_format($itemized_item[price]) . "</td>"; 
+		 $response .= "<td style=\"width: 70px; text-align: right;\">". pp_money_format( $itemized_item[price] ) . "</td>"; 
 		 }
 
 		$response .="</tr>";
@@ -397,7 +394,7 @@ function wp_invoice_draw_itemized_table($invoice_id) {
 		if($wp_invoice_tax) {
 		$response .= "<tr>";
 		if(get_option('wp_invoice_show_quantities') == "Show") { $response .= "<td></td>"; }
-		$response .= "<td>". get_option('wp_invoice_custom_label_tax') . " (". round($wp_invoice_tax,2). "%) </td><td style='text-align:right;' colspan='2'>" . wp_invoice_currency_symbol($currency_code) . wp_invoice_currency_format($tax_value)."</td></tr>";
+		$response .= "<td>". get_option('wp_invoice_custom_label_tax') . " (". round($wp_invoice_tax,2). "%) </td><td style='text-align:right;' colspan='2'>" . pp_money_format( $tax_value )."</td></tr>";
 		}
 
 		$response .="		
@@ -405,7 +402,7 @@ function wp_invoice_draw_itemized_table($invoice_id) {
 		<td align=\"right\">Invoice Total:</td>
 		<td  colspan=\"2\" style=\"text-align: right;\" class=\"grand_total\">";
 
-		$response .= wp_invoice_currency_symbol($currency_code) . wp_invoice_currency_format($amount);
+		$response .= pp_money_format( $amount );
 		$response .= "</td></table>";
 
 		return $response;

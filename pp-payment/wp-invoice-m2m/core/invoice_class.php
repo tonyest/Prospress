@@ -13,7 +13,8 @@ class wp_invoice_get {
 		Load invoice variables
 	*/
 	function wp_invoice_get($invoice_id) {
-		global $wpdb, $user_ID;
+		global $wpdb, $user_ID, $currency_symbol;
+
 		$this->invoice_id = $invoice_id;
 
 		if(empty($this->invoice_id))
@@ -75,13 +76,13 @@ class wp_invoice_get {
 
 		// Dynamic Variables
 		$this->data->pay_link = admin_url("admin.php?page=make_payment&invoice_id=$invoice_id");
-		$this->data->currency_symbol = wp_invoice_currency_symbol($this->data->currency_code);
+		$this->data->currency_symbol = $currency_symbol;
 		$this->data->tax_free_amount = $this->data->amount;
 		
 		if(!empty($this->data->tax))
 			$this->data->amount = $this->data->amount + ($this->data->amount * ($this->data->tax / 100));
 
-		$this->data->display_amount = wp_invoice_currency_symbol($this->data->currency_code) . wp_invoice_currency_format($this->data->amount);
+		$this->data->display_amount = pp_money_format( $this->data->amount );
 		
 		// Fix amount
 		$this->data->amount = wp_invoice_currency_format($this->data->amount);

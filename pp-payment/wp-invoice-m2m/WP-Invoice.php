@@ -1015,7 +1015,7 @@ class WP_Invoice_GetInfo {
 			
 			case 'display_amount':
 				if(!strpos($invoice_info->amount,'.')) $amount = $invoice_info->amount . ".00"; else $amount = $invoice_info->amount;
-				return wp_invoice_currency_symbol($this->display('currency')).wp_invoice_currency_format($amount);
+				return pp_money_format( $amount );
 			break;
 			
 			case 'description':

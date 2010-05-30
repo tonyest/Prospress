@@ -1137,15 +1137,9 @@ function wp_invoice_currency_array() {
 	return $currency_list;
 }
 
-function wp_invoice_currency_symbol($currency = "USD" ) {
-	global $currency_symbol;
-
-	return $currency_symbol;
-}
-
 function wp_invoice_contextual_help_list($content) {
 // Will add help and FAQ here eventually
-return $content;
+	return $content;
 }
 
 function wp_invoice_process_invoice_update($invoice_id) {
@@ -1408,14 +1402,6 @@ function wp_invoice_process_updates($array, $type = "update_option", $invoice_id
 	if($type == "wp_invoice_update_invoice_meta") foreach($array as $item_name) { 
 		if($wp_invoice_debug) echo $item_name . " - " . $_POST[$item_name] . "  <br />";
 		if(isset($_POST[$item_name])) wp_invoice_update_invoice_meta($invoice_id, $item_name, $_POST[$item_name]); }
-}
-
-function wp_invoice_determine_currency($invoice_id) {
-	//in class
-	if(wp_invoice_meta($invoice_id,'wp_invoice_currency_code') != '') { $currency_code = wp_invoice_meta($invoice_id,'wp_invoice_currency_code'); }
-		elseif(get_option('wp_invoice_default_currency_code') != '') { $currency_code = get_option('wp_invoice_default_currency_code'); }
-		else { $currency_code = "USD"; }
-		return $currency_code;
 }
 
 function wp_invoice_md5_to_invoice($md5) {
@@ -1798,6 +1784,7 @@ class load_wp_invoice {
 	var $invoice_id;
 
 	function create_new($user_id) {
+		global $currency;
 		$profileuser = @get_user_to_edit($user_id);
 
 		// this is a new invoice, get defaults
@@ -1829,7 +1816,7 @@ class load_wp_invoice {
 		$this->alertpay_allow = get_option('wp_invoice_alertpay_allow');
 		$this->alertpay_secret = get_option('wp_invoice_alertpay_secret');
 
-		$this->currency_code = get_option("wp_invoice_default_currency_code");
+		$this->currency_code = $currency;
 
 		// create item rows 
 		$this->itemized_array[1] = "";
