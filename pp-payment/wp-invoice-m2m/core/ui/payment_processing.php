@@ -24,7 +24,7 @@
 				<td><?php echo wp_invoice_draw_inputfield('wp_invoice_fe_paypal_link_url',$wp_invoice_fe_paypal_link_url); ?></td>
 			</tr>
 <?php } ?>
-			
+
 		</table>
   </div>
 
