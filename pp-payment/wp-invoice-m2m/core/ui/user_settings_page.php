@@ -75,7 +75,7 @@
 				</td>
 			</tr>
 			<tr>
-				<th><?php _e("Payment Venues:");?></th>
+				<th><?php _e("Payment Types:");?></th>
 				<td>
 					<div class="wp_invoice_payment_option"><?php // Do not remove div.wp_invoice_payment_option -> it is used by jQuery to select payment venue checkboxes ?>
 					<?php echo wpi_checkbox("group=wp_invoice_user_settings&name=paypal_allow&label=PayPal.&value=true&id=paypal", $user_settings[paypal_allow]); ?><br />
@@ -101,7 +101,7 @@
 			</td>
 			</tr>
 			<tr class="paypal_settings">
-				<th>PayPal Settings:</th>
+				<th><?php _e( 'PayPal Settings:', 'prospress' ); ?></th>
 				<td>
 				<table>
 					<tr class="paypal_settings">
@@ -118,7 +118,7 @@
 				</td>
 			</tr>
 			<tr class="gateway_info">
-				<th>Credit Card Settings</th>
+				<th><?php _e( 'Credit Card Settings', 'prospress' ); ?></th>
 				<td>
 				<table>
 				<tr class="gateway_info">
@@ -153,19 +153,8 @@
 			</td>
 			</tr>
 			<tr class="draft_info">
-				<th>Draft Settings:</th>
-				<td>
-				<table>
-				<tr>
-				<th>Draft Instructions:</th>
+				<th><?php _e( 'Draft Instructions:', 'prospress' ); ?></th>
 				<td><textarea name='wp_invoice_user_settings[draft_text]'><?php echo $user_settings[draft_text]; ?></textarea></td>
-				</tr>
-				<tr>
-				<th></th>
-				<td><?php echo wpi_checkbox("group=wp_invoice_user_settings&name=display_draft_message_box&label=Display input box.&value=true", $user_settings[display_draft_message_box]); ?><br /></td>
-				</tr>
-				</table>
-				</td>
 			</tr>
 		</table>
 		<div class="clear"></div>
