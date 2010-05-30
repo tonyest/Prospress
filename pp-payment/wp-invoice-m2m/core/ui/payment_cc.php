@@ -80,11 +80,11 @@
 	<input type="hidden" name="action" value="wp_invoice_process_cc_ajax">
 	<input type="hidden" name="user_id" value="<?php echo $invoice->payer_class->ID; ?>">
 	<input type="hidden" name="invoice_id" value="<?php echo $invoice->id; ?>">
-	<input type="hidden" name="amount" id="total_amount" value="<?php echo $invoice->amount; ?>" />
+	<input type="hidden" name="amount" id="total_amount" value="<?php echo round( $invoice->amount, 2 ); ?>" />
 	<?php 
 	wp_nonce_field( 'wp_invoice_process_cc_' . $invoice->id, 'wp_invoice_process_cc' , false );
 	?>
-	
+
 	<input type="hidden" name="amount" value="<?php echo $invoice->amount; ?>">
  	<input type="hidden" name="email_address" value="<?php echo $invoice->payee_class->user_email; ?>">
 	<input type="hidden" name="id" value="<?php echo  $invoice->id; ?>">
@@ -154,7 +154,7 @@
 		<label class="inputLabel" for="card_code"><?php _e('Security Code', 'prospress'); ?></label>
 		<input id="card_code" autocomplete="off"  name="card_code" class="input_field"  style="width: 70px;" type="text" size="4" maxlength="4" />
 		</li>
-		
+
 		</ol>
 	</fieldset>
 &nbsp;<div id="wp_cc_response"><ol></ol></div>

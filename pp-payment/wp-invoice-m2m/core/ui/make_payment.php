@@ -4,10 +4,10 @@
 	<h2>Make Payment</h2>
  
 	<div class="wp_invoice_error_wrapper">
-	<?php if(count($errors) > 0): ?>
+	<?php if( count( $errors ) > 0): ?>
 	<div class="error"><p>
-		<?php foreach($errors as $error): ?>
-			<?php echo $error; ?><br />
+		<?php foreach( $errors as $error ): ?>
+			<p><?php echo $error; ?></p>
 		<?php endforeach; ?>
 	</p></div>
 	<?php endif; ?>
@@ -16,7 +16,7 @@
 	<?php if(count($messages) > 0): ?>
 	<div class="updated fade"><p>
 		<?php foreach($messages as $message): ?>
-			<?php echo $message; ?><br />
+			<p><?php echo $message; ?></p>
 		<?php endforeach; ?>
 	</p></div>
 	<?php endif; ?>
@@ -35,7 +35,7 @@
 	wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce', false );
 	wp_nonce_field( 'meta-box-order', 'meta-box-order-nonce', false ); 
 	?>
-		
+	
 	<div id="poststuff" class="metabox-holder has-right-sidebar">
 	
 		<div id="side-info-column" class="inner-sidebar">

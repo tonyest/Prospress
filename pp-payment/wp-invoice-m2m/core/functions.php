@@ -7,64 +7,55 @@
 // Hide errors if using PHP4, otherwise we get many html_entity_decode() errors
 if (phpversion() <= 5 && $wp_invoice_debug == false ) { ini_set('error_reporting', 0); }
 
-/*
-	Deleted any invoices associated with a post that is being deleted.	
-*/
-	function wp_invoice_delete_post( $post_id) {
-		global $wpdb;
+//Delete any invoices associated with a post that is being deleted.	
+function wp_invoice_delete_post( $post_id) {
+	global $wpdb;
 
-		if(!$post_id)
-			return;
+	if(!$post_id)
+		return;
 
-		$invoice_id = $wpdb->get_var("SELECT id FROM ".$wpdb->payments."  WHERE post_id = '$post_id'" );
+	$invoice_id = $wpdb->get_var("SELECT id FROM ".$wpdb->payments."  WHERE post_id = '$post_id'" );
 
-		if(!$invoice_id)
-			return;
+	if(!$invoice_id)
+		return;
 
-		wp_invoice_delete( $invoice_id);	
+	wp_invoice_delete( $invoice_id);	
+}
+
+//New function for sending invoices 
+function wp_send_single_invoice( $invoice_id, $message = false ) {
+	$invoice_class = new wp_invoice_get( $invoice_id);
+	$invoice = $invoice_class->data;
+
+	if(wp_mail( $invoice->payer_class->user_email, "Invoice: {$invoice->post_title}", $invoice_class->data->email_payment_request, "From: {$invoice->payee_class->user_nickname} <{$invoice->payee_class->user_email}>\r\n" )) {
+			wp_invoice_update_invoice_meta( $invoice_id, "sent_date", date("Y-m-d", time()));
+		wp_invoice_update_log( $invoice_id,'contact',"Invoice emailed to {$invoice->payer_class->user_email}" ); 
+		return "Web invoice sent successfully."; 
+	} else { 
+		return "There was a problem sending the invoice."; 
 	}
 
-/*
-	New function for sending invoices 
-*/
-	function wp_send_single_invoice( $invoice_id, $message = false ) {
-		$invoice_class = new wp_invoice_get( $invoice_id);
-		$invoice = $invoice_class->data;
+}
 
-		if(wp_mail( $invoice->payer_class->user_email, "Invoice: {$invoice->post_title}", $invoice_class->data->email_payment_request, "From: {$invoice->payee_class->user_nickname} <{$invoice->payee_class->user_email}>\r\n" )) {
- 			wp_invoice_update_invoice_meta( $invoice_id, "sent_date", date("Y-m-d", time()));
-			wp_invoice_update_log( $invoice_id,'contact',"Invoice emailed to {$invoice->payer_class->user_email}" ); 
-			return "Web invoice sent successfully."; 
-		} else { 
-			return "There was a problem sending the invoice."; 
-		}
+//Converts payment venue slug into nice name
+function wp_invoice_payment_nicename( $slug) {
 
-	}
-
-/*
-	Converts payment venue slug into nice name
-*/	
-	function wp_invoice_payment_nicename( $slug) {
-
-		switch( $slug) {
-			case 'paypal':
-				return "PayPal";
-			break;
-			case 'cc':
-				return "Credit Card";
-			break;
-			case 'draft':
-				return "Bank Draft";
-			break;
-
-		}
+	switch( $slug) {
+		case 'paypal':
+			return "PayPal";
+		break;
+		case 'cc':
+			return "Credit Card";
+		break;
+		case 'draft':
+			return "Bank Draft";
+		break;
 
 	}
 
-/*
-	Return a user's WP-Invoice setting
-	If not user_id is passed, current user is used
-*/
+}
+
+// Return a user's WP-Invoice setting, if no user_id is passed, current user is used
 function wp_invoice_user_settings( $what, $user_id = false ) {
 	global $user_ID;
 
@@ -107,31 +98,17 @@ function wp_invoice_user_settings( $what, $user_id = false ) {
 	return false;
 }
 
-/*
-	Load default user options into a users settings
-	Some settings are generated based on user account settings
-*/
-
+// Load default user options into a users settings. Some settings are generated based on user account settings
 function wp_invoice_load_default_user_settings( $user_id) {
 
 	//wpi_qc("Running wp_invoice_load_default_user_settings()" );
 	$user_data = get_userdata( $user_id);
 
-	$settings[business_name] = $user_data->display_name;
-	$settings[user_email] = $user_data->user_email;
-	$settings[reminder_message] = "This is a reminder to pay your invoice.";
-	$settings[default_currency_code] = "USD";
-	$settings[tax_label] = "Tax";
-
-	/*
-	Used in plugin:
-	show_address_on_invoice
-	can_change_payment_method
-	payment_received_notification
-	default_currency_code
-	tax_label
-
-	*/
+	$settings[ 'business_name' ] = $user_data->display_name;
+	$settings[ 'user_email' ] = $user_data->user_email;
+	$settings[ 'reminder_message' ] = "This is a reminder to pay your invoice.";
+	$settings[ 'default_currency_code' ] = "USD";
+	$settings[ 'tax_label' ] = "Tax";
 
 	update_usermeta( $user_id, 'wp_invoice_settings', $settings);
 

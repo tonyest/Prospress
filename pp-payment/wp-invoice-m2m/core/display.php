@@ -542,7 +542,7 @@ function wp_invoice_show_business_address() {
 }
 
 function wp_invoice_show_billing_information($invoice_id) {
-$invoice = new WP_Invoice_GetInfo($invoice_id);
+	$invoice = new WP_Invoice_GetInfo($invoice_id);
 
 ?>
 

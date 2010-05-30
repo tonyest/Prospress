@@ -63,7 +63,6 @@ class WP_Invoice {
 		add_action( 'edit_user_profile', 'wp_invoice_user_profile_fields' );
 		add_action( 'show_user_profile', 'wp_invoice_user_profile_fields' );
 		add_action( 'admin_menu', array( $this, 'wp_invoice_add_pages' ) );
-		//add_action( 'wp_head', 'wp_invoice_frontend_header' ); 
  		add_action( 'admin_init', array( $this, 'admin_init' ) );
 
 		add_action( 'deleted_post', 'wp_invoice_delete_post' );
@@ -76,12 +75,6 @@ class WP_Invoice {
 		if(get_option( 'wp_invoice_where_to_display' ) != 'replace_tag' ) { add_filter( 'the_content', 'wp_invoice_the_content' );  } else { add_shortcode( 'wp-invoice', 'wp_invoice_the_content' ); 	}
 
 		$this->SetUserAccess(get_option( 'wp_invoice_user_level' ) );
-
-		// Load invoice lookup widget
-		//add_action( 'widgets_init', create_function( '', 'return register_widget("InvoiceLookupWidget");' ) );
-		// load user's invoice history widget
-		//add_action( 'widgets_init', create_function( '', 'return register_widget("InvoiceHistoryWidget");' ) );
-
 	}
 
 	function SetUserAccess( $level = 8) {
@@ -219,7 +212,6 @@ class WP_Invoice {
 			// Remove payment metabox if current user is not the payer, or if the invoice has already been paid
 			if( $has_invoice_permissions != 'payer' || $invoice->is_paid) {
 				remove_meta_box( 'wp_invoice_metabox_billing_details', $wp_invoice_page_names[ 'make_payment' ], 'normal' );
-				remove_meta_box( 'wp_invoice_metabox_billing_details', $wp_invoice_page_names[ 'make_payment' ], 'normal' );
  			}
 
 			include WP_INVOICE_UI_PATH . 'metaboxes/send_invoice.php';	
@@ -249,39 +241,41 @@ class WP_Invoice {
 			if (wp_verify_nonce( $_REQUEST[ 'wp_invoice_process_cc' ], 'wp_invoice_process_cc_' . $invoice_id) ) {
 				$draft_message = nl2br( $_REQUEST[ 'draft_message' ]);
 				wp_invoice_update_invoice_meta( $invoice_id,'paid_status','paid' );
-				wp_invoice_update_log( $invoice_id,'paid',"Invoice paid via draft. <br />Message: {$draft_message}");			
+				wp_invoice_update_log( $invoice_id,'paid', sprintf( __( "Invoice paid via draft. Message from payer:", 'prospress' ), $draft_message ) );
 			}
 
 			// PayPal return
 			if( $_REQUEST[ 'return_info' ] == 'cancel' ) {
-				$errors[] = "Your PayPal payment has not been processed.";
+				$errors[] = __( "Your PayPal payment has not been processed.", 'prospress' );
 			}
 
 			if( $_REQUEST[ 'return_info' ] == 'success' ) {
-				//$messages[] = "Invoice paid, receipt id: {$_REQUEST[ 'receipt_id' ]}";
-				wp_invoice_update_invoice_meta( $invoice_id,'paid_status','paid' );
-				wp_invoice_update_log( $invoice_id,'paid',"Invoice paid via PayPal. <br />Receipt id: {$_REQUEST[ 'receipt_id' ]}");
+				wp_invoice_update_invoice_meta( $invoice_id, 'paid_status', 'paid' );
+				wp_invoice_update_log( $invoice_id, 'paid', __( "Invoice paid via PayPal.", 'prospress' ) );
  			}
 
 			// Load invoice
 			$invoice_class = new wp_invoice_get( $invoice_id);
-			$errors = $invoice_class->error;
+			$invoice_errors = $invoice_class->error;
 			$invoice = $invoice_class->data;
 
 			// Get invoice reporting information
 			if( $invoice->is_paid) {
-				$paid_data = $wpdb->get_row("SELECT value, time_stamp FROM  ".$wpdb->payments_log." WHERE action_type = 'paid' AND invoice_id = '".$invoice_id."' ORDER BY time_stamp DESC LIMIT 0, 1");			
+				$paid_data = $wpdb->get_row( "SELECT value, time_stamp FROM  " . $wpdb->payments_log . " WHERE action_type = 'paid' AND invoice_id = '" . $invoice_id . "' ORDER BY time_stamp DESC LIMIT 0, 1" );			
+				error_log( '$paid_data = ' . print_r( $paid_data, true ) );
 				$paid_date = date_i18n(get_option( 'date_format' ).' '.get_option( 'time_format' ), strtotime( $paid_data->time_stamp) );
 			}
 
 			if(!$invoice->is_paid && $has_invoice_permissions == 'payer' )
-				$messages[] = "You have not yet paid this invoice.";
+				$messages[] = __( "You have not paid this invoice.", 'prospress' );
 
 			if(!$invoice->is_paid && $has_invoice_permissions == 'payee' )
-				$messages[] = "{$invoice->payer_class->user_nicename} has not paid this invoice.";
+				$messages[] = sprintf( __( "%s has not paid this invoice.", 'prospress' ), $invoice->payer_class->user_nicename );
 
-			if( $invoice->is_paid)
-				$messages[] = "{$paid_data->value}. <br />Processed on $paid_date.";
+			if( $invoice->is_paid){
+				$messages[] = $paid_data->value;				
+				$messages[] = __( "Payment processed on $paid_date.", 'prospress' );
+			}
 
 			// UI Modifications
 			// Remove payment metabox if current user is not the payer, or if the invoice has already been paid
