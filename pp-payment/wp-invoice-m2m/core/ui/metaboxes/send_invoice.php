@@ -74,7 +74,7 @@ function wp_invoice_metabox_publish($ic) { ?>
 		<div id="major-publishing-actions">
 
 		<div id="publishing-action">
-			<input type="submit"  name="save" class="button-primary" value="Preview and Send"> 	
+			<input type="submit"  name="save" class="button-primary" value="Preview Email and Send"> 	
 		</div>
 		<div class="clear"></div>
 	</div>

@@ -10,7 +10,4 @@
 
 	<dt>Last Name</dt>
 	<dd><?php echo $invoice->payer_class->last_name; ?></dd>
-
-	<dt>Description</dt>
-	<dd><?php echo $invoice->payer_class->description; ?></dd>
 </dl>

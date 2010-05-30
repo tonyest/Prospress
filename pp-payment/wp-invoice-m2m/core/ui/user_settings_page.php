@@ -58,8 +58,7 @@
 		});
 		//]]>
 	</script>
-<div id="wp_invoice_settings_page" class="wp_invoice_tabbed_content">
-	<div id="selling" class="wp_invoice_tab"  >
+	<div id="selling" >
  		<table class="form-table">
 			<tr>
 				<th width="200">Basic Settings</th>
@@ -90,13 +89,13 @@
 				<td>
  				<select id="default_payment_venue" name="wp_invoice_user_settings[default_payment_venue]" style="width: 100px;">
 					<?php if($user_settings['paypal_allow']): ?>
-						<option class="paypal" value="paypal" <?php echo ($user_settings[default_payment_venue] == 'paypal' ? "SELECTED" : ""); ?>>PayPal</option>
+						<option class="paypal" value="paypal" <?php selected( $user_settings[default_payment_venue], 'paypal' ); ?>>PayPal</option>
 					<?php endif; ?>
 					<?php if($user_settings['cc_allow']): ?>
-					<option class="cc" value="cc"  <?php echo ($user_settings[default_payment_venue] == 'cc' ? "SELECTED" : ""); ?>>Credit Card</option>
+					<option class="cc" value="cc"  <?php selected( $user_settings[default_payment_venue], 'cc' ); ?>>Credit Card</option>
 					<?php endif; ?>
 					<?php if($user_settings['draft_allow']): ?>
-					<option class="draft" value="draft"  <?php echo ($user_settings[default_payment_venue] == 'draft' ? "SELECTED" : ""); ?>>Bank Draft</option>
+					<option class="draft" value="draft"  <?php selected( $user_settings[default_payment_venue], 'draft' ); ?>>Bank Draft</option>
 					<?php endif; ?>
 				</select>
 			</td>
@@ -170,8 +169,9 @@
 			</tr>
 		</table>
 		<div class="clear"></div>
-		<input type="submit" value="Save Settings" class="button-primary"></div>
-		<div class="clear"></div>
+		<p class="submit">
+			<input type="submit" value="Save Settings" class="button-primary"></div>
+		</p>
 	</div>
 </form>
 </div>

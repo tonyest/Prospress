@@ -46,6 +46,8 @@
 	</tr>
 </table>
 <div class="clear"></div>
-<input type="submit" value="Save Settings" class="button-primary">
+<p class="submit">
+	<input type="submit" value="Save Settings" class="button-primary">
+</p>
 </form>
 </div>

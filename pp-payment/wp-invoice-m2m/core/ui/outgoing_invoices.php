@@ -5,9 +5,13 @@
 	<form id="invoices-filter" action="" method="post" >
 	<h2><?php _e('Incoming Payments', 'prospress'); ?></h2>
 
-	<?php if($message): ?>
+	<?php if( $message ): ?>
 	<div class="updated fade">
-		<p><?php echo $message; ?></p>
+		<?php if( is_array( $message ) ): foreach( $message as $m ): ?>
+			<p><?php echo $m; ?></p>
+		<?php endforeach; else: ?>
+			<p><?php echo $message; ?></p>
+		<?php endif; ?>
 	</div>
 	<?php endif; ?>
 
