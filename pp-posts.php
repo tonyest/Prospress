@@ -604,7 +604,7 @@ function pp_capabilities_settings_page() {
 		<p><?php printf( __( 'You can restrict interaction with %s to certain roles. Please choose which roles have the following capabilities:', 'prospress' ), $market_system->display_name() ); ?></p>
 		<div class="prospress-capabilitiy create">
 			<h4><?php printf( __( "Publish %s", 'prospress' ), $market_system->display_name() ); ?></h4>
-			<?php foreach ( $roles as $role ): if( $role->name == 'administrator' ) continue; ?>
+			<?php foreach ( $roles as $role ): //if( $role->name == 'administrator' ) continue; ?>
 			<?php //error_log( 'role = ' . print_r( $role, true ) ); ?>
 
 			<label for="<?php echo $role->name; ?>-create">
@@ -615,7 +615,7 @@ function pp_capabilities_settings_page() {
 		</div>
 		<div class="prospress-capability edit">
 			<h4><?php printf( __( "Edit %s", 'prospress' ), $market_system->display_name() ); ?></h4>
-			<?php foreach ( $roles as $role ): if( $role->name == 'administrator' ) continue; ?>
+			<?php foreach ( $roles as $role ): //if( $role->name == 'administrator' ) continue; ?>
 			<label for="<?php echo $role->name; ?>-edit">
 			  	<input type="checkbox" id="<?php echo $role->name; ?>-edit" name="<?php echo $role->name; ?>-edit"<?php checked( $role->capabilities[ 'edit_prospress_post' ], 1 ); ?> />
 				<?php echo $role->display_name; ?>
@@ -624,7 +624,7 @@ function pp_capabilities_settings_page() {
 		</div>
 		<div class="prospress-capability edit">
 			<h4><?php printf( __( "Edit Other's %s", 'prospress' ), $market_system->display_name() ); ?></h4>
-			<?php foreach ( $roles as $role ): if( $role->name == 'administrator' ) continue; ?>
+			<?php foreach ( $roles as $role ): //if( $role->name == 'administrator' ) continue; ?>
 			<label for="<?php echo $role->name; ?>-edit-others">
 				<input type="checkbox" id="<?php echo $role->name; ?>-edit-others" name="<?php echo $role->name; ?>-edit-others"<?php checked( $role->capabilities[ 'edit_others_prospress_posts' ], 1 ); ?> />
 				<?php echo $role->display_name; ?>
@@ -633,9 +633,9 @@ function pp_capabilities_settings_page() {
 		</div>
 		<div class="prospress-capability delete">
 			<h4><?php printf( __( "Delete %s", 'prospress' ), $market_system->display_name() ); ?></h4>
-			<?php foreach ( $roles as $role ): if( $role->name == 'administrator' ) continue; ?>
+			<?php foreach ( $roles as $role ): //if( $role->name == 'administrator' ) continue; ?>
 			<label for="<?php echo $role->name; ?>-delete">
-				<input type="checkbox" id="<?php echo $role->name; ?>-delete" name="<?php echo $role->name; ?>-delete"<?php checked( $role->capabilities[ 'delete_prospress_posts' ], 1 ) ?> />
+				<input type="checkbox" id="<?php echo $role->name; ?>-delete" name="<?php echo $role->name; ?>-delete"<?php checked( $role->capabilities[ 'delete_prospress_post' ], 1 ) ?> />
 				<?php echo $role->display_name; ?>
 			</label>
 			<?php endforeach; ?>
@@ -661,8 +661,8 @@ function pp_capabilities_whitelist( $whitelist_options ) {
 
 		foreach ( $roles as $key => $role ) {
 
-			if( $role->name == 'administrator' )
-				continue;
+			//if( $role->name == 'administrator' )
+			//	continue;
 
 			if ( isset( $_POST[ $key . '-publish' ] )  && $_POST[ $key . '-publish' ] == 'on' ) {
 				$role->add_cap( 'publish_prospress_posts' );
