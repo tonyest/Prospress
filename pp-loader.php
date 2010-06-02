@@ -52,6 +52,7 @@ function pp_activate(){
 register_activation_hook( __FILE__, 'pp_activate' );
 
 function pp_deactivate(){
+	error_log('*** in pp_deactivate ***');
 	do_action( 'pp_deactivation' );
 }
 register_deactivation_hook( __FILE__, 'pp_deactivate' );

@@ -5,6 +5,7 @@
  * Adds a marketplace posting system along side WordPress.
  *
  * @package Prospress
+ * @subpackage Posts
  * @author Brent Shepherd
  * @version 0.1
  */
@@ -23,27 +24,44 @@ if ( !defined( 'PP_POSTS_URL' ) )
 	define( 'PP_POSTS_URL', PP_PLUGIN_URL . '/pp-posts' );
 
 /**
- * Include Custom Post Type
+ * Include the Prospress Custom Post Type
  */
 include( PP_POSTS_DIR . '/pp-custom-post-type.php');
 
 /**
- * Include Sort widget
+ * Include Prospress Sort widget
  */
 include( PP_POSTS_DIR . '/pp-sort.php');
 
 /**
- * Include Template Tags
+ * Include Prospress Template Tags
  */
 include( PP_POSTS_DIR . '/pp-posts-templatetags.php');
 
 /**
- * Include Custom Taxonomy Component
+ * Include Prospress Custom Taxonomy Component
  */
 include( PP_POSTS_DIR . '/pp-custom-taxonomy.php');
 
 global $market_system;
 
+
+/**
+ * Sets up Prospress environment with any settings required and/or shared across the 
+ * other components. 
+ *
+ * @package Prospress
+ * @subpackage Posts
+ * @since 0.1
+ *
+ * @uses is_site_admin() returns true if the current user is a site admin, false if not.
+ * @uses add_submenu_page() WP function to add a submenu item.
+ * @uses get_role() WP function to get the administrator role object and add capabilities to it.
+ *
+ * @global wpdb $wpdb WordPress DB access object.
+ * @global PP_Market_System $market_system Prospress market system object for this marketplace.
+ * @global WP_Rewrite $wp_rewrite WordPress Rewrite Component.
+ */
 function pp_posts_install(){
 	global $wpdb, $market_system, $wp_rewrite;
 
@@ -51,7 +69,7 @@ function pp_posts_install(){
 
 	error_log('*** in pp_posts_install ***');
 
-	// Create a page to be used as the index for Prospress posts
+	// Need an index page for Prospress posts
 	if( !$wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . $market_system->name() . "'" ) ){
 		$index_page = array();
 		$index_page['post_title'] = $market_system->display_name();
@@ -60,21 +78,35 @@ function pp_posts_install(){
 		$index_page['post_content'] = __( 'This is the index for your ' . $market_system->display_name() . '.' );
 		$index_page['post_type'] = 'page';
 
-		error_log('Creating page = ' . print_r( $index_page, true ) );
-
 		wp_insert_post( $index_page );
 	}
 
 	pp_add_sidebars_widgets();
+	
+ 	$role = get_role( 'administrator' );
+
+	$role->add_cap( 'publish_prospress_posts' );
+	$role->add_cap( 'edit_prospress_post' );
+	$role->add_cap( 'edit_prospress_posts' );
+	$role->add_cap( 'edit_others_prospress_posts' );
+	$role->add_cap( 'read_prospress_posts' );
+	$role->add_cap( 'delete_prospress_post' );	
 }
-//register_activation_hook( __FILE__, 'pp_posts_install' );
 add_action( 'pp_activation', 'pp_posts_install' );
 
-/* When the post is saved, saves our custom data */
+
+/** 
+ * When a Prospress post is saved, this function saves the custom information specific to Prospress posts,
+ * like end time. 
+ * 
+ * @package Prospress
+ * @subpackage Posts
+ * @since 0.1
+ * 
+ * @global wpdb $wpdb WordPress DB access object.
+ */
 function pp_post_save_postdata( $post_id, $post ) {
 	global $wpdb;
-
-	/** @TODO validate post input */
 
 	if( wp_is_post_revision( $post_id ) )
 		$post_id = wp_is_post_revision( $post_id );
@@ -125,23 +157,32 @@ function pp_post_save_postdata( $post_id, $post ) {
 }
 add_action( 'save_post', 'pp_post_save_postdata', 10, 2 );
 
+
 /**
  * Schedules a post to end at a given post end time. 
  *
+ * @package Prospress
+ * @subpackage Posts
+ * @since 0.1
+ *
+ * @uses wp_schedule_single_event function
  * @param post_id for identifing the post
  * @param post_end_time_gmt a unix time stamp of the gmt date/time the post should end
- * @uses global $wpdb object for update function
  */
 function pp_schedule_end_post( $post_id, $post_end_time_gmt ) {
 	wp_schedule_single_event( $post_end_time_gmt, 'schedule_end_post', array( 'ID' => $post_id ) );
 }
 
+
 /**
  * Changes the status of a given post to 'completed'. This function is added to the
  * schedule_end_post hook.
  *
- * @uses $post_id for identifing the post
- * @uses global $wpdb object for update function
+ * @package Prospress
+ * @subpackage Posts
+ * @since 0.1
+ *
+ * @uses wp_unschedule_event function
  */
 function pp_end_post( $post_id ) {
 	global $wpdb;
@@ -156,29 +197,35 @@ function pp_end_post( $post_id ) {
 }
 add_action('schedule_end_post', 'pp_end_post');
 
+
 /**
- * Unschedule the end of a post.
+ * Unschedules the completion of a post in WP Cron.
  *
- * @uses $post_id for identifing the post
- * @uses global $wpdb object for update function
+ * @package Prospress
+ * @subpackage Posts
+ * @since 0.1
+ *
+ * @uses wp_unschedule_event function
  */
 function pp_unschedule_post_end( $post_id ) {
 	$next = wp_next_scheduled( 'schedule_end_post', array('ID' => $post_id) );
 	wp_unschedule_event( $next, 'schedule_end_post', array('ID' => $post_id) );
 }
-// Unschedule end of a post when a post is deleted. 
 add_action( 'deleted_post', 'pp_unschedule_post_end' );
 
 
-//**************************************************************************************************//
-// CREATE CUSTOM POST STATUS AND ADD END DATE TO POST SUBMIT META BOX
-//**************************************************************************************************//
-
 /**
- * Create a "completed" status to designate to posts upon their completion. 
+ * What happens to Prospress posts when they completed? They need to be marked with a special status. 
+ * This function registers the "Completed" to designate to posts upon their completion. 
+ * 
+ * For now, a post earns this status with the passing of a given period of time. However, eventually a 
+ * post may be completed due to a number of other circumstances. 
  *
- * @uses pp_register_completed_status functiion
- * @param object $post
+ * @package Prospress
+ * @subpackage Posts
+ * @since 0.1
+ *
+ * @uses pp_register_completed_status function
  */
 function pp_register_completed_status() {
 	register_post_status(
@@ -197,15 +244,16 @@ function pp_register_completed_status() {
 }
 add_action('init', 'pp_register_completed_status');
 
+
 /**
- * Display custom Prospress post submit form fields, mainly the 'end date' box.
+ * Display custom Prospress post end date/time form fields.
  *
  * This code is sourced from the edit-form-advanced.php file. Additional code is added for 
- * dealing with 'completed' post status. The HTML has also split from the php code for more
- * readable poetry.
+ * dealing with 'completed' post status. 
  *
- * @uses global $wpdb to get post meta, including post end time
- * @param object $post
+ * @package Prospress
+ * @subpackage Posts
+ * @since 0.1
  */
 function pp_post_submit_meta_box() {
 	global $action, $wpdb, $post, $market_system;
@@ -233,7 +281,7 @@ function pp_post_submit_meta_box() {
 	if ( !isset( $end_date ) ) {
 		$end_date = date_i18n( $datef, strtotime( gmdate( 'Y-m-d H:i:s', ( time() + 604800 + ( get_option( 'gmt_offset' ) * 3600 ) ) ) ) );
 	}
-?>
+	?>
 	<div class="misc-pub-section curtime misc-pub-section-last">
 		<span id="endtimestamp">
 		<?php printf($end_stamp, $end_date); ?></span>
@@ -245,13 +293,15 @@ function pp_post_submit_meta_box() {
 }
 add_action('post_submitbox_misc_actions', 'pp_post_submit_meta_box');
 
+
 /**
- * Copy of the "touch_time" template function for use with end time, instead of start time
+ * Copy of the WordPress "touch_time" template function for use with end time, instead of start time
  *
- * @since unknown
+ * @package Prospress
+ * @subpackage Posts
+ * @since 0.1
  *
  * @param unknown_type $edit
- * @param unknown_type $for_post
  * @param unknown_type $tab_index
  * @param unknown_type $multi
  */
@@ -323,6 +373,14 @@ function touch_end_time( $edit = 1, $tab_index = 0, $multi = 0 ) {
 <?php
 }
 
+
+/** 
+ * Enqueues scripts and styles to the head of Prospress post admin pages. 
+ * 
+ * @package Prospress
+ * @subpackage Posts
+ * @since 0.1
+ */
 function pp_posts_admin_head() {
 
 	if( !is_pp_post_admin_page() )
@@ -356,38 +414,19 @@ function pp_posts_admin_head() {
 }
 add_action( 'admin_enqueue_scripts', 'pp_posts_admin_head' );
 
-//**************************************************************************************************//
-// ADD ADMIN MENU FOR POSTS THAT HAVE ENDED
-//**************************************************************************************************//
-/*
-function pp_posts_add_admin_pages() {
-	if ( strpos( $_SERVER['REQUEST_URI'], 'completed' ) !== false ){
-		wp_enqueue_script( 'inline-edit-post' );
-	}
-}
-add_action( 'admin_enqueue_scripts', 'pp_posts_add_admin_pages' );
 
-// @TODO replace this quick and dirty hack with a server side way to remove styles on these tables.
-function pp_remove_classes() {
-	
-	if( !is_pp_post_admin_page() )
-		return;
-
-	if ( strpos( $_SERVER['REQUEST_URI'], 'edit.php' ) !== false ||  strpos( $_SERVER['REQUEST_URI'], 'completed' ) !== false ) {
-		echo '<script type="text/javascript">';
-		echo 'jQuery(document).ready( function($) {';
-		echo '$("#author").removeClass("column-author");';
-		echo '$("#categories").removeClass("column-categories");';
-		echo '$("#tags").removeClass("column-tags");';
-		echo '});</script>';
-	}
-}
-add_action( 'admin_enqueue_scripts', 'pp_remove_classes' );
-*/
-
-//**************************************************************************************************//
-// Customise columns on table of posts shown on edit.php
-//**************************************************************************************************//
+/** 
+ * Prospress posts end and a post's end date/time is important enough to be shown on the posts 
+ * admin table. Completed posts also require follow up actions, so these actions should also be 
+ * shown on the posts admin table, but only for completed posts. 
+ *
+ * This function adds the end date and completed posts actions columns to the column headings array
+ * for Prospress posts admin tables. 
+ * 
+ * @package Prospress
+ * @subpackage Posts
+ * @since 0.1
+ */
 function pp_post_columns( $column_headings ) {
 	global $market_system;
 
@@ -407,6 +446,15 @@ function pp_post_columns( $column_headings ) {
 }
 add_filter( 'manage_' . $market_system->name() . '_posts_columns', 'pp_post_columns' );
 
+
+/** 
+ * The admin tables for Prospress posts have custom columns for Prospress specific information. 
+ * This function fills those columns with their appropriate information.
+ * 
+ * @package Prospress
+ * @subpackage Posts
+ * @since 0.1
+ */
 function pp_post_columns_custom( $column_name, $post_id ) {
 	global $wpdb;
 
@@ -447,10 +495,20 @@ function pp_post_columns_custom( $column_name, $post_id ) {
 add_action( 'manage_posts_custom_column', 'pp_post_columns_custom', 10, 2 );
 
 
-//**************************************************************************************************//
-// CUSTOM POST TYPE & TEMPLATE REDIRECTS
-//**************************************************************************************************//
-
+/** 
+ * Prospress posts aren't just your vanilla WordPress post! They have special meta which needs to
+ * be presented in a special way. They also need to be sorted and filtered to make them easier to
+ * browse and compare. That's why this function redirects individual Prospress posts to a default
+ * template for single posts - pp-single.php - and the auto-generated Prospress index page to a 
+ * special index template - pp-index.php. 
+ * 
+ * However, before doing so, it provides a hook for overriding the templates and also checks if the 
+ * current theme has Prospress compatible templates. 
+ * 
+ * @package Prospress
+ * @subpackage Posts
+ * @since 0.1
+ */
 function pp_template_redirects() {
 	global $post, $market_system;
 
@@ -478,6 +536,39 @@ function pp_template_redirects() {
 }
 add_action( 'template_redirect', 'pp_template_redirects' );
 
+
+/** 
+ * Create a sidebar for the Prospress post index page. This sidebar automatically has the Sort and 
+ * Filter widgets added to it on activation. 
+ * 
+ * @package Prospress
+ * @subpackage Posts
+ * @since 0.1
+ */
+function pp_register_sidebars(){
+	global $market_system;
+
+	register_sidebar( array (
+		'name' => $market_system->display_name() . ' ' . __( 'Index Sidebar', 'prospress' ),
+		'id' => $market_system->name() . '-index-sidebar',
+		'description' => __( "The sidebar on your Prospress posts.", 'prospress' ),
+		'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
+		'after_widget' => "</li>",
+		'before_title' => '<h3 class="widget-title">',
+		'after_title' => '</h3>',
+	) );
+}
+add_action( 'init', 'pp_register_sidebars' );
+
+
+/** 
+ * Add the Sort and Filter widgets to the default Prospress sidebar. This function is called on 
+ * Prospress' activation to help get everything working with one-click.
+ * 
+ * @package Prospress
+ * @subpackage Posts
+ * @since 0.1
+ */
 function pp_add_sidebars_widgets(){
 	global $market_system;
 
@@ -517,44 +608,16 @@ function pp_add_sidebars_widgets(){
 	update_option( 'sidebars_widgets', $sidebars_widgets );
 }
 
-function pp_posts_deactivate(){
-	global $market_system;
 
-	error_log( '** pp_posts_deactivate called **' );
-
-	delete_option( 'widget_bid-filter' );
-	delete_option( 'widget_pp-sort' );
-	
-	$sidebars_widgets = get_option( 'sidebars_widgets' );
-
-	if( isset( $sidebars_widgets[ $market_system->name() . '-index-sidebar' ] ) ){
-		unset( $sidebars_widgets[ $market_system->name() . '-index-sidebar' ] );
-		update_option( 'sidebars_widgets', $sidebars_widgets );
-	}
-	if( isset( $sidebars_widgets[ $market_system->name() . '-single-sidebar' ] ) ){
-		unset( $sidebars_widgets[ $market_system->name() . '-single-sidebar' ] );
-		update_option( 'sidebars_widgets', $sidebars_widgets );
-	}
-}
-//register_deactivation_hook( __FILE__, 'pp_posts_deactivate' );
-add_action( 'pp_deactivation', 'pp_posts_deactivate' );
-
-
-function pp_add_sidebars(){
-	global $market_system;
-
-	register_sidebar( array (
-		'name' => $market_system->display_name() . ' ' . __( 'Index Sidebar', 'prospress' ),
-		'id' => $market_system->name() . '-index-sidebar',
-		'description' => __( "The sidebar on your Prospress posts.", 'prospress' ),
-		'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
-		'after_widget' => "</li>",
-		'before_title' => '<h3 class="widget-title">',
-		'after_title' => '</h3>',
-	) );
-}
-add_action( 'init', 'pp_add_sidebars' );
-
+/** 
+ * Prospress includes a widget & function for sorting Prospress posts. This function adds post
+ * related meta values to optionally be sorted. 
+ * 
+ * @package Prospress
+ * @subpackage Posts
+ * @since 0.1
+ * @see pp_set_sort_options()
+ */
 function pp_post_sort_options( $pp_sort_options ){
 
 	$pp_sort_options['post-desc'] = __( 'Time: Newly posted', 'prospress' );
@@ -566,6 +629,17 @@ function pp_post_sort_options( $pp_sort_options ){
 }
 add_filter( 'pp_sort_options', 'pp_post_sort_options' );
 
+
+/** 
+ * A boolean function to centralise the check for whether the current page is a Prospress posts admin page. 
+ *
+ * This is required when enqueuing scripts, styles and performing other Prospress post admin page 
+ * specific functions so it makes sense to centralise it. 
+ * 
+ * @package Prospress
+ * @subpackage Posts
+ * @since 0.1
+ */
 function is_pp_post_admin_page(){
 	global $market_system, $post;
 
@@ -575,7 +649,14 @@ function is_pp_post_admin_page(){
 		return false;
 }
 
-//Removes the Prospress index page from the search results
+
+/** 
+ * Removes the Prospress index page from the search results as it's really meant to be used as an empty place-holder. 
+ * 
+ * @package Prospress
+ * @subpackage Posts
+ * @since 0.1
+ */
 function pp_remove_index( $search ){
 	global $wpdb, $market_system;
 
@@ -586,7 +667,18 @@ function pp_remove_index( $search ){
 }
 add_filter( 'posts_search', 'pp_remove_index' );
 
-// Allow site admin to choose which roles can do what to marketplace posts.
+
+/** 
+ * Admin's may want to allow or disallow users to create, edit and delete marketplace posts. 
+ * To do this without relying on the post capability type, Prospress creates it's own type. 
+ * This function provides an admin menu for selecting which roles can do what to posts. 
+ * 
+ * Allow site admin to choose which roles can do what to marketplace posts.
+ * 
+ * @package Prospress
+ * @subpackage Posts
+ * @since 0.1
+ */
 function pp_capabilities_settings_page() { 
 	global $wp_roles, $market_system;
 
@@ -646,7 +738,16 @@ function pp_capabilities_settings_page() {
 }
 add_action( 'pp_core_settings_page', 'pp_capabilities_settings_page' );
 
-// Save settings from capabiltiies page... as they don't need to be stored in the database, they're not added to the whitelist, instead they're added to the appropriate role
+
+/** 
+ * Save capabilities settings when the admin page is submitted page. As the settings don't need to be stored in 
+ * the options table of the database, they're not added to the whitelist as is expected by this filter, instead 
+ * they're added to the appropriate roles.
+ * 
+ * @package Prospress
+ * @subpackage Posts
+ * @since 0.1
+ */
 function pp_capabilities_whitelist( $whitelist_options ) {
 	global $wp_roles, $market_system;
 
@@ -698,6 +799,51 @@ function pp_capabilities_whitelist( $whitelist_options ) {
 add_filter( 'pp_options_whitelist', 'pp_capabilities_whitelist' );
 
 
+/** 
+ * Clean up anything added on activation that does not need to persist incase of reactivation. 
+ * 
+ * @package Prospress
+ * @subpackage Posts
+ * @since 0.1
+ */
+function pp_posts_deactivate(){
+	global $market_system;
+
+	error_log( '** pp_posts_deactivate called **' );
+
+	delete_option( 'widget_bid-filter' );
+	delete_option( 'widget_pp-sort' );
+	
+	$sidebars_widgets = get_option( 'sidebars_widgets' );
+
+	if( isset( $sidebars_widgets[ $market_system->name() . '-index-sidebar' ] ) ){
+		unset( $sidebars_widgets[ $market_system->name() . '-index-sidebar' ] );
+		update_option( 'sidebars_widgets', $sidebars_widgets );
+	}
+	if( isset( $sidebars_widgets[ $market_system->name() . '-single-sidebar' ] ) ){
+		unset( $sidebars_widgets[ $market_system->name() . '-single-sidebar' ] );
+		update_option( 'sidebars_widgets', $sidebars_widgets );
+	}
+
+ 	$role = get_role( 'administrator' );
+
+	$role->remove_cap( 'publish_prospress_posts' );
+	$role->remove_cap( 'edit_prospress_post' );
+	$role->remove_cap( 'edit_prospress_posts' );
+	$role->remove_cap( 'edit_others_prospress_posts' );
+	$role->remove_cap( 'read_prospress_posts' );
+	$role->remove_cap( 'delete_prospress_post' );	
+}
+add_action( 'pp_deactivation', 'pp_posts_deactivate' );
+
+
+/** 
+ * When Prospress is uninstalled completely, remove that nasty index page created on activation. 
+ * 
+ * @package Prospress
+ * @subpackage Posts
+ * @since 0.1
+ */
 function pp_posts_uninstall(){
 	global $wpdb, $market_system;
 
@@ -706,6 +852,6 @@ function pp_posts_uninstall(){
 	$index_page_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . $market_system->name() . "'" );
 
 	wp_delete_post( $index_page_id );
+
 }
-//register_activation_hook( __FILE__, 'pp_posts_install' );
 add_action( 'pp_uninstall', 'pp_posts_uninstall' );

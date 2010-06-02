@@ -50,7 +50,6 @@ function pp_feedback_maybe_install() {
 	if ( !get_site_option('pp_feedback_db_version') || get_site_option('pp_feedback_db_version') < PP_FEEDBACK_DB_VERSION )
 		pp_feedback_install();
 }
-//register_activation_hook( __FILE__, 'pp_feedback_maybe_install' );
 add_action( 'pp_activation', 'pp_feedback_maybe_install' );
 
 
@@ -64,7 +63,6 @@ function pp_feedback_deactivate() {
 
 	delete_site_option( 'pp_feedback_db_version' );
 }
-//register_deactivation_hook( __FILE__, 'pp_feedback_deactivate' );
 add_action( 'pp_deactivation', 'pp_feedback_deactivate' );
 
 

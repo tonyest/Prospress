@@ -11,22 +11,18 @@ if( !defined( 'PP_CORE_URL' ) )
 	define( 'PP_CORE_URL', PP_PLUGIN_URL . '/pp-core' );
 
 /**
- * {@internal Missing Short Description}}
+ * Sets up Prospress environment with any settings required and/or shared across the 
+ * other components. 
  *
  * @package Prospress
  * @since 0.1
- * @global $wpdb WordPress DB access object.
- * @uses is_site_admin() returns true if the current user is a site admin, false if not
- * @uses add_submenu_page() WP function to add a submenu item
- *
- * @return unknown
  */
 function pp_core_install(){
 	error_log('*** in pp_maybe_install ***');
+
 	if( !get_option( 'currency_type' ) )
-		update_option( 'currency_type', 'USD' );
-	if( !get_option( 'currency_sign_location' ) )
-		update_option( 'currency_sign_location', '1' );
+		update_option( 'currency_type', 'USD' ); //default to the mighty green back
+
 }
 add_action( 'pp_activation', 'pp_core_install' );
 
@@ -36,10 +32,6 @@ add_action( 'pp_activation', 'pp_core_install' );
  *
  * @package Prospress
  * @since 0.1
- * @global $bp The global BuddyPress settings variable created in bp_core_setup_globals()
- * @global $wpdb WordPress DB access object.
- * @uses is_site_admin() returns true if the current user is a site admin, false if not
- * @uses add_submenu_page() WP function to add a submenu item
  */
 function pp_add_core_admin_menu() {
 	global $pp_core_admin_page;
@@ -48,6 +40,7 @@ function pp_add_core_admin_menu() {
 	$pp_core_settings_page = add_submenu_page( 'Prospress', __( 'Prospress Settings', 'prospress' ), __( 'General Settings', 'prospress' ), 10, 'Prospress', 'pp_settings_page' );
 }
 add_action( 'admin_menu', 'pp_add_core_admin_menu' );
+
 
 /**
  * The core component only knows about a few settings required for Prospress to run. This functions outputs those settings as a
@@ -59,8 +52,6 @@ add_action( 'admin_menu', 'pp_add_core_admin_menu' );
  *
  * @package Prospress
  * @since 0.1
- *
- * @global $currencies Prospress currency list.
  */
 function pp_settings_page(){
 	global $currencies, $currency;
@@ -130,9 +121,10 @@ function pp_settings_page(){
  * 
  * @package Prospress
  * @since 0.1
- * @global $currencies Prospress currency list. 
- * @global $currency The currency chosen for the marketplace. 
- * @global $currency_symbol Symbol of the marketplace's chosen currency, eg. $. 
+ * 
+ * @global array currencies Prospress currency list. 
+ * @global string currency The currency chosen for the marketplace. 
+ * @global string currency_symbol Symbol of the marketplace's chosen currency, eg. $. 
  */
 function pp_set_currency(){
 	global $currencies, $currency, $currency_symbol;
@@ -157,9 +149,10 @@ add_action( 'init', 'pp_set_currency' );
 /** 
  * For displaying monetary numbers, it's important to transform the number to include the currency symbol and correct number of decimals. 
  * 
- * @param number int | float
- * @param decimals int | float optional number of decimal places
- * @param currency string optional ISO 4217 code representing the currency. eg. for Japanese Yen, $currency == 'JPY'.
+ * @param int | float $number the numerical value to be formatted
+ * @param int | float optional $decimals the number of decimal places to return, default 2
+ * @param string optional $currency ISO 4217 code representing the currency. eg. for Japanese Yen, $currency == 'JPY'.
+ * @return string The formatted value with currency symbol.
  **/
 function pp_money_format( $number, $decimals = 2, $currency = '' ){
 	global $currencies, $currency_symbol;

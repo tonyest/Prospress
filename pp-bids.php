@@ -71,7 +71,6 @@ function pp_bids_maybe_install() {
 		pp_bids_install();
 	}
 }
-//register_activation_hook( __FILE__, 'pp_bids_check_installed' );
 add_action( 'pp_activation', 'pp_bids_maybe_install' );
 
 
@@ -131,7 +130,6 @@ function pp_bids_deactivate() {
 
 	delete_site_option( 'pp_bids_db_version' );
 }
-//register_deactivation_hook( __FILE__, 'pp_bids_deactivate' );
 add_action( 'pp_deactivation', 'pp_bids_deactivate' );
 
 // This is called when switch to blog and restore blog functions are called. 

@@ -2,9 +2,20 @@
 /**
  * @package Prospress
  * @author Brent Shepherd
- * @version 0.2
+ * @version 0.1
  */
 
+/** 
+ * A custom post type especially for Prospress posts. 
+ * 
+ * Admin's may want to allow or disallow users to create, edit and delete marketplace posts. 
+ * To do this without relying on the post capability type, Prospress creates it's own type. 
+ * 
+ * @package Prospress
+ * @since 0.1
+ * 
+ * @global PP_Market_System $market_system Prospress market system object for this marketplace.
+ */
 function pp_post_type() {
 	global $market_system;
 
