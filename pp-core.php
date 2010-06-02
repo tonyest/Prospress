@@ -28,6 +28,15 @@ if( !defined( 'PP_CORE_URL' ) )
 
 load_plugin_textdomain( 'prospress', PP_PLUGIN_DIR . '/languages', dirname( plugin_basename(__FILE__) ) . '/languages' );
 
+function pp_core_install(){
+	error_log('*** in pp_maybe_install ***');
+	if( !get_option( 'currency_type' ) )
+		update_option( 'currency_type', 'USD' );
+	if( !get_option( 'currency_sign_location' ) )
+		update_option( 'currency_sign_location', '1' );
+}
+add_action( 'pp_activation', 'pp_core_install' );
+
 function pp_remove_wp_dashboard_widgets() {
 	global $wp_meta_boxes;
 
@@ -35,8 +44,8 @@ function pp_remove_wp_dashboard_widgets() {
 		return;
 
 	// Remove the side column widgets to make space for Prospress widgets
-	unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_primary']);
-	unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_secondary']);
+	//unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_primary']);
+	//unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_secondary']);
 }
 add_action('wp_dashboard_setup', 'pp_remove_wp_dashboard_widgets' );
 
@@ -152,14 +161,6 @@ $currencies = array(
 $currency = get_option( 'currency_type' );
 
 $currency_symbol = $currencies[ $currency ][ 'symbol' ];
-
-function pp_maybe_install(){
-	error_log('*** in pp_maybe_install ***');
-	if( !get_option( 'currency_type' ) )
-		update_option( 'currency_type', 'USD' );
-	if( !get_option( 'currency_sign_location' ) )
-		update_option( 'currency_sign_location', '1' );
-}
 
 /** 
  * Function for transforming a number into a monetary formatted number, complete with currency symbol.

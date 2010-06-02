@@ -3,7 +3,9 @@
 Template Name: Single Prospress page
 */
 /**
- * The main template file for marketplace listings.
+ * This the default template for displaying a single Prospress post.
+ * It includes all the basic elements for a Prospress post in a very 
+ * neutral style.
  *
  * @package Prospress
  * @subpackage Theme
