@@ -2,23 +2,22 @@
 /*
 Plugin Name: Prospress
 Plugin URI: http://prospress.org
-Description: Publishing and trade - two prosperous human endeavours. WordPress advances the first, Prospress the second. This plugin transforms WordPress into your very own auction site.
+Description: Publishing and trade - two prosperous human endeavours. WordPress advances the first, Prospress the second. This plugin slips your very own auction site along side your WordPress blog.
 Author: Brent Shepherd
 Version: 0.2
 Author URI: http://prospress.org/
 */
 
-if ( !defined( 'PP_VERSION'))
-	define( 'PP_VERSION', '0.2' );
+if ( !defined( 'PP_VERSION' ) )
+	define( 'PP_VERSION', '0.1' );
 
 /***
  * Ye be a brave soul who enters these waters. Feel free to delve into the dark depths of this code; but be warned: 
- * this code is released as real beta, not that Google style we-use-beta-for-awesome-finished-versions type of beta.
+ * this code is released as a real beta, not that Google style we-use-beta-for-awesome-finished-versions type of beta.
  * The code is messy, undocumentated and will change over the coming months.
  * 
- * Ultimately, there are too many features and not enough polish. That will change over time, but not expect no poetry here
+ * I hacked out are too many features and not enough polish. That will change over time, but don't expect no poetry here
  * until approximately September.
- * 
  */
 
 /*
@@ -27,19 +26,30 @@ if ( !defined( 'PP_VERSION'))
  * a post system, feedback system and market/bid system. Each has it's own central file, which is called here to create Prospress.
  */
 
-require_once( WP_PLUGIN_DIR . '/prospress/pp-core.php' );
+if( !defined( 'PP_PLUGIN_DIR' ) )
+	define( 'PP_PLUGIN_DIR', WP_PLUGIN_DIR . '/prospress' );
+if( !defined( 'PP_PLUGIN_URL' ) )
+	define( 'PP_PLUGIN_URL', WP_PLUGIN_URL . '/prospress' );
 
-require_once( WP_PLUGIN_DIR . '/prospress/pp-posts.php' );
+load_plugin_textdomain( 'prospress', PP_PLUGIN_DIR . '/languages', dirname( plugin_basename(__FILE__) ) . '/languages' );
 
-require_once( WP_PLUGIN_DIR . '/prospress/pp-bids.php' );
 
-require_once( WP_PLUGIN_DIR . '/prospress/pp-feedback.php' );
+require_once( PP_PLUGIN_DIR . '/pp-core.php' );
+
+require_once( PP_PLUGIN_DIR . '/pp-bids.php' );
+
+require_once( PP_PLUGIN_DIR . '/pp-posts.php' );
+
+require_once( PP_PLUGIN_DIR . '/pp-feedback.php' );
+
+require_once( PP_PLUGIN_DIR . '/pp-payment.php' );
 
 
 function pp_activate(){
+	error_log('*** in pp_activate ***');
 	do_action( 'pp_activation' );
 }
-register_activation_hook( __FILE__, 'pp_deactivate' );
+register_activation_hook( __FILE__, 'pp_activate' );
 
 function pp_deactivate(){
 	do_action( 'pp_deactivation' );
@@ -50,3 +60,4 @@ function pp_uninstall(){
 	do_action( 'pp_uninstall' );
 }
 register_uninstall_hook( __FILE__, 'pp_uninstall' );
+

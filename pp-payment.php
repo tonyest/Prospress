@@ -1,18 +1,14 @@
 <?php
 /**
+ * Prospress Payment
+ * 
+ * Money - the great enabler of trade. This component provides a system for traders in a Prospress market place 
+ * to exchange money.
+ * 
  * @package Prospress
  * @author Brent Shepherd
  * @version 0.1
  */
-
-/*
-Plugin Name: Prospress Payment
-Plugin URI: http://prospress.com
-Description: Money - the great enabler of trade. This plugin provides a payment system for Prospress posts.
-Author: Brent Shepherd
-Version: 0.1
-Author URI: http://brentshepherd.com/
-*/
 
 if ( !defined( 'PP_PAYMENTS_DB_VERSION'))
 	define ( 'PP_PAYMENTS_DB_VERSION', '0003' );
@@ -37,13 +33,14 @@ if ( !isset($wpdb->payments_log) || empty($wpdb->payments_log))
 // The engine behind the payment system - TwinCitiesTech's WP Invoice
 require_once( PP_INVOICE_DIR . '/WP-Invoice.php' );
 
-register_activation_hook(__FILE__, array( $WP_Invoice, 'install' ) );
+//register_activation_hook(__FILE__, array( $WP_Invoice, 'install' ) );
+add_action( 'pp_activation', array( $WP_Invoice, 'install' ) );
+
 
 /**
  * Adds the "Make Payment" & "Send Invoice" actions to ended posts. 
  * 
  **/
-
 function pp_add_payment_action( $actions, $post_id ) {
 	global $user_ID, $market_system, $blog_id, $wpdb;
  

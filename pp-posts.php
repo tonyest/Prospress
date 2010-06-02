@@ -1,17 +1,13 @@
 <?php
 /**
+ * Prospress Posts
+ *
+ * Adds a marketplace posting system along side WordPress.
+ *
  * @package Prospress
  * @author Brent Shepherd
  * @version 0.1
  */
-/*
-Plugin Name: Prospress Posts
-Plugin URI: http://prospress.org
-Description: Adds a marketplace posting system into WordPress.
-Author: Brent Shepherd
-Version: 0.1
-Author URI: http://brentshepherd.com/
-*/
 
 /**
  * @TODO have these constant declarations occur in the pp-core.php
@@ -53,7 +49,7 @@ function pp_posts_install(){
 
 	$wp_rewrite->flush_rules(false);
 
-	error_log('activation hook being called.');
+	error_log('*** in pp_posts_install ***');
 
 	// Create a page to be used as the index for Prospress posts
 	if( !$wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . $market_system->name() . "'" ) ){
@@ -71,7 +67,8 @@ function pp_posts_install(){
 
 	pp_add_sidebars_widgets();
 }
-register_activation_hook( __FILE__, 'pp_posts_install' );
+//register_activation_hook( __FILE__, 'pp_posts_install' );
+add_action( 'pp_activation', 'pp_posts_install' );
 
 /* When the post is saved, saves our custom data */
 function pp_post_save_postdata( $post_id, $post ) {
@@ -520,8 +517,10 @@ function pp_add_sidebars_widgets(){
 	update_option( 'sidebars_widgets', $sidebars_widgets );
 }
 
-function pp_posts_uninstall(){
+function pp_posts_deactivate(){
 	global $market_system;
+
+	error_log( '** pp_posts_deactivate called **' );
 
 	delete_option( 'widget_bid-filter' );
 	delete_option( 'widget_pp-sort' );
@@ -537,7 +536,9 @@ function pp_posts_uninstall(){
 		update_option( 'sidebars_widgets', $sidebars_widgets );
 	}
 }
-register_deactivation_hook( __FILE__, 'pp_posts_uninstall' );
+//register_deactivation_hook( __FILE__, 'pp_posts_deactivate' );
+add_action( 'pp_deactivation', 'pp_posts_deactivate' );
+
 
 function pp_add_sidebars(){
 	global $market_system;
@@ -695,3 +696,16 @@ function pp_capabilities_whitelist( $whitelist_options ) {
 	return $whitelist_options;
 }
 add_filter( 'pp_options_whitelist', 'pp_capabilities_whitelist' );
+
+
+function pp_posts_uninstall(){
+	global $wpdb, $market_system;
+
+	error_log('*** in pp_posts_uninstall ***');
+
+	$index_page_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . $market_system->name() . "'" );
+
+	wp_delete_post( $index_page_id );
+}
+//register_activation_hook( __FILE__, 'pp_posts_install' );
+add_action( 'pp_uninstall', 'pp_posts_uninstall' );

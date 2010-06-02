@@ -1,17 +1,13 @@
 <?php
 /**
+ * Prospress Feedback
+ *
+ * Leave feedback for other users on your prospress marketplace. 
+ *
  * @package Prospress
  * @author Brent Shepherd
- * @version 0.2
+ * @version 0.1
  */
-/*
-Plugin Name: Prospress Feedback
-Plugin URI: http://prospress.com
-Description: Leave feedback for other users on your prospress marketplace. 
-Author: Brent Shepherd
-Version: 0.2
-Author URI: http://brentshepherd.com/
-*/
 
 if ( !defined( 'PP_FEEDBACK_DB_VERSION'))
 	define ( 'PP_FEEDBACK_DB_VERSION', '0015' );
@@ -54,17 +50,23 @@ function pp_feedback_maybe_install() {
 	if ( !get_site_option('pp_feedback_db_version') || get_site_option('pp_feedback_db_version') < PP_FEEDBACK_DB_VERSION )
 		pp_feedback_install();
 }
-register_activation_hook( __FILE__, 'pp_feedback_maybe_install' );
+//register_activation_hook( __FILE__, 'pp_feedback_maybe_install' );
+add_action( 'pp_activation', 'pp_feedback_maybe_install' );
+
 
 function pp_feedback_deactivate() {
 	global $wpdb;
+
+	error_log( '** pp_feedback_deactivate called **' );
 
 	if ( !current_user_can('edit_plugins') || !function_exists( 'delete_site_option') )
 		return false;
 
 	delete_site_option( 'pp_feedback_db_version' );
 }
-register_deactivation_hook( __FILE__, 'pp_feedback_deactivate' );
+//register_deactivation_hook( __FILE__, 'pp_feedback_deactivate' );
+add_action( 'pp_deactivation', 'pp_feedback_deactivate' );
+
 
 /**
  * Set up the Prospress Feedback plugin on single blog. Creates table, and add site options to sitemeta DB.

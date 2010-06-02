@@ -1,4 +1,13 @@
 <?php
+/**
+ * The Core Market System. 
+ * 
+ * This is where it get's exciting... and a little messy. 
+ * 
+ * @package Prospress
+ * @author Brent Shepherd
+ * @version 0.1
+ */
 
 class PP_Market_System {
 

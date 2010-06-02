@@ -5,29 +5,22 @@
  * @version 0.1
  */
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
- * GLOBAL CONSTANTS
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
-/* Define the path and url of the Prospress plugins directory */
-//define( 'PP_PLUGIN_DIR', WP_PLUGIN_DIR . '/prospress' );
-//define( 'PP_PLUGIN_URL', WP_PLUGIN_URL . '/prospress' );
-
-/* Define the current version number for checking if DB tables are up to date. */
-//define( 'PP_CORE_DB_VERSION', '0001' );
-
-//define('PP_DB_PREFIX', 'pp_');
-
-if( !defined( 'PP_PLUGIN_DIR' ) )
-	define( 'PP_PLUGIN_DIR', WP_PLUGIN_DIR . '/prospress' );
-if( !defined( 'PP_PLUGIN_URL' ) )
-	define( 'PP_PLUGIN_URL', WP_PLUGIN_URL . '/prospress' );
 if( !defined( 'PP_CORE_DIR' ) )
 	define( 'PP_CORE_DIR', PP_PLUGIN_DIR . '/pp-core' );
 if( !defined( 'PP_CORE_URL' ) )
 	define( 'PP_CORE_URL', PP_PLUGIN_URL . '/pp-core' );
 
-load_plugin_textdomain( 'prospress', PP_PLUGIN_DIR . '/languages', dirname( plugin_basename(__FILE__) ) . '/languages' );
-
+/**
+ * {@internal Missing Short Description}}
+ *
+ * @package Prospress
+ * @since 0.1
+ * @global $wpdb WordPress DB access object.
+ * @uses is_site_admin() returns true if the current user is a site admin, false if not
+ * @uses add_submenu_page() WP function to add a submenu item
+ *
+ * @return unknown
+ */
 function pp_core_install(){
 	error_log('*** in pp_maybe_install ***');
 	if( !get_option( 'currency_type' ) )
@@ -37,22 +30,12 @@ function pp_core_install(){
 }
 add_action( 'pp_activation', 'pp_core_install' );
 
-function pp_remove_wp_dashboard_widgets() {
-	global $wp_meta_boxes;
-
-	if( is_super_admin() )
-		return;
-
-	// Remove the side column widgets to make space for Prospress widgets
-	//unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_primary']);
-	//unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_secondary']);
-}
-add_action('wp_dashboard_setup', 'pp_remove_wp_dashboard_widgets' );
 
 /**
- * Adds the "Prospress" admin menu item to the Site Admin tab.
+ * Adds the Prospress admin menu item to the Site Admin tab.
  *
  * @package Prospress
+ * @since 0.1
  * @global $bp The global BuddyPress settings variable created in bp_core_setup_globals()
  * @global $wpdb WordPress DB access object.
  * @uses is_site_admin() returns true if the current user is a site admin, false if not
@@ -61,24 +44,26 @@ add_action('wp_dashboard_setup', 'pp_remove_wp_dashboard_widgets' );
 function pp_add_core_admin_menu() {
 	global $pp_core_admin_page;
 
-	/* Add the administration tab under the "Site Admin" tab for site administrators */
 	$pp_core_admin_page = add_menu_page( __( 'Prospress', 'prospress' ), __( 'Prospress', 'prospress' ), 10, 'Prospress', '', PP_PLUGIN_URL . '/images/prospress-16x16.png', 3 );
 	$pp_core_settings_page = add_submenu_page( 'Prospress', __( 'Prospress Settings', 'prospress' ), __( 'General Settings', 'prospress' ), 10, 'Prospress', 'pp_settings_page' );
 }
 add_action( 'admin_menu', 'pp_add_core_admin_menu' );
 
-function pp_add_icon_css() {
-
-	if ( strpos( $_SERVER['REQUEST_URI'], 'Prospress' ) !== false || strpos( $_SERVER['REQUEST_URI'], 'custom_taxonomy_manage' ) !== false || strpos( $_SERVER['REQUEST_URI'], 'invoice_settings' ) !== false ) {
-		echo "<style type='text/css'>";
-		echo "#icon-prospress{background: url(" . PP_PLUGIN_URL . "/images/prospress-35x35.png) no-repeat center transparent}";
-		echo "</style>";
-	}
-}
-add_action( 'admin_head', 'pp_add_icon_css' );
-
+/**
+ * The core component only knows about a few settings required for Prospress to run. This functions outputs those settings as a
+ * central Prospress settings administration page and saves settings when it is submitted. 
+ *
+ * Other components, and potentially plugins for Prospress, can output their own settings on this page with the 'pp_core_settings_page'
+ * hook. They can also save these by adding them to the 'pp_options_whitelist' filter. This filter works in the same was the Wordpress
+ * settings page filter of the similar name.
+ *
+ * @package Prospress
+ * @since 0.1
+ *
+ * @global $currencies Prospress currency list.
+ */
 function pp_settings_page(){
-	global $currencies;
+	global $currencies, $currency;
 
 	if( isset( $_POST[ 'submit' ] ) && $_POST[ 'submit' ] == 'Save' ){
 
@@ -87,13 +72,16 @@ function pp_settings_page(){
 		foreach ( $pp_options_whitelist[ 'general' ] as $option ) {
 			$option = trim($option);
 			$value = null;
-			if ( isset($_POST[$option]) )
-				$value = $_POST[$option];
-			if ( !is_array($value) )
-				$value = trim($value);
-			$value = stripslashes_deep($value);
-
-			update_option($option, $value);
+			if ( isset( $_POST[ $option ] ) )
+				$value = $_POST[ $option ];
+			if ( !is_array( $value ) )
+				$value = trim( $value );
+			$value = stripslashes_deep( $value );
+			
+			update_option( $option, $value );
+			
+			if( $option == 'currency_type' )
+				$currency = $value;
 		}
 		$updated_message = __( 'Settings Updated.' );
 	}
@@ -113,10 +101,9 @@ function pp_settings_page(){
 			<label for='currency_type'>
 				<?php _e('Currency:' , 'prospress' );?>
 				<select id='currency_type' name='currency_type'>
-				<?php $currency_type = get_option( 'currency_type' );
-				foreach( $currencies as $code => $currency ) { ?>
-					<option value='<?php echo $code; ?>' <?php selected( $currency_type, $code ); ?> >
-						<?php echo $currency[ 'currency' ]; ?> (<?php echo $code . ', ' . $currency['symbol']; ?>)
+				<?php foreach( $currencies as $code => $details ) { ?>
+					<option value='<?php echo $code; ?>' <?php selected( $currency, $code ); ?> >
+						<?php echo $details[ 'currency_name' ]; ?> (<?php echo $code . ', ' . $details[ 'symbol' ]; ?>)
 					</option>
 				<?php } ?>
 				</select>
@@ -130,46 +117,50 @@ function pp_settings_page(){
 	<?php
 }
 
-/************************************************************************************************************************/
-/**** MONEY FORMAT FUNCTIONS ****/
-/************************************************************************************************************************/
+
 /** 
- * Global currencies variable for storing all currencies available in the marketplace.
+ * Create and set global currency variables for sharing all currencies available in the marketplace and the currently 
+ * selected currency type and symbol.
  * 
- * To make a new currency available for your marketplace, add an array to this variable. 
- * The key for this array must be the currency's ISO 4217 code. The array must contain the currency 
- * name and symbol. 
+ * To make a new currency available, simply add an array to this variable. The key for this array must be the currency's 
+ * ISO 4217 code. The array must contain the currency name and symbol. 
  * e.g. $currencies['CAD'] = array( 'currency' => __('Canadian Dollar', 'prospress' ), 'symbol' => '&#36;' ).
  * 
  * Once added, the currency will be available for selection from the admin page.
  * 
- * @package Prospress Currency
+ * @package Prospress
  * @since 0.1
+ * @global $currencies Prospress currency list. 
+ * @global $currency The currency chosen for the marketplace. 
+ * @global $currency_symbol Symbol of the marketplace's chosen currency, eg. $. 
  */
-global $currencies, $currency, $currency_symbol;
+function pp_set_currency(){
+	global $currencies, $currency, $currency_symbol;
 
-$currencies = array(
-	'AUD' => array( 'currency' => __('Australian Dollar', 'prospress' ), 'symbol' => '&#36;' ),
-	'GBP' => array( 'currency' => __('British Pound', 'prospress' ), 'symbol' => '&#163;' ),
-	'CNY' => array( 'currency' => __('Chinese Yuan', 'prospress' ), 'symbol' => '&#165;' ),
-	'EUR' => array( 'currency' => __('Euro', 'prospress' ), 'symbol' => '&#8364;' ),
-	'INR' => array( 'currency' => __('Indian Rupee', 'prospress' ), 'symbol' => 'Rs' ),
-	'JPY' => array( 'currency' => __('Japanese Yen', 'prospress' ), 'symbol' => '&#165;' ),
-	'USD' => array( 'currency' => __('United States Dollar', 'prospress' ), 'symbol' => '&#36;' )
-	);
+	$currencies = array(
+		'AUD' => array( 'currency_name' => __('Australian Dollar', 'prospress' ), 'symbol' => '&#36;' ),
+		'GBP' => array( 'currency_name' => __('British Pound', 'prospress' ), 'symbol' => '&#163;' ),
+		'CNY' => array( 'currency_name' => __('Chinese Yuan', 'prospress' ), 'symbol' => '&#165;' ),
+		'EUR' => array( 'currency_name' => __('Euro', 'prospress' ), 'symbol' => '&#8364;' ),
+		'INR' => array( 'currency_name' => __('Indian Rupee', 'prospress' ), 'symbol' => 'Rs' ),
+		'JPY' => array( 'currency_name' => __('Japanese Yen', 'prospress' ), 'symbol' => '&#165;' ),
+		'USD' => array( 'currency_name' => __('United States Dollar', 'prospress' ), 'symbol' => '&#36;' )
+		);
 
-$currency = get_option( 'currency_type' );
+	$currency = get_option( 'currency_type' );
 
-$currency_symbol = $currencies[ $currency ][ 'symbol' ];
+	$currency_symbol = $currencies[ $currency ][ 'symbol' ];
+}
+add_action( 'init', 'pp_set_currency' );
+
 
 /** 
- * Function for transforming a number into a monetary formatted number, complete with currency symbol.
+ * For displaying monetary numbers, it's important to transform the number to include the currency symbol and correct number of decimals. 
  * 
  * @param number int | float
  * @param decimals int | float optional number of decimal places
- * @param currency string optional ISO 4217 code representing the currency. eg. for Japanese Yen, $currency == 'JPY'. If left empty, the currency stored in the options table will be used.
+ * @param currency string optional ISO 4217 code representing the currency. eg. for Japanese Yen, $currency == 'JPY'.
  **/
-// Takes an int or float representing number and returns it as a string with currency symbol and formatted in locale suitable number format
 function pp_money_format( $number, $decimals = 2, $currency = '' ){
 	global $currencies, $currency_symbol;
 
@@ -183,9 +174,25 @@ function pp_money_format( $number, $decimals = 2, $currency = '' ){
 	return $currency_sym . ' ' . number_format_i18n( $number, $decimals );
 }
 
-/************************************************************************************************************************/
-/**** MONEY FORMAT FUNCTIONS ****/
-/************************************************************************************************************************/
+
+/**
+ * The default WordPress admin menu icon has nothing on the Prospress jumping koi. This function adds 
+ * the fish to menu pages under the Prospress top-level admin menu.
+ *
+ * @package Prospress
+ * @since 0.1
+ */
+function pp_add_icon_css() {
+
+	if ( strpos( $_SERVER['REQUEST_URI'], 'Prospress' ) !== false || strpos( $_SERVER['REQUEST_URI'], 'custom_taxonomy_manage' ) !== false || strpos( $_SERVER['REQUEST_URI'], 'invoice_settings' ) !== false ) {
+		echo "<style type='text/css'>";
+		echo "#icon-prospress{background: url(" . PP_PLUGIN_URL . "/images/prospress-35x35.png) no-repeat center transparent}";
+		echo "</style>";
+	}
+}
+add_action( 'admin_head', 'pp_add_icon_css' );
+
+
 /** 
  * Add admin style and scripts that are required by more than one component. 
  * 
@@ -193,7 +200,6 @@ function pp_money_format( $number, $decimals = 2, $currency = '' ){
  * @since 0.1
  */
 function pp_core_admin_head() {
-	global $market_system;
 
 	if( strpos( $_SERVER['REQUEST_URI'], 'custom_taxonomy_manage' ) !== false  || strpos( $_SERVER['REQUEST_URI'], 'completed' ) !== false  || strpos( $_SERVER['REQUEST_URI'], 'bids' ) !== false )
 		wp_enqueue_style( 'prospress-admin',  PP_CORE_URL . '/prospress-admin.css' );
