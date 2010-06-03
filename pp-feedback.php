@@ -19,7 +19,6 @@ if ( !defined( 'PP_FEEDBACK_URL'))
 require_once ( PP_FEEDBACK_DIR . '/feedback-functions.php' );
 require_once ( PP_FEEDBACK_DIR . '/feedback-templatetags.php' );
 
-
 // For testing
 //include_once ( PP_FEEDBACK_DIR . '/feedback-tests.php' );
 
@@ -466,7 +465,7 @@ function pp_feedback_settings_section() {
 	$edit_feedback = get_option( 'edit_feedback' );
 	?>
 	<h3><?php _e( 'Feedback' , 'prospress' )?></h3>
-	<p><?php _e( 'Allowing a user to edit feedback they have left for others helps keep make feedback more accurate. Circumstances can change, even after feedback has been provided.' , 'prospress' ); ?></p>
+	<p><?php _e( 'Allowing a user to edit the feedback left for others makes feedback more accurate. Circumstances can change, even after feedback has been provided.' , 'prospress' ); ?></p>
 	<label for='edit_feedback'>
 		<input type='checkbox' value='true' name='edit_feedback' id='edit_feedback' <?php checked( (boolean)$edit_feedback ); ?> />
 		  <?php _e('Allow users to edit feedback.' , 'prospress' );?>

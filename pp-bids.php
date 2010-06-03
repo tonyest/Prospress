@@ -134,11 +134,11 @@ add_action( 'pp_deactivation', 'pp_bids_deactivate' );
 
 // This is called when switch to blog and restore blog functions are called. 
 // It makes the correct bid table names available in the $wpdb global.
-function set_bid_table() {
+function pp_set_bid_tables() {
 	global $wpdb;
 
 	$wpdb->bids = $wpdb->prefix . 'bids';
 	$wpdb->bidsmeta = $wpdb->prefix . 'bidsmeta';
 }
-add_action( 'switch_blog', 'set_bid_table' );
+add_action( 'switch_blog', 'pp_set_bid_tables' );
 

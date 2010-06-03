@@ -26,22 +26,22 @@ if ( !defined( 'PP_POSTS_URL' ) )
 /**
  * Include the Prospress Custom Post Type
  */
-include( PP_POSTS_DIR . '/pp-custom-post-type.php');
+include( PP_POSTS_DIR . '/pp-custom-post-type.php' );
 
 /**
- * Include Prospress Sort widget
+ * Include Prospress Custom Taxonomy Components
  */
-include( PP_POSTS_DIR . '/pp-sort.php');
+include( PP_POSTS_DIR . '/pp-custom-taxonomy.php' );
+
+/**
+ * Include the Prospress Sort widget
+ */
+include( PP_POSTS_DIR . '/pp-sort.php' );
 
 /**
  * Include Prospress Template Tags
  */
-include( PP_POSTS_DIR . '/pp-posts-templatetags.php');
-
-/**
- * Include Prospress Custom Taxonomy Component
- */
-include( PP_POSTS_DIR . '/pp-custom-taxonomy.php');
+include( PP_POSTS_DIR . '/pp-posts-templatetags.php' );
 
 global $market_system;
 
@@ -66,8 +66,6 @@ function pp_posts_install(){
 	global $wpdb, $market_system, $wp_rewrite;
 
 	$wp_rewrite->flush_rules(false);
-
-	error_log('*** in pp_posts_install ***');
 
 	// Need an index page for Prospress posts
 	if( !$wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . $market_system->name() . "'" ) ){
@@ -125,13 +123,13 @@ function pp_post_save_postdata( $post_id, $post ) {
 	$hhe = $_POST['hhe'];
 	$mne = $_POST['mne'];
 	$sse = $_POST['sse'];	
-	$yye = ($yye <= 0 ) ? date('Y') : $yye;
-	$mme = ($mme <= 0 ) ? date('n') : $mme;
-	$dde = ($dde > 31 ) ? 31 : $dde;
-	$dde = ($dde <= 0 ) ? date('j') : $dde;
-	$hhe = ($hhe > 23 ) ? $hhe -24 : $hhe;
-	$mne = ($mne > 59 ) ? $mne -60 : $mne;
-	$sse = ($sse > 59 ) ? $sse -60 : $sse;
+	$yye = ( $yye <= 0 ) ? date('Y' ) : $yye;
+	$mme = ( $mme <= 0 ) ? date('n' ) : $mme;
+	$dde = ( $dde > 31 ) ? 31 : $dde;
+	$dde = ( $dde <= 0 ) ? date('j' ) : $dde;
+	$hhe = ( $hhe > 23 ) ? $hhe -24 : $hhe;
+	$mne = ( $mne > 59 ) ? $mne -60 : $mne;
+	$sse = ( $sse > 59 ) ? $sse -60 : $sse;
 	$post_end_date = sprintf( "%04d-%02d-%02d %02d:%02d:%02d", $yye, $mme, $dde, $hhe, $mne, $sse );
 
 	$now_gmt = current_time( 'mysql', true ); // get current GMT
@@ -143,13 +141,13 @@ function pp_post_save_postdata( $post_id, $post ) {
 		update_post_meta( $post_id, 'post_end_date_gmt', $post_end_date_gmt);		
 	}
 
-	if( $post_end_date_gmt <= $now_gmt && $_POST['save'] != 'Save Draft'){
+	if( $post_end_date_gmt <= $now_gmt && $_POST['save'] != 'Save Draft' ){
 		wp_unschedule_event( strtotime( $original_post_end_date_gmt ), 'schedule_end_post', array( 'ID' => $post_id ) );
 		pp_end_post( $post_id );
 	} else {
 		wp_unschedule_event( strtotime( $original_post_end_date_gmt ), 'schedule_end_post', array( 'ID' => $post_id ) );
 
-		if($post_status != 'draft'){
+		if( $post_status != 'draft' ){
 			pp_schedule_end_post( $post_id, strtotime( $post_end_date_gmt ) );
 			do_action( 'publish_end_date_change', $post_status, $post_end_date );
 		}
@@ -195,7 +193,7 @@ function pp_end_post( $post_id ) {
 	$wpdb->update( $wpdb->posts, array( 'post_status' => $post_status ), array( 'ID' => $post_id ) );
 	do_action( 'post_completed' );
 }
-add_action('schedule_end_post', 'pp_end_post');
+add_action('schedule_end_post', 'pp_end_post' );
 
 
 /**
@@ -230,8 +228,8 @@ add_action( 'deleted_post', 'pp_unschedule_post_end' );
 function pp_register_completed_status() {
 	register_post_status(
 	       'completed',
-	       array('label' => _x('Completed Posts', 'post'),
-				'label_count' => _n_noop('Completed <span class="count">(%s)</span>', 'Completed <span class="count">(%s)</span>'),
+	       array('label' => _x('Completed Posts', 'post' ),
+				'label_count' => _n_noop('Completed <span class="count">(%s)</span>', 'Completed <span class="count">(%s)</span>' ),
 				'show_in_admin_all' => false,
 				'show_in_admin_all_list' => false,
 				'show_in_admin_status_list' => true,
@@ -242,7 +240,7 @@ function pp_register_completed_status() {
 	       )
 	);
 }
-add_action('init', 'pp_register_completed_status');
+add_action('init', 'pp_register_completed_status' );
 
 
 /**
@@ -284,14 +282,14 @@ function pp_post_submit_meta_box() {
 	?>
 	<div class="misc-pub-section curtime misc-pub-section-last">
 		<span id="endtimestamp">
-		<?php printf($end_stamp, $end_date); ?></span>
+		<?php printf( $end_stamp, $end_date); ?></span>
 		<a href="#edit_endtimestamp" class="edit-endtimestamp hide-if-no-js" tabindex='4'><?php ('completed' != $post->post_status) ? _e('Edit', 'prospress' ) : _e('Extend', 'prospress' ); ?></a>
 		<div id="endtimestampdiv" class="hide-if-js">
-			<?php touch_end_time(($action == 'edit'),5); ?>
+			<?php pp_touch_end_time( ( $action == 'edit' ), 5 ); ?>
 		</div>
 	</div><?php
 }
-add_action('post_submitbox_misc_actions', 'pp_post_submit_meta_box');
+add_action('post_submitbox_misc_actions', 'pp_post_submit_meta_box' );
 
 
 /**
@@ -305,13 +303,12 @@ add_action('post_submitbox_misc_actions', 'pp_post_submit_meta_box');
  * @param unknown_type $tab_index
  * @param unknown_type $multi
  */
-function touch_end_time( $edit = 1, $tab_index = 0, $multi = 0 ) {
+function pp_touch_end_time( $edit = 1, $tab_index = 0, $multi = 0 ) {
 	global $wp_locale, $post, $comment;
 
-	//error_log('post = ' . print_r($post,true));
 	$post_end_date_gmt = get_post_end_time( $post->ID, 'mysql' );
 
-	$edit = ( in_array($post->post_status, array('draft', 'pending') ) && (!$post_end_date_gmt || '0000-00-00 00:00:00' == $post_end_date_gmt ) ) ? false : true;
+	$edit = ( in_array( $post->post_status, array('draft', 'pending' ) ) && (!$post_end_date_gmt || '0000-00-00 00:00:00' == $post_end_date_gmt ) ) ? false : true;
 
 	$tab_index_attribute = '';
 	if ( (int) $tab_index > 0 )
@@ -321,15 +318,15 @@ function touch_end_time( $edit = 1, $tab_index = 0, $multi = 0 ) {
 	$time_adj_end = time() + 604800 + ( get_option( 'gmt_offset' ) * 3600 );
 
 	$post_end_date = get_post_end_time( $post->ID, 'mysql', false );
-	if(empty($post_end_date))
+	if(empty( $post_end_date))
 		$post_end_date = gmdate( 'Y-m-d H:i:s', ( time() + 604800 + ( get_option( 'gmt_offset' ) * 3600 ) ) );
 
-	$dde = ($edit) ? mysql2date( 'd', $post_end_date, false ) : gmdate( 'd', $time_adj_end );
-	$mme = ($edit) ? mysql2date( 'm', $post_end_date, false ) : gmdate( 'm', $time_adj_end );
-	$yye = ($edit) ? mysql2date( 'Y', $post_end_date, false ) : gmdate( 'Y', $time_adj_end );
-	$hhe = ($edit) ? mysql2date( 'H', $post_end_date, false ) : gmdate( 'H', $time_adj_end );
-	$mne = ($edit) ? mysql2date( 'i', $post_end_date, false ) : gmdate( 'i', $time_adj_end );
-	$sse = ($edit) ? mysql2date( 's', $post_end_date, false ) : gmdate( 's', $time_adj_end );
+	$dde = ( $edit) ? mysql2date( 'd', $post_end_date, false ) : gmdate( 'd', $time_adj_end );
+	$mme = ( $edit) ? mysql2date( 'm', $post_end_date, false ) : gmdate( 'm', $time_adj_end );
+	$yye = ( $edit) ? mysql2date( 'Y', $post_end_date, false ) : gmdate( 'Y', $time_adj_end );
+	$hhe = ( $edit) ? mysql2date( 'H', $post_end_date, false ) : gmdate( 'H', $time_adj_end );
+	$mne = ( $edit) ? mysql2date( 'i', $post_end_date, false ) : gmdate( 'i', $time_adj_end );
+	$sse = ( $edit) ? mysql2date( 's', $post_end_date, false ) : gmdate( 's', $time_adj_end );
 
 	$cur_dde = gmdate( 'd', $time_adj );
 	$cur_mme = gmdate( 'm', $time_adj );
@@ -340,7 +337,7 @@ function touch_end_time( $edit = 1, $tab_index = 0, $multi = 0 ) {
 
 	$month = "<select " . ( $multi ? '' : 'id="mme" ' ) . "name=\"mme\"$tab_index_attribute>\n";
 	for ( $i = 1; $i < 13; $i = $i +1 ) {
-		$month .= "\t\t\t" . '<option value="' . zeroise($i, 2) . '"';
+		$month .= "\t\t\t" . '<option value="' . zeroise( $i, 2) . '"';
 		if ( $i == $mme )
 			$month .= ' selected="selected"';
 		$month .= '>' . $wp_locale->get_month_abbrev( $wp_locale->get_month( $i ) ) . "</option>\n";
@@ -352,14 +349,14 @@ function touch_end_time( $edit = 1, $tab_index = 0, $multi = 0 ) {
 	$hour = '<input type="text" ' . ( $multi ? '' : 'id="hhe" ' ) . 'name="hhe" value="' . $hhe . '" size="2" maxlength="2"' . $tab_index_attribute . ' autocomplete="off" />';
 	$minute = '<input type="text" ' . ( $multi ? '' : 'id="mne" ' ) . 'name="mne" value="' . $mne . '" size="2" maxlength="2"' . $tab_index_attribute . ' autocomplete="off" />';
 	/* translators: 1: month input, 2: day input, 3: year input, 4: hour input, 5: minute input */
-	printf(__('%1$s%2$s, %3$s @ %4$s : %5$s'), $month, $day, $year, $hour, $minute);
+	printf(__('%1$s%2$s, %3$s @ %4$s : %5$s' ), $month, $day, $year, $hour, $minute);
 
 	echo '<input type="hidden" id="sse" name="sse" value="' . $sse . '" />';
 
 	if ( $multi ) return;
 
 	echo "\n\n";
-	foreach ( array('mme', 'dde', 'yye', 'hhe', 'mne', 'sse') as $timeunit ) {
+	foreach ( array('mme', 'dde', 'yye', 'hhe', 'mne', 'sse' ) as $timeunit ) {
 		echo '<input type="hidden" id="hidden_' . $timeunit . '" name="hidden_' . $timeunit . '" value="' . $$timeunit . '" />' . "\n";
 		$cur_timeunit = 'cur_' . $timeunit;
 		echo '<input type="hidden" id="'. $cur_timeunit . '" name="'. $cur_timeunit . '" value="' . $$cur_timeunit . '" />' . "\n";
@@ -387,7 +384,7 @@ function pp_posts_admin_head() {
 		return;
 
 	if( strpos( $_SERVER['REQUEST_URI'], 'post.php' ) !== false || strpos( $_SERVER['REQUEST_URI'], 'post-new.php' ) !== false ) {
-		wp_enqueue_script( 'prospress-post', PP_POSTS_URL . '/pp-post.dev.js', array('jquery') );
+		wp_enqueue_script( 'prospress-post', PP_POSTS_URL . '/pp-post.dev.js', array('jquery' ) );
 		wp_localize_script( 'prospress-post', 'ppPostL10n', array(
 			'endedOn' => __('Ended on:', 'prospress' ),
 			'endOn' => __('End on:', 'prospress' ),
@@ -405,7 +402,7 @@ function pp_posts_admin_head() {
 	// @TODO replace this quick and dirty hack with a server side way to remove styles on these tables.
 	if ( strpos( $_SERVER['REQUEST_URI'], 'edit.php' ) !== false ||  strpos( $_SERVER['REQUEST_URI'], 'completed' ) !== false ) {
 		echo '<script type="text/javascript">';
-		echo 'jQuery(document).ready( function($) {';
+		echo 'jQuery(document).ready( function( $) {';
 		echo '$("#author").removeClass("column-author");';
 		echo '$("#categories").removeClass("column-categories");';
 		echo '$("#tags").removeClass("column-tags");';
@@ -512,15 +509,14 @@ add_action( 'manage_posts_custom_column', 'pp_post_columns_custom', 10, 2 );
 function pp_template_redirects() {
 	global $post, $market_system;
 
-	error_log('$post = ' . print_r( $post, true ));
 	if( $post->post_name == $market_system->name() ){
 		
 		do_action( 'pp_index_template_redirect' );
 		
 		if( file_exists( TEMPLATEPATH . '/pp-index.php' ) )
-			include( TEMPLATEPATH . '/pp-index.php');
+			include( TEMPLATEPATH . '/pp-index.php' );
 		else
-			include( PP_POSTS_DIR . '/pp-index.php');
+			include( PP_POSTS_DIR . '/pp-index.php' );
 		exit;
 
 	} elseif ( $post->post_type == $market_system->name() && !isset( $_GET[ 's' ] ) ) {
@@ -528,9 +524,9 @@ function pp_template_redirects() {
 		do_action( 'pp_single_template_redirect' );
 
 		if( file_exists( TEMPLATEPATH . '/pp-single.php' ) )
-			include( TEMPLATEPATH . '/pp-single.php');
+			include( TEMPLATEPATH . '/pp-single.php' );
 		else
-			include( PP_POSTS_DIR . '/pp-single.php');
+			include( PP_POSTS_DIR . '/pp-single.php' );
 		exit;
 	}
 }
@@ -661,7 +657,7 @@ function pp_remove_index( $search ){
 	global $wpdb, $market_system;
 
 	if ( isset( $_GET['s'] ) ) // only remove post from search results
-		$search .= "AND ID NOT IN (SELECT ID FROM $wpdb->posts WHERE post_name = '" . $market_system->name() . "')";
+		$search .= "AND ID NOT IN (SELECT ID FROM $wpdb->posts WHERE post_name = '" . $market_system->name() . "' )";
 
 	return $search;
 }
@@ -697,9 +693,7 @@ function pp_capabilities_settings_page() {
 		<p><?php printf( __( 'You can restrict interaction with %s to certain roles. Please choose which roles have the following capabilities:', 'prospress' ), $market_system->display_name() ); ?></p>
 		<div class="prospress-capabilitiy create">
 			<h4><?php printf( __( "Publish %s", 'prospress' ), $market_system->display_name() ); ?></h4>
-			<?php foreach ( $roles as $role ): //if( $role->name == 'administrator' ) continue; ?>
-			<?php //error_log( 'role = ' . print_r( $role, true ) ); ?>
-
+			<?php foreach ( $roles as $role ): if( $role->name == 'administrator' ) continue; ?>
 			<label for="<?php echo $role->name; ?>-create">
 				<input type="checkbox" id="<?php echo $role->name; ?>-publish" name="<?php echo $role->name; ?>-publish"<?php checked( $role->capabilities[ 'publish_prospress_posts' ], 1 ); ?> />
 				<?php echo $role->display_name; ?>
@@ -708,7 +702,7 @@ function pp_capabilities_settings_page() {
 		</div>
 		<div class="prospress-capability edit">
 			<h4><?php printf( __( "Edit %s", 'prospress' ), $market_system->display_name() ); ?></h4>
-			<?php foreach ( $roles as $role ): //if( $role->name == 'administrator' ) continue; ?>
+			<?php foreach ( $roles as $role ): if( $role->name == 'administrator' ) continue; ?>
 			<label for="<?php echo $role->name; ?>-edit">
 			  	<input type="checkbox" id="<?php echo $role->name; ?>-edit" name="<?php echo $role->name; ?>-edit"<?php checked( $role->capabilities[ 'edit_prospress_post' ], 1 ); ?> />
 				<?php echo $role->display_name; ?>
@@ -717,7 +711,7 @@ function pp_capabilities_settings_page() {
 		</div>
 		<div class="prospress-capability edit">
 			<h4><?php printf( __( "Edit Other's %s", 'prospress' ), $market_system->display_name() ); ?></h4>
-			<?php foreach ( $roles as $role ): //if( $role->name == 'administrator' ) continue; ?>
+			<?php foreach ( $roles as $role ): if( $role->name == 'administrator' ) continue; ?>
 			<label for="<?php echo $role->name; ?>-edit-others">
 				<input type="checkbox" id="<?php echo $role->name; ?>-edit-others" name="<?php echo $role->name; ?>-edit-others"<?php checked( $role->capabilities[ 'edit_others_prospress_posts' ], 1 ); ?> />
 				<?php echo $role->display_name; ?>
@@ -726,7 +720,7 @@ function pp_capabilities_settings_page() {
 		</div>
 		<div class="prospress-capability delete">
 			<h4><?php printf( __( "Delete %s", 'prospress' ), $market_system->display_name() ); ?></h4>
-			<?php foreach ( $roles as $role ): //if( $role->name == 'administrator' ) continue; ?>
+			<?php foreach ( $roles as $role ): if( $role->name == 'administrator' ) continue; ?>
 			<label for="<?php echo $role->name; ?>-delete">
 				<input type="checkbox" id="<?php echo $role->name; ?>-delete" name="<?php echo $role->name; ?>-delete"<?php checked( $role->capabilities[ 'delete_prospress_post' ], 1 ) ?> />
 				<?php echo $role->display_name; ?>
@@ -763,8 +757,8 @@ function pp_capabilities_whitelist( $whitelist_options ) {
 
 		foreach ( $roles as $key => $role ) {
 
-			//if( $role->name == 'administrator' )
-			//	continue;
+			if( $role->name == 'administrator' )
+				continue;
 
 			if ( isset( $_POST[ $key . '-publish' ] )  && $_POST[ $key . '-publish' ] == 'on' ) {
 				$role->add_cap( 'publish_prospress_posts' );
@@ -809,8 +803,6 @@ add_filter( 'pp_options_whitelist', 'pp_capabilities_whitelist' );
 function pp_posts_deactivate(){
 	global $market_system;
 
-	error_log( '** pp_posts_deactivate called **' );
-
 	delete_option( 'widget_bid-filter' );
 	delete_option( 'widget_pp-sort' );
 	
@@ -846,8 +838,6 @@ add_action( 'pp_deactivation', 'pp_posts_deactivate' );
  */
 function pp_posts_uninstall(){
 	global $wpdb, $market_system;
-
-	error_log('*** in pp_posts_uninstall ***');
 
 	$index_page_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . $market_system->name() . "'" );
 
