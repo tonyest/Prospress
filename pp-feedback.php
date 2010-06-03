@@ -119,6 +119,76 @@ function pp_feedback_admin_head() {
 add_action( 'admin_menu', 'pp_feedback_admin_head' );
 
 
+/** 
+ * Adds feedback history column headings to the built in print_column_headers function for the feedback admin page. 
+ *
+ * @see get_column_headers()
+ */
+function pp_feedback_columns_admin(){
+
+ 	if( strpos( $_SERVER[ 'REQUEST_URI' ], 'given' ) !== false ) {
+		$feedback_columns[ 'for_user_id' ] = __( 'For', 'prospress' );
+	} else {
+		$feedback_columns[ 'from_user_id' ] = __( 'From', 'prospress' );
+	}
+
+	$feedback_columns = array_merge( $feedback_columns, array(
+		'role' => __( 'Your Role', 'prospress' ),
+		'feedback_score' => __( 'Score', 'prospress' ),
+		'feedback_comment' => __( 'Comment', 'prospress' ),
+		'feedback_date' => __( 'Date', 'prospress' ),
+		'post_id' => __( 'Post', 'prospress' )
+	) );
+
+	if ( is_multisite() ) 
+		$feedback_columns[ 'blog_id' ] = __( 'Site', 'prospress' );
+	
+	return $feedback_columns;
+}
+add_filter( 'manage_feedback_columns', 'pp_feedback_columns_admin' );
+
+
+/** 
+ * Outputs all the feedback items for the feedback admin page. 
+ *
+ * @param feedback array optional the feedback for a user
+ */
+function pp_feedback_rows( $feedback = '' ){
+	global $user_ID;
+
+	if( !empty( $feedback ) ){
+		$style = '';
+		foreach ( $feedback as $feedback_item ) {
+			if( function_exists( 'switch_to_blog' ) )
+				switch_to_blog( $feedback_item[ 'blog_id' ] );
+
+			extract( $feedback_item );
+			echo "<tr class='feedback $style' >";
+			echo "<td scope='row'>";
+		 	if( strpos( $_SERVER[ 'REQUEST_URI' ], 'given' ) == false )
+				echo ( ( $user_ID == $from_user_id ) ? 'You' : get_userdata( $from_user_id )->user_nicename ) . pp_users_feedback_link( $from_user_id );
+			else
+				echo ( ( $user_ID == $for_user_id ) ? 'You' : get_userdata( $for_user_id )->user_nicename ) . pp_users_feedback_link( $for_user_id );
+			echo "</td>";
+			echo "<td>" . ucfirst( $role ) . "</td>";
+			echo "<td>" . (( $feedback_score == 2) ? __("Positive", 'prospress' ) : (( $feedback_score == 1) ? __("Neutral", 'prospress' ) : __("Negative", 'prospress' ))) . "</td>";
+			echo "<td>$feedback_comment</td>";
+			echo "<td>" . mysql2date( __( 'd M Y', 'prospress' ), $feedback_date ) . "</td>";
+			echo "<td><a href='" . get_permalink( $post_id ) . "' target='blank'>" . get_post( $post_id )->post_title . "</a></td>";
+			if( is_multisite() )
+				echo "<td><a href='" . get_blogaddress_by_id( $blog_id ) . "' target='blank'>" . get_bloginfo( 'name' ) . "</a></td>";
+			echo "</tr>";
+			$style = ( 'alternate' == $style ) ? '' : 'alternate';
+
+			if( function_exists( 'restore_current_blog' ) )
+				restore_current_blog();
+		}
+	} else {
+		echo '<tr><td colspan="5">You have no feedback.</td>';
+	}
+}
+
+
 /**
  * Central controller to determine which functions are called and what view is output to the screen.
  * 
@@ -422,76 +492,6 @@ function pp_feedback_history_admin( $user_id = '' ) {
 	}
 
 	include_once( PP_FEEDBACK_DIR . '/pp-feedback-table-view.php' );
-}
-
-
-/** 
- * Adds feedback history column headings to the built in print_column_headers function. 
- *
- * @see get_column_headers()
- */
-function pp_feedback_columns_admin(){
-
- 	if( strpos( $_SERVER[ 'REQUEST_URI' ], 'given' ) !== false ) {
-		$feedback_columns[ 'for_user_id' ] = __( 'For', 'prospress' );
-	} else {
-		$feedback_columns[ 'from_user_id' ] = __( 'From', 'prospress' );
-	}
-
-	$feedback_columns = array_merge( $feedback_columns, array(
-		'role' => __( 'Your Role', 'prospress' ),
-		'feedback_score' => __( 'Score', 'prospress' ),
-		'feedback_comment' => __( 'Comment', 'prospress' ),
-		'feedback_date' => __( 'Date', 'prospress' ),
-		'post_id' => __( 'Post', 'prospress' )
-	) );
-
-	if ( is_multisite() ) 
-		$feedback_columns[ 'blog_id' ] = __( 'Site', 'prospress' );
-	
-	return $feedback_columns;
-}
-add_filter( 'manage_feedback_columns', 'pp_feedback_columns_admin' );
-
-
-/** 
- * Outputs all the feedback items for the feedback admin page. 
- *
- * @param feedback array optional the feedback for a user
- */
-function pp_feedback_rows( $feedback = '' ){
-	global $user_ID;
-
-	if( !empty( $feedback ) ){
-		$style = '';
-		foreach ( $feedback as $feedback_item ) {
-			if( function_exists( 'switch_to_blog' ) )
-				switch_to_blog( $feedback_item[ 'blog_id' ] );
-
-			extract( $feedback_item );
-			echo "<tr class='feedback $style' >";
-			echo "<td scope='row'>";
-		 	if( strpos( $_SERVER[ 'REQUEST_URI' ], 'given' ) == false )
-				echo ( ( $user_ID == $from_user_id ) ? 'You' : get_userdata( $from_user_id )->user_nicename ) . pp_users_feedback_link( $from_user_id );
-			else
-				echo ( ( $user_ID == $for_user_id ) ? 'You' : get_userdata( $for_user_id )->user_nicename ) . pp_users_feedback_link( $for_user_id );
-			echo "</td>";
-			echo "<td>" . ucfirst( $role ) . "</td>";
-			echo "<td>" . (( $feedback_score == 2) ? __("Positive", 'prospress' ) : (( $feedback_score == 1) ? __("Neutral", 'prospress' ) : __("Negative", 'prospress' ))) . "</td>";
-			echo "<td>$feedback_comment</td>";
-			echo "<td>" . mysql2date( __( 'd M Y', 'prospress' ), $feedback_date ) . "</td>";
-			echo "<td><a href='" . get_permalink( $post_id ) . "' target='blank'>" . get_post( $post_id )->post_title . "</a></td>";
-			if( is_multisite() )
-				echo "<td><a href='" . get_blogaddress_by_id( $blog_id ) . "' target='blank'>" . get_bloginfo( 'name' ) . "</a></td>";
-			echo "</tr>";
-			$style = ( 'alternate' == $style ) ? '' : 'alternate';
-
-			if( function_exists( 'restore_current_blog' ) )
-				restore_current_blog();
-		}
-	} else {
-		echo '<tr><td colspan="5">You have no feedback.</td>';
-	}
 }
 
 
