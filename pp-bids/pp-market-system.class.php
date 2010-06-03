@@ -766,6 +766,10 @@ class PP_Market_System {
 	}
 
 	function enqueue_bid_form_scripts(){
+		
+		if( is_admin() )
+			return;
+
   		wp_enqueue_script( 'bid-form-ajax', PP_BIDS_URL . '/bid-form-ajax.js', array( 'jquery' ) );
 		wp_localize_script( 'bid-form-ajax', 'pppostL10n', array(
 			'endedOn' => __( 'Ended on:', 'prospress' ),

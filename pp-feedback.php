@@ -9,17 +9,19 @@
  * @version 0.1
  */
 
-if ( !defined( 'PP_FEEDBACK_DB_VERSION'))
+if ( !defined( 'PP_FEEDBACK_DB_VERSION' ))
 	define ( 'PP_FEEDBACK_DB_VERSION', '0015' );
-if ( !defined( 'PP_FEEDBACK_DIR'))
+if ( !defined( 'PP_FEEDBACK_DIR' ))
 	define( 'PP_FEEDBACK_DIR', PP_PLUGIN_DIR . '/pp-feedback' );
-if ( !defined( 'PP_FEEDBACK_URL'))
+if ( !defined( 'PP_FEEDBACK_URL' ))
 	define( 'PP_FEEDBACK_URL', PP_PLUGIN_URL . '/pp-feedback' );
 
-require_once ( PP_FEEDBACK_DIR . '/feedback-functions.php' );
 
-require_once ( PP_FEEDBACK_DIR . '/feedback-templatetags.php' );
+require_once( PP_FEEDBACK_DIR . '/pp-feedback-functions.php' );
 
+require_once( PP_FEEDBACK_DIR . '/pp-feedback-templatetags.php' );
+
+include_once( PP_FEEDBACK_DIR . '/pp-feedback-dashboard-widget.php' );
 
 global $wpdb;
 
@@ -29,54 +31,33 @@ if ( !isset( $wpdb->feedbackmeta ) || empty( $wpdb->feedbackmeta ) )
 	$wpdb->feedbackmeta = $wpdb->base_prefix . 'feedbackmeta';
 
 
-//**************************************************************************************************//
-// INSTALLATION FUNCTIONS
-//**************************************************************************************************//
-
 /**
- * 	Checks the Feedback database tables are set up and options set, if not, calls install function to set them up.
+ * To save updating/installing the feedback tables when they already exist and are up-to-date, check 
+ * the current feedback database version exists and is not of a prior version.
  * 
- * @uses get_site_option() to check the current database version  (**WPMU_FUNCTION**)
- * @uses pp_feedback_install() to create the database table if it is not up to date
- * @return false if logged in user is not the site admin
+ * @uses pp_feedback_install to create the database table if it is not up to date
  **/
 function pp_feedback_maybe_install() {
 	global $wpdb;
 
-	if ( !current_user_can('edit_plugins') )
+	if ( !current_user_can( 'edit_plugins' ) )
 		return false;
 
-	if ( !get_site_option('pp_feedback_db_version') || get_site_option('pp_feedback_db_version') < PP_FEEDBACK_DB_VERSION )
+	if ( !get_site_option( 'pp_feedback_db_version' ) || get_site_option( 'pp_feedback_db_version' ) < PP_FEEDBACK_DB_VERSION )
 		pp_feedback_install();
 }
 add_action( 'pp_activation', 'pp_feedback_maybe_install' );
 
 
-function pp_feedback_deactivate() {
-	global $wpdb;
-
-	error_log( '** pp_feedback_deactivate called **' );
-
-	if ( !current_user_can('edit_plugins') || !function_exists( 'delete_site_option') )
-		return false;
-
-	delete_site_option( 'pp_feedback_db_version' );
-}
-add_action( 'pp_deactivation', 'pp_feedback_deactivate' );
-
-
 /**
- * Set up the Prospress Feedback plugin on single blog. Creates table, and add site options to sitemeta DB.
+ * Set ups the feedback system by creates tables, adding options and setting sensible defaults.
  * 
- * @param blog_id optional, the id of the marketplace on which to install. Defaults to 0, in which case installed on current blog.
- * 
- * @uses dbDelta($sql) to execute the sql query for creating tables
- * @uses update_option(name, value) to set the database version
+ * @uses dbDelta( $sql) to execute the sql query for creating/updating tables
  **/
 function pp_feedback_install() {
 	global $wpdb;
 
-	if ( !empty($wpdb->charset) )
+	if ( !empty( $wpdb->charset) )
 		$charset_collate = "DEFAULT CHARACTER SET $wpdb->charset";
 
 	$wpdb->feedback = $wpdb->base_prefix . 'feedback';
@@ -113,16 +94,36 @@ function pp_feedback_install() {
 	dbDelta( $sql );
 
 	update_site_option( 'pp_feedback_db_version', PP_FEEDBACK_DB_VERSION );
+	update_option( 'edit_feedback', '' );
 }
 
-//**************************************************************************************************//
-// FEEDBACK FUNCTIONS
-//**************************************************************************************************//
 
 /**
- * Feedback controller: determines what functions are called and ultimately 
- * what is printed to the screen. This function is called from the admin menu hook.
+ * Adds the feedback 
+ **/
+function pp_add_feedback_admin_pages() {
+	if ( function_exists( 'add_submenu_page' ) )
+		add_users_page( 'Feedback', 'Feedback', 'read', 'feedback', 'pp_feedback_controller' );
+}
+add_action( 'admin_menu', 'pp_add_feedback_admin_pages' );
+
+
+/** 
+ * Enqueues scripts and styles to the head of feedback admin pages.
+ */
+function pp_feedback_admin_head() {
+
+	if( strpos( $_SERVER[ 'REQUEST_URI' ], 'wp-admin/index.php' ) !== false || preg_match ( '/wp-admin\/$/', $_SERVER[ 'REQUEST_URI' ] ) )
+		wp_enqueue_style( "prospress-feedback", PP_FEEDBACK_URL . "/pp-feedback.css" );
+}
+add_action( 'admin_menu', 'pp_feedback_admin_head' );
+
+
+/**
+ * Central controller to determine which functions are called and what view is output to the screen.
  * 
+ * @uses pp_feedback_form_submit() to process a feedback form submission
+ * @uses pp_edit_feedback() to add or edit feedback items upon submission
  **/
 function pp_feedback_controller() {
 	global $wpdb, $user_ID;
@@ -130,28 +131,57 @@ function pp_feedback_controller() {
 	$title = __( 'Feedback', 'prospress' );
 
 	if( $_POST[ 'feedback_submit' ] ){
+
 		extract( pp_feedback_form_submit( $_POST ) );
-		include_once( PP_FEEDBACK_DIR . '/feedback-form-view.php' );
-		return;
+		include_once( PP_FEEDBACK_DIR . '/pp-feedback-form-view.php' );
+
 	} elseif ( $_GET[ 'action' ] == 'give-feedback' ){
+		
 		extract( pp_edit_feedback( $_GET[ 'post' ], $_GET[ 'blog' ] ) );
-		include_once( PP_FEEDBACK_DIR . '/feedback-form-view.php'  );
-		return;
+		include_once( PP_FEEDBACK_DIR . '/pp-feedback-form-view.php'  );
+
 	} elseif ( $_GET[ 'action' ] == 'edit-feedback' ){
+
 		$feedback = pp_edit_feedback( $_GET[ 'post' ], $_GET[ 'blog' ] );
 		extract( pp_edit_feedback( $_GET[ 'post' ], $_GET[ 'blog' ] ) );
-		include_once( PP_FEEDBACK_DIR . '/feedback-form-view.php'  );
-		return;
+		include_once( PP_FEEDBACK_DIR . '/pp-feedback-form-view.php'  );
+
 	} elseif ( $_GET[ 'action' ] == 'view-feedback' ){
 		pp_feedback_history_admin( $user_ID );
-		return;
 	} else {
 		pp_feedback_history_admin( $user_ID );
-		return;
 	}
 }
 
-//Function to ensure current user can give/edit the feedback for a transaction, it also determines the contents of the feedback form.
+
+/**
+ * Ensures the logged in user can give feedback on a post and that the post status is such that 
+ * a feedback item is due. 
+ *
+ * @todo wp_die is a pretty nasty way to handle this simple error, better to just output an error message on the feedback page.
+ *
+ * @param bidder_id int the id of the winning bidder.
+ * @param from_user_id int the user who is trying to give feedback.
+ * @param post object the post for which the users should be validated against, including post status and post author.
+ **/
+function pp_can_edit_feedback( $bidder_id, $from_user_id, $post ) {
+
+	if( empty( $bidder_id ) )
+		wp_die( __( 'Error: could not determine winning bidder.', 'prospress' ) );
+	if( $bidder_id == $from_user_id && $from_user_id == $post->post_author )
+		wp_die( __( 'You can not leave feedback for yourself, in fact, you should not have even been able to win your own post!', 'prospress' ) );
+	if ( ( !$is_winning_bidder && $from_user_id != $post->post_author ) )
+		wp_die( __( 'You can not leave feedback for this post. It appears you are neither the author author of the post nor the winning bidder.', 'prospress' ) );
+	if ( NULL == $post->post_status || 'completed' != $post->post_status )
+		wp_die( __( 'You can not leave feedback for this post. The post has either not completed or does not exist.', 'prospress' ) );
+}
+
+
+/**
+ * There are a number of constraints on leaving feedback to make sure a valid transaction has occured. 
+ * This function checks the constraints to ensure the logged in user can give/edit the feedback for a 
+ * transaction and then determines the contents of the feedback form.  
+ **/
 function pp_edit_feedback( $post_id, $blog_ID = '' ) {
   	global $wpdb, $user_ID, $market_system, $blog_id;
 
@@ -162,20 +192,18 @@ function pp_edit_feedback( $post_id, $blog_ID = '' ) {
 		switch_to_blog( $blog_ID );
 
 	get_currentuserinfo();
+
 	$from_user_id = $user_ID;
 
 	$post = get_post( $post_id );
 
 	$bidder_id = $market_system->get_winning_bid( $post_id )->bidder_id;
 
-	if( empty( $bidder_id ) )
-		wp_die( __("Error: could not determine winning bidder.", 'prospress' ) );
-
 	$is_winning_bidder = $market_system->is_winning_bidder( $from_user_id, $post_id );
 
-	if ( ( !$is_winning_bidder && $from_user_id != $post->post_author ) || NULL == $post->post_status || 'completed' != $post->post_status ) {
-		wp_die( __('You can not leave feedback on this post.', 'prospress' ) );
-	} elseif ( pp_has_feedback( $post_id, $from_user_id ) ) { //user already left feedback for post
+	pp_can_edit_feedback( $bidder_id, $from_user_id, $post );
+
+	if ( pp_post_has_feedback( $post_id, $from_user_id ) ) { //user already left feedback for post
 		$feedback = pp_get_feedback_item( $post_id, $from_user_id );
 		if( get_option( 'edit_feedback' ) != 'true' ){
 			$feedback[ 'disabled' ] = 'disabled="disabled"';
@@ -204,42 +232,33 @@ function pp_edit_feedback( $post_id, $blog_ID = '' ) {
 	return $feedback;
 }
 
-//**************************************************************************************************//
-// VALIDATE FEEDBACK & SUBMIT FEEDBACK FORM
-//**************************************************************************************************//
 
-/** Performs submission process for the feedback form. **/
+/**
+ * Performs submission process for the feedback form including validation. 
+ *
+ * @param feedback array with feedback fields conforming to the column structure of the feedback table.
+ **/
 function pp_feedback_form_submit( $feedback ) {
 	global $wpdb, $market_system;
 
 	$feedback = pp_feedback_sanitize( $feedback );
-	
+
 	if( function_exists( 'switch_to_blog' ) ) //if multisite
 		switch_to_blog( $feedback_details[ 'blog_id' ] );
 
 	$post = get_post( $feedback[ 'post_id' ] );
+
 	$is_winning_bidder = $market_system->is_winning_bidder( $feedback[ 'from_user_id' ], $feedback[ 'post_id' ] );
 
-	if ( ( !$is_winning_bidder && $feedback[ 'from_user_id' ] != $post->post_author ) || NULL == $post->post_status || 'completed' != $post->post_status ) {
-		if( !$is_winning_bidder )
-			wp_die( __( 'You can not leave feedback on this post. You are not the winning bidder.', 'prospress' ) );
-		if( $feedback[ 'from_user_id' ] != $post->post_author)
-			wp_die( __( 'You can not leave feedback on this post. As you are not the post author.', 'prospress' ) );
-		if( NULL == $post->post_status )
-			wp_die( __( "You can not leave feedback on this post as it's status is null", 'prospress' ) );
-		if( 'completed' != $post->post_status )
-			wp_die( __( "You can not leave feedback on this post as it's status is not set to completed.", 'prospress' ) );
-
-		wp_die( __('You can not leave feedback on this post.', 'prospress' ) );
-	}
-
+	pp_can_edit_feedback( $market_system->get_winning_bid( $post_id )->bidder_id, $feedback[ 'from_user_id' ], $post );
+	
 	$feedback[ 'feedback_status' ] = 'publish';
 
-	if( pp_has_feedback( $feedback[ 'post_id' ], $feedback[ 'from_user_id' ] ) ){
+	if( pp_post_has_feedback( $feedback[ 'post_id' ], $feedback[ 'from_user_id' ] ) ){
 	
 		if( get_option( 'edit_feedback' ) != 'true' ){ // user trying to edit feedback when not allowed
 			$feedback = pp_get_feedback_item( $feedback[ 'post_id' ], $feedback[ 'from_user_id' ] );
-			$feedback[ 'feedback_msg' ] = __('You are not allowed to edit this feedback', 'prospress' );
+			$feedback[ 'feedback_msg' ] = __( 'You are not allowed to edit this feedback', 'prospress' );
 			return $feedback;
 		}
 
@@ -252,7 +271,7 @@ function pp_feedback_form_submit( $feedback ) {
 
 	pp_update_feedback( $feedback );
 
-	$feedback[ 'feedback_msg' ] = __('Feedback Submitted', 'prospress' );
+	$feedback[ 'feedback_msg' ] = __( 'Feedback Submitted', 'prospress' );
 
 	if( function_exists( 'restore_current_blog' ) )
 		restore_current_blog();
@@ -260,7 +279,12 @@ function pp_feedback_form_submit( $feedback ) {
 	return $feedback;
 }
 
-/** Validates given feedback items. **/
+
+/**
+ * @link http://xkcd.com/327/ 
+*
+ * @param feedback_details array with feedback fields conforming to the column structure of the feedback table.
+ **/
 function pp_feedback_sanitize( $feedback_details ){
 
 	$feedback_details[ 'for_user_id' ] 		= (int)$feedback_details[ 'for_user_id' ];
@@ -279,7 +303,13 @@ function pp_feedback_sanitize( $feedback_details ){
 	return $feedback_details;
 }
 
-// Updates an entry in the feedback table.
+
+/**
+ * Adds an entry in the feedback table. 
+ *
+ * @param feedback array with feedback fields conforming to the column structure of the feedback table.
+ * @return int the ID of the newly inserted feedback item.
+ **/
 function pp_update_feedback( $feedback ) {
 	global $wpdb;
 
@@ -305,25 +335,21 @@ function pp_update_feedback( $feedback ) {
 	return $wpdb->insert_id;
 }
 
-//**************************************************************************************************//
-// Functions to add feedback pages to admin interface
-//**************************************************************************************************//
-function pp_add_feedback_admin_pages() {
-	if ( function_exists('add_submenu_page') ) {
-		$feedback_page = add_submenu_page( 'users.php', 'Feedback', 'Feedback', 'read', 'feedback', 'pp_feedback_controller' );
-	}
-}
-add_action( 'admin_menu', 'pp_add_feedback_admin_pages' );
 
-//the place for enqueuing scripts, styles and other assorted admin head functions
-function pp_feedback_admin_head() {
-
-	/** @TODO Figure out a more efficient way to add this style only to dashboard page */
-	wp_enqueue_style( "dashboard-feedback", PP_FEEDBACK_URL . "/dashboard-feedback.css" );
-}
-add_action( 'admin_menu', 'pp_feedback_admin_head' );
-
-
+/** 
+ * Certain administration pages in Prospress provide a hook for other components to add an "action" link. This function 
+ * determines and then outputs an appropriate feedback action link, which may be any of give, edit or view feedback. 
+ * 
+ * The function receives the existing array of actions from the hook and adds to it an array with the url for 
+ * performing a feedback action and label for outputting as the link text. 
+ * 
+ * @see completed_post_actions hook
+ * @see winning_bid_actions hook
+ * 
+ * @param actions array existing actions for the hook
+ * @param post_id int for identifying the post
+ * @return array of actions for the hook, including the feedback action
+ */
 function pp_add_feedback_action( $actions, $post_id ) {
 	global $user_ID, $market_system, $blog_id;
  
@@ -337,17 +363,17 @@ function pp_add_feedback_action( $actions, $post_id ) {
 	$feedback_url = ( is_super_admin() ) ? 'users.php?page=feedback' : 'profile.php?page=feedback';
 
 	if ( is_super_admin() && !$is_winning_bidder && $user_ID != $post->post_author ) { // Admin isn't bidder or author
-		if( pp_has_feedback( $post_id ) )
-			$actions[ 'view' ] = array('label' => __( 'View Feedback', 'prospress' ), 
+		if( pp_post_has_feedback( $post_id ) )
+			$actions[ 'view-feedback' ] = array( 'label' => __( 'View Feedback', 'prospress' ), 
 										'url' => add_query_arg( array( 'post' => $post_id, 'blog' => $blog_id ), $feedback_url ) );
-	} else if ( !pp_has_feedback( $post_id, $user_ID ) ) {
-		$actions[ 'give-feedback' ] = array('label' => __( 'Give Feedback', 'prospress' ),
+	} else if ( !pp_post_has_feedback( $post_id, $user_ID ) ) {
+		$actions[ 'give-feedback' ] = array( 'label' => __( 'Give Feedback', 'prospress' ),
 											'url' => add_query_arg( array( 'post' => $post_id, 'blog' => $blog_id ), $feedback_url ) );
 	} else if ( get_option( 'edit_feedback' ) == 'true' ) {
-		$actions[ 'edit-feedback' ] = array('label' => __( 'Edit Feedback', 'prospress' ),
+		$actions[ 'edit-feedback' ] = array( 'label' => __( 'Edit Feedback', 'prospress' ),
 											'url' => add_query_arg( array( 'post' => $post_id, 'blog' => $blog_id ), $feedback_url ) );
 	} else {
-		$actions[ 'view-feedback' ] = array('label' => __( 'View Feedback', 'prospress' ),
+		$actions[ 'view-feedback' ] = array( 'label' => __( 'View Feedback', 'prospress' ),
 											'url' => $feedback_url );
 	}
 	return $actions;
@@ -356,14 +382,18 @@ add_filter( 'completed_post_actions', 'pp_add_feedback_action', 10, 2 );
 add_filter( 'winning_bid_actions', 'pp_add_feedback_action', 10, 2 );
 
 
-//**************************************************************************************************//
-// Printing the history admin page
-//**************************************************************************************************//
-//Function to print the feedback history for a user. If no user is specified, currently logged in user is used.
-function pp_feedback_history_admin( $user_id ) {
-  	global $wpdb;
+/** 
+ * A central function to determine feedback history for a user and display the table of that user's feedback. 
+ * 
+ * @param user_id int optional used to determine whose feedback items to get
+ */
+function pp_feedback_history_admin( $user_id = '' ) {
+  	global $wpdb, $user_ID;
 
-	get_currentuserinfo(); //get's ID of currently logged in user and puts into global $user_id
+	if( empty( $user_id ) ){
+		get_currentuserinfo(); //get's ID of currently logged in user and puts into global $user_ID
+		$user_id = $user_ID;
+	}
 
 	if( isset( $_GET[ 'uid' ] ) && $_GET[ 'uid' ] != $user_id ){
 		$_GET[ 'uid' ] = (int)$_GET[ 'uid' ];
@@ -391,31 +421,29 @@ function pp_feedback_history_admin( $user_id ) {
 		$title = __( 'Your Feedback', 'prospress' );
 	}
 
-	include_once( PP_FEEDBACK_DIR . '/feedback-table-view.php' );
+	include_once( PP_FEEDBACK_DIR . '/pp-feedback-table-view.php' );
 }
 
-//Echos a count of all the feedback given and received by a user, encapsulated in a link to a table of that user's feedback.
-function pp_users_feedback_link( $user_id ){
-	return "<a href='" . add_query_arg ( array( 'uid' => $user_id ), 'users.php?page=feedback' ) . "'> (" . pp_users_feedback_count( $user_id ) . ")</a>";
-}
 
-//Function to add feedback history column headings to the built in print_column_headers function
+/** 
+ * Adds feedback history column headings to the built in print_column_headers function. 
+ *
+ * @see get_column_headers()
+ */
 function pp_feedback_columns_admin(){
 
-	$feedback_columns = array( 'cb' => '<input type="checkbox" />' );
-
- 	if( strpos( $_SERVER['REQUEST_URI'], 'given' ) !== false ) {
-		$feedback_columns[ 'for_user_id' ] = __('For', 'prospress' );
+ 	if( strpos( $_SERVER[ 'REQUEST_URI' ], 'given' ) !== false ) {
+		$feedback_columns[ 'for_user_id' ] = __( 'For', 'prospress' );
 	} else {
-		$feedback_columns[ 'from_user_id' ] = __('From', 'prospress' );
+		$feedback_columns[ 'from_user_id' ] = __( 'From', 'prospress' );
 	}
 
 	$feedback_columns = array_merge( $feedback_columns, array(
-		'role' => __('Your Role', 'prospress' ),
-		'feedback_score' => __('Score', 'prospress' ),
-		'feedback_comment' => __('Comment', 'prospress' ),
-		'feedback_date' => __('Date', 'prospress' ),
-		'post_id' => __('Post', 'prospress' )
+		'role' => __( 'Your Role', 'prospress' ),
+		'feedback_score' => __( 'Score', 'prospress' ),
+		'feedback_comment' => __( 'Comment', 'prospress' ),
+		'feedback_date' => __( 'Date', 'prospress' ),
+		'post_id' => __( 'Post', 'prospress' )
 	) );
 
 	if ( is_multisite() ) 
@@ -423,10 +451,15 @@ function pp_feedback_columns_admin(){
 	
 	return $feedback_columns;
 }
-add_filter('manage_feedback_columns','pp_feedback_columns_admin');
+add_filter( 'manage_feedback_columns', 'pp_feedback_columns_admin' );
 
-//Function to print feedback rows for
-function pp_feedback_rows($feedback = ''){
+
+/** 
+ * Outputs all the feedback items for the feedback admin page. 
+ *
+ * @param feedback array optional the feedback for a user
+ */
+function pp_feedback_rows( $feedback = '' ){
 	global $user_ID;
 
 	if( !empty( $feedback ) ){
@@ -436,21 +469,22 @@ function pp_feedback_rows($feedback = ''){
 				switch_to_blog( $feedback_item[ 'blog_id' ] );
 
 			extract( $feedback_item );
-			echo "<tr $style >";
-			echo "<th class='check-column' scope='row'><input type='checkbox' value='$feedback_id' name='$feedback_id'></th>";
-		 	if( strpos( $_SERVER['REQUEST_URI'], 'given' ) == false )
-				echo "<td>" . ( ( $user_ID == $from_user_id ) ? 'You' : get_userdata( $from_user_id )->user_nicename ) . pp_users_feedback_link( $from_user_id ) . "</td>";
+			echo "<tr class='feedback $style' >";
+			echo "<td scope='row'>";
+		 	if( strpos( $_SERVER[ 'REQUEST_URI' ], 'given' ) == false )
+				echo ( ( $user_ID == $from_user_id ) ? 'You' : get_userdata( $from_user_id )->user_nicename ) . pp_users_feedback_link( $from_user_id );
 			else
-				echo "<td>" . ( ( $user_ID == $for_user_id ) ? 'You' : get_userdata( $for_user_id )->user_nicename ) . pp_users_feedback_link( $for_user_id ) . "</td>";
+				echo ( ( $user_ID == $for_user_id ) ? 'You' : get_userdata( $for_user_id )->user_nicename ) . pp_users_feedback_link( $for_user_id );
+			echo "</td>";
 			echo "<td>" . ucfirst( $role ) . "</td>";
-			echo "<td>" . (($feedback_score == 2) ? __("Positive", 'prospress' ) : (($feedback_score == 1) ? __("Neutral", 'prospress' ) : __("Negative", 'prospress' ))) . "</td>";
+			echo "<td>" . (( $feedback_score == 2) ? __("Positive", 'prospress' ) : (( $feedback_score == 1) ? __("Neutral", 'prospress' ) : __("Negative", 'prospress' ))) . "</td>";
 			echo "<td>$feedback_comment</td>";
-			echo "<td>" . mysql2date( __('d M Y', 'prospress' ), $feedback_date ) . "</td>";
+			echo "<td>" . mysql2date( __( 'd M Y', 'prospress' ), $feedback_date ) . "</td>";
 			echo "<td><a href='" . get_permalink( $post_id ) . "' target='blank'>" . get_post( $post_id )->post_title . "</a></td>";
 			if( is_multisite() )
 				echo "<td><a href='" . get_blogaddress_by_id( $blog_id ) . "' target='blank'>" . get_bloginfo( 'name' ) . "</a></td>";
 			echo "</tr>";
-			$style = ( ' class="alternate"' == $style ) ? '' : ' class="alternate"';
+			$style = ( 'alternate' == $style ) ? '' : 'alternate';
 
 			if( function_exists( 'restore_current_blog' ) )
 				restore_current_blog();
@@ -460,7 +494,12 @@ function pp_feedback_rows($feedback = ''){
 	}
 }
 
-// Displays the fields for handling feedback options in the Core Prospress Settings admin page.
+
+/**
+ * Displays the fields for handling feedback options in the Core Prospress Settings admin page.
+ *
+ * @see pp_settings_page()
+ **/
 function pp_feedback_settings_section() { 
 	$edit_feedback = get_option( 'edit_feedback' );
 	?>
@@ -468,190 +507,24 @@ function pp_feedback_settings_section() {
 	<p><?php _e( 'Allowing a user to edit the feedback left for others makes feedback more accurate. Circumstances can change, even after feedback has been provided.' , 'prospress' ); ?></p>
 	<label for='edit_feedback'>
 		<input type='checkbox' value='true' name='edit_feedback' id='edit_feedback' <?php checked( (boolean)$edit_feedback ); ?> />
-		  <?php _e('Allow users to edit feedback.' , 'prospress' );?>
+		  <?php _e( 'Allow users to edit feedback.' , 'prospress' );?>
 	</label>
 <?php
 }
 add_action( 'pp_core_settings_page', 'pp_feedback_settings_section' );
 
+
+/**
+ * Tells Prospress core to save this item upon submission of the Prospress Settings page.
+ *
+ * @param array with the existing whitelist of options for the Prospress settings page.
+ **/
 function pp_feedback_admin_option( $whitelist_options ) {
 	$whitelist_options[ 'general' ][] = 'edit_feedback';
 
 	return $whitelist_options;
 }
 add_filter( 'pp_options_whitelist', 'pp_feedback_admin_option' );
-
-//**************************************************************************************************//
-// ADD DASHBOARD WIDGETS 
-//**************************************************************************************************//
-
-/**
- * Outputs the contents of Prospress Feedback Dashboard Widget
- * 
- * @uses 
- **/
-function pp_feedback_dashboard_widget() {
-	global $user_ID;
-
-	echo "\n\t".'<p class="sub">' . __('Overview', 'prospress' ) . '</p>';
-	echo "\n\t".'<div class="table">'."\n\t".'<table>';
-	echo "\n\t".'<tr class="first">';
-
-	// Feedback
-	$total_feedback = pp_users_feedback_count( $user_ID );
-	$num = number_format_i18n( $total_feedback );
-	$text = __( 'Feedback', 'prospress' );
-	if ( $total_feedback > 0 ) {
-		$feedback_url = add_query_arg( array( 'page' => 'feedback' ), 'users.php' );
-		$num = "<a href='$feedback_url'>$num</a>";
-		$text = "<a href='$feedback_url'>$text</a>";
-	}
-	echo "<td class='first b b-posts'>$num</td>";
-	echo "<td class='t posts'>$text</td>";
-
-	// Feedback break down
-	// Feedback Received
-	$received = pp_users_feedback_count( $user_ID, 'received' );
-	$num = '<span class="total-count">' . number_format_i18n( $received ) . '</span>';
-	$text = __( 'Received', 'prospress' );
-	if ( $received > 0 ) {
-		$received_url = add_query_arg( array( 'filter' => 'received' ), 'users.php?page=feedback' );
-		$num = "<a href='$received_url'>$num</a>";
-		$text = "<a href='$received_url'>$text</a>";
-	}
-	echo "<td class='b b-comments'>$num</td>";
-	echo "<td class='last t comments'>$text</td>";
-
-	// Feedback Given
-	$given = pp_users_feedback_count( $user_ID, 'given' );
-	$num = '<span class="total-count">' . number_format_i18n( $given ) . '</span>';
-	$text = __( 'Given', 'prospress' );
-	if ( $given > 0 ) {
-		$given_url = add_query_arg( array( 'filter' => 'given' ), 'users.php?page=feedback' );
-		$num = "<a href='$given_url'>$num</a>";
-		$text = "<a href='$given_url'>$text</a>";
-	}
-	echo "<td class='b b-comments'>$num</td>";
-	echo "<td class='last t comments'>$text</td>";
-
-	if ( $total_feedback > 0 ) {
-		echo '</tr><tr>';
-		// Feedback Received Breakdown
-		// Positive Feedback Received
-		$positive = pp_users_positive_feedback( $user_ID, 'received' );
-		$num = number_format_i18n( $positive );
-		$text = __( 'Positive Feedback Received', 'prospress' );
-		if ( $positive > 0 ) {
-			$given_url = add_query_arg( array( 'filter' => 'received' ), 'users.php?page=feedback' );
-			$num = "<a href='$feedback_url'>$num</a>";
-			$text = "<a href='$feedback_url'>$text</a>";
-		}
-		echo "<td class='first b b-posts'>$num</td>";
-		echo "<td class='t posts'>$text</td>";
-
-		// Neutral Feedback Received
-		$neutral = pp_users_neutral_feedback( $user_ID, 'received' );
-		$num = '<span class="total-count">' . number_format_i18n( $neutral ) . '</span>';
-		$text = __( 'Neutral Feedback Received', 'prospress' );
-		if ( $neutral > 0 ) {
-			$given_url = add_query_arg( array( 'filter' => 'received' ), 'users.php?page=feedback' );
-			$num = "<a href='$received_url'>$num</a>";
-			$text = "<a href='$received_url'>$text</a>";
-		}
-		echo "<td class='b b-comments'>$num</td>";
-		echo "<td class='last t comments'>$text</td>";
-
-		// Negative Feedback Received
-		$negative = pp_users_negative_feedback( $user_ID, 'received' );
-		$num = '<span class="total-count">' . number_format_i18n( $negative ) . '</span>';
-		$text = __( 'Negative Feedback Received', 'prospress' );
-		if ( $negative > 0 ) {
-			$given_url = add_query_arg( array( 'filter' => 'received' ), 'users.php?page=feedback' );
-			$num = "<a href='$given_url'>$num</a>";
-			$text = "<a href='$given_url'>$text</a>";
-		}
-		echo "<td class='b b-comments'>$num</td>";
-		echo "<td class='last t comments'>$text</td>";
-
-		echo '</tr><tr>';
-		// Feedback Given Breakdown
-		// Positive Feedback Given
-		$positive = pp_users_positive_feedback( $user_ID, 'given' );
-		$num = number_format_i18n( $positive );
-		$text = __( 'Positive Feedback Given', 'prospress' );
-		if ( $positive > 0 ) {
-			$received_url = add_query_arg( array( 'filter' => 'given' ), 'users.php?page=feedback' );
-			$num = "<a href='$feedback_url'>$num</a>";
-			$text = "<a href='$feedback_url'>$text</a>";
-		}
-		echo "<td class='first b b-posts'>$num</td>";
-		echo "<td class='t posts'>$text</td>";
-
-		// Neutral Feedback Given
-		$neutral = pp_users_neutral_feedback( $user_ID, 'given' );
-		$num = '<span class="total-count">' . number_format_i18n( $neutral ) . '</span>';
-		$text = __( 'Neutral Feedback Given', 'prospress' );
-		if ( $neutral > 0 ) {
-			$received_url = add_query_arg( array( 'filter' => 'given' ), 'users.php?page=feedback' );
-			$num = "<a href='$received_url'>$num</a>";
-			$text = "<a href='$received_url'>$text</a>";
-		}
-		echo "<td class='b b-comments'>$num</td>";
-		echo "<td class='last t comments'>$text</td>";
-
-		// Negative Feedback Given
-		$negative = pp_users_negative_feedback( $user_ID, 'given' );
-		$num = '<span class="total-count">' . number_format_i18n( $negative ) . '</span>';
-		$text = __( 'Negative Feedback Given', 'prospress' );
-		if ( $negative > 0 ) {
-			$given_url = add_query_arg( array( 'filter' => 'given' ), 'users.php?page=feedback' );
-			$num = "<a href='$given_url'>$num</a>";
-			$text = "<a href='$given_url'>$text</a>";
-		}
-		echo "<td class='b b-comments'>$num</td>";
-		echo "<td class='last t comments'>$text</td>";
-	}
-
-	echo '</tr>';
-	echo "\n\t</table>\n\t</div>";
-
-	if ( $received > 0 ) {
-		echo "\n\t".'<div class="versions">';
-
-		$latest = pp_get_latest_feedback( $user_ID );
-
-		echo "\n\t<p>";
-		_e( 'Recent Comment: ', 'prospress' );
-		echo '<quote class="sub">' . $latest['feedback_comment'] . '</quote>';
-		echo '</p>';
-		echo "\n\t<p>";
-		_e( 'From: ', 'prospress' );
-		echo get_userdata( $latest['from_user_id'] )->user_nicename;
-		echo '</p>';
-		echo "\n\t".'<br class="clear" /></div>';
-	}
-	do_action( 'feedback_box_end' );
-}
-
-/**
- * Creates the Widget function to use in the dashboard set-up action hook if current user has required privileges
- * 
- * @uses wp_add_dashboard_widget
- **/
-function pp_feedback_add_dashboard_widgets() {
-	global $wp_meta_boxes;
-
-	if ( current_user_can('read') ){
-		$wp_meta_boxes['dashboard']['side']['core']['dashboard_feedback'] = array(
-											'id' => 'dashboard_feedback',
-											'title' => 'Feedback',
-											'callback' => 'pp_feedback_dashboard_widget',
-											'args' => ''
-		                                );
-	}
-}
-// Hook into the 'wp_dashboard_setup' action to register our other functions
-add_action('wp_dashboard_setup', 'pp_feedback_add_dashboard_widgets' );
 
 
 /**

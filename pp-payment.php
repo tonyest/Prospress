@@ -30,7 +30,7 @@ if ( !isset($wpdb->paymentsmeta) || empty($wpdb->paymentsmeta))
 if ( !isset($wpdb->payments_log) || empty($wpdb->payments_log))
 	$wpdb->payments_log = $wpdb->prefix . 'payments_log';
 
-// The engine behind the payment system - TwinCitiesTech's WP Invoice
+// The engine behind the payment system - TwinCitiesTech's WP Invoice modified for marketplace payments
 require_once( PP_INVOICE_DIR . '/WP-Invoice.php' );
 
 //register_activation_hook(__FILE__, array( $WP_Invoice, 'install' ) );

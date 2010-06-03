@@ -14,7 +14,8 @@ if ( !defined( 'PP_VERSION' ) )
 /***
  * Ye be a brave soul who enters these waters. Feel free to delve into the dark depths of this code; but be warned: 
  * this code is released as a real beta, not that Google style we-use-beta-for-awesome-finished-versions type of beta.
- * The code is messy, undocumentated and will change over the coming months.
+ * The code is messy, undocumentated and will change over the coming months. For example, feedback items may become a
+ * custom post type instead of having their own table. 
  * 
  * I hacked out too many features and not enough polish. That will change over time, but don't expect no poetry here
  * until approximately September.

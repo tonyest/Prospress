@@ -56,7 +56,8 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 		</div>
 		<div class="pp-author-feedback">
 			<?php _e( 'Feedback: ', 'prospress' ); ?>
-			<?php the_authors_feedback_list(); ?>
+			<?php the_users_feedback_items(); ?>
+			<?php the_most_recent_feedback(); ?>
 		</div>
 	</div>
 <?php get_footer(); ?>

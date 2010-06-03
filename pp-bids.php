@@ -40,11 +40,10 @@ $market_system = new PP_Auction_Bid_System();
 
 
 /**
- * To save updating/installing the bids tables every time the plugin is activated, this function checks 
- * the current bids database version exists and is not of a prior version.   
+ * To save updating/installing the bids tables when they already exist and are up-to-date, check 
+ * the current bids database version both exists and is not of a prior version.
  * 
  * @uses pp_bids_install to create the database tables if they are not up to date
- * @return false if logged in user is not the site admin
  **/
 function pp_bids_maybe_install() {
 	global $wpdb;
@@ -59,7 +58,7 @@ add_action( 'pp_activation', 'pp_bids_maybe_install' );
 
 
 /**
- * As the name suggests, this function takes Creates bid and bidmeta tables and adds bid DB version number to options DB.
+ * Set ups the bid system by creating tables, adding options and setting sensible defaults.
  * 
  * @uses dbDelta($sql) to execute the sql query for creating tables
  **/
@@ -69,10 +68,9 @@ function pp_bids_install($blog_id = 0) {
 	if ( !empty($wpdb->charset) )
 		$charset_collate = "DEFAULT CHARACTER SET $wpdb->charset";
 
-	$bids_table_name = ($blog_id == 0) ? $wpdb->prefix . 'bids' : $wpdb->base_prefix . $blog_id . '_bids';
-	$bidsmeta_table_name = ($blog_id == 0) ? $wpdb->prefix . 'bidsmeta' : $wpdb->base_prefix . $blog_id . '_bidsmeta';
+	pp_set_bid_tables();
 
-	$sql[] = "CREATE TABLE {$bids_table_name} (
+	$sql[] = "CREATE TABLE {$wpdb->bids} (
 		  		bid_id bigint(20) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
 		  		post_id bigint(20) unsigned NOT NULL,
 		  		bidder_id bigint(20) unsigned NOT NULL,
@@ -85,7 +83,7 @@ function pp_bids_install($blog_id = 0) {
 			    KEY bid_date_gmt (bid_date_gmt)
 			   ) {$charset_collate};";
 
-	$sql[] = "CREATE TABLE {$bidsmeta_table_name} (
+	$sql[] = "CREATE TABLE {$wpdb->bidsmeta} (
 		  		meta_id bigint(20) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
 		  		bid_id bigint(20) unsigned NOT NULL,
 		  		meta_key varchar(255) NOT NULL,
@@ -95,7 +93,7 @@ function pp_bids_install($blog_id = 0) {
 			   ) {$charset_collate};";
 
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-		dbDelta($sql);
+		dbDelta( $sql );
 
 	update_option( 'pp_bids_db_version', PP_BIDS_DB_VERSION );
 }

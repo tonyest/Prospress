@@ -140,7 +140,7 @@ add_action( 'save_post', 'pp_post_save_postdata', 10, 2 );
  * @since 0.1
  *
  * @uses wp_schedule_single_event function
- * @param post_id for identifing the post
+ * @param post_id for identifying the post
  * @param post_end_time_gmt a unix time stamp of the gmt date/time the post should end
  */
 function pp_schedule_end_post( $post_id, $post_end_time_gmt ) {
