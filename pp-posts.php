@@ -10,38 +10,20 @@
  * @version 0.1
  */
 
-/**
- * @TODO have these constant declarations occur in the pp-core.php
- */
-if ( !defined( 'PP_PLUGIN_DIR' ) )
-	define( 'PP_PLUGIN_DIR', WP_PLUGIN_DIR . '/prospress' );
-if ( !defined( 'PP_PLUGIN_URL' ) )
-	define( 'PP_PLUGIN_URL', WP_PLUGIN_URL . '/prospress' );
-
 if ( !defined( 'PP_POSTS_DIR' ) )
 	define( 'PP_POSTS_DIR', PP_PLUGIN_DIR . '/pp-posts' );
 if ( !defined( 'PP_POSTS_URL' ) )
 	define( 'PP_POSTS_URL', PP_PLUGIN_URL . '/pp-posts' );
 
-/**
- * Include the Prospress Custom Post Type
- */
-include( PP_POSTS_DIR . '/pp-custom-post-type.php' );
 
-/**
- * Include Prospress Custom Taxonomy Components
- */
-include( PP_POSTS_DIR . '/pp-custom-taxonomy.php' );
+require_once( PP_POSTS_DIR . '/pp-custom-post-type.php' );
 
-/**
- * Include the Prospress Sort widget
- */
-include( PP_POSTS_DIR . '/pp-sort.php' );
+require_once( PP_POSTS_DIR . '/pp-custom-taxonomy.php' );
 
-/**
- * Include Prospress Template Tags
- */
-include( PP_POSTS_DIR . '/pp-posts-templatetags.php' );
+require_once( PP_POSTS_DIR . '/pp-posts-templatetags.php' );
+
+include_once( PP_POSTS_DIR . '/pp-post-sort.php' );
+
 
 global $market_system;
 
@@ -49,10 +31,6 @@ global $market_system;
 /**
  * Sets up Prospress environment with any settings required and/or shared across the 
  * other components. 
- *
- * @package Prospress
- * @subpackage Posts
- * @since 0.1
  *
  * @uses is_site_admin() returns true if the current user is a site admin, false if not.
  * @uses add_submenu_page() WP function to add a submenu item.
@@ -100,8 +78,6 @@ add_action( 'pp_activation', 'pp_posts_install' );
  * @package Prospress
  * @subpackage Posts
  * @since 0.1
- * 
- * @global wpdb $wpdb WordPress DB access object.
  */
 function pp_post_save_postdata( $post_id, $post ) {
 	global $wpdb;
@@ -384,7 +360,7 @@ function pp_posts_admin_head() {
 		return;
 
 	if( strpos( $_SERVER['REQUEST_URI'], 'post.php' ) !== false || strpos( $_SERVER['REQUEST_URI'], 'post-new.php' ) !== false ) {
-		wp_enqueue_script( 'prospress-post', PP_POSTS_URL . '/pp-post.dev.js', array('jquery' ) );
+		wp_enqueue_script( 'prospress-post', PP_POSTS_URL . '/pp-post-admin.js', array('jquery' ) );
 		wp_localize_script( 'prospress-post', 'ppPostL10n', array(
 			'endedOn' => __('Ended on:', 'prospress' ),
 			'endOn' => __('End on:', 'prospress' ),
@@ -392,7 +368,7 @@ function pp_posts_admin_head() {
 			'update' => __('Update', 'prospress' ),
 			'repost' => __('Repost', 'prospress' ),
 			));
-		wp_enqueue_style( 'prospress-post',  PP_POSTS_URL . '/pp-post.css' );
+		wp_enqueue_style( 'prospress-post',  PP_POSTS_URL . '/pp-post-admin.css' );
 	}
 
 	if ( strpos( $_SERVER['REQUEST_URI'], 'completed' ) !== false ){
@@ -839,9 +815,17 @@ add_action( 'pp_deactivation', 'pp_posts_deactivate' );
 function pp_posts_uninstall(){
 	global $wpdb, $market_system;
 
+	if ( !current_user_can( 'edit_plugins' ) || !function_exists( 'delete_site_option' ) )
+		return false;
+
 	$index_page_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . $market_system->name() . "'" );
 
 	wp_delete_post( $index_page_id );
+	
+	$pp_post_ids = $wpdb->get_col($wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type = '" . $market_system->name() . "'" ) );
 
+	if ( $pp_post_ids )
+		foreach ( $pp_post_ids as $pp_post_id )
+			wp_delete_post( $pp_post_id );
 }
 add_action( 'pp_uninstall', 'pp_posts_uninstall' );

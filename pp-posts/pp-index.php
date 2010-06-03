@@ -7,7 +7,7 @@ Template Name: Auctions Index
  *
  * @package Prospress
  * @subpackage Theme
- * @since 0.7
+ * @since 0.1
  */
 global $market_system;
 

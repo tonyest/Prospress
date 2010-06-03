@@ -1,7 +1,5 @@
 <?php
 
-// Plugin Name: Bids Filter
-// Version: 1.0a
 
 class Bid_Filter_Widget extends WP_Widget {
 

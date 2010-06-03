@@ -7,7 +7,7 @@
 /*
 Plugin Name: Capital Quotes
 Plugin URI: http://prospress.org
-Description: This is not just a plugin, it embodies the collective genius behind humanity's heightened prosperity. When activated you will see a random quote in the upper right of your admin screen on every page.
+Description: This is not just a plugin, it embodies the collective genius behind humanity's heightened prosperity. When activated you will see a random economics related quote at the top of admin page. Its like Hello Dolly, but for budding economists. 
 Author: Brent Shepherd
 Version: 0.2
 Author URI: http://brentshepherd.com/
@@ -69,5 +69,3 @@ function capital_css() {
 }
 
 add_action('admin_head', 'capital_css');
-
-?>

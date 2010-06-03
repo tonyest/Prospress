@@ -12,15 +12,14 @@
 if ( !defined( 'PP_FEEDBACK_DB_VERSION'))
 	define ( 'PP_FEEDBACK_DB_VERSION', '0015' );
 if ( !defined( 'PP_FEEDBACK_DIR'))
-	define( 'PP_FEEDBACK_DIR', WP_PLUGIN_DIR . '/prospress/pp-feedback' );
+	define( 'PP_FEEDBACK_DIR', PP_PLUGIN_DIR . '/pp-feedback' );
 if ( !defined( 'PP_FEEDBACK_URL'))
-	define( 'PP_FEEDBACK_URL', WP_PLUGIN_URL . '/prospress/pp-feedback' );
+	define( 'PP_FEEDBACK_URL', PP_PLUGIN_URL . '/pp-feedback' );
 
 require_once ( PP_FEEDBACK_DIR . '/feedback-functions.php' );
+
 require_once ( PP_FEEDBACK_DIR . '/feedback-templatetags.php' );
 
-// For testing
-//include_once ( PP_FEEDBACK_DIR . '/feedback-tests.php' );
 
 global $wpdb;
 
@@ -28,6 +27,7 @@ if ( !isset( $wpdb->feedback ) || empty( $wpdb->feedback ) )
 	$wpdb->feedback = $wpdb->base_prefix . 'feedback';
 if ( !isset( $wpdb->feedbackmeta ) || empty( $wpdb->feedbackmeta ) )
 	$wpdb->feedbackmeta = $wpdb->base_prefix . 'feedbackmeta';
+
 
 //**************************************************************************************************//
 // INSTALLATION FUNCTIONS
@@ -652,3 +652,22 @@ function pp_feedback_add_dashboard_widgets() {
 }
 // Hook into the 'wp_dashboard_setup' action to register our other functions
 add_action('wp_dashboard_setup', 'pp_feedback_add_dashboard_widgets' );
+
+
+/**
+ * Clean up if the plugin when deleted by removing feedback related options and database tables.
+ * 
+ **/
+function pp_feedback_uninstall() {
+	global $wpdb;
+
+	if ( !current_user_can( 'edit_plugins' ) || !function_exists( 'delete_site_option' ) )
+		return false;
+
+	delete_site_option( 'pp_feedback_db_version' );
+	
+	$wpdb->query( "DROP TABLE IF EXISTS $wpdb->feedback" );
+	$wpdb->query( "DROP TABLE IF EXISTS $wpdb->feedbackmeta" );
+
+}
+add_action( 'pp_uninstall', 'pp_feedback_uninstall' );

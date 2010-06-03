@@ -12,11 +12,11 @@
 if ( !defined( 'PP_BIDS_DB_VERSION' ))
 	define ( 'PP_BIDS_DB_VERSION', '0022' );
 if ( !defined( 'PP_BIDS_DIR' ))
-	define( 'PP_BIDS_DIR', WP_PLUGIN_DIR . '/prospress/pp-bids' );
+	define( 'PP_BIDS_DIR', PP_PLUGIN_DIR . '/pp-bids' );
 if ( !defined( 'PP_BIDS_URL' ))
-	define( 'PP_BIDS_URL', WP_PLUGIN_URL . '/prospress/pp-bids' );
+	define( 'PP_BIDS_URL', PP_PLUGIN_URL . '/pp-bids' );
 
-/* Add Bids tables to the wpdb global var */
+
 global $wpdb;
 
 if ( !isset($wpdb->bids) || empty($wpdb->bids))
@@ -24,66 +24,47 @@ if ( !isset($wpdb->bids) || empty($wpdb->bids))
 if ( !isset($wpdb->bidsmeta) || empty($wpdb->bidsmeta))
 	$wpdb->bidsmeta = $wpdb->prefix . 'bidsmeta';
 
-/* Include required files */
+
 require_once ( PP_BIDS_DIR . '/pp-bids-templatetags.php' );
 
-/* Hook for requiring custom bid system. */
-//do_action( 'include_bid_systems' );
+include_once( PP_BIDS_DIR . '/bids-filter.php' );
+
+require_once ( PP_BIDS_DIR . '/pp-auction-system.class.php' );
 
 /**
- * Include Sort functions
+ * @global PP_Market_System $market_system Stores the market system object.
  */
-include( PP_BIDS_DIR . '/bids-filter.php' );
-
-/**
- * This is where the marketplace system is created. It's a standard class creation: require class file; 
- * create instance of class and store this instance in a global variable to be used elsewhere.
- *
- * However, to make the bid system extensible, filters are applied to the bid system file and bid system name.
- */
-/* Require bid system. */
-$market_system_file = apply_filters( 'bid_system_file', PP_BIDS_DIR . '/PP_Auction_Bid_System.class.php' );
-require_once ( $market_system_file );
-
-/* Determine which type of bid system to use. */
 global $market_system;
 
-$market_system_name = apply_filters( 'bid_system_name', 'PP_Auction_Bid_System' ); 
-$market_system = new $market_system_name;
+$market_system = new PP_Auction_Bid_System();
+
 
 /**
- * 	Checks if the bids database tables are set up and options set, if not,call install function to set them up.
+ * To save updating/installing the bids tables every time the plugin is activated, this function checks 
+ * the current bids database version exists and is not of a prior version.   
  * 
- * @uses get_site_option to check the current database version  (**WPMU_FUNCTION**)
  * @uses pp_bids_install to create the database tables if they are not up to date
  * @return false if logged in user is not the site admin
  **/
 function pp_bids_maybe_install() {
 	global $wpdb;
 
-	error_log( '** pp_bids_maybe_install called' );
-
 	if ( !current_user_can( 'edit_plugins' ) )
 		return false;
 
-	if ( !get_option( 'pp_bids_db_version' ) || get_option( 'pp_bids_db_version' ) < PP_BIDS_DB_VERSION ) {
-		error_log( '** pp_bids_install called, VHOST NOT defined' );
+	if ( !get_option( 'pp_bids_db_version' ) || get_option( 'pp_bids_db_version' ) < PP_BIDS_DB_VERSION )
 		pp_bids_install();
-	}
 }
 add_action( 'pp_activation', 'pp_bids_maybe_install' );
 
 
 /**
- * Creates bid and bidmeta tables and adds bid DB version number to options DB.
+ * As the name suggests, this function takes Creates bid and bidmeta tables and adds bid DB version number to options DB.
  * 
  * @uses dbDelta($sql) to execute the sql query for creating tables
- * @uses update_option(name, value) to set the database version
  **/
 function pp_bids_install($blog_id = 0) {
 	global $wpdb;
-
-	error_log( '*** in pp_bids_install ***' );
 	
 	if ( !empty($wpdb->charset) )
 		$charset_collate = "DEFAULT CHARACTER SET $wpdb->charset";
@@ -120,20 +101,10 @@ function pp_bids_install($blog_id = 0) {
 }
 
 
-function pp_bids_deactivate() {
-	global $wpdb;
-
-	if ( !current_user_can( 'edit_plugins' ) || !function_exists( 'delete_site_option' ) )
-		return false;
-
-	error_log( '** pp_bids_deactivate called **' );
-
-	delete_site_option( 'pp_bids_db_version' );
-}
-add_action( 'pp_deactivation', 'pp_bids_deactivate' );
-
-// This is called when switch to blog and restore blog functions are called. 
-// It makes the correct bid table names available in the $wpdb global.
+/**
+ * For multi-site installations, a bids table exists for each site. This function sets the bids 
+ * and bidsmeta table names in the wpdb global so these are correct on multi-site installations. 
+ **/
 function pp_set_bid_tables() {
 	global $wpdb;
 
@@ -141,4 +112,23 @@ function pp_set_bid_tables() {
 	$wpdb->bidsmeta = $wpdb->prefix . 'bidsmeta';
 }
 add_action( 'switch_blog', 'pp_set_bid_tables' );
+
+
+/**
+ * Clean up if the plugin is deleted by removing bids related options, posts and database tables. 
+ * 
+ **/
+function pp_bids_uninstall() {
+	global $wpdb;
+
+	if ( !current_user_can( 'edit_plugins' ) || !function_exists( 'delete_site_option' ) )
+		return false;
+
+	delete_site_option( 'pp_bids_db_version' );
+	
+	$wpdb->query( "DROP TABLE IF EXISTS $wpdb->bids" );
+	$wpdb->query( "DROP TABLE IF EXISTS $wpdb->bidsmeta" );
+
+}
+add_action( 'pp_uninstall', 'pp_bids_uninstall' );
 

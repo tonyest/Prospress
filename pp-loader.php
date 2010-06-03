@@ -16,7 +16,7 @@ if ( !defined( 'PP_VERSION' ) )
  * this code is released as a real beta, not that Google style we-use-beta-for-awesome-finished-versions type of beta.
  * The code is messy, undocumentated and will change over the coming months.
  * 
- * I hacked out are too many features and not enough polish. That will change over time, but don't expect no poetry here
+ * I hacked out too many features and not enough polish. That will change over time, but don't expect no poetry here
  * until approximately September.
  */
 
@@ -46,13 +46,11 @@ require_once( PP_PLUGIN_DIR . '/pp-payment.php' );
 
 
 function pp_activate(){
-	error_log('*** in pp_activate ***');
 	do_action( 'pp_activation' );
 }
 register_activation_hook( __FILE__, 'pp_activate' );
 
 function pp_deactivate(){
-	error_log('*** in pp_deactivate ***');
 	do_action( 'pp_deactivation' );
 }
 register_deactivation_hook( __FILE__, 'pp_deactivate' );

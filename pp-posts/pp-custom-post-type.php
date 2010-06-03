@@ -24,7 +24,7 @@ function pp_post_type() {
 			'public' 	=> true,
 			'show_ui' 	=> true,
 			'rewrite' 	=> array( 'slug' => $market_system->name(), 'with_front' => false ),
-			'capability_type' => 'prospress_post', //generic to cover all Prospress marketplace types
+			'capability_type' => 'prospress_post', //generic to cover the future proof for multiple Prospress marketplace types
 			'show_in_nav_menus' => false,
 			'supports' 	=> array(
 							'title',
