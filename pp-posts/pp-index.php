@@ -52,7 +52,7 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 
 			<?php endwhile; else: ?>
 
-				<p>No marketplace listings yet.</p>
+				<p>No <?php echo $market_system->display_name(); ?>.</p>
 
 			<?php endif; ?>
 		</div>

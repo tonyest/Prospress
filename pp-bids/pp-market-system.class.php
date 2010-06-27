@@ -521,9 +521,6 @@ class PP_Market_System {
 
 		$bids = $wpdb->get_results( $query, ARRAY_A );
 
-		error_log( 'In active_history $bids = ' . print_r( $bids, true ) );
-		error_log( ' ' );
-
 		$bids = apply_filters( 'active_history_bids', $bids );
 
 		$this->print_admin_bids_table( $bids, sprintf( __( 'Bids on Active %s', 'prospress' ), $this->display_name() ), 'active-bids' );
@@ -537,9 +534,6 @@ class PP_Market_System {
 		$query = $this->create_bid_page_query( 'completed' );
 
 		$bids = $wpdb->get_results( $query, ARRAY_A );
-
-		error_log( 'In completed_history $bids = ' . print_r( $bids, true ) );
-		error_log( ' ' );
 
 		$bids = apply_filters( 'completed_history_bids', $bids );
 
@@ -600,8 +594,6 @@ class PP_Market_System {
 				}
 		}
 
-		error_log( '$query = ' . $query );
-		error_log( ' ' );
 		return $query;
 	}
 
