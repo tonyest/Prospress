@@ -91,7 +91,7 @@ class WP_Invoice {
 		$unsent_invoices = (count( $this->unsent_invoices) > 0 ? "(" . count( $this->unsent_invoices) . ")" : "");
 		$unpaid_invoices = (count( $this->unpaid_invoices) > 0 ? "(" . count( $this->unpaid_invoices) . ")" : "");
 
-		$wp_invoice_page_names[ 'web_invoice' ] 			= add_menu_page( 'Payments', 'Payments',  $this->wp_invoice_user_level,'outgoing_invoices', array(&$this,'outgoing_invoices' ),$this->uri."/core/images/wp_invoice.png", $_wp_last_object_menu);		
+		$wp_invoice_page_names[ 'web_invoice' ] 			= add_menu_page( 'Payments', 'Payments',  $this->wp_invoice_user_level,'outgoing_invoices', array(&$this,'outgoing_invoices' ),$this->uri."/core/images/payments16.png", $_wp_last_object_menu);		
 		$wp_invoice_page_names[ 'outgoing_invoices' ] 	= add_submenu_page( 'outgoing_invoices', "Incoming Payments $unsent_invoices", "Incoming $unsent_invoices", $this->wp_invoice_user_level, 'outgoing_invoices', array(&$this,'outgoing_invoices' ) );
 		$wp_invoice_page_names[ 'incoming_invoices' ] 	= add_submenu_page( 'outgoing_invoices', "Outgoing Payments $unpaid_invoices", "Outgoing $unpaid_invoices", $this->wp_invoice_user_level, 'incoming_invoices', array(&$this,'incoming_invoices' ) );
 		$wp_invoice_page_names[ 'user_settings' ] 		= add_submenu_page( 'outgoing_invoices', "Settings", "Settings", $this->wp_invoice_user_level, 'user_settings_page', array(&$this,'user_settings_page' ) );

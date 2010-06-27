@@ -3,6 +3,7 @@
 	 pagenow = 'toplevel_page_outgoing_invoices';
 	</script>
 	<form id="invoices-filter" action="" method="post" >
+	<?php screen_icon(); ?>
 	<h2><?php _e('Incoming Payments', 'prospress'); ?></h2>
 
 	<?php if( $message ): ?>
@@ -20,8 +21,8 @@
 	<div class="alignleft">
 	<select id="wp_invoice_action" name="wp_invoice_action">
 		<option value="-1" selected="selected"><?php _e('-- Actions --', 'prospress'); ?></option>
-		<option value="archive_invoice" name="archive" ><?php _e('Archive Invoice(s)', 'prospress'); ?></option>
-		<option value="unrachive_invoice" name="unarchive" ><?php _e('Un-Archive Invoice(s)', 'prospress'); ?></option>
+		<option value="archive_invoice" name="archive" ><?php _e('Archive', 'prospress'); ?></option>
+		<option value="unrachive_invoice" name="unarchive" ><?php _e('Un-Archive', 'prospress'); ?></option>
 		<option value="mark_as_sent" name="mark_as_sent" ><?php _e('Mark as Sent', 'prospress'); ?></option>
 		<option value="mark_as_paid" name="mark_as_paid" ><?php _e('Mark as Paid', 'prospress'); ?></option>
 		<option value="mark_as_unpaid" name="mark_as_unpaid" ><?php _e('Unset Paid Status', 'prospress'); ?></option>
@@ -38,9 +39,9 @@
 	<div class="alignright">
 		<ul class="subsubsub" style="margin:0;">
 		<li><?php _e('Filter:', 'prospress'); ?></li>
-		<li><a href='#' class="" id="">All Invoices</a> |</li>
-		<li><a href='#'  class="paid" id="">Paid</a> |</li>
-		<li><a href='#'  class="sent" id="">Unpaid</a> |</li>
+		<li><a href='#' class="" id=""><?php _e( 'All', 'prospress' ); ?></a> |</li>
+		<li><a href='#'  class="paid" id=""><?php _e( 'Paid', 'prospress' ); ?></a> |</li>
+		<li><a href='#'  class="sent" id=""><?php _e( 'Unpaid', 'prospress' ); ?></a> |</li>
 		<li><?php _e('Custom: ', 'prospress'); ?><input type="text" id="FilterTextBox" class="search-input" name="FilterTextBox" /> </li>
 		</ul>
 	</div>

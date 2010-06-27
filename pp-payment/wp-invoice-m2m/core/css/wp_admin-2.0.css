@@ -1,3 +1,5 @@
+#icon-outgoing_invoices,#icon-incoming_invoices{background: transparent url(../images/payments32.png) no-repeat scroll;}
+
 #wp_invoice_metabox_billing_details #cardimage {margin-bottom: 10px; height: 23px;}
 #wp_invoice_metabox_billing_details .nocard {background-position: 0px 0px !important;}
 #wp_invoice_metabox_billing_details .visa_card {background-position: 0px -23px !important;}

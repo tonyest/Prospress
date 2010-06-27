@@ -1,6 +1,6 @@
 <div class="wrap">
 <form method='POST'>
-<h2><?php _e("Account Settings", 'prospress') ?></h2>
+<h2><?php _e("Payment Settings", 'prospress') ?></h2>
 <?php // wpi_qc($user_settings); ?>
 	<style>
 		<?php if($user_settings[paypal_allow] != 'true') : ?>
@@ -70,7 +70,7 @@
 			<tr>
 				<th><?php _e("Payment Settings:");?></th>
 				<td>
-					<?php echo wpi_checkbox("group=wp_invoice_user_settings&name=can_change_payment_method&label=Invoice payer can change payment method.&value=true", $user_settings[can_change_payment_method]); ?><br />
+					<?php echo wpi_checkbox("group=wp_invoice_user_settings&name=can_change_payment_method&label=Payer can change payment method.&value=true", $user_settings[can_change_payment_method]); ?><br />
 					<?php echo wpi_checkbox("group=wp_invoice_user_settings&name=payment_received_notification&label=Notify me when payment is made.&value=true", $user_settings[payment_received_notification]); ?><br />
 				</td>
 			</tr>

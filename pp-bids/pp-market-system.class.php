@@ -38,9 +38,9 @@ class PP_Market_System {
 
 		if( empty( $bid_table_headings ) || !is_array( $bid_table_headings ) ){
 			$this->bid_table_headings = array( 
-										'bid_value' => 'Amount',
 										'post_id' => 'Post', 
 										'post_status' => 'Post Status', 
+										'bid_value' => 'Amount',
 										'bid_status' => 'Bid Status', 
 										'bid_date' => 'Bid Date',
 										'post_end' => 'Post End Date'
@@ -675,7 +675,7 @@ class PP_Market_System {
 			<table class="widefat fixed" cellspacing="0">
 				<thead>
 					<tr class="thead">
-						<?php print_column_headers( $this->name() ); ?>
+						<?php print_column_headers( $this->name() ); // Calls get_column_headings() added by add_filter( manage_$this->name()_columns ?>
 					</tr>
 				</thead>
 				<tbody id="bids" class="list:user user-list">
@@ -688,11 +688,9 @@ class PP_Market_System {
 							$post_status = ( $post->post_status == 'publish' ) ? 'Active' : $post->post_status;
 							?>
 							<tr class='<?php echo $style; ?>'>
-								<td><?php echo pp_money_format( $bid[ 'bid_value' ] );//$bid_money; ?></td>
-								<td><a href='<?php echo get_permalink( $bid[ 'post_id' ] ); ?>'>
-									<?php echo $post->post_title; ?>
-								</a></td>
+								<td><a href='<?php echo get_permalink( $bid[ 'post_id' ] ); ?>'><?php echo $post->post_title; ?></a></td>
 								<td><?php echo ucfirst( $post_status ); ?></td>
+								<td><?php echo pp_money_format( $bid[ 'bid_value' ] ); ?></td>
 								<td><?php echo ucfirst( $bid[ 'bid_status' ] ); ?></td>
 								<td><?php echo mysql2date( __( 'g:ia d M Y' , 'prospress' ), $bid[ 'bid_date' ] ); ?></td>
 								<td><?php echo mysql2date( __( 'g:ia d M Y' , 'prospress' ), $post_end_date ); ?></td>

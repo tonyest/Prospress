@@ -25,11 +25,11 @@ if ( !isset($wpdb->bidsmeta) || empty($wpdb->bidsmeta))
 	$wpdb->bidsmeta = $wpdb->prefix . 'bidsmeta';
 
 
-require_once ( PP_BIDS_DIR . '/pp-bids-templatetags.php' );
+require_once( PP_BIDS_DIR . '/pp-bids-templatetags.php' );
 
 include_once( PP_BIDS_DIR . '/bids-filter.php' );
 
-require_once ( PP_BIDS_DIR . '/pp-auction-system.class.php' );
+require_once( PP_BIDS_DIR . '/pp-auction-system.class.php' );
 
 /**
  * @global PP_Market_System $market_system Stores the market system object.

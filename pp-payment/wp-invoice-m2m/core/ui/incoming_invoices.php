@@ -3,6 +3,7 @@
 	 pagenow = 'web-invoice_page_incoming_invoices';
 	</script>
 	<form id="invoices-filter" action="" method="post" >
+	<?php screen_icon(); ?>
 	<h2><?php _e('Outgoing Payments', 'prospress'); ?></h2>
 	<div class="tablenav clearfix">
 
@@ -17,11 +18,11 @@
 
 	<div class="alignright">
 		<ul class="subsubsub" style="margin:0;">
-		<li><?php _e('Filter:', 'prospress'); ?></li>
-		<li><a href='#' class="" id="">All Invoices</a> |</li>
-		<li><a href='#'  class="paid" id="">Paid</a> |</li>
-		<li><a href='#'  class="sent" id="">Unpaid</a> |</li>
-		<li><?php _e('Custom: ', 'prospress'); ?><input type="text" id="FilterTextBox" class="search-input" name="FilterTextBox" /> </li>
+		<li><?php _e( 'Filter:', 'prospress' ); ?></li>
+		<li><a href='#' class="" id=""><?php _e( 'All', 'prospress' ); ?></a> |</li>
+		<li><a href='#'  class="paid" id=""><?php _e( 'Paid', 'prospress' ); ?></a> |</li>
+		<li><a href='#'  class="sent" id=""><?php _e( 'Unpaid', 'prospress' ); ?></a> |</li>
+		<li><?php _e( 'Custom: ', 'prospress' ); ?><input type="text" id="FilterTextBox" class="search-input" name="FilterTextBox" /> </li>
 		</ul>
 	</div>
 	</div>
