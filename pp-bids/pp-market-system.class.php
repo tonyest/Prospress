@@ -39,7 +39,6 @@ class PP_Market_System {
 		if( empty( $bid_table_headings ) || !is_array( $bid_table_headings ) ){
 			$this->bid_table_headings = array( 
 										'post_id' => 'Post', 
-										'post_status' => 'Post Status', 
 										'bid_value' => 'Amount',
 										'bid_status' => 'Bid Status', 
 										'bid_date' => 'Bid Date',
@@ -63,8 +62,6 @@ class PP_Market_System {
 		if( !empty( $this->post_table_columns ) && is_array( $this->post_table_columns ) ){
 			add_filter( 'manage_posts_columns', array( &$this, 'add_post_column_headings' ) );
 			add_action( 'manage_posts_custom_column', array( &$this, 'add_post_column_contents' ), 10, 2 );
-			//add_filter( 'manage_' . $this->name() . '_columns', array( &$this, 'add_post_column_headings' ) );
-			//add_action( 'manage_' . $this->name() . '_custom_column', array( &$this, 'add_post_column_contents' ), 10, 2 );
 		}
 
 		// Determine if bid form submission function should be called
@@ -495,7 +492,7 @@ class PP_Market_System {
 
 		$base_page = "bids";
 
-		$bids_title = apply_filters( 'bids_admin_title', __( 'Bids', 'prospress' ) );
+		$bids_title = apply_filters( 'bids_admin_title', __( $this->singular_name() . ' Bids', 'prospress' ) );
 
 		if ( function_exists( 'add_object_page' ) ) {
 			add_object_page( $bids_title, $bids_title, 'read', $base_page, '', PP_PLUGIN_URL . '/images/bid-16x16.png' );
@@ -503,18 +500,18 @@ class PP_Market_System {
 			add_menu_page( $bids_title, $bids_title, 'read', $base_page, '', PP_PLUGIN_URL . '/images/bid-16x16.png' );
 		}
 
-		$winning_bids_title = apply_filters( 'winning_bids_title', __( 'Winning Bids', 'prospress' ) );
-		$bid_history_title = apply_filters( 'bid_history_title', __( 'Bid History', 'prospress' ) );
+		$completed_posts_menu_title = apply_filters( 'pp_completed_posts_menu_title', sprintf( __( 'Completed %s', 'prospress' ), $this->display_name() ) );
+		$active_posts_menu_title = apply_filters( 'pp_active_posts_menu_title', sprintf( __( 'Active %s', 'prospress' ), $this->display_name() ) );
 
 	    // Add submenu items to the bids top-level menu
 		if (function_exists( 'add_submenu_page' )){
-		    add_submenu_page( $base_page, $winning_bids_title, $winning_bids_title, 'read', $base_page, array( &$this, 'winning_history' ) );
-		    add_submenu_page( $base_page, $bid_history_title, $bid_history_title, 'read', 'bid-history', array( &$this, 'admin_history' ) );
+		    add_submenu_page( $base_page, $completed_posts_menu_title, $completed_posts_menu_title, 'read', $base_page, array( &$this, 'completed_history' ) );
+		    add_submenu_page( $base_page, $active_posts_menu_title, $active_posts_menu_title, 'read', 'active-bids', array( &$this, 'active_history' ) );
 		}
 	}
 
 	// Print the feedback history for a user
-	function admin_history() {
+	function active_history() {
 	  	global $wpdb, $user_ID;
 
 		get_currentuserinfo(); //get's user ID of currently logged in user and puts into global $user_id
@@ -522,40 +519,45 @@ class PP_Market_System {
 		$order_by = 'bid_date_gmt';
 		$query = $this->create_bid_page_query();
 
-		error_log( 'In admin_history, post create query' );
-
 		$bids = $wpdb->get_results( $query, ARRAY_A );
 
-		error_log( 'In admin_history, post get results' );
+		error_log( 'In active_history $bids = ' . print_r( $bids, true ) );
+		error_log( ' ' );
 
-		$bids = apply_filters( 'admin_history_bids', $bids );
-		
-		error_log( 'In admin_history' );
+		$bids = apply_filters( 'active_history_bids', $bids );
 
-		$this->print_admin_bids_table( $bids, __( 'Bid History', 'prospress' ), 'bid-history' );
+		$this->print_admin_bids_table( $bids, sprintf( __( 'Bids on Active %s', 'prospress' ), $this->display_name() ), 'active-bids' );
 	}
 
-	function winning_history() {
+	function completed_history() {
 	  	global $wpdb, $user_ID;
 
 		get_currentuserinfo(); //get's user ID of currently logged in user and puts into global $user_id
 
-		$query = $this->create_bid_page_query( 'winning' );
+		$query = $this->create_bid_page_query( 'completed' );
 
 		$bids = $wpdb->get_results( $query, ARRAY_A );
 
-		$bids = apply_filters( 'winning_history_bids', $bids );
+		error_log( 'In completed_history $bids = ' . print_r( $bids, true ) );
+		error_log( ' ' );
 
-		$this->print_admin_bids_table( $bids, __( 'Winning Bids', 'prospress' ), 'bids' );
+		$bids = apply_filters( 'completed_history_bids', $bids );
+
+		$this->print_admin_bids_table( $bids, sprintf( __( 'Bids on Completed %s', 'prospress' ), $this->display_name() ), 'bids' );
 	}
 
-	function create_bid_page_query( $bid_status = '' ){
+	function create_bid_page_query( $post_status = 'publish', $bid_status = '' ){
 		global $wpdb, $user_ID;
-		
+
 		$query = $wpdb->prepare( "SELECT * FROM $wpdb->bids WHERE bidder_id = %d", $user_ID );
+
+		$query .= $wpdb->prepare( " AND post_id IN ( SELECT ID FROM $wpdb->posts WHERE post_status = %s ) ", $post_status );
 
 		if( !empty( $bid_status ) )
 			$query .= $wpdb->prepare( ' AND bid_status = %s', $bid_status );
+
+		// Only the latest bid
+		$query .= $wpdb->prepare( " AND bid_id IN ( SELECT MAX( bid_id ) FROM $wpdb->bids WHERE bidder_id = %d GROUP BY post_id ) ", $user_ID );
 
 		if( isset( $_GET[ 'm' ] ) && $_GET[ 'm' ] != 0 ){
 			$month	= substr( $_GET[ 'm' ], -2 );
@@ -598,15 +600,15 @@ class PP_Market_System {
 				}
 		}
 
+		error_log( '$query = ' . $query );
+		error_log( ' ' );
 		return $query;
 	}
 
-	function print_admin_bids_table( $bids, $title, $page ){
+	function print_admin_bids_table( $bids = array(), $title = 'Bids', $page ){
 		global $wpdb, $user_ID, $wp_locale;
 
-		$title = ( empty( $title ) ) ? 'Bids' : $title;
-
-		if( empty( $bids ) && !is_array( $bids ) )
+		if( !is_array( $bids ) )
 			$bids = array();
 
 		$sort = isset( $_GET[ 'sort' ] ) ? (int)$_GET[ 'sort' ] : 0;
@@ -631,7 +633,6 @@ class PP_Market_System {
 							$arc_query = $wpdb->prepare("SELECT DISTINCT YEAR(bid_date) AS yyear, MONTH(bid_date) AS mmonth FROM $wpdb->bids WHERE bidder_id = %d AND bid_status = 'winning' ORDER BY bid_date DESC", $user_ID );
 						else 
 							$arc_query = $wpdb->prepare("SELECT DISTINCT YEAR(bid_date) AS yyear, MONTH(bid_date) AS mmonth FROM $wpdb->bids WHERE bidder_id = %d ORDER BY bid_date DESC", $user_ID );
-						error_log( "title = $title and arc_query = $arc_query" );
 						$arc_result = $wpdb->get_results( $arc_query );
 						$month_count = count( $arc_result);
 
@@ -685,11 +686,9 @@ class PP_Market_System {
 						foreach ( $bids as $bid ) {
 							$post = get_post( $bid[ 'post_id' ] );
 							$post_end_date = get_post_meta( $bid[ 'post_id' ], 'post_end_date', true );
-							$post_status = ( $post->post_status == 'publish' ) ? 'Active' : $post->post_status;
 							?>
 							<tr class='<?php echo $style; ?>'>
 								<td><a href='<?php echo get_permalink( $bid[ 'post_id' ] ); ?>'><?php echo $post->post_title; ?></a></td>
-								<td><?php echo ucfirst( $post_status ); ?></td>
 								<td><?php echo pp_money_format( $bid[ 'bid_value' ] ); ?></td>
 								<td><?php echo ucfirst( $bid[ 'bid_status' ] ); ?></td>
 								<td><?php echo mysql2date( __( 'g:ia d M Y' , 'prospress' ), $bid[ 'bid_date' ] ); ?></td>
