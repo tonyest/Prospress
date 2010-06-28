@@ -24,6 +24,8 @@ require_once( PP_POSTS_DIR . '/pp-posts-templatetags.php' );
 
 include_once( PP_POSTS_DIR . '/pp-post-sort.php' );
 
+include_once( PP_POSTS_DIR . '/pp-post-widgets.php' );
+
 
 global $market_system;
 

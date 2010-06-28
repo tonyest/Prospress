@@ -43,24 +43,12 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 			<?php dynamic_sidebar( $market_system->name() . '-single-sidebar' ); ?>
 		</ul>
 		<h3><?php _e( 'Details', 'prospress' ); ?></h3>
-		<div class="pp-publish-date">
-			<?php _e('Published: ', 'prospress' ); ?>
-			<?php the_time('F jS, Y'); ?></div>
-		<div class="pp-end-date">
-			<?php _e('Ending: ', 'prospress' ); ?>
-			<?php the_post_end_countdown(); ?>
-		</div>
 		<div class="pp-taxonomies">
 			<?php pp_get_the_term_list(); ?>
 		</div>
 		<div class="pp-author">
 			<?php _e('Seller: ', 'prospress' ); ?>
 			<?php the_author() ?>
-		</div>
-		<div class="pp-author-feedback">
-			<?php _e( 'Feedback: ', 'prospress' ); ?>
-			<?php the_users_feedback_items(); ?>
-			<?php the_most_recent_feedback(); ?>
 		</div>
 	</div>
 <?php get_footer(); ?>

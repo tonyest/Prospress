@@ -1,4 +1,13 @@
 <?php
+/**
+ * Prospress Sort
+ *
+ * Allows an index of Prospress posts to be sorted by a customisable array of attributes.
+ *
+ * @package Prospress
+ * @author Brent Shepherd
+ * @version 0.1
+ */
 
 class PP_Sort_Widget extends WP_Widget {
 	function PP_Sort_Widget() {
