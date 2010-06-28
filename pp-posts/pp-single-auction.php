@@ -42,13 +42,5 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 		<ul class="xoxo">
 			<?php dynamic_sidebar( $market_system->name() . '-single-sidebar' ); ?>
 		</ul>
-		<h3><?php _e( 'Details', 'prospress' ); ?></h3>
-		<div class="pp-taxonomies">
-			<?php pp_get_the_term_list(); ?>
-		</div>
-		<div class="pp-author">
-			<?php _e('Seller: ', 'prospress' ); ?>
-			<?php the_author() ?>
-		</div>
 	</div>
 <?php get_footer(); ?>
