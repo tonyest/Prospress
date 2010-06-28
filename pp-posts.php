@@ -469,14 +469,14 @@ add_action( 'manage_posts_custom_column', 'pp_post_columns_custom', 10, 2 );
 
 
 /** 
- * Prospress posts aren't just your vanilla WordPress post! They have special meta which needs to
+ * Prospress posts aren't just your vanilla WordPress post, they have special meta which needs to
  * be presented in a special way. They also need to be sorted and filtered to make them easier to
  * browse and compare. That's why this function redirects individual Prospress posts to a default
  * template for single posts - pp-single.php - and the auto-generated Prospress index page to a 
  * special index template - pp-index.php. 
  * 
  * However, before doing so, it provides a hook for overriding the templates and also checks if the 
- * current theme has Prospress compatible templates. 
+ * current theme has Prospress compatible templates.
  * 
  * @package Prospress
  * @subpackage Posts
@@ -488,21 +488,21 @@ function pp_template_redirects() {
 	if( $post->post_name == $market_system->name() ){
 		
 		do_action( 'pp_index_template_redirect' );
-		
-		if( file_exists( TEMPLATEPATH . '/pp-index.php' ) )
-			include( TEMPLATEPATH . '/pp-index.php' );
+
+		if( file_exists( TEMPLATEPATH . '/pp-index-' . $market_system->name() . '.php' ) )
+			include( TEMPLATEPATH . '/pp-index-' . $market_system->name() . '.php' );
 		else
-			include( PP_POSTS_DIR . '/pp-index.php' );
+			include( PP_POSTS_DIR . '/pp-index-' . $market_system->name() . '.php' );
 		exit;
 
 	} elseif ( $post->post_type == $market_system->name() && !isset( $_GET[ 's' ] ) ) {
-		
+
 		do_action( 'pp_single_template_redirect' );
 
-		if( file_exists( TEMPLATEPATH . '/pp-single.php' ) )
-			include( TEMPLATEPATH . '/pp-single.php' );
+		if( file_exists( TEMPLATEPATH . '/pp-single-' . $market_system->singular_name() . '.php' ) )
+			include( TEMPLATEPATH . '/pp-single-' . $market_system->singular_name() . '.php' );
 		else
-			include( PP_POSTS_DIR . '/pp-single.php' );
+			include( PP_POSTS_DIR . '/pp-single-' . $market_system->singular_name() . '.php' );
 		exit;
 	}
 }
@@ -523,7 +523,17 @@ function pp_register_sidebars(){
 	register_sidebar( array (
 		'name' => $market_system->display_name() . ' ' . __( 'Index Sidebar', 'prospress' ),
 		'id' => $market_system->name() . '-index-sidebar',
-		'description' => __( "The sidebar on your Prospress posts.", 'prospress' ),
+		'description' => sprintf( __( "The sidebar on the %s index.", 'prospress' ), $market_system->display_name() ),
+		'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
+		'after_widget' => "</li>",
+		'before_title' => '<h3 class="widget-title">',
+		'after_title' => '</h3>',
+	) );
+
+	register_sidebar( array (
+		'name' => sprintf( __( 'Single %s Sidebar', 'prospress' ), $market_system->singular_name() ),
+		'id' => $market_system->name() . '-single-sidebar',
+		'description' => sprintf( __( "The sidebar on a single %s.", 'prospress' ), $market_system->singular_name() ),
 		'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
 		'after_widget' => "</li>",
 		'before_title' => '<h3 class="widget-title">',

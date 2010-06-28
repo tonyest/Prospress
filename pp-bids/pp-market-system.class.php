@@ -11,8 +11,8 @@
 
 class PP_Market_System {
 
-	var $name;					// Public name of the market system e.g. "Auction".
-	var $singular_name;			// Public name of the market system e.g. "Auction".
+	var $name;					// Public name of the market system e.g. "Auctions".
+	var $singular_name;			// Name of a single market system object e.g. "Auction".
 	var $bid_form_title;		// Title for the bid form.
 	var $bid_button_value;		// Text used on the submit button of the bid form.
 	var $post_fields;			// Array of flags representing the fields which the market system implements e.g. array( 'post_fields' )

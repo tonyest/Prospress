@@ -155,4 +155,5 @@ function pp_feedback_add_dashboard_widgets() {
 		                                );
 	}
 }
-add_action('wp_dashboard_setup', 'pp_feedback_add_dashboard_widgets' );
+//Save it for later...
+//add_action('wp_dashboard_setup', 'pp_feedback_add_dashboard_widgets' );

@@ -3,7 +3,7 @@
  * Prospress Payment
  * 
  * Money - the great enabler of trade. This component provides a system for traders in a Prospress market place 
- * to exchange money.
+ * to exchange money in return to posted items/services.
  * 
  * @package Prospress
  * @author Brent Shepherd

@@ -39,6 +39,9 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 	</div>
 
 	<div id="sidebar" class="prospress-sidebar">
+		<ul class="xoxo">
+			<?php dynamic_sidebar( $market_system->name() . '-single-sidebar' ); ?>
+		</ul>
 		<h3><?php _e( 'Details', 'prospress' ); ?></h3>
 		<div class="pp-publish-date">
 			<?php _e('Published: ', 'prospress' ); ?>

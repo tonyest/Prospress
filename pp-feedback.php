@@ -21,6 +21,8 @@ require_once( PP_FEEDBACK_DIR . '/pp-feedback-functions.php' );
 
 require_once( PP_FEEDBACK_DIR . '/pp-feedback-templatetags.php' );
 
+include_once( PP_FEEDBACK_DIR . '/pp-feedback-widgets.php' );
+
 include_once( PP_FEEDBACK_DIR . '/pp-feedback-dashboard-widget.php' );
 
 global $wpdb;
