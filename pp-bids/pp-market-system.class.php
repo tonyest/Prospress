@@ -500,8 +500,8 @@ class PP_Market_System {
 			add_menu_page( $bids_title, $bids_title, 'read', $base_page, '', PP_PLUGIN_URL . '/images/auctions16.png' );
 		}
 
-		$completed_posts_menu_title = apply_filters( 'pp_completed_posts_menu_title', sprintf( __( 'Completed %s', 'prospress' ), $this->display_name() ) );
-		$active_posts_menu_title = apply_filters( 'pp_active_posts_menu_title', sprintf( __( 'Active %s', 'prospress' ), $this->display_name() ) );
+		$completed_posts_menu_title = apply_filters( 'pp_completed_posts_menu_title', __( 'Finalized', 'prospress' ) );
+		$active_posts_menu_title = apply_filters( 'pp_active_posts_menu_title', __( 'Active', 'prospress' ) );
 
 	    // Add submenu items to the bids top-level menu
 		if (function_exists( 'add_submenu_page' )){

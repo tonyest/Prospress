@@ -74,13 +74,13 @@ add_action( 'widgets_init', create_function( '', 'return register_widget("PP_Tag
  *
  * @since 0.1
  */
-class PP_Single_Taxonomies_Widget extends WP_Widget {
+class PP_Taxonomies_List_Widget extends WP_Widget {
 
-	function PP_Single_Taxonomies_Widget() {
+	function PP_Taxonomies_List_Widget() {
 		global $market_system;
 
 		$widget_ops = array( 'description' => sprintf( __('List of taxonomy items that apply to a single %s', 'prospress' ), $market_system->singular_name() ) );
-		$this->WP_Widget( 'pp_single_tax', __( 'Prospress Single Taxonomies' ), $widget_ops );
+		$this->WP_Widget( 'pp_single_tax', __( 'Prospress Taxonomy List' ), $widget_ops );
 	}
 
 	function widget( $args, $instance ) {
@@ -119,7 +119,7 @@ class PP_Single_Taxonomies_Widget extends WP_Widget {
 		return $instance;
 	}
 }
-add_action( 'widgets_init', create_function( '', 'return register_widget("PP_Single_Taxonomies_Widget");' ) );
+add_action( 'widgets_init', create_function( '', 'return register_widget("PP_Taxonomies_List_Widget");' ) );
 
 
 /**

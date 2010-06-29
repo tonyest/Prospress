@@ -26,6 +26,7 @@ include_once( PP_POSTS_DIR . '/pp-post-sort.php' );
 
 include_once( PP_POSTS_DIR . '/pp-post-widgets.php' );
 
+include_once( PP_POSTS_DIR . '/query-multiple-taxonomies/query-multiple-taxonomies.php' );
 
 global $market_system;
 
@@ -488,7 +489,7 @@ function pp_template_redirects() {
 	global $post, $market_system;
 
 	if( $post->post_name == $market_system->name() ){
-		
+
 		do_action( 'pp_index_template_redirect' );
 
 		if( file_exists( TEMPLATEPATH . '/pp-index-' . $market_system->name() . '.php' ) )
@@ -497,7 +498,17 @@ function pp_template_redirects() {
 			include( PP_POSTS_DIR . '/pp-index-' . $market_system->name() . '.php' );
 		exit;
 
-	} elseif ( $post->post_type == $market_system->name() && !isset( $_GET[ 's' ] ) ) {
+	} elseif ( $post->post_type == $market_system->name() && is_multitax() ) {
+
+		do_action( 'pp_taxonomy_template_redirect' );
+
+		if( file_exists( TEMPLATEPATH . '/pp-taxonomy-' . $market_system->name() . '.php' ) )
+			include( TEMPLATEPATH . '/pp-taxonomy-' . $market_system->name() . '.php' );
+		else
+			include( PP_POSTS_DIR . '/pp-taxonomy-' . $market_system->name() . '.php' );
+		exit;
+
+	} elseif ( $post->post_type == $market_system->name() && is_single() && !isset( $_GET[ 's' ] ) ) {
 
 		do_action( 'pp_single_template_redirect' );
 

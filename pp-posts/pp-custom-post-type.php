@@ -24,8 +24,9 @@ function pp_post_type() {
 			'public' 	=> true,
 			'show_ui' 	=> true,
 			'rewrite' 	=> array( 'slug' => $market_system->name(), 'with_front' => false ),
-			'capability_type' => 'prospress_post', //generic to cover the future proof for multiple Prospress marketplace types
+			'capability_type' => 'prospress_post', //generic to cover multiple Prospress marketplace types
 			'show_in_nav_menus' => false,
+			'exclude_from_search' => true,
 			'menu_icon' => PP_PLUGIN_URL . '/images/auctions16.png',
 			'supports' 	=> array(
 							'title',
