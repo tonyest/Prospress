@@ -4,7 +4,7 @@ Plugin Name: Prospress
 Plugin URI: http://prospress.org
 Description: Publishing and trade - two prosperous human endeavours. WordPress advances the first, Prospress the second. This plugin slips your very own auction site along side your WordPress blog.
 Author: Brent Shepherd
-Version: 0.2
+Version: 0.1
 Author URI: http://prospress.org/
 */
 
@@ -17,8 +17,8 @@ if ( !defined( 'PP_VERSION' ) )
  * The code is messy, undocumentated and will change over the coming months. For example, feedback items may become a
  * custom post type instead of having their own table. 
  * 
- * I hacked out too many features and not enough polish. That will change over time, but don't expect no poetry here
- * until approximately September.
+ * I hacked out too many features without enough polish. That will change over time, but don't expect poetry here
+ * until approximately December.
  */
 
 /*

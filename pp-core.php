@@ -36,7 +36,7 @@ add_action( 'pp_activation', 'pp_core_install' );
 function pp_add_core_admin_menu() {
 	global $pp_core_admin_page;
 
-	$pp_core_admin_page = add_menu_page( __( 'Prospress', 'prospress' ), __( 'Prospress', 'prospress' ), 10, 'Prospress', '', PP_PLUGIN_URL . '/images/prospress-16x16.png', 3 );
+	$pp_core_admin_page = add_menu_page( __( 'Prospress', 'prospress' ), __( 'Prospress', 'prospress' ), 10, 'Prospress', '', PP_PLUGIN_URL . '/images/prospress16.png', 3 );
 	$pp_core_settings_page = add_submenu_page( 'Prospress', __( 'Prospress Settings', 'prospress' ), __( 'General Settings', 'prospress' ), 10, 'Prospress', 'pp_settings_page' );
 }
 add_action( 'admin_menu', 'pp_add_core_admin_menu' );
@@ -168,7 +168,7 @@ function pp_money_format( $number, $decimals = 2, $currency = '' ){
 }
 
 
-/**
+/** 
  * The default WordPress admin menu icon has nothing on the Prospress jumping koi. This function adds 
  * the fish to menu pages under the Prospress top-level admin menu.
  *
@@ -179,7 +179,7 @@ function pp_add_icon_css() {
 
 	if ( strpos( $_SERVER['REQUEST_URI'], 'Prospress' ) !== false || strpos( $_SERVER['REQUEST_URI'], 'custom_taxonomy_manage' ) !== false || strpos( $_SERVER['REQUEST_URI'], 'invoice_settings' ) !== false ) {
 		echo "<style type='text/css'>";
-		echo "#icon-prospress{background: url(" . PP_PLUGIN_URL . "/images/prospress-35x35.png) no-repeat center transparent}";
+		echo "#icon-prospress{background: url(" . PP_PLUGIN_URL . "/images/prospress35.png) no-repeat center transparent}";
 		echo "</style>";
 	}
 }

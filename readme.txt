@@ -9,7 +9,7 @@ Prosper with Wordpress - create an online marketplace.
 
 == Description ==
 
-Technically, Prosspress is a suite of WordPress plugins and themes. 
+Technically, Prospress is a suite of WordPress plugins and themes. 
 
 But really, Prospress is a dream. The dream to do for marketplaces what WordPress did for communication - make it easy and free (as in beer and liberty).
 

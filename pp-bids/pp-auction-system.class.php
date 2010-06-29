@@ -50,9 +50,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		error_log('in bid_form_submit _REQUEST = ' . print_r($_REQUEST, true));
 
 		//Get Bid details
-		//$post_id 		= ( isset( $_GET[ 'post_ID' ] ) ) ? intval( $_GET[ 'post_ID' ] ) : $post_id;
 		$post_id 		= ( isset( $_REQUEST[ 'post_ID' ] ) ) ? intval( $_REQUEST[ 'post_ID' ] ) : $post_id;
-		//$bid_value		= ( isset( $_GET[ 'bid_value' ] ) ) ? str_replace( ',', '', trim( $_GET[ 'bid_value' ] ) ) : $bid_value;
 		$bid_value		= ( isset( $_REQUEST[ 'bid_value' ] ) ) ? str_replace( ',', '', trim( $_REQUEST[ 'bid_value' ] ) ) : $bid_value;
 		$bidder_id 		= ( isset( $bidder_id ) ) ? $bidder_id : $user_ID;
 		$bid_date 		= current_time( 'mysql' );
@@ -231,6 +229,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 
 		/** @TODO casting start_price as a float and removing ',' and ' ' will cause a bug for international currency formats. */
 		$_POST[ 'start_price' ] = (float)str_replace( array(",", " "), "", $_POST[ 'start_price' ]);
+
 		// Verify options nonce because save_post can be triggered at other times
 		if ( !isset( $_POST[ 'selling_options_nonce' ] ) || !wp_verify_nonce( $_POST['selling_options_nonce'], __FILE__) ) {
 			return $post_id;

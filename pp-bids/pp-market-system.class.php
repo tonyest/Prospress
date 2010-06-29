@@ -65,7 +65,7 @@ class PP_Market_System {
 		}
 
 		// Determine if bid form submission function should be called
-		add_action( 'init', array( &$this, 'bid_controller' ) );
+		add_action( 'init', array( &$this, '_controller' ) );
 
 		// Adds columns for printing bid history table
 		add_action( 'admin_menu', array( &$this, 'add_admin_pages' ) );
@@ -490,14 +490,14 @@ class PP_Market_System {
 	 **/
 	function add_admin_pages() {
 
-		$base_page = "bids";
+		$base_page = $this->name() . "-bids";
 
 		$bids_title = apply_filters( 'bids_admin_title', __( $this->singular_name() . ' Bids', 'prospress' ) );
 
 		if ( function_exists( 'add_object_page' ) ) {
-			add_object_page( $bids_title, $bids_title, 'read', $base_page, '', PP_PLUGIN_URL . '/images/bid-16x16.png' );
+			add_object_page( $bids_title, $bids_title, 'read', $base_page, '', PP_PLUGIN_URL . '/images/auctions16.png' );
 		} elseif ( function_exists( 'add_menu_page' ) ) {
-			add_menu_page( $bids_title, $bids_title, 'read', $base_page, '', PP_PLUGIN_URL . '/images/bid-16x16.png' );
+			add_menu_page( $bids_title, $bids_title, 'read', $base_page, '', PP_PLUGIN_URL . '/images/auctions16.png' );
 		}
 
 		$completed_posts_menu_title = apply_filters( 'pp_completed_posts_menu_title', sprintf( __( 'Completed %s', 'prospress' ), $this->display_name() ) );
@@ -780,19 +780,21 @@ class PP_Market_System {
 		return $pp_sort_options;
 	}
 
+	/**
+	 * The logic controller for the market system class.
+	 * 
+	 * 
+	 *
+	 **/
 	// Called with init hook to determine if a bid has been submitted. If it has, bid_form_submit is called.
 	// Takes care of the logic of the class, determining if and when to call a function.
-	function bid_controller(){
+	function _controller(){
 		global $pp_bid_status;
 
-		//Is user trying to submit bid
+		// If a bid is not being sumbited, exist asap to avoid wasting user's time
 		if( !isset( $_REQUEST[ 'bid_submit' ] ) )
 			return;
-		error_log( '********************************** $_REQUEST[ bid_submit ] set **********************************' );
-		error_log( 'in bid_controller _GET = ' . print_r( $_GET, true));
-		error_log( 'in bid_controller _POST = ' . print_r( $_POST, true));
 
-		// If bidder is not logged in, redirect to login page
 		if ( !is_user_logged_in() ){ 
 			do_action( 'bidder_not_logged_in' );
 
@@ -802,9 +804,7 @@ class PP_Market_System {
 			$redirect = wp_login_url( $redirect );
 			$redirect = apply_filters( 'bid_login_redirect', $redirect );
 
-			error_log( '!is_user_logged_in(), $redirect = ' . $redirect);
-			//if( isset( $_REQUEST[ 'ajax_bid' ] ) ){
-			if( $_REQUEST[ 'bid_submit' ] == 'ajax' ){
+			if( $_REQUEST[ 'bid_submit' ] == 'ajax' ){ // Bid being submitted with AJAX need to print redirect instead of using WP redirect
 				error_log("*** AJAX BID: returning $redirect ***");
 				echo '{"redirect":"' . $redirect . '"}';
 				die();
@@ -813,7 +813,6 @@ class PP_Market_System {
 				wp_safe_redirect( $redirect );
 				exit();
 			}
-			error_log( 'in !is_user_logged_in() even after exit' );
 		}
 
 		// Verify bid nonce if bid is not coming from a login redirect

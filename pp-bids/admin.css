@@ -1,8 +1,7 @@
-#icon-bids{
-	background: transparent url(../images/icons32.png) no-repeat scroll;
+#icon-auctions-bids{
+	background: transparent url(../images/auctions32.png) no-repeat scroll;
 }
 
-#icon-bids:hover;{
-	background: transparent url(../images/icons32.png) no-repeat scroll;
+#icon-auctions-bids:hover;{
+	background: transparent url(../images/auctions32.png) no-repeat scroll;
 }
-
