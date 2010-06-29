@@ -1,6 +1,6 @@
 <?php
 /*
-The Fantastic Query Multiple Taxonomies Plugin by scribu http://scribu.net/wordpress/query-multiple-taxonomies/ customised for use on Prospress taxonomies.
+The Fantastic Query Multiple Taxonomies Plugin by scribu http://scribu.net/wordpress/query-multiple-taxonomies/ slightly modified for Prospress custom taxonomies.
 Version 1.1.1
 */
 
@@ -11,16 +11,13 @@ class QMT_Core {
 	private static $url = '';
 
 	function init() {
-		add_action('init', array(__CLASS__, 'builtin_tax_fix'));
+		add_action( 'init', array( __CLASS__, 'builtin_tax_fix' ) );
 
 		//Hook function to 
-		add_action('parse_query', array(__CLASS__, 'query'));
+		add_action('parse_query', array( __CLASS__, 'query' ) );
 		
-		//Hook function to use a multitax.php template to be used for displaying multitax search results
-		//add_action('template_redirect', array(__CLASS__, 'template'));
-
 		//Hook function to change title of multitax search pages to include the taxonomies being queried
-		add_filter( 'wp_title', array(__CLASS__, 'set_title'), 10, 3);
+		add_filter( 'wp_title', array( __CLASS__, 'set_title' ), 10, 3);
 
 		//remove_action('template_redirect', 'redirect_canonical');
 	}
@@ -33,18 +30,9 @@ class QMT_Core {
 		return self::$url;
 	}
 
-	function template() {
-		if ( is_multitax() && $template = locate_template(array('multitax.php')) ) {
-			include $template;
-			die;
-		}
-	}
-	
 	//Sets the title of the webpage to the query taxonomy attributes
-	function set_title($title, $sep, $seplocation = '') {
-		error_log("in QMT_Core::set_title, title = " . print_r($title, true));
-		error_log("in QMT_Core::set_title, sep = " . print_r($sep, true));
-		error_log("in QMT_Core::set_title, seplocation = " . print_r($seplocation, true));
+	function set_title( $title, $sep, $seplocation = '' ) {
+
 		if ( !is_multitax() )
 			return $title;
 
@@ -88,7 +76,7 @@ class QMT_Core {
 				$taxobj->query_var = $tmp[$taxname];
 	}
 
-	function query($wp_query) {
+	function query( $wp_query ) {
 		global $market_system;
 
 		self::$url = get_bloginfo('url');
@@ -132,14 +120,13 @@ class QMT_Core {
 
 		$wp_query->is_multitax = true;
 		$wp_query->is_archive = true;
-		//error_log("in QMT_Core::query, at completion, wp_query = " . print_r($wp_query, true));
 	}
 
-	private function find_posts($query, $post_type) {
+	private function find_posts( $query, $post_type ) {
 		global $wpdb;
 
 		// get an initial set of ids, to intersect with the others
-		if ( ! $ids = self::get_objects(array_shift($query)) )
+		if ( ! $ids = self::get_objects( array_shift( $query ) ) )
 			return false;
 
 		foreach ( $query as $qv ) {
@@ -189,7 +176,7 @@ class QMT_Core {
 		return $ids;
 	}
 
-	function get_terms($tax) {
+	function get_terms( $tax ) {
 		if ( empty(self::$post_ids) )
 			return get_terms($tax);
 
@@ -208,49 +195,37 @@ class QMT_Core {
 		return get_terms($tax, array('include' => implode(',', $term_ids)));
 	}
 
-	public function get_url($key, $value, $base = '') {
-		if ( empty($base) )
+	public function get_url( $key, $value, $base = '' ) {
+		global $wpdb, $market_system;
+
+		if ( empty( $base ) )
 			$base = self::$url;
 
-		if ( empty($value) )
-			return remove_query_arg($key, $base);
+		error_log('$base = ' . print_r( $base, true));
 
-		$value = trim(implode('+', $value), '+');
+		if ( empty( $value ) )
+			return remove_query_arg( $key, $base );
+
+		$value = trim( implode( '+', $value ), '+' );
 
 		return add_query_arg($key, $value, $base);
 	}
 }
 
-// WP < 3.0
-if ( ! function_exists('get_taxonomies') ) :
-function get_taxonomies( $args = array(), $output = 'names' ) {
-	global $wp_taxonomies;
+function is_multitax() {
+	global $wp_query;
 
-	$taxonomies = array();
-	foreach ( (array) $wp_taxonomies as $taxname => $taxobj )
-		if ( empty($args) || array_intersect_assoc((array) $taxobj, $args) )
-			$taxonomies[$taxname] = $taxobj;
-
-	if ( 'names' == $output )
-		return array_keys($taxonomies);
-
-	return $taxonomies;
+	return @$wp_query->is_multitax;
 }
-endif;
-
 
 function _qmt_init() {
 	include dirname(__FILE__) . '/scb/load.php';
 
-	include dirname(__FILE__) . '/template-tags.php';
 	include dirname(__FILE__) . '/widget.php';
-
-	// Load translations
-	load_plugin_textdomain('taxonomy-drill-down', '', basename(dirname(__FILE__)) . '/lang');
 
 	QMT_Core::init();
 
-	scbWidget::init('Taxonomy_Drill_Down_Widget', __FILE__, 'taxonomy-drill-down');
+	scbWidget::init('PP_Taxonomy_Filter_Widget', __FILE__, 'taxonomy-filter');
 }
 _qmt_init();
 

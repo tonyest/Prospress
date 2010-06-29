@@ -1,8 +1,8 @@
 <?php
 
-class Taxonomy_Drill_Down_Widget extends scbWidget {
+class PP_Taxonomy_Filter_Widget extends scbWidget {
 
-	function Taxonomy_Drill_Down_Widget() {
+	function PP_Taxonomy_Filter_Widget() {
 		global $market_system;
 
 		$this->defaults = array(
@@ -11,10 +11,10 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 		);
 
 		$widget_ops = array(
-			'description' => sprintf( __( 'Display a drill-down navigation to filter %s by your custom taxonomies' ), $market_system->display_name() )
+			'description' => sprintf( __( 'Filter %s by your custom taxonomies' ), $market_system->display_name() )
 		);
 
-		$this->WP_Widget('taxonomy-drill-down', 'Prospress Taxonomy Filter', $widget_ops);
+		$this->WP_Widget('taxonomy-filter', 'Prospress Taxonomy Filter', $widget_ops);
 	}
 
 	function form($instance) {
@@ -24,7 +24,7 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 			$instance = $this->defaults;
 
 		echo $this->input(array(
-			'title' => __('Title:', 'query-multiple-taxonomies'),
+			'title' => __('Title:', 'prospress' ),
 			'name' => 'title',
 			'type' => 'text',
 		), $instance);
@@ -43,7 +43,7 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 			'type' => 'select',
 			'name' => 'taxonomy',
 			'values' => $taxonomies,
-			'desc' => __('Taxonomy:', 'query-multiple-taxonomies'),
+			'desc' => __( 'Taxonomy:', 'prospress' ),
 		), $instance);
 	}
 
@@ -54,7 +54,7 @@ class Taxonomy_Drill_Down_Widget extends scbWidget {
 		echo $before_widget;
 
 		if ( empty($taxonomy) ) {
-			echo html('p', __('No taxonomy selected.', 'query-multiple-taxonomies'));
+			echo html('p', __('No taxonomy selected.', 'prospress' ));
 		}
 		else {
 			if ( empty($title) )
@@ -113,12 +113,13 @@ class QMT_Term_Walker extends Walker_Category {
 	}
 
 	function start_el(&$output, $term, $depth, $args) {
+		global $market_system;
 		extract($args);
 
 		$term_name = esc_attr($term->name);
 		$link = '<a href="' . get_term_link($term, $this->taxonomy) . '" ';
 		if ( $use_desc_for_title == 0 || empty($term->description) )
-			$link .= 'title="' . sprintf(__( 'View all posts filed under %s', 'query-multiple-taxonomies'), $term_name) . '"';
+			$link .= 'title="' . sprintf(__( 'View all %s filed under %s', 'prospress' ), $market_system->display_name(), $term_name) . '"';
 		else
 			$link .= 'title="' . esc_attr( strip_tags( $term->description ) ) . '"';
 		$link .= '>';
