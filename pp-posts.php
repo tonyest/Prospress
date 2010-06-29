@@ -15,10 +15,9 @@ if ( !defined( 'PP_POSTS_DIR' ) )
 if ( !defined( 'PP_POSTS_URL' ) )
 	define( 'PP_POSTS_URL', PP_PLUGIN_URL . '/pp-posts' );
 
+global $pp_use_custom_taxonomies, $market_system;
 
 require_once( PP_POSTS_DIR . '/pp-custom-post-type.php' );
-
-require_once( PP_POSTS_DIR . '/pp-custom-taxonomy.php' );
 
 require_once( PP_POSTS_DIR . '/pp-posts-templatetags.php' );
 
@@ -26,9 +25,13 @@ include_once( PP_POSTS_DIR . '/pp-post-sort.php' );
 
 include_once( PP_POSTS_DIR . '/pp-post-widgets.php' );
 
-include_once( PP_POSTS_DIR . '/query-multiple-taxonomies/query-multiple-taxonomies.php' );
-
-global $market_system;
+if( get_option( 'pp_use_custom_taxonomies' ) == 'true' ){
+	$pp_use_custom_taxonomies = true;
+	include_once( PP_POSTS_DIR . '/pp-custom-taxonomy.php' );
+	include_once( PP_POSTS_DIR . '/query-multiple-taxonomies/query-multiple-taxonomies.php' );
+} else {
+	$pp_use_custom_taxonomies = false;
+}
 
 
 /**
@@ -498,7 +501,7 @@ function pp_template_redirects() {
 			include( PP_POSTS_DIR . '/pp-index-' . $market_system->name() . '.php' );
 		exit;
 
-	} elseif ( $post->post_type == $market_system->name() && is_multitax() ) {
+	} elseif ( $pp_use_custom_taxonomies && $post->post_type == $market_system->name() && is_multitax() ) {
 
 		do_action( 'pp_taxonomy_template_redirect' );
 
@@ -790,6 +793,46 @@ function pp_capabilities_whitelist( $whitelist_options ) {
 	return $whitelist_options;
 }
 add_filter( 'pp_options_whitelist', 'pp_capabilities_whitelist' );
+
+
+/** 
+ * Not all marketplaces require a custom classification system. Including custom taxonomies by
+ * default adds a degree of complexity that may trap young players - best to opt-in to use it.
+ * 
+ * @package Prospress
+ * @subpackage Posts
+ * @since 0.1
+ */
+function pp_taxonomies_option_page() {
+	global $market_system;
+?>
+	<h3><?php _e( 'Custom Taxonomies', 'prospress' )?></h3>
+	<p><?php echo sprintf( __( 'You can create a unique classification system for your site\'s %s with custom taxonomies.', 'prospress' ), $market_system->display_name() ); ?></p>
+
+	<label for="pp_use_custom_taxonomies">
+		<input type="checkbox" value='true' id="pp_use_custom_taxonomies" name="pp_use_custom_taxonomies"<?php checked( (boolean)get_option( 'pp_use_custom_taxonomies' ) ); ?> />
+		<?php _e( 'Use custom taxonomies' ); ?>
+	</label>
+<?php
+}
+add_action( 'pp_core_settings_page', 'pp_taxonomies_option_page' );
+
+
+/** 
+ * Save custom taxonomy setting @see pp_options_whitelist for details about adding pp_use_custom_taxonomies to
+ * the settings whitelist.
+ * 
+ * @package Prospress
+ * @subpackage Posts
+ * @since 0.1
+ */
+function pp_taxonomies_whitelist( $whitelist_options ) {
+
+	$whitelist_options[ 'general' ][] = 'pp_use_custom_taxonomies';
+
+	return $whitelist_options;
+}
+add_filter( 'pp_options_whitelist', 'pp_taxonomies_whitelist' );
 
 
 /** 

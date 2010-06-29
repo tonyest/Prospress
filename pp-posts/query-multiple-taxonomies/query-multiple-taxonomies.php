@@ -15,7 +15,7 @@ class QMT_Core {
 
 		//Hook function to 
 		add_action('parse_query', array( __CLASS__, 'query' ) );
-		
+
 		//Hook function to change title of multitax search pages to include the taxonomies being queried
 		add_filter( 'wp_title', array( __CLASS__, 'set_title' ), 10, 3);
 
@@ -200,8 +200,6 @@ class QMT_Core {
 
 		if ( empty( $base ) )
 			$base = self::$url;
-
-		error_log('$base = ' . print_r( $base, true));
 
 		if ( empty( $value ) )
 			return remove_query_arg( $key, $base );

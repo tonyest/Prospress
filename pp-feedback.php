@@ -522,8 +522,10 @@ add_action( 'pp_core_settings_page', 'pp_feedback_settings_section' );
  * @param array with the existing whitelist of options for the Prospress settings page.
  **/
 function pp_feedback_admin_option( $whitelist_options ) {
+
 	$whitelist_options[ 'general' ][] = 'edit_feedback';
 
+	error_log( '$whitelist_options ' . print_r( $whitelist_options , true) );
 	return $whitelist_options;
 }
 add_filter( 'pp_options_whitelist', 'pp_feedback_admin_option' );

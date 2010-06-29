@@ -7,6 +7,8 @@
  * @version 0.1
  */
 
+global $pp_use_custom_taxonomies; 
+
 /**
  * Prospress custom taxonomy cloud widget
  *
@@ -67,7 +69,8 @@ class PP_Tag_Cloud_Widget extends WP_Widget {
 			return $instance['taxonomy'];
 	}
 }
-add_action( 'widgets_init', create_function( '', 'return register_widget("PP_Tag_Cloud_Widget");' ) );
+if( $pp_use_custom_taxonomies )
+	add_action( 'widgets_init', create_function( '', 'return register_widget("PP_Tag_Cloud_Widget");' ) );
 
 /**
  * A list of the taxonomy items that apply to the current post
@@ -119,7 +122,8 @@ class PP_Taxonomies_List_Widget extends WP_Widget {
 		return $instance;
 	}
 }
-add_action( 'widgets_init', create_function( '', 'return register_widget("PP_Taxonomies_List_Widget");' ) );
+if( $pp_use_custom_taxonomies )
+	add_action( 'widgets_init', create_function( '', 'return register_widget("PP_Taxonomies_List_Widget");' ) );
 
 
 /**
