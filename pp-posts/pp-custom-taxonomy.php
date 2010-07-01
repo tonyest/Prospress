@@ -43,8 +43,8 @@ function pp_manage_taxonomies() {
 		screen_icon( 'prospress' );
 		?>
 		<h2><?php echo $market_system->singular_name() . ' '; _e( 'Taxonomies', 'prospress' ) ?><a href="<?php echo PP_ADD_TAX_URL; ?>" class="button add-new-h2">Add New</a></h2>
-		<p><?php printf( __( 'Taxonomies are used to classify and categorize %s. They can be used to group %s with similar characteristics and make it easier to find %s with a certain characteristic.', 'prospress' ), $market_system->display_name(), $market_system->display_name(), $market_system->display_name() ) ?></p>
-		<p><?php printf( __( 'For example, to classify Motorcyle %s, an <em>Engine Size</em> taxonomy could be created to include <em>Less than 250cc</em>, <em>251 to 600cc</em> and <em>Greater than 600cc</em> categories.', 'prospress' ), $market_system->display_name() ) ?></p>
+		<p><?php printf( __( 'Taxonomies can be used to categorise %s based on common characteristics; thus, making it easier to find an item with a certain characteristic.', 'prospress' ), $market_system->display_name() ) ?></p>
+		<p><?php _e( 'For example, an auction site for 17th Century Dutch Masterpieces could use an <i>Artist</i> taxonomy comprised of the artists <i>Vermeer</i>, <i>Rembrandt</i> and <i>Cuyp</i>.', 'prospress' ) ?></p>
 		<?php 
 		$pp_tax_types = get_option( 'pp_custom_taxonomies' );
 		if( !empty( $pp_tax_types ) ) { ?>

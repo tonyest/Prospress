@@ -18,13 +18,11 @@ Index & Single Page Layouts
 	clear:both;
 	border-bottom: 1px solid #ccc;
 	margin: 5px;
+	padding-bottom:1em;
 }
 .pp-post-content{
 	float:left;
 	width:70%;
-}
-.prospress-title{
-	
 }
 .prospress-content{
 	clear:both;
@@ -32,12 +30,15 @@ Index & Single Page Layouts
 .pp-price,.pp-end{
 	float:right;
 	width:12%;
-	margin-left:3%;
-	text-align:center;
+	margin:0 5px;
+	text-align:right;
+	font-size:0.85em;
 }
 .price-header,.end-header{
-	text-align:center;
+	text-align:right;
 	font-weight:bold;
+	font-size:1.1em;
+	margin-right:0px;
 }
 .pp-publish-details{
 	font-size:0.8em;
@@ -45,19 +46,13 @@ Index & Single Page Layouts
 .pp-excerpt,.pp-content{
 	clear:both;
 }
-.pp-publish-date{
-}
-.pp-end-date{
-}
 .pp-publish-date,.pp-end-date,.pp-tax,.pp-author,.pp-author-feedback{
 	float:left;
 	clear:both;
 	margin: 0.5em 0;
 }
-.pp-tax{
-	
-}
-/* Side bar & Widget Styles 
+
+/* Sidebar & Widget Styles 
 -------------------------------------------------------------- */
 .prospress-sidebar{
 	float: right;
@@ -68,7 +63,6 @@ Index & Single Page Layouts
 }
 .prospress-sidebar ul {
 	margin-left: 0;
-	/*padding: 0 20px 0 0;*/
 	list-style-type: none;
 }
 .prospress-sidebar ul ul {

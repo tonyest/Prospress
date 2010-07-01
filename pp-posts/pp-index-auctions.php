@@ -46,7 +46,7 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 						<?php _e( 'by ', 'prospress'); the_author(); ?>
 					</div>
 				</div>
-				<div class="pp-end"><?php the_post_end_countdown(); ?></div>
+				<div class="pp-end"><?php the_post_end_countdown( $the_ID, 3, '<br/>' ); ?></div>
 				<div class="pp-price"><?php $market_system->the_winning_bid_value(); ?></div>
 			</div>
 

@@ -475,7 +475,7 @@ add_action( 'manage_posts_custom_column', 'pp_post_columns_custom', 10, 2 );
 
 
 /** 
- * Prospress posts aren't just your vanilla WordPress post, they have special meta which needs to
+ * Prospress posts are not your vanilla WordPress post, they have special meta which needs to
  * be presented in a special way. They also need to be sorted and filtered to make them easier to
  * browse and compare. That's why this function redirects individual Prospress posts to a default
  * template for single posts - pp-single.php - and the auto-generated Prospress index page to a 
@@ -526,8 +526,9 @@ add_action( 'template_redirect', 'pp_template_redirects' );
 
 
 /** 
- * Create a sidebar for the Prospress post index page. This sidebar automatically has the Sort and 
- * Filter widgets added to it on activation. 
+ * Create default sidebars for Prospress pages if the current theme doesn't support Prospress.
+ *
+ * The index sidebar automatically has the Sort and Filter widgets added to it on activation. 
  * 
  * @package Prospress
  * @subpackage Posts
@@ -535,26 +536,30 @@ add_action( 'template_redirect', 'pp_template_redirects' );
  */
 function pp_register_sidebars(){
 	global $market_system;
+	
+	if ( !file_exists( TEMPLATEPATH . '/pp-index-' . $market_system->name() . '.php' ) ) {
+		register_sidebar( array (
+			'name' => $market_system->display_name() . ' ' . __( 'Index Sidebar', 'prospress' ),
+			'id' => $market_system->name() . '-index-sidebar',
+			'description' => sprintf( __( "The sidebar on the %s index.", 'prospress' ), $market_system->display_name() ),
+			'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
+			'after_widget' => "</li>",
+			'before_title' => '<h3 class="widget-title">',
+			'after_title' => '</h3>'
+		) );
+	}
 
-	register_sidebar( array (
-		'name' => $market_system->display_name() . ' ' . __( 'Index Sidebar', 'prospress' ),
-		'id' => $market_system->name() . '-index-sidebar',
-		'description' => sprintf( __( "The sidebar on the %s index.", 'prospress' ), $market_system->display_name() ),
-		'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
-		'after_widget' => "</li>",
-		'before_title' => '<h3 class="widget-title">',
-		'after_title' => '</h3>',
-	) );
-
-	register_sidebar( array (
-		'name' => sprintf( __( 'Single %s Sidebar', 'prospress' ), $market_system->singular_name() ),
-		'id' => $market_system->name() . '-single-sidebar',
-		'description' => sprintf( __( "The sidebar on a single %s.", 'prospress' ), $market_system->singular_name() ),
-		'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
-		'after_widget' => "</li>",
-		'before_title' => '<h3 class="widget-title">',
-		'after_title' => '</h3>',
-	) );
+	if ( !file_exists( TEMPLATEPATH . '/pp-single-' . $market_system->singular_name() . '.php' ) ) {
+		register_sidebar( array (
+			'name' => sprintf( __( 'Single %s Sidebar', 'prospress' ), $market_system->singular_name() ),
+			'id' => $market_system->name() . '-single-sidebar',
+			'description' => sprintf( __( "The sidebar on a single %s.", 'prospress' ), $market_system->singular_name() ),
+			'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
+			'after_widget' => "</li>",
+			'before_title' => '<h3 class="widget-title">',
+			'after_title' => '</h3>'
+		) );
+	}
 }
 add_action( 'init', 'pp_register_sidebars' );
 
@@ -649,7 +654,7 @@ function is_pp_post_admin_page(){
 
 
 /** 
- * Removes the Prospress index page from the search results as it's really meant to be used as an empty place-holder. 
+ * Removes the Prospress index page from the search results as it's meant to be an empty place-holder.
  * 
  * @package Prospress
  * @subpackage Posts
@@ -796,8 +801,8 @@ add_filter( 'pp_options_whitelist', 'pp_capabilities_whitelist' );
 
 
 /** 
- * Not all marketplaces require a custom classification system. Including custom taxonomies by
- * default adds a degree of complexity that may trap young players - best to opt-in to use it.
+ * Small marketplaces do not require a custom classification system. Furthermore, custom taxonomies
+ * add a degree of complexity that may bewilder young players - best to make it opt-in.
  * 
  * @package Prospress
  * @subpackage Posts
@@ -807,7 +812,7 @@ function pp_taxonomies_option_page() {
 	global $market_system;
 ?>
 	<h3><?php _e( 'Custom Taxonomies', 'prospress' )?></h3>
-	<p><?php echo sprintf( __( 'You can create a unique classification system for your site\'s %s with custom taxonomies.', 'prospress' ), $market_system->display_name() ); ?></p>
+	<p><?php echo sprintf( __( 'Custom taxonomies provide a way to classify for your site\'s %s. If your site lists more than 25 %s at the same time, you should use custom taxonomies.', 'prospress' ), $market_system->display_name(), $market_system->display_name() ); ?></p>
 
 	<label for="pp_use_custom_taxonomies">
 		<input type="checkbox" value='true' id="pp_use_custom_taxonomies" name="pp_use_custom_taxonomies"<?php checked( (boolean)get_option( 'pp_use_custom_taxonomies' ) ); ?> />

@@ -116,18 +116,15 @@ function post_end_time_filter( $date ){
  * @param int $post_id Optional, default 0. The post id for which you want the max bid. 
  * @return object Returns the row in the bids 
  */
-function get_post_end_countdown() {
+function get_post_end_countdown( $post_id = '', $units = 3, $separator = ' ' ) {
 	global $post;
 
-	//if( ( is_home() || is_search() ) && in_the_loop() && get_post_type( $post ) == 'post' && !is_admin() ){
-		return human_interval( wp_next_scheduled( 'schedule_end_post', array( "ID" => $post->ID ) ) - time() );
-	//}
-
-	//return $countdown;
+	return human_interval( wp_next_scheduled( 'schedule_end_post', array( "ID" => $post->ID ) ) - time(), $units, $separator );
 }
 
-function the_post_end_countdown() {
-	echo get_post_end_countdown();
+function the_post_end_countdown( $post_id = '', $units = 3, $separator = ' ' ) {
+
+	echo get_post_end_countdown( $post_id, $units, $separator );
 }
 
 
@@ -137,7 +134,7 @@ function the_post_end_countdown() {
  * 
  * Based on WP Crontrol's Interval function
  **/
-function human_interval( $time_period, $units = 3 ) {
+function human_interval( $time_period, $units = 3, $separator = ' ' ) {
     // array of time period chunks
 	$chunks = array(
     	array(60 * 60 * 24 * 365 , _n_noop('%s year', '%s years')),
@@ -150,7 +147,7 @@ function human_interval( $time_period, $units = 3 ) {
 	);
 
 	if( $time_period <= 0 ) {
-	    return __('now', 'prospress' );
+	    return __('Now', 'prospress' );
 	}
 
 	// 1st chunk
@@ -158,7 +155,6 @@ function human_interval( $time_period, $units = 3 ) {
 
 		$seconds = $chunks[$i][0];
 		$name = $chunks[$i][1];
-		//error_log("$i ** In human_interval, $seconds seconds in " . print_r($name, true));
 
 		// finding the biggest chunk (if the chunk fits, break)
 		if ( ( $count = floor( $time_period / $seconds ) ) != 0 ) {
@@ -177,7 +173,7 @@ function human_interval( $time_period, $units = 3 ) {
 
 		if ( ( $count2 = floor( ( $time_period - ( $seconds * $count ) ) / $seconds2) ) != 0 ) {
 			// add to output var
-			$output .= ' '.sprintf(_n($name2[0], $name2[1], $count2), $count2);
+			$output .= $separator.sprintf(_n($name2[0], $name2[1], $count2), $count2);
 		}
 	}
 
@@ -188,7 +184,7 @@ function human_interval( $time_period, $units = 3 ) {
 
 		if ( ( $count3 = floor( ( $time_period - ( $seconds * $count ) - ( $seconds2 * $count2 ) ) / $seconds3 ) ) != 0 ) {
 			// add to output var
-			$output .= ' '.sprintf( _n( $name3[0], $name3[1], $count3 ), $count3 );
+			$output .= $separator.sprintf( _n( $name3[0], $name3[1], $count3 ), $count3 );
 		}
 	}
 

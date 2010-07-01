@@ -35,11 +35,12 @@ function the_most_recent_feedback( $user_id = '' ){
 
 	$latest = pp_get_latest_feedback( $user_id );
 
-	echo '<p>';
+	echo '<div "feedback-title">';
 	echo __( 'Recent Feedback: ', 'prospress' );
-	echo '<quote class="feedback-comment">' . $latest['feedback_comment'] . '</quote>';
-	echo '<br />';
+	echo '</div>';
+	echo '<blockquote class="feedback-comment">' . $latest['feedback_comment'] . '</blockquote>';
+	echo '<div "feedback-provider">';
 	echo __( 'From: ', 'prospress' );
-		echo get_userdata( $latest['from_user_id'] )->user_nicename;
-	echo '</p>';
+	echo get_userdata( $latest['from_user_id'] )->user_nicename;
+	echo '</div>';
 }
