@@ -489,24 +489,28 @@ add_action( 'manage_posts_custom_column', 'pp_post_columns_custom', 10, 2 );
  * @since 0.1
  */
 function pp_template_redirects() {
-	global $post, $market_system;
+	global $post, $market_system, $pp_use_custom_taxonomies;
 
-	if( $post->post_name == $market_system->name() ){
+	if( $post->post_name == $market_system->name() && TEMPLATEPATH . '/page.php' == get_page_template() ){ // No template set for default Prospress index
 
 		do_action( 'pp_index_template_redirect' );
 
-		if( file_exists( TEMPLATEPATH . '/pp-index-' . $market_system->name() . '.php' ) )
+		if( file_exists( TEMPLATEPATH . '/pp-index-' . $market_system->name() . '.php' ) )	// Theme supports Prospress
 			include( TEMPLATEPATH . '/pp-index-' . $market_system->name() . '.php' );
-		else
+		elseif( file_exists( TEMPLATEPATH . '/index-' . $market_system->name() . '.php' ) )	// Copied the default template to the them directory?
+			include( TEMPLATEPATH . '/index-' . $market_system->name() . '.php' );
+		else   																				// Default
 			include( PP_POSTS_DIR . '/pp-index-' . $market_system->name() . '.php' );
 		exit;
 
-	} elseif ( $pp_use_custom_taxonomies && $post->post_type == $market_system->name() && is_multitax() ) {
+	} elseif ( $pp_use_custom_taxonomies && is_multitax() ) {
 
 		do_action( 'pp_taxonomy_template_redirect' );
 
 		if( file_exists( TEMPLATEPATH . '/pp-taxonomy-' . $market_system->name() . '.php' ) )
 			include( TEMPLATEPATH . '/pp-taxonomy-' . $market_system->name() . '.php' );
+		elseif( file_exists( TEMPLATEPATH . '/taxonomy-' . $market_system->name() . '.php' ) )
+			include( TEMPLATEPATH . '/taxonomy-' . $market_system->name() . '.php' );
 		else
 			include( PP_POSTS_DIR . '/pp-taxonomy-' . $market_system->name() . '.php' );
 		exit;
@@ -515,7 +519,9 @@ function pp_template_redirects() {
 
 		do_action( 'pp_single_template_redirect' );
 
-		if( file_exists( TEMPLATEPATH . '/pp-single-' . $market_system->singular_name() . '.php' ) )
+		if( file_exists( TEMPLATEPATH . '/single-' . $market_system->singular_name() . '.php' ) )
+			include( TEMPLATEPATH . '/single-' . $market_system->singular_name() . '.php' );
+		elseif( file_exists( TEMPLATEPATH . '/pp-single-' . $market_system->singular_name() . '.php' ) )
 			include( TEMPLATEPATH . '/pp-single-' . $market_system->singular_name() . '.php' );
 		else
 			include( PP_POSTS_DIR . '/pp-single-' . $market_system->singular_name() . '.php' );
@@ -549,7 +555,7 @@ function pp_register_sidebars(){
 		) );
 	}
 
-	if ( !file_exists( TEMPLATEPATH . '/pp-single-' . $market_system->singular_name() . '.php' ) ) {
+	if ( !file_exists( TEMPLATEPATH . '/single-' . $market_system->singular_name() . '.php' ) && !file_exists( TEMPLATEPATH . '/pp-single-' . $market_system->singular_name() . '.php' ) ) {
 		register_sidebar( array (
 			'name' => sprintf( __( 'Single %s Sidebar', 'prospress' ), $market_system->singular_name() ),
 			'id' => $market_system->name() . '-single-sidebar',

@@ -19,7 +19,7 @@ class QMT_Core {
 		//Hook function to change title of multitax search pages to include the taxonomies being queried
 		add_filter( 'wp_title', array( __CLASS__, 'set_title' ), 10, 3);
 
-		//remove_action('template_redirect', 'redirect_canonical');
+		remove_action('template_redirect', 'redirect_canonical');
 	}
 
 	function get_actual_query() {
@@ -61,7 +61,6 @@ class QMT_Core {
 			$title[] .= "$key: $value";
 		}
 
-		error_log("in QMT_Core::get_title, title = " . print_r($title, true));
 		return implode('; ', $title);
 	}
 
@@ -99,7 +98,6 @@ class QMT_Core {
 			foreach ( explode(' ', $value) as $slug )
 				$query[] = array($slug, $taxname);
 		}
-		//error_log("in QMT_Core::query, query = " . print_r($query, true));
 
 		if ( empty($query) )
 			return;

@@ -1,6 +1,6 @@
 <?php
 /*
-Template Name: Auctions Index
+Template Name: Prospress Index
 */
 /**
  * The main template file for marketplace listings.

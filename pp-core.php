@@ -18,7 +18,6 @@ if( !defined( 'PP_CORE_URL' ) )
  * @since 0.1
  */
 function pp_core_install(){
-	error_log('*** in pp_maybe_install ***');
 
 	if( !get_option( 'currency_type' ) )
 		update_option( 'currency_type', 'USD' ); //default to the mighty green back

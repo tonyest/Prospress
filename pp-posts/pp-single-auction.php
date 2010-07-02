@@ -1,6 +1,6 @@
 <?php
 /*
-Template Name: Single Prospress page
+Template Name: Single Prospress Post
 */
 /**
  * This the default template for displaying a single Prospress post.
