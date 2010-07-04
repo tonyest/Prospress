@@ -21,6 +21,8 @@ require_once( PP_POSTS_DIR . '/pp-custom-post-type.php' );
 
 require_once( PP_POSTS_DIR . '/pp-posts-templatetags.php' );
 
+require_once( PP_POSTS_DIR . '/pp-capabilities.php' );
+
 include_once( PP_POSTS_DIR . '/pp-post-sort.php' );
 
 include_once( PP_POSTS_DIR . '/pp-post-widgets.php' );
@@ -64,13 +66,13 @@ function pp_posts_install(){
 	}
 
 	pp_add_sidebars_widgets();
-	
- 	$role = get_role( 'administrator' );
 
+ 	$role = get_role( 'administrator' );
 	$role->add_cap( 'publish_prospress_posts' );
-	$role->add_cap( 'edit_prospress_post' );
 	$role->add_cap( 'edit_prospress_posts' );
 	$role->add_cap( 'edit_others_prospress_posts' );
+	$role->add_cap( 'edit_published_prospress_posts' );
+	$role->add_cap( 'edit_private_prospress_posts' );
 	$role->add_cap( 'read_prospress_posts' );
 	$role->add_cap( 'delete_prospress_post' );	
 }
@@ -78,7 +80,7 @@ add_action( 'pp_activation', 'pp_posts_install' );
 
 
 /** 
- * When a Prospress post is saved, this function saves the custom information specific to Prospress posts,
+ * When a Prospress post is saved, this function saves the custom information specific to a Prospress post type,
  * like end time. 
  * 
  * @package Prospress
@@ -675,135 +677,6 @@ function pp_remove_index( $search ){
 	return $search;
 }
 add_filter( 'posts_search', 'pp_remove_index' );
-
-
-/** 
- * Admin's may want to allow or disallow users to create, edit and delete marketplace posts. 
- * To do this without relying on the post capability type, Prospress creates it's own type. 
- * This function provides an admin menu for selecting which roles can do what to posts. 
- * 
- * Allow site admin to choose which roles can do what to marketplace posts.
- * 
- * @package Prospress
- * @subpackage Posts
- * @since 0.1
- */
-function pp_capabilities_settings_page() { 
-	global $wp_roles, $market_system;
-
-	$role_names = $wp_roles->get_names();
-	$roles = array();
-
-	foreach ( $role_names as $key => $value ) {
-		$roles[ $key] = get_role( $key);
-		$roles[ $key]->display_name = $value;
-	}
-	?>
-
-	<?php wp_nonce_field( 'pp_capabilities_settings' ); ?>
-	<div class="prospress-capabilities">
-		<h3><?php _e( 'Capabilities', 'prospress' ); ?></h3>
-		<p><?php printf( __( 'You can restrict interaction with %s to certain roles. Please choose which roles have the following capabilities:', 'prospress' ), $market_system->display_name() ); ?></p>
-		<div class="prospress-capabilitiy create">
-			<h4><?php printf( __( "Publish %s", 'prospress' ), $market_system->display_name() ); ?></h4>
-			<?php foreach ( $roles as $role ): if( $role->name == 'administrator' ) continue; ?>
-			<label for="<?php echo $role->name; ?>-create">
-				<input type="checkbox" id="<?php echo $role->name; ?>-publish" name="<?php echo $role->name; ?>-publish"<?php checked( $role->capabilities[ 'publish_prospress_posts' ], 1 ); ?> />
-				<?php echo $role->display_name; ?>
-			</label>
-			<?php endforeach; ?>
-		</div>
-		<div class="prospress-capability edit">
-			<h4><?php printf( __( "Edit %s", 'prospress' ), $market_system->display_name() ); ?></h4>
-			<?php foreach ( $roles as $role ): if( $role->name == 'administrator' ) continue; ?>
-			<label for="<?php echo $role->name; ?>-edit">
-			  	<input type="checkbox" id="<?php echo $role->name; ?>-edit" name="<?php echo $role->name; ?>-edit"<?php checked( $role->capabilities[ 'edit_prospress_post' ], 1 ); ?> />
-				<?php echo $role->display_name; ?>
-			</label>
-			<?php endforeach; ?>
-		</div>
-		<div class="prospress-capability edit">
-			<h4><?php printf( __( "Edit Other's %s", 'prospress' ), $market_system->display_name() ); ?></h4>
-			<?php foreach ( $roles as $role ): if( $role->name == 'administrator' ) continue; ?>
-			<label for="<?php echo $role->name; ?>-edit-others">
-				<input type="checkbox" id="<?php echo $role->name; ?>-edit-others" name="<?php echo $role->name; ?>-edit-others"<?php checked( $role->capabilities[ 'edit_others_prospress_posts' ], 1 ); ?> />
-				<?php echo $role->display_name; ?>
-			</label>
-			<?php endforeach; ?>
-		</div>
-		<div class="prospress-capability delete">
-			<h4><?php printf( __( "Delete %s", 'prospress' ), $market_system->display_name() ); ?></h4>
-			<?php foreach ( $roles as $role ): if( $role->name == 'administrator' ) continue; ?>
-			<label for="<?php echo $role->name; ?>-delete">
-				<input type="checkbox" id="<?php echo $role->name; ?>-delete" name="<?php echo $role->name; ?>-delete"<?php checked( $role->capabilities[ 'delete_prospress_post' ], 1 ) ?> />
-				<?php echo $role->display_name; ?>
-			</label>
-			<?php endforeach; ?>
-		</div>
-	</div>
-<?php
-}
-add_action( 'pp_core_settings_page', 'pp_capabilities_settings_page' );
-
-
-/** 
- * Save capabilities settings when the admin page is submitted page. As the settings don't need to be stored in 
- * the options table of the database, they're not added to the whitelist as is expected by this filter, instead 
- * they're added to the appropriate roles.
- * 
- * @package Prospress
- * @subpackage Posts
- * @since 0.1
- */
-function pp_capabilities_whitelist( $whitelist_options ) {
-	global $wp_roles, $market_system;
-
-    if ( $_POST['_wpnonce' ] && check_admin_referer( 'pp_capabilities_settings' ) && current_user_can( 'manage_options' ) ){
-
-		$role_names = $wp_roles->get_names();
-		$roles = array();
-
-		foreach ( $role_names as $key=>$value ) {
-			$roles[ $key ] = get_role( $key );
-			$roles[ $key ]->display_name = $value;
-		}
-
-		foreach ( $roles as $key => $role ) {
-
-			if( $role->name == 'administrator' )
-				continue;
-
-			if ( isset( $_POST[ $key . '-publish' ] )  && $_POST[ $key . '-publish' ] == 'on' ) {
-				$role->add_cap( 'publish_prospress_posts' );
-			} else {
-				$role->remove_cap( 'publish_prospress_posts' );
-			}
-
-			if ( isset( $_POST[ $key . '-edit' ] )  && $_POST[ $key . '-edit' ] == 'on' ) {
-				$role->add_cap( 'edit_prospress_post' );
-				$role->add_cap( 'edit_prospress_posts' );
-			} else {
-				$role->remove_cap( 'edit_prospress_post' );
-				$role->remove_cap( 'edit_prospress_posts' );
-			}
-
-			if ( isset( $_POST[ $key . '-edit-others' ] )  && $_POST[ $key . '-edit-others' ] == 'on' ) {
-				$role->add_cap( 'edit_others_prospress_posts' );
-			} else {
-				$role->remove_cap( 'edit_others_prospress_posts' );
-	        }
-
-			if ( isset( $_POST[ $key . '-delete' ] )  && $_POST[ $key . '-delete' ] == 'on' ) {
-				$role->add_cap( 'delete_prospress_post' );
-			} else {
-				$role->remove_cap( 'delete_prospress_post' );
-			}
-		}
-    }
-
-	return $whitelist_options;
-}
-add_filter( 'pp_options_whitelist', 'pp_capabilities_whitelist' );
 
 
 /** 
