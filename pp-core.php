@@ -176,7 +176,7 @@ function pp_money_format( $number, $decimals = 2, $currency = '' ){
  */
 function pp_add_icon_css() {
 
-	if ( strpos( $_SERVER['REQUEST_URI'], 'Prospress' ) !== false || strpos( $_SERVER['REQUEST_URI'], 'custom_taxonomy_manage' ) !== false || strpos( $_SERVER['REQUEST_URI'], 'invoice_settings' ) !== false ) {
+	if ( strpos( $_SERVER['REQUEST_URI'], 'Prospress' ) !== false || strpos( $_SERVER['REQUEST_URI'], 'pp_tax' ) !== false || strpos( $_SERVER['REQUEST_URI'], 'invoice_settings' ) !== false ) {
 		echo "<style type='text/css'>";
 		echo "#icon-prospress{background: url(" . PP_PLUGIN_URL . "/images/prospress35.png) no-repeat center transparent}";
 		echo "</style>";
@@ -193,7 +193,7 @@ add_action( 'admin_head', 'pp_add_icon_css' );
  */
 function pp_core_admin_head() {
 
-	if( strpos( $_SERVER['REQUEST_URI'], 'custom_taxonomy_manage' ) !== false  || strpos( $_SERVER['REQUEST_URI'], 'completed' ) !== false  || strpos( $_SERVER['REQUEST_URI'], 'bids' ) !== false )
+	if( strpos( $_SERVER['REQUEST_URI'], 'pp_tax' ) !== false  || strpos( $_SERVER['REQUEST_URI'], 'completed' ) !== false  || strpos( $_SERVER['REQUEST_URI'], 'bids' ) !== false )
 		wp_enqueue_style( 'prospress-admin',  PP_CORE_URL . '/prospress-admin.css' );
 }
 add_action('admin_menu', 'pp_core_admin_head');

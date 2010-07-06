@@ -13,7 +13,6 @@ global $market_system, $wp_query;
 
 wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 
-
 $taxonomy = esc_attr( get_query_var( 'taxonomy' ) );
 $tax = get_taxonomy( $taxonomy );
 $term = esc_attr( get_query_var( 'term' ) );

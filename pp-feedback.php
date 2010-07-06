@@ -525,7 +525,6 @@ function pp_feedback_admin_option( $whitelist_options ) {
 
 	$whitelist_options[ 'general' ][] = 'edit_feedback';
 
-	error_log( '$whitelist_options ' . print_r( $whitelist_options , true) );
 	return $whitelist_options;
 }
 add_filter( 'pp_options_whitelist', 'pp_feedback_admin_option' );

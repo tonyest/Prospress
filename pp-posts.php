@@ -30,7 +30,7 @@ include_once( PP_POSTS_DIR . '/pp-post-widgets.php' );
 if( get_option( 'pp_use_custom_taxonomies' ) == 'true' ){
 	$pp_use_custom_taxonomies = true;
 	include_once( PP_POSTS_DIR . '/pp-custom-taxonomy.php' );
-	include_once( PP_POSTS_DIR . '/query-multiple-taxonomies/query-multiple-taxonomies.php' );
+	include_once( PP_POSTS_DIR . '/qmt/query-multiple-taxonomies.php' );
 } else {
 	$pp_use_custom_taxonomies = false;
 }
@@ -51,7 +51,7 @@ if( get_option( 'pp_use_custom_taxonomies' ) == 'true' ){
 function pp_posts_install(){
 	global $wpdb, $market_system, $wp_rewrite;
 
-	$wp_rewrite->flush_rules(false);
+	$wp_rewrite->flush_rules();
 
 	// Need an index page for Prospress posts
 	if( !$wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . $market_system->name() . "'" ) ){
@@ -493,7 +493,20 @@ add_action( 'manage_posts_custom_column', 'pp_post_columns_custom', 10, 2 );
 function pp_template_redirects() {
 	global $post, $market_system, $pp_use_custom_taxonomies;
 
-	if( $post->post_name == $market_system->name() && TEMPLATEPATH . '/page.php' == get_page_template() ){ // No template set for default Prospress index
+	if ( $pp_use_custom_taxonomies && is_pp_multitax() ) {
+
+		error_log('doing custom tax template redirect');
+		do_action( 'pp_taxonomy_template_redirect' );
+
+		if( file_exists( TEMPLATEPATH . '/pp-taxonomy-' . $market_system->name() . '.php' ) )
+			include( TEMPLATEPATH . '/pp-taxonomy-' . $market_system->name() . '.php' );
+		elseif( file_exists( TEMPLATEPATH . '/taxonomy-' . $market_system->name() . '.php' ) )
+			include( TEMPLATEPATH . '/taxonomy-' . $market_system->name() . '.php' );
+		else
+			include( PP_POSTS_DIR . '/pp-taxonomy-' . $market_system->name() . '.php' );
+		exit;
+
+	} elseif( $post->post_name == $market_system->name() && TEMPLATEPATH . '/page.php' == get_page_template() ){ // No template set for default Prospress index
 
 		do_action( 'pp_index_template_redirect' );
 
@@ -503,18 +516,6 @@ function pp_template_redirects() {
 			include( TEMPLATEPATH . '/index-' . $market_system->name() . '.php' );
 		else   																				// Default
 			include( PP_POSTS_DIR . '/pp-index-' . $market_system->name() . '.php' );
-		exit;
-
-	} elseif ( $pp_use_custom_taxonomies && is_multitax() ) {
-
-		do_action( 'pp_taxonomy_template_redirect' );
-
-		if( file_exists( TEMPLATEPATH . '/pp-taxonomy-' . $market_system->name() . '.php' ) )
-			include( TEMPLATEPATH . '/pp-taxonomy-' . $market_system->name() . '.php' );
-		elseif( file_exists( TEMPLATEPATH . '/taxonomy-' . $market_system->name() . '.php' ) )
-			include( TEMPLATEPATH . '/taxonomy-' . $market_system->name() . '.php' );
-		else
-			include( PP_POSTS_DIR . '/pp-taxonomy-' . $market_system->name() . '.php' );
 		exit;
 
 	} elseif ( $post->post_type == $market_system->name() && is_single() && !isset( $_GET[ 's' ] ) ) {
