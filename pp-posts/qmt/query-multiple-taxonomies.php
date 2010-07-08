@@ -102,8 +102,13 @@ class PP_QMT_Core {
 		if ( empty($query) )
 			return;
 
-		if ( ! self::find_posts($query, $post_type) )
+		// Prepending marketplace index to url don't actually want to return it
+		unset($wp_query->query['pagename']);
+		$wp_query->set('pagename', '');
+
+		if ( ! self::find_posts($query, $post_type ) ){
 			return $wp_query->set_404();
+		}
 
 		$is_feed = $wp_query->is_feed;
 		$paged = $wp_query->get('paged');

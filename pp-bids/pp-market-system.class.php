@@ -21,6 +21,7 @@ class PP_Market_System {
 								// e.g. 'current_bid' => array( 'title' => 'Winning Bid', 'function' => 'get_winning_bid' ), 'bid_count' => array( 'title => 'Number of Bids', 'function' => 'get_bid_count' )
 	var $bid_table_headings;	// Array of name/value pairs to be used as column headings when printing table of bids. 
 								// e.g. 'bid_id' => 'Bid ID', 'post_id' => 'Post', 'bid_value' => 'Amount', 'bid_date' => 'Date'
+	var $capability = 'read';	// the capability for making bids and viewing bid menus etc.
 
 	function __construct( $name, $singular_name, $bid_form_title = "", $bid_button_value = "", $post_fields = array(), $post_table_columns = array(), $bid_table_headings = array() ) {
 
@@ -64,16 +65,16 @@ class PP_Market_System {
 			add_action( 'manage_posts_custom_column', array( &$this, 'add_post_column_contents' ), 10, 2 );
 		}
 
-		// Determine if bid form submission function should be called
+		// Determine if any of this class's functions should be called
 		add_action( 'init', array( &$this, '_controller' ) );
 
-		// Adds columns for printing bid history table
+		// Columns for printing bid history table
 		add_action( 'admin_menu', array( &$this, 'add_admin_pages' ) );
 
-		// Adds columns for printing bid history table
+		// Columns for printing bid history table
 		add_filter( 'manage_' . $this->name() . '_columns', array( &$this, 'get_column_headings' ) );
 
-		// For adding Ajax & other scripts
+		// For Ajax & other scripts
 		add_action( 'wp_print_scripts', array( &$this, 'enqueue_bid_form_scripts' ) );
 		add_action( 'admin_menu', array( &$this, 'enqueue_bid_admin_scripts' ) );
 		
@@ -238,7 +239,6 @@ class PP_Market_System {
 		
 		$max_bid = ( $max_bid->bid_value ) ? pp_money_format( $max_bid->bid_value ) : __( 'No Bids', 'prospress' );
 
-		//( $echo ) ? echo $max_bid; : return $max_bid;
 		if ( $echo ) 
 			echo $max_bid;
 		else 
@@ -404,7 +404,6 @@ class PP_Market_System {
 	 */
 	function the_bid_count( $post_id = '', $echo = true ) {
 		$bid_count = ( empty( $post_id ) ) ? $this->get_bid_count() : $this->get_bid_count( $post_id );
-		//echo ( $bid_count ) ? $bid_count : __( 'No Bids', 'prospress' );
 		
 		$bid_count = ( $bid_count ) ? $bid_count : __( 'No Bids', 'prospress' );
 
@@ -424,7 +423,7 @@ class PP_Market_System {
 		global $pp_bid_status;
 
 		// Avoid showing messages passed in latent url parameters
-		if ( !is_user_logged_in() ) //|| !isset( $pp_bid_status ) )//|| !isset( $_GET[ 'bid_msg' ] ) )
+		if ( !is_user_logged_in() )
 			return;
 
 		if ( isset( $pp_bid_status ) )
@@ -516,18 +515,18 @@ class PP_Market_System {
 		$bids_title = apply_filters( 'bids_admin_title', __( $this->singular_name() . ' Bids', 'prospress' ) );
 
 		if ( function_exists( 'add_object_page' ) ) {
-			add_object_page( $bids_title, $bids_title, 'read', $base_page, '', PP_PLUGIN_URL . '/images/auctions16.png' );
+			add_object_page( $bids_title, $bids_title, $this->capability, $base_page, '', PP_PLUGIN_URL . '/images/auctions16.png' );
 		} elseif ( function_exists( 'add_menu_page' ) ) {
-			add_menu_page( $bids_title, $bids_title, 'read', $base_page, '', PP_PLUGIN_URL . '/images/auctions16.png' );
+			add_menu_page( $bids_title, $bids_title, $this->capability, $base_page, '', PP_PLUGIN_URL . '/images/auctions16.png' );
 		}
 
-		$completed_posts_menu_title = apply_filters( 'pp_completed_posts_menu_title', __( 'Finalized', 'prospress' ) );
+		$completed_posts_menu_title = apply_filters( 'pp_completed_posts_menu_title', __( 'Completed', 'prospress' ) );
 		$active_posts_menu_title = apply_filters( 'pp_active_posts_menu_title', __( 'Active', 'prospress' ) );
 
 	    // Add submenu items to the bids top-level menu
 		if (function_exists( 'add_submenu_page' )){
-		    add_submenu_page( $base_page, $completed_posts_menu_title, $completed_posts_menu_title, 'read', $base_page, array( &$this, 'completed_history' ) );
-		    add_submenu_page( $base_page, $active_posts_menu_title, $active_posts_menu_title, 'read', 'active-bids', array( &$this, 'active_history' ) );
+		    add_submenu_page( $base_page, $completed_posts_menu_title, $completed_posts_menu_title, $this->capability, $base_page, array( &$this, 'completed_history' ) );
+		    add_submenu_page( $base_page, $active_posts_menu_title, $active_posts_menu_title, $this->capability, 'active-bids', array( &$this, 'active_history' ) );
 		}
 	}
 
@@ -549,6 +548,9 @@ class PP_Market_System {
 
 	function completed_history() {
 	  	global $wpdb, $user_ID;
+
+		if ( !current_user_can( $this->capability ) )
+			wp_die("You need to be able to read to view this page.");
 
 		get_currentuserinfo(); //get's user ID of currently logged in user and puts into global $user_id
 
