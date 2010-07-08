@@ -77,7 +77,7 @@ class PP_QMT_Core {
 	function query( $wp_query ) {
 		global $market_system;
 
-		self::$url = get_bloginfo('url');
+		self::$url = $market_system->get_index_url();
 
 		$post_type = $market_system->name();
 
@@ -96,6 +96,7 @@ class PP_QMT_Core {
 
 			foreach ( explode(' ', $value) as $slug )
 				$query[] = array($slug, $taxname);
+
 		}
 
 		if ( empty($query) )

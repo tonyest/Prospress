@@ -8,7 +8,6 @@
 if( !isset( $disabled ) )
 	$disabled = ( get_option( 'edit_feedback' ) == 'true' ) ? '' : 'disabled="disabled"';
 
-error_log("feedback score = $feedback_score");
 ?>
 
 <div class="wrap" id="give-feedback">

@@ -51,10 +51,8 @@ if( get_option( 'pp_use_custom_taxonomies' ) == 'true' ){
 function pp_posts_install(){
 	global $wpdb, $market_system, $wp_rewrite;
 
-	$wp_rewrite->flush_rules();
-
 	// Need an index page for Prospress posts
-	if( !$wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . $market_system->name() . "'" ) ){
+	if( !$market_system->get_index_url() ){
 		$index_page = array();
 		$index_page['post_title'] = $market_system->display_name();
 		$index_page['post_name'] = $market_system->name();
@@ -66,6 +64,8 @@ function pp_posts_install(){
 	}
 
 	pp_add_sidebars_widgets();
+
+	$wp_rewrite->flush_rules();
 
  	$role = get_role( 'administrator' );
 	$role->add_cap( 'publish_prospress_posts' );
@@ -495,7 +495,6 @@ function pp_template_redirects() {
 
 	if ( $pp_use_custom_taxonomies && is_pp_multitax() ) {
 
-		error_log('doing custom tax template redirect');
 		do_action( 'pp_taxonomy_template_redirect' );
 
 		if( file_exists( TEMPLATEPATH . '/pp-taxonomy-' . $market_system->name() . '.php' ) )
@@ -655,7 +654,7 @@ add_filter( 'pp_sort_options', 'pp_post_sort_options' );
 function is_pp_post_admin_page(){
 	global $market_system, $post;
 
-	if( $_GET[ 'post_type' ] == $market_system->name() || $_GET[ 'post' ] == $market_system->name() || $post->post_type == $market_system->name() ) //get_post_type( $_GET[ 'post' ] ) ==  $market_system->name() )
+	if( $_GET[ 'post_type' ] == $market_system->name() || $_GET[ 'post' ] == $market_system->name() || $post->post_type == $market_system->name() )
 		return true;
 	else
 		return false;
@@ -672,8 +671,8 @@ function is_pp_post_admin_page(){
 function pp_remove_index( $search ){
 	global $wpdb, $market_system;
 
-	if ( isset( $_GET['s'] ) ) // only remove post from search results
-		$search .= "AND ID NOT IN (SELECT ID FROM $wpdb->posts WHERE post_name = '" . $market_system->name() . "' )";
+	if ( isset( $_GET['s'] ) ) // remove index post from search results
+		$search .= "AND ID != " . $market_system->get_index_url() . " ";
 
 	return $search;
 }
@@ -769,9 +768,7 @@ function pp_posts_uninstall(){
 	if ( !current_user_can( 'edit_plugins' ) || !function_exists( 'delete_site_option' ) )
 		return false;
 
-	$index_page_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . $market_system->name() . "'" );
-
-	wp_delete_post( $index_page_id );
+	wp_delete_post( $market_system->get_index_id() );
 	
 	$pp_post_ids = $wpdb->get_col($wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type = '" . $market_system->name() . "'" ) );
 

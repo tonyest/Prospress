@@ -476,8 +476,29 @@ class PP_Market_System {
 
 
 	/************************************************************************************************
-	 * Private Functions. Don't worry about these, unless you want to get really tricky
+	 * Private Functions. Don't worry about these, unless you want to get really tricksy
 	 ************************************************************************************************/
+
+	function get_index_id() {
+		global $wpdb;
+
+		$index_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . $this->name . "'" );
+
+		if( $index_id == NULL)
+			return false; 
+		else 
+			return $index_id;
+	}
+
+	function get_index_url() {
+
+		$index_id = $this->get_index_id();
+
+		if( $index_id == NULL)
+			return false; 
+		else 
+			return get_permalink( $index_id );
+	}
 
 	/**
 	 * 	Adds bid pages to admin menu

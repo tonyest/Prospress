@@ -91,21 +91,16 @@ function pp_get_feedback_user( $user_id = '', $filters = '' ){
 		$user_id = (int)$user_id;
 		
 	if( isset( $filters[ 'post' ] ) ){
-		//error_log('In pp_get_feedback_user, isset( $filters[ post ] ).');
 		$filters[ 'post' ] = (int)$filters[ 'post' ];
 		$feedback = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->feedback WHERE post_id = %d AND feedback_status = 'publish' ORDER BY feedback_date_gmt DESC", $filters[ 'post' ]), ARRAY_A);
 	} else if( isset( $filters[ 'given' ] ) ){
-		//error_log('In pp_get_feedback_user, isset( $filters[ given ] ).');
 		$feedback = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->feedback WHERE from_user_id = %d AND feedback_status = 'publish' ORDER BY feedback_date_gmt DESC", $user_id), ARRAY_A);
 	} else if( isset( $filters[ 'received' ] ) ){
-		//error_log('In pp_get_feedback_user, isset( $filters[ received ] ).');
 		$feedback = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->feedback WHERE for_user_id = %d AND feedback_status = 'publish' ORDER BY feedback_date_gmt DESC", $user_id), ARRAY_A);
 	} else if( isset( $filters[ 'role' ] ) ){
-		//error_log('In pp_get_feedback_user, isset( $filters[ role ] ).');
 		$filters[ 'role' ] = (int)$filters[ 'role' ];
 		$feedback = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->feedback WHERE for_user_id = %d AND role = %s AND feedback_status = 'publish' ORDER BY feedback_date_gmt DESC", $user_id, $filters[ 'role' ]), ARRAY_A);
 	} else {
-		//error_log('In pp_get_feedback_user, else.');
 		$feedback = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->feedback WHERE feedback_status = 'publish' AND ( for_user_id = %d OR from_user_id = %d ) ORDER BY feedback_date_gmt DESC", $user_id, $user_id), ARRAY_A);
 	}
 

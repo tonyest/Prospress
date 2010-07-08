@@ -168,7 +168,7 @@ function pp_edit_tax_page( $error = '', $label = '', $singular_label = '' ) {
 }
 
 function pp_edit_taxonomies() {
-	global $market_system;
+	global $market_system, $wp_rewrite;
 
 	check_admin_referer( 'pp_custom_taxonomy' );
 
@@ -199,6 +199,8 @@ function pp_edit_taxonomies() {
 	$pp_taxonomies[ $pp_tax_name ] = $pp_new_tax;
 
 	update_option( 'pp_custom_taxonomies' , $pp_taxonomies );
+
+	$wp_rewrite->flush_rules();
 
 	pp_manage_taxonomies( $msg );
 }

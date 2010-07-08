@@ -64,6 +64,7 @@ class PP_Taxonomy_Filter_Widget extends scbWidget {
 			$query = PP_QMT_Core::get_actual_query();
 			if ( isset($query[$taxonomy]) ) {
 				$new_url = PP_QMT_Core::get_url($taxonomy, '');
+				error_log(' new_url = ' . print_r( $new_url, true ) );
 				$title .= ' ' . html("a class='clear-taxonomy' href='$new_url'", '(-)');
 			}
 
