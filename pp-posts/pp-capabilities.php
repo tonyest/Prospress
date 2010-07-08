@@ -37,7 +37,7 @@ function pp_capabilities_settings_page() {
 	<div class="prospress-capabilities">
 		<h3><?php _e( 'Capabilities', 'prospress' ); ?></h3>
 		<p><?php printf( __( 'You can restrict the type of interaction users have with %s. Please choose which roles have the following capabilities:', 'prospress' ), $market_system->display_name() ); ?></p>
-		<div class="prospress-capabilitiy create">
+		<div class="prospress-capability">
 			<h4><?php printf( __( "Publish %s", 'prospress' ), $market_system->display_name() ); ?></h4>
 			<?php foreach ( $roles as $role ): if( $role->name == 'administrator' ) continue; ?>
 			<label for="<?php echo $role->name; ?>-publish">
@@ -67,7 +67,7 @@ function pp_capabilities_settings_page() {
 		<div class="prospress-capability">
 			<h4><?php printf( __( "View private %s", 'prospress' ), $market_system->display_name() ); ?></h4>
 			<?php foreach ( $roles as $role ): if( $role->name == 'administrator' ) continue; ?>
-			<label for="<?php echo $role->name; ?>-edit-others">
+			<label for="<?php echo $role->name; ?>-private">
 				<input type="checkbox" id="<?php echo $role->name; ?>-private" name="<?php echo $role->name; ?>-private"<?php checked( $role->capabilities[ 'read_private_prospress_posts' ], 1 ); ?> />
 				<?php echo $role->display_name; ?>
 			</label>
@@ -106,6 +106,13 @@ function pp_capabilities_whitelist( $whitelist_options ) {
 			if( $role->name == 'administrator' )
 				continue;
 
+			// Shared capability
+			if ( ( isset( $_POST[ $key . '-publish' ] )  && $_POST[ $key . '-publish' ] == 'on' ) || ( isset( $_POST[ $key . '-edit' ] )  && $_POST[ $key . '-edit' ] == 'on' ) || ( isset( $_POST[ $key . '-edit-others' ] )  && $_POST[ $key . '-edit-others' ] == 'on' ) ) {
+				$role->add_cap( 'edit_prospress_posts' );
+			} else {
+				$role->remove_cap( 'edit_prospress_posts' );
+			}
+
 			if ( isset( $_POST[ $key . '-publish' ] )  && $_POST[ $key . '-publish' ] == 'on' ) {
 				$role->add_cap( 'publish_prospress_posts' );
 				$role->add_cap( 'delete_prospress_posts' );
@@ -129,7 +136,7 @@ function pp_capabilities_whitelist( $whitelist_options ) {
 			} else {
 				$role->remove_cap( 'edit_others_prospress_posts' );
 	        }
-	
+
 			if ( isset( $_POST[ $key . '-private' ] )  && $_POST[ $key . '-private' ] == 'on' ) {
 				$role->add_cap( 'edit_prospress_posts' );
 				$role->add_cap( 'read_private_prospress_posts' );
@@ -138,12 +145,6 @@ function pp_capabilities_whitelist( $whitelist_options ) {
 				$role->remove_cap( 'edit_prospress_posts' );
 			}
 
-			// Shared capability
-			if ( ( isset( $_POST[ $key . '-publish' ] )  && $_POST[ $key . '-publish' ] == 'on' ) || ( isset( $_POST[ $key . '-edit' ] )  && $_POST[ $key . '-edit' ] == 'on' ) || ( isset( $_POST[ $key . '-edit-others' ] )  && $_POST[ $key . '-edit-others' ] == 'on' ) ) {
-				$role->add_cap( 'edit_prospress_posts' );
-			} else {
-				$role->remove_cap( 'edit_prospress_posts' );
-			}
 		}
     }
 
