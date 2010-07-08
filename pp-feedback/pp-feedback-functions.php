@@ -56,13 +56,10 @@ function pp_user_has_feedback( $post_id, $user_id = '' ){
  */
 function pp_get_feedback_item( $post_id, $user_id ){
 	global $wpdb;
-	
-	error_log("pp_get_feedback_item called with post_id $post_id and user_id $user_id");
 
 	$feedback = $wpdb->get_row($wpdb->prepare("SELECT * FROM $wpdb->feedback WHERE post_id = %d AND feedback_status = 'publish' AND ( for_user_id = %d OR from_user_id = %d )", $post_id, $user_id, $user_id ), ARRAY_A);
-	error_log('In pp_get_feedback_item feedback =' . print_r($feedback, true));
+
 	return $feedback;
-	//return $wpdb->get_row($wpdb->prepare("SELECT * FROM $wpdb->feedback WHERE post_id = %d AND feedback_status = 'publish' AND for_user_id = %d", $post_id, $user_id ), ARRAY_A);
 }
 
 /**

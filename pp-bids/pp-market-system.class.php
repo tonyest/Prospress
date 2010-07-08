@@ -577,7 +577,6 @@ class PP_Market_System {
 		if( isset( $_GET[ 'm' ] ) && $_GET[ 'm' ] != 0 ){
 			$month	= substr( $_GET[ 'm' ], -2 );
 			$year	= substr( $_GET[ 'm' ], 0, 4 );
-			error_log("month = $month, year = $year");
 			$query .= $wpdb->prepare( ' AND MONTH(bid_date) = %d AND YEAR(bid_date) = %d ', $month, $year );
 		}
 
@@ -802,7 +801,7 @@ class PP_Market_System {
 	}
 
 	/**
-	 * The logic controller for the market system class.
+	 * The logic for the market system class.
 	 * 
 	 * 
 	 *
@@ -826,11 +825,9 @@ class PP_Market_System {
 			$redirect = apply_filters( 'bid_login_redirect', $redirect );
 
 			if( $_REQUEST[ 'bid_submit' ] == 'ajax' ){ // Bid being submitted with AJAX need to print redirect instead of using WP redirect
-				error_log("*** AJAX BID: returning $redirect ***");
 				echo '{"redirect":"' . $redirect . '"}';
 				die();
 			} else {
-				error_log("*** NON AJAX BID: redirecting ***");
 				wp_safe_redirect( $redirect );
 				exit();
 			}
@@ -838,56 +835,35 @@ class PP_Market_System {
 
 		// Verify bid nonce if bid is not coming from a login redirect
 		if ( !isset( $_REQUEST[ 'bid_redirect' ] ) && ( !isset( $_REQUEST[ 'bid_nonce' ] ) || !wp_verify_nonce( $_REQUEST['bid_nonce' ], __FILE__) ) ) {
-			if ( !isset( $_REQUEST[ 'bid_nonce' ] ))
-				error_log( '$_REQUEST[ bid_nonce ] not set' );
-			if ( !wp_verify_nonce( $_REQUEST['bid_nonce' ], __FILE__) )
-				error_log( '$_REQUEST[ bid_nonce ] not valid' );
 			$bid_status = 8;
 		} elseif ( isset( $_GET[ 'bid_redirect' ] ) ) {
-			error_log( 'in bid_controller, using _GET for bid_form_submit' );
 			$bid_status = $this->bid_form_submit( $_GET[ 'post_ID' ], $_GET[ 'bid_value' ] );
 		} else {
-			error_log( 'in bid_controller, using _POST for bid_form_submit' );
 			$bid_status = $this->bid_form_submit( $_POST[ 'post_ID' ], $_POST[ 'bid_value' ] );
 		}
 
 		// Redirect user back to post
 		if ( !empty( $_REQUEST[ 'bid_redirect' ] ) ){
-			//$location = wp_get_referer();
-			error_log("** REDIRECT USER BACK TO POST **");
 			$location = $_REQUEST[ 'bid_redirect' ];
-			error_log( 'location equalling _REQUEST[ \'bid_redirect\' ] = ' . $location );
 			$location = add_query_arg( 'bid_msg', $bid_status, $location );
-			error_log("location after adding bid_msg = $location");
 			$location = add_query_arg( 'bid_nonce', wp_create_nonce( __FILE__ ), $location );
-			error_log("location after adding bid_nonce = $location");
-			error_log("location = $location");
 			wp_safe_redirect( $location );
 			exit();
 		}
 
-		//wp_safe_redirect( $location );
-		error_log("** setting global pp_bid_status var = $bid_status");
 		$pp_bid_status = $bid_status;
 
 		// If bid was submitted using Ajax
 		if( $_POST[ 'bid_submit' ] == 'ajax' ){
-			error_log("*********** AJAX BID SET ****************");
 			echo $this->bid_form( $_POST[ 'post_ID' ] );
 			die();
 		}
 
 		// If someone enters a URL with a bid_msg but they didn't make that bid
 		if( isset( $_GET[ 'bid_msg' ] ) && isset( $_GET[ 'bid_nonce' ] ) && !wp_verify_nonce( $_GET[ 'bid_nonce' ], __FILE__ ) ){
-			error_log( '********* USER ENTERING A URL WITH BS FOR A BID THEY DIDNT MAKE *********' );
-			if ( !isset( $_GET[ 'bid_nonce' ] ))
-				error_log( '$_GET[ bid_nonce ] not set' );
-			if ( !wp_verify_nonce( $_GET['bid_nonce' ], __FILE__) )
-				error_log( '$_GET[ bid_nonce ] not valid' );
 
 			$redirect = remove_query_arg( 'bid_nonce' );
 			$redirect = remove_query_arg( 'bid_msg', $redirect );
-			error_log( "********* REDIRECTING TO $redirect *********" );
 			wp_safe_redirect( $redirect );
 			exit();
 		}

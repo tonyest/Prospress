@@ -47,8 +47,6 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		global $user_ID, $wpdb, $blog_id;
 		nocache_headers();
 
-		error_log('in bid_form_submit _REQUEST = ' . print_r($_REQUEST, true));
-
 		//Get Bid details
 		$post_id 		= ( isset( $_REQUEST[ 'post_ID' ] ) ) ? intval( $_REQUEST[ 'post_ID' ] ) : $post_id;
 		$bid_value		= ( isset( $_REQUEST[ 'bid_value' ] ) ) ? str_replace( ',', '', trim( $_REQUEST[ 'bid_value' ] ) ) : $bid_value;
@@ -56,20 +54,16 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		$bid_date 		= current_time( 'mysql' );
 		$bid_date_gmt 	= current_time( 'mysql', 1 );
 
-		error_log( "in Auction bid_form_submit bidder_id = $bidder_id, blog_id = $blog_id, post_id = $post_id, user_ID = $user_ID");
 		do_action( 'get_auction_bid', $post_id, $bid_value, $bidder_id, $_GET );
 
 		$post_status	= $this->verify_post_status( $post_id );
 		$bid_ms			= $this->bid_form_validate( $post_id, $bid_value, $bidder_id );
-		//error_log("*** bid_ms  = " . print_r($bid_ms, true));
 
 		if ( $bid_ms[ 'bid_status' ] != 'invalid' ) {
 			$bid = compact("post_id", "bidder_id", "bid_value", "bid_date", "bid_date_gmt" );
 			$bid[ 'bid_status' ] = $bid_ms[ 'bid_status' ];
 			$bid = apply_filters( 'bid_pre_db_insert', $bid );
-			error_log("*** Bid  = " . print_r($bid, true));
 			$this->update_bid( $bid, $bid_ms, $post_id );
-			error_log("*** Winning Bid updated ***");
 		}
 		return $bid_ms[ 'bid_msg' ];
 	}
@@ -79,51 +73,39 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		$bidders_max_bid	= $this->get_users_max_bid( $bidder_id, $post_id );
 
 		if ( $bidder_id == get_post( $post_id )->post_author ) {
-			error_log('INVALID: Invalid bidder same as author...');
 			$bid_msg = 11;
 			$bid_status = 'invalid';
 		} else if ( empty( $bid_value ) || $bid_value === NULL || !preg_match( '/^[0-9]*\.?[0-9]*$/', $bid_value ) ) {
-			error_log('INVALID: Invalid bid...');
 			$bid_msg = 7;
 			$bid_status = 'invalid';
 		} elseif ( $bidder_id != $this->get_winning_bid( $post_id )->bidder_id ) {
-			error_log("Bidder is different to winning bidder: bidder_id = $bidder_id & this->get_winning_bid( $post_id )->bidder_id  = " . $this->get_winning_bid( $post_id )->bidder_id );
 			$current_winning_bid_value = $this->get_winning_bid_value( $post_id );
 			if ( $this->get_bid_count( $post_id ) == 0 ) {
 				$start_price = get_post_meta( $post_id, 'start_price', true );
-				error_log("** In bid_form_validate, start_price = $start_price ");
 				if ( $bid_value < $start_price ){
-					error_log("INVALID: Bid value ($bid_value) is first bid, but must bid higher than starting price");
 					$bid_msg = 9;
 					$bid_status = 'invalid';
 				} else {
-					error_log("WINNING: Bid value ($bid_value) is first bid over start price, setting bid msg to 0 & status to winning");
 					$bid_msg = 0;
 					$bid_status = 'winning';
 				}
 			} elseif ( $bid_value > $post_max_bid->bid_value ) {
-				error_log("WINNING: Bid value ($bid_value) is over max bid ($post_max_bid->bid_value), setting bid status to 1");
 				$bid_msg = 1;
 				$bid_status = 'winning';
 			} elseif ( $bid_value <= $current_winning_bid_value ) {
-				error_log("INVALID: bid_too_low with a bid of $bid_value, setting bid status to 3");
 				$bid_msg = 3;
 				$bid_status = 'invalid';
 			} elseif ( $bid_value <= $post_max_bid->bid_value ) {
-				error_log('OUTBID: bid_less_than_max_more_than_winning, setting bid status to 2');
 				$bid_msg = 2;
 				$bid_status = 'outbid';
 			}
 		} elseif ( $bid_value > $bidders_max_bid->bid_value ){ //user increasing max bid
-			error_log("WINNING: bidder_increasing_max, setting bid status to 4");
 			$bid_msg = 4;
 			$bid_status = 'winning';
 		} elseif ( $bid_value < $bidders_max_bid->bid_value ) { //user trying to decrease max bid
-			error_log("INVALID: bidder_decreasing_max, setting bid status to 5");
 			$bid_msg = 5;
 			$bid_status = 'invalid';
 		} else {
-			error_log("INVALID: bidder_rebidding_max, setting bid status to 6");	
 			$bid_msg = 6;
 			$bid_status = 'invalid';
 		}
@@ -132,10 +114,8 @@ class PP_Auction_Bid_System extends PP_Market_System {
 
 	function update_bid( $bid, $bid_ms, $post_id ){
 		global $wpdb;
-		error_log("** update_winning_bid called **");
 
 		$current_winning_bid_value 	= $this->get_winning_bid_value( $bid[ 'post_id' ] );
-		error_log('$current_winning_bid_value = ' . print_r($current_winning_bid_value, true));
 
 		// No need to update winning bid for invalid bids, bids too low
 		if ( $bid_ms[ 'bid_status' ] == 'invalid' ) // nothing to update
@@ -145,26 +125,19 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		$current_winning_bid_id	= $this->get_winning_bid( $bid[ 'post_id' ] )->bid_id;
 
 		if( $bid_ms[ 'bid_msg' ] == 0 ) { //if first bid
-			error_log("** First bid.");
 			$start_price = get_post_meta( $post_id, 'start_price', true );
 			if( $start_price ){ // If start price is greater than 0
-				error_log("** Start price is greater than zero with value of $start_price");
 				$new_winning_bid_value = $start_price;
 			} else {
-				error_log("** Start price NOT greater than zero with value of $start_price");
 				$new_winning_bid_value = ( $bid[ 'bid_value' ] * BID_INCREMENT );
 			}
 		} elseif ( $bid_ms[ 'bid_msg' ] == 1 ) { //Bid value is over max bid & bidder different to current winning bidder
-			error_log("** Bid value is over max bid & bidder different to current winning bidder");
 			if ( $bid[ 'bid_value' ] > ( $posts_max_bid->bid_value * ( BID_INCREMENT + 1 ) ) ) {
-				error_log("** Bid value (bid[ 'bid_value' ]) is more than current max ($posts_max_bid->bid_value) + bid increment (" . BID_INCREMENT . ") * current max ($posts_max_bid->bid_value)");
 				$new_winning_bid_value = $posts_max_bid->bid_value * ( BID_INCREMENT + 1 );
 			} else {
-				error_log("** Bid value (bid[ 'bid_value' ]) is less than current max ($posts_max_bid->bid_value) + bid increment (" . BID_INCREMENT . ") * current max ($posts_max_bid->bid_value)");
 				$new_winning_bid_value = $bid[ 'bid_value' ];
 			}
 		} elseif ( $bid_ms[ 'bid_msg'] == 2 ) {
-			error_log('** bid less than max but more than winning');
 			$bid_value_incremented = $bid[ 'bid_value' ] * ( 1 + BID_INCREMENT );
 			if ( $posts_max_bid->bid_value > $bid_value_incremented ) {
 				$new_winning_bid_value = $bid_value_incremented;
@@ -183,15 +156,9 @@ class PP_Auction_Bid_System extends PP_Market_System {
 			$wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->bidsmeta WHERE bid_id = %d AND meta_key = 'winning_bid_value'", $current_winning_bid_id ) );
 			$new_winning_bid_id = $this->get_winning_bid( $bid[ 'post_id' ] )->bid_id;
 			$wpdb->insert( $wpdb->bidsmeta, array( 'bid_id' => $new_winning_bid_id, 'meta_key' => 'winning_bid_value', 'meta_value' => $new_winning_bid_value ) );
-			error_log("** insert bidsmeta with new_winning_bid = $new_winning_bid_value and new_winning_bid_id = $new_winning_bid_id");
 		} else { // current winning bid is still winning bid, just need to update winning bid value
-			error_log("** update bidsmeta with new_winning_bid = $new_winning_bid_value and current_winning_bid_id = $current_winning_bid_id");
 			$wpdb->update( $wpdb->bidsmeta, array( 'meta_value' => $new_winning_bid_value ), array( 'bid_id' => $current_winning_bid_id, 'meta_key' => 'winning_bid_value' ) );
 		}
-		error_log("** winning_bid value calculated as = $new_winning_bid_value");
-		//update_post_meta( $bid[ 'post_id' ], 'winning_bid_value', $new_winning_bid_value );
-		//$wpdb->insert( $wpdb->bidsmeta, array( 'meta_value' => $new_winning_bid_value ), array( 'bid_id' => $current_winning_bid_id, 'meta_key' => 'winning_bid_value' ) );
-
 
 		return $new_winning_bid_value;
 	}

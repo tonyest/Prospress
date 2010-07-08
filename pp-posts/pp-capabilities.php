@@ -141,8 +141,6 @@ function pp_capabilities_whitelist( $whitelist_options ) {
 			} else {
 				$role->remove_cap( 'read_private_prospress_posts' );
 			}
-			
-			error_log('$role = ' . print_r( $role, true ) );
 		}
     }
 

@@ -262,7 +262,6 @@ class WP_Invoice {
 			// Get invoice reporting information
 			if( $invoice->is_paid) {
 				$paid_data = $wpdb->get_row( "SELECT value, time_stamp FROM  " . $wpdb->payments_log . " WHERE action_type = 'paid' AND invoice_id = '" . $invoice_id . "' ORDER BY time_stamp DESC LIMIT 0, 1" );			
-				error_log( '$paid_data = ' . print_r( $paid_data, true ) );
 				$paid_date = date_i18n(get_option( 'date_format' ).' '.get_option( 'time_format' ), strtotime( $paid_data->time_stamp) );
 			}
 
