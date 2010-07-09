@@ -32,7 +32,7 @@ include_once( PP_BIDS_DIR . '/bids-filter.php' );
 require_once( PP_BIDS_DIR . '/pp-auction-system.class.php' );
 
 /**
- * @global PP_Market_System $market_system Stores the market system object.
+ * @global PP_Auction_Bid_System $market_system Stores the market system object, defaults to PP_Auction_Bid_System.
  */
 global $market_system;
 

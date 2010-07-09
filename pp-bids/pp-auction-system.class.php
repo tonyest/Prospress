@@ -220,4 +220,13 @@ class PP_Auction_Bid_System extends PP_Market_System {
 												'url' => $permalink );
 		return $actions;
 	}
+
+	// Adds bid system specific sort options to the post system sort widget
+	public function add_sort_options( $pp_sort_options ){
+		$pp_sort_options['price-asc' ] = __( 'Price: low to high', 'prospress' );
+		$pp_sort_options['price-desc' ] = __( 'Price: high to low', 'prospress' );
+
+		return $pp_sort_options;
+	}
+
 }

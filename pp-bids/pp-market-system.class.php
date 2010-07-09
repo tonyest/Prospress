@@ -9,21 +9,21 @@
  * @version 0.1
  */
 
-class PP_Market_System {
+abstract class PP_Market_System {
 
-	var $name;					// Public name of the market system e.g. "Auctions".
-	var $singular_name;			// Name of a single market system object e.g. "Auction".
-	var $bid_form_title;		// Title for the bid form.
-	var $bid_button_value;		// Text used on the submit button of the bid form.
-	var $post_fields;			// Array of flags representing the fields which the market system implements e.g. array( 'post_fields' )
-	var $post_table_columns;	// Array of arrays, each array is used to create a column in the post tables. By default it adds two columns, 
-								// one for number of bids on the post and the other for the current winning bid on the post 
-								// e.g. 'current_bid' => array( 'title' => 'Winning Bid', 'function' => 'get_winning_bid' ), 'bid_count' => array( 'title => 'Number of Bids', 'function' => 'get_bid_count' )
-	var $bid_table_headings;	// Array of name/value pairs to be used as column headings when printing table of bids. 
-								// e.g. 'bid_id' => 'Bid ID', 'post_id' => 'Post', 'bid_value' => 'Amount', 'bid_date' => 'Date'
-	var $capability = 'read';	// the capability for making bids and viewing bid menus etc.
+	public $name;					// Public name of the market system e.g. "Auctions".
+	protected $singular_name;		// Name of a single market system object e.g. "Auction".
+	public $bid_form_title;			// Title for the bid form.
+	public $bid_button_value;		// Text used on the submit button of the bid form.
+	public $post_fields;			// Array of flags representing the fields which the market system implements e.g. array( 'post_fields' )
+	public $post_table_columns;		// Array of arrays, each array is used to create a column in the post tables. By default it adds two columns, 
+									// one for number of bids on the post and the other for the current winning bid on the post 
+									// e.g. 'current_bid' => array( 'title' => 'Winning Bid', 'function' => 'get_winning_bid' ), 'bid_count' => array( 'title => 'Number of Bids', 'function' => 'get_bid_count' )
+	public $bid_table_headings;		// Array of name/value pairs to be used as column headings when printing table of bids. 
+									// e.g. 'bid_id' => 'Bid ID', 'post_id' => 'Post', 'bid_value' => 'Amount', 'bid_date' => 'Date'
+	private $capability = 'read';	// the capability for making bids and viewing bid menus etc.
 
-	function __construct( $name, $singular_name, $bid_form_title = "", $bid_button_value = "", $post_fields = array(), $post_table_columns = array(), $bid_table_headings = array() ) {
+	public function __construct( $name, $singular_name, $bid_form_title = "", $bid_button_value = "", $post_fields = array(), $post_table_columns = array(), $bid_table_headings = array() ) {
 
 		$this->name 			= (string)$name;
 		$this->singular_name 	= (string)$singular_name;
@@ -66,7 +66,7 @@ class PP_Market_System {
 		}
 
 		// Determine if any of this class's functions should be called
-		add_action( 'init', array( &$this, '_controller' ) );
+		add_action( 'init', array( &$this, 'controller' ) );
 
 		// Columns for printing bid history table
 		add_action( 'admin_menu', array( &$this, 'add_admin_pages' ) );
@@ -88,26 +88,25 @@ class PP_Market_System {
 
 	// The fields that make up the bid form.
 	// The <form> tag and a bid form header and footer are automatically generated for the class.
-	// You only need to enter the tags to capture information required by your market system.
-	function bid_form_fields( $post_id = NULL ) {
-		die( 'function PP_Market_System::bid_form_fields() must be over-ridden in a sub-class.' );
-	}
+	// You only need to enter the fields to capture information required by your market system, eg. price.
+	abstract protected function bid_form_fields( $post_id = NULL );
 
 	// Process the bid form fields upon submission.
-	function bid_form_submit( $post_id = NULL, $bid_value = NULL, $bidder_id = NULL ){
-		die( 'function PP_Market_System::bid_form_submit() must be over-ridden in a sub-class.' );
-	}
+	abstract protected function bid_form_submit( $post_id = NULL, $bid_value = NULL, $bidder_id = NULL );
 
-	// Validate a bid when the bid form.
-	function bid_form_validate(){
-		die( 'function PP_Market_System::bid_form_validate() must be over-ridden in a sub-class.' );
-	}
+	// Validate and sanitize a bid upon submission.
+	abstract protected function bid_form_validate( $post_id, $bid_value, $bidder_id );
+
+	// Form fields for receiving input from the edit and add new post type pages.
+	abstract public function post_fields();
+
+	// Processes data taken from the post edit and add new post forms.
+	abstract protected function post_fields_submit( $post_id, $post );
 
 
 	/************************************************************************************************
-	 * Functions that you may override, but shouldn't need to be changed to create a new market system.
+	 * Functions that you may wish to override, but don't need to change to create a new market system
 	 ************************************************************************************************/
-
 	/**
 	 * A getter for the market system's name. This is called from various places to refer to the both the market system and
 	 * posts within that market system. 
@@ -116,20 +115,20 @@ class PP_Market_System {
 	 * upper case first letter; however, other market systems require additional words or operations performed on the name 
 	 * member variable.
 	 **/
-	function name() {
+	public function name() { //function __toString() {
 		return $this->name;
 	}
 
-	function singular_name() {
+	public function singular_name() {
 		return ucfirst( $this->singular_name );
 	}
 
-	function display_name() {
+	public function display_name() {
 		return ucfirst( $this->name );
 	}
 
 	// The function that brings all the bid form elements together.
-	function bid_form( $post_id = NULL ) {
+	public function bid_form( $post_id = NULL ) {
 		global $post;
 
 		$post_id = ( $post_id === NULL ) ? $post->ID : $post_id;
@@ -139,9 +138,14 @@ class PP_Market_System {
 			$form .= '<p class="bid-form">' . __( 'This post has ended. Bidding is closed.', 'prospress' ) . '</p>';
 		} else {
 			$form .= '<form id="bid_form-' . $post_id . '" class="bid-form" method="post" action="">';
-			$form .= '<em class="bid-updated bid_msg" >' . $this->get_bid_message() . '</em>';
+
+			if( $message = $this->get_bid_message() ) 
+				$form .= '<em class="bid-updated bid_msg" >' . $message . '</em>';
+
 			$form .= ( $post->post_status != 'completed' ) ? $this->bid_form_fields( $post_id ) : '<p>' . __( 'This post has ended. Bidding is closed.', 'prospress' ) . '</p>';
+
 			apply_filters( 'bid_form_hidden_fields', $form );
+
 			$form .= wp_nonce_field( __FILE__, 'bid_nonce', false, false );
 			$form .= '<input type="hidden" name="post_ID" value="' . $post_id . '" id="post_ID" /> ';
 			$form .= '<input name="bid_submit" type="submit" id="bid_submit" value="' . $this->bid_button_value .'" />';
@@ -153,28 +157,10 @@ class PP_Market_System {
 		return $form;		
 	}
 
-	// Form fields to taking input from the edit and add new post forms.
-	function post_fields(){
-		error_log( 'post_fields method' );
-	}
-
-	// Processes data taken from the post edit and add new post forms.
-	function post_fields_submit(){
-		error_log( 'no_post_submit method' );
-	}
-
-	// Adds the meta box with post fields to the edit and add new post forms. 
-	// This function is hooked in the constructor and is only called if post fields is defined. 
-	function post_fields_meta_box(){
-		if( function_exists( 'add_meta_box' )) {
-			add_meta_box( 'pp-bidding-options', __( 'Bidding Options', 'prospress' ), array(&$this, 'post_fields' ), $this->name(), 'normal', 'core' );
-		}
-	}
-
 	/**
 	 * Check's a post's status and verify's that it may receive bids. 
 	 */
-	function verify_post_status( $post_id = '' ) {
+	private function verify_post_status( $post_id = '' ) {
 		global $post, $wpdb;
 		
 		if( empty( $post_id ))
@@ -203,7 +189,7 @@ class PP_Market_System {
 	// Calculates the value of the new winning bid and updates it in the DB if necessary
 	// Returns the value of the winning bid (either new or existing)
 	// function update_winning_bid( $bid_ms, $post_id, $bid_value, $bidder_id ){
-	function update_bid( $bid, $bid_ms ){
+	public function update_bid( $bid, $bid_ms ){
 		global $wpdb;
 
 		if ( $bid_ms[ 'bid_status' ] == 'invalid' ) // nothing to update
@@ -220,7 +206,7 @@ class PP_Market_System {
 	 *
 	 * If no post id is specified, the global $post var is used. 
 	 */
-	function get_max_bid( $post_id = '' ) {
+	public function get_max_bid( $post_id = '' ) {
 		global $post, $wpdb;
 
 		if ( empty( $post_id ) )
@@ -234,7 +220,7 @@ class PP_Market_System {
 	/**
 	 * Prints the max bid value for a post, optionally specified with $post_id. Optional also to just return the value. 
 	 */
-	function the_max_bid_value( $post_id = '', $echo = true ) {
+	public function the_max_bid_value( $post_id = '', $echo = true ) {
 		$max_bid = ( empty( $post_id ) ) ? $this->get_max_bid() : $this->get_max_bid( $post_id );
 		
 		$max_bid = ( $max_bid->bid_value ) ? pp_money_format( $max_bid->bid_value ) : __( 'No Bids', 'prospress' );
@@ -253,7 +239,7 @@ class PP_Market_System {
 	 * 
 	 * If no post id is specified, the global $post var is used. 
 	 */
-	function get_winning_bid( $post_id = '' ) {
+	public function get_winning_bid( $post_id = '' ) {
 		global $post, $wpdb;
 
 		if ( empty( $post_id ) )
@@ -274,7 +260,7 @@ class PP_Market_System {
 	 * If no winning value is stored in the bidsmeta table, then the function uses the winning bids
 	 * value, which is equal to the maximum bid for that user on this post.
 	 */
-	function get_winning_bid_value( $post_id = '' ) {
+	public function get_winning_bid_value( $post_id = '' ) {
 		global $post, $wpdb;
 
 		if ( empty( $post_id ) )
@@ -300,7 +286,7 @@ class PP_Market_System {
 	 *
 	 * The value of the winning bid is not necessarily equal to the maximum bid. 
 	 */
-	function the_winning_bid_value( $post_id = '', $echo = true ) {
+	public function the_winning_bid_value( $post_id = '', $echo = true ) {
 		$winning_bid = $this->get_winning_bid_value( $post_id );
 
 		$winning_bid = ( $winning_bid == 0 ) ? __( 'No bids.', 'prospress' ) : pp_money_format( $winning_bid );
@@ -314,7 +300,7 @@ class PP_Market_System {
 	/**
 	 * Prints the display name of the winning bidder for a post, optionally specified with $post_id.
 	 */
-	function the_winning_bidder( $post_id = '', $echo = true ) {
+	public function the_winning_bidder( $post_id = '', $echo = true ) {
 		global $user_ID, $display_name;
 
 		get_currentuserinfo(); // to set global $display_name
@@ -341,7 +327,7 @@ class PP_Market_System {
 	 * Optionally takes $user_id and $post_id, if not specified, using the ID of the currently
 	 * logged in user and post in the loop.
 	 */
-	function is_winning_bidder( $user_id = '', $post_id = '' ) {
+	public function is_winning_bidder( $user_id = '', $post_id = '' ) {
 		global $user_ID, $post;
 
 		if ( empty( $post_id ) )
@@ -361,7 +347,7 @@ class PP_Market_System {
 	 * If no user ID or post ID is specified, the function uses the global $post ad $user_ID 
 	 * variables. 
 	 */
-	function get_users_max_bid( $user_id = '', $post_id = '' ) {
+	public function get_users_max_bid( $user_id = '', $post_id = '' ) {
 		global $user_ID, $post, $wpdb;
 
 		if ( empty( $user_id ) )
@@ -376,7 +362,7 @@ class PP_Market_System {
 	}
 
 	// Prints the max bid for a user on a post, optionally specified with $post_id.
-	function the_users_max_bid_value( $user_id = '', $post_id = '', $echo = true ) {
+	public function the_users_max_bid_value( $user_id = '', $post_id = '', $echo = true ) {
 		$users_max_bid = get_users_max_bid( $user_id, $post_id );
 
 		$users_max_bid = ( $users_max_bid->bid_value ) ? $users_max_bid->bid_value : __( 'No Bids.', 'prospress' );
@@ -388,7 +374,7 @@ class PP_Market_System {
 	}
 
 	// Get's the number of bids for a post, optionally specified with $post_id.
-	function get_bid_count( $post_id = '' ) {
+	public function get_bid_count( $post_id = '' ) {
 		global $post, $wpdb;
 
 		if ( empty( $post_id ) )
@@ -402,7 +388,7 @@ class PP_Market_System {
 	/**
 	 * Prints the number of bids on a post, optionally specified with $post_id.
 	 */
-	function the_bid_count( $post_id = '', $echo = true ) {
+	public function the_bid_count( $post_id = '', $echo = true ) {
 		$bid_count = ( empty( $post_id ) ) ? $this->get_bid_count() : $this->get_bid_count( $post_id );
 		
 		$bid_count = ( $bid_count ) ? $bid_count : __( 'No Bids', 'prospress' );
@@ -419,7 +405,7 @@ class PP_Market_System {
 	 * A message can be passed to a bid form using the URL. This function pulls any messages
 	 * passed to a page containing a bid form and prints the messages. 
 	 */
-	function get_bid_message(){
+	private function get_bid_message(){
 		global $pp_bid_status;
 
 		// Avoid showing messages passed in latent url parameters
@@ -430,6 +416,8 @@ class PP_Market_System {
 			$message_id = $pp_bid_status;
 		elseif ( isset( $_GET[ 'bid_msg' ] ) )
 			$message_id = $_GET[ 'bid_msg' ];
+			
+		$message = '';
 
 		if ( isset( $message_id ) ){
 			switch( $message_id ) {
@@ -475,10 +463,10 @@ class PP_Market_System {
 
 
 	/************************************************************************************************
-	 * Private Functions. Don't worry about these, unless you want to get really tricksy
+	 * Private Functions: don't worry about these, unless you want to get really tricky.
+	 * Even if they're declared public, it's only because they are attached to a hook
 	 ************************************************************************************************/
-
-	function get_index_id() {
+	public function get_index_id() {
 		global $wpdb;
 
 		$index_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . $this->name . "'" );
@@ -489,7 +477,7 @@ class PP_Market_System {
 			return $index_id;
 	}
 
-	function get_index_url() {
+	public function get_index_url() {
 
 		$index_id = $this->get_index_id();
 
@@ -508,7 +496,7 @@ class PP_Market_System {
 	 * @uses add_options_page to add administration pages for bid settings
 	 * @return false if logged in user is not the site admin
 	 **/
-	function add_admin_pages() {
+	public function add_admin_pages() {
 
 		$base_page = $this->name() . "-bids";
 
@@ -531,7 +519,7 @@ class PP_Market_System {
 	}
 
 	// Print the feedback history for a user
-	function active_history() {
+	public function active_history() {
 	  	global $wpdb, $user_ID;
 
 		get_currentuserinfo(); //get's user ID of currently logged in user and puts into global $user_id
@@ -546,7 +534,7 @@ class PP_Market_System {
 		$this->print_admin_bids_table( $bids, sprintf( __( 'Bids on Active %s', 'prospress' ), $this->display_name() ), 'active-bids' );
 	}
 
-	function completed_history() {
+	public function completed_history() {
 	  	global $wpdb, $user_ID;
 
 		if ( !current_user_can( $this->capability ) )
@@ -563,7 +551,7 @@ class PP_Market_System {
 		$this->print_admin_bids_table( $bids, sprintf( __( 'Bids on Completed %s', 'prospress' ), $this->display_name() ), 'bids' );
 	}
 
-	function create_bid_page_query( $post_status = 'publish', $bid_status = '' ){
+	private function create_bid_page_query( $post_status = 'publish', $bid_status = '' ){
 		global $wpdb, $user_ID;
 
 		$query = $wpdb->prepare( "SELECT * FROM $wpdb->bids WHERE bidder_id = %d", $user_ID );
@@ -619,7 +607,8 @@ class PP_Market_System {
 		return $query;
 	}
 
-	function print_admin_bids_table( $bids = array(), $title = 'Bids', $page ){
+
+	protected function print_admin_bids_table( $bids = array(), $title = 'Bids', $page ){
 		global $wpdb, $user_ID, $wp_locale;
 
 		if( !is_array( $bids ) )
@@ -745,9 +734,9 @@ class PP_Market_System {
 	}
 
 	// Returns bid column headings for market system. Used with the built in print_column_headers function.
-	function get_column_headings(){
+	public function get_column_headings(){
 		$column_headings = $this->bid_table_headings;
-		
+
 		if( strpos( $_SERVER['REQUEST_URI' ], 'bids' ) !== false )
 			$column_headings[ 'bid_actions' ] = __( 'Action', 'prospress' );
 
@@ -755,7 +744,7 @@ class PP_Market_System {
 	}
 
 	// Add market system columns to tables of posts
-	function add_post_column_headings( $column_headings ) {
+	public function add_post_column_headings( $column_headings ) {
 
 		if( !( ( $_GET[ 'post_type' ] == $this->name() ) || ( get_post_type( $_GET[ 'post' ] ) ==  $this->name() ) ) )
 			return $column_headings;
@@ -767,18 +756,18 @@ class PP_Market_System {
 	}
 
 	/**
-	 * 
+	 * It's private, don't worry about it, you shouldn't need to create the bid table columns, instead
+	 * you can rely on this bad boy to call the function assigned to the column
 	 **/
-	function add_post_column_contents( $column_name, $post_id ) {
+	private function add_post_column_contents( $column_name, $post_id ) {
 		if( array_key_exists( $column_name, $this->post_table_columns ) ) {
 			$function = $this->post_table_columns[ $column_name ][ 'function' ];
 			$this->$function( $post_id );
 		}
 	}
 
-	function enqueue_bid_form_scripts(){
-		
-		if( is_admin() )
+	public function enqueue_bid_form_scripts(){
+		if( is_admin() ) //only needed on public facing pages
 			return;
 
   		wp_enqueue_script( 'bid-form-ajax', PP_BIDS_URL . '/bid-form-ajax.js', array( 'jquery' ) );
@@ -791,15 +780,21 @@ class PP_Market_System {
 			));
 	}
 
-	function enqueue_bid_admin_scripts(){
+	public function enqueue_bid_admin_scripts(){
 		wp_enqueue_style( 'bids', PP_BIDS_URL . '/admin.css' );
 	}
 
-	function add_sort_options( $pp_sort_options ){
-		$pp_sort_options['price-asc' ] = __( 'Price: low to high', 'prospress' );
-		$pp_sort_options['price-desc' ] = __( 'Price: high to low', 'prospress' );
-
+	// Adds bid system specific sort options to the post system sort widget, can be implemented, but doesn't have to be
+	public function add_sort_options( $pp_sort_options ){
 		return $pp_sort_options;
+	}
+
+	// Adds the meta box with post fields to the edit and add new post forms. 
+	// This function is hooked in the constructor and is only called if post fields is defined. 
+	public function post_fields_meta_box(){
+		if( function_exists( 'add_meta_box' )) {
+			add_meta_box( 'pp-bidding-options', __( 'Bidding Options', 'prospress' ), array(&$this, 'post_fields' ), $this->name(), 'normal', 'core' );
+		}
 	}
 
 	/**
@@ -808,9 +803,9 @@ class PP_Market_System {
 	 * 
 	 *
 	 **/
-	// Called with init hook to determine if a bid has been submitted. If it has, bid_form_submit is called.
+	// Hooked to init to determine if a bid has been submitted. If it has, bid_form_submit is called.
 	// Takes care of the logic of the class, determining if and when to call a function.
-	function _controller(){
+	public function controller(){
 		global $pp_bid_status;
 
 		// If a bid is not being sumbited, exist asap to avoid wasting user's time

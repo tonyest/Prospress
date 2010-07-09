@@ -11,7 +11,7 @@ Prosper with Wordpress - create an online marketplace.
 
 Technically, Prospress is a suite of WordPress plugins and themes. 
 
-But really, Prospress is a dream. The dream to do for marketplaces what WordPress did for communication - make it easy and free (as in beer and liberty).
+But really, Prospress is a dream. The dream to do for marketplaces what WordPress did for publishing - make it easy and free.
 
 Prospress provides all the power-packed simplicity you've come to love of WordPress, with a marketplace twist.
 
@@ -52,7 +52,7 @@ directory. If you are using your own custom themes, they will continue to work w
 
 = Will this work on standard WordPress? =
 
-Yes, this will only work on WordPress MU for the time being, but watch this space.
+Yes.
 
 = Where can I get support? =
 
