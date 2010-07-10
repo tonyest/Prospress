@@ -506,7 +506,7 @@ function pp_feedback_settings_section() {
 	$edit_feedback = get_option( 'edit_feedback' );
 	?>
 	<h3><?php _e( 'Feedback' , 'prospress' )?></h3>
-	<p><?php _e( 'Allowing feedback to be modified makes feedback more accurate.' , 'prospress' ); ?></p>
+	<p><?php _e( 'Allowing feedback to be modified helps make it more accurate.' , 'prospress' ); ?></p>
 	<label for='edit_feedback'>
 		<input type='checkbox' value='true' name='edit_feedback' id='edit_feedback' <?php checked( (boolean)$edit_feedback ); ?> />
 		  <?php _e( 'Allow users to edit feedback.' , 'prospress' );?>

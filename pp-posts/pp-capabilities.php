@@ -36,7 +36,7 @@ function pp_capabilities_settings_page() {
 	<?php wp_nonce_field( 'pp_capabilities_settings' ); ?>
 	<div class="prospress-capabilities">
 		<h3><?php _e( 'Capabilities', 'prospress' ); ?></h3>
-		<p><?php printf( __( 'You can restrict the type of interaction users have with %s. Please choose which roles have the following capabilities:', 'prospress' ), $market_system->display_name() ); ?></p>
+		<p><?php printf( __( 'All registered users can make bids, but you can control which users are able to publish and edit %s.', 'prospress' ), $market_system->display_name() ); ?></p>
 		<div class="prospress-capability">
 			<h4><?php printf( __( "Publish %s", 'prospress' ), $market_system->display_name() ); ?></h4>
 			<?php foreach ( $roles as $role ): if( $role->name == 'administrator' ) continue; ?>

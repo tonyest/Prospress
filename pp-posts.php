@@ -691,7 +691,7 @@ function pp_taxonomies_option_page() {
 	global $market_system;
 ?>
 	<h3><?php _e( 'Custom Taxonomies', 'prospress' )?></h3>
-	<p><?php echo sprintf( __( 'Custom taxonomies provide a way to classify for your site\'s %s. If your site lists more than 25 %s at the same time, you should use custom taxonomies.', 'prospress' ), $market_system->display_name(), $market_system->display_name() ); ?></p>
+	<p><?php echo sprintf( __( 'Custom taxonomies provide a way to classify %s. If your site lists more than 20 %s at a time, you should use custom taxonomies.', 'prospress' ), $market_system->display_name(), $market_system->display_name() ); ?></p>
 
 	<label for="pp_use_custom_taxonomies">
 		<input type="checkbox" value='true' id="pp_use_custom_taxonomies" name="pp_use_custom_taxonomies"<?php checked( (boolean)get_option( 'pp_use_custom_taxonomies' ) ); ?> />
