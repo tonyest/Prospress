@@ -31,8 +31,6 @@ include_once( PP_BIDS_DIR . '/bids-filter.php' );
 
 require_once( PP_BIDS_DIR . '/pp-auction-system.class.php' );
 
-include_once( PP_BIDS_DIR . '/auction-system-tests.php' );
-
 /**
  * @global PP_Auction_Bid_System $market_system Stores the market system object, defaults to PP_Auction_Bid_System.
  */

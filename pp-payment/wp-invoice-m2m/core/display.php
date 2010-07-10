@@ -444,40 +444,40 @@ function wp_invoice_user_profile_fields()
 	$profileuser = @get_user_to_edit($user_id);
 	?>
 
-	<h3>Billing / Invoicing Info</h3>
+	<h3><?php _e( 'Billing Address', 'prospress' ); ?></h3>
 	<a name="billing_info"></a>
 	<table class="form-table" >
 
 	<tr>
-	<th><label for="company_name">Company Name</label></th>
+	<th><label for="company_name"><?php _e( 'Company Name', 'prospress' ); ?></label></th>
 	<td><input type="text" name="company_name" id="company_name" class="regular-text" value="<?php echo get_usermeta($user_id,'company_name'); ?>" /></td>
 	</tr>
 
 	<tr>
-	<th><label for="streetaddress">Street Address</label></th>
+	<th><label for="streetaddress"><?php _e( 'Street Address', 'prospress' ); ?></label></th>
 	<td><input type="text" name="streetaddress" id="streetaddress" class="regular-text" value="<?php echo get_usermeta($user_id,'streetaddress'); ?>" /></td>
 	</tr>
 
 	<tr>
-	<th><label for="city">City</label></th>
+	<th><label for="city"><?php _e( 'City', 'prospress' ); ?></label></th>
 	<td><input type="text" name="city" id="city" class="regular-text" value="<?php echo get_usermeta($user_id,'city'); ?>" /></td>
 	</tr>
 
 	<tr>
-	<th><label for="state">State</label></th>
+	<th><label for="state"><?php _e( 'State', 'prospress' ); ?></label></th>
 	<td><input type="text" name="state" id="state" class="regular-text" value="<?php echo get_usermeta($user_id,'state'); ?>" /><br />
-	<p class="note">Use two-letter state codes for safe credit card processing.</p></td>
+	<p class="note"><?php _e( 'Use two-letter state codes for safe credit card processing.', 'prospress' ); ?></p></td>
 	</tr>
 
 	<tr>
-	<th><label for="streetaddress">ZIP Code</label></th>
+	<th><label for="streetaddress"><?php _e( 'ZIP Code', 'prospress' ); ?></label></th>
 	<td><input type="text" name="zip" id="zip" class="regular-text" value="<?php echo get_usermeta($user_id,'zip'); ?>" /></td>
 	</tr>
 
 	<tr>
-	<th><label for="phonenumber">Phone Number</label></th>
+	<th><label for="phonenumber"><?php _e( 'Phone Number', 'prospress' ); ?></label></th>
 	<td><input type="text" name="phonenumber" id="phonenumber" class="regular-text" value="<?php echo get_usermeta($user_id,'phonenumber'); ?>" />
-	<p class="note">Enforce 555-555-5555 format if you are using PayPal.</p></td>
+	<p class="note"><?php _e( 'Enforce 555-555-5555 format if you are using PayPal.', 'prospress' ); ?></p></td>
 	</tr>
 
 	<tr>
@@ -547,7 +547,7 @@ function wp_invoice_show_billing_information($invoice_id) {
 ?>
 
 <div id="billing_overview" class="clearfix">
-<h2 class="invoice_page_subheading">Billing Information</h2>
+<h2 class="invoice_page_subheading"><?php _e( 'Billing Information', 'prospress' ); ?></h2>
 
 <?php
 // count how many payment options we have availble

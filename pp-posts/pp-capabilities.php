@@ -73,6 +73,15 @@ function pp_capabilities_settings_page() {
 			</label>
 			<?php endforeach; ?>
 		</div>
+		<div class="prospress-capability">
+			<h4><?php printf( __( "Upload Media", 'prospress' ) ); ?></h4>
+			<?php foreach ( $roles as $role ): if( $role->name == 'administrator' ) continue; ?>
+			<label for="<?php echo $role->name; ?>-media">
+				<input type="checkbox" id="<?php echo $role->name; ?>-media" name="<?php echo $role->name; ?>-media"<?php checked( $role->capabilities[ 'upload_files' ], 1 ); ?> />
+				<?php echo $role->display_name; ?>
+			</label>
+			<?php endforeach; ?>
+		</div>
 	</div>
 <?php
 }
@@ -138,11 +147,15 @@ function pp_capabilities_whitelist( $whitelist_options ) {
 	        }
 
 			if ( isset( $_POST[ $key . '-private' ] )  && $_POST[ $key . '-private' ] == 'on' ) {
-				$role->add_cap( 'edit_prospress_posts' );
 				$role->add_cap( 'read_private_prospress_posts' );
 			} else {
 				$role->remove_cap( 'read_private_prospress_posts' );
-				$role->remove_cap( 'edit_prospress_posts' );
+			}
+
+			if ( isset( $_POST[ $key . '-media' ] )  && $_POST[ $key . '-media' ] == 'on' ) {
+				$role->add_cap( 'upload_files' );
+			} else {
+				$role->remove_cap( 'upload_files' );
 			}
 
 		}
