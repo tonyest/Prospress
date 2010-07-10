@@ -1,14 +1,18 @@
 <?php
 /**
- * The Core Market System. 
+ * The Core Market System: this is where it get's exciting... and a little messy. 
  * 
- * This is where it get's exciting... and a little messy. 
+ * This asbtract class provides a solid foundation for creating a variety of market systems. 
+ * It takes care of much of the logic and other generic functions. It defines a few abstract 
+ * functions for implementing your market specific code, but you can also overide most of its
+ * other functions if you feel the need. 
  * 
  * @package Prospress
  * @author Brent Shepherd
  * @version 0.1
  */
 
+/** @TODO Refactor this class to create a bid object. The class currently fulfills too many roles, need a separate bid object class. */
 abstract class PP_Market_System {
 
 	public $name;					// Public name of the market system e.g. "Auctions".
@@ -22,13 +26,15 @@ abstract class PP_Market_System {
 	public $bid_table_headings;		// Array of name/value pairs to be used as column headings when printing table of bids. 
 									// e.g. 'bid_id' => 'Bid ID', 'post_id' => 'Post', 'bid_value' => 'Amount', 'bid_date' => 'Date'
 	private $capability = 'read';	// the capability for making bids and viewing bid menus etc.
+	protected $bid_status;
+	protected $message;
 
 	public function __construct( $name, $singular_name, $bid_form_title = "", $bid_button_value = "", $post_fields = array(), $post_table_columns = array(), $bid_table_headings = array() ) {
 
 		$this->name 			= (string)$name;
 		$this->singular_name 	= (string)$singular_name;
-		$this->bid_form_title 	= empty( $bid_form_title ) ? __("Make a bid", 'prospress' ) : $bid_form_title;
-		$this->bid_button_value	= empty( $bid_button_value ) ? __("Bid now!", 'prospress' ) : $bid_button_value;
+		$this->bid_form_title 	= empty( $bid_form_title ) ? __( 'Make a bid', 'prospress' ) : $bid_form_title;
+		$this->bid_button_value	= empty( $bid_button_value ) ? __( 'Bid now!', 'prospress' ) : $bid_button_value;
 
 		if( empty( $post_table_columns ) || !is_array( $post_table_columns ) ){
 			$this->post_table_columns = array (	'current_bid' => array( 'title' => 'Price', 'function' => 'the_winning_bid_value' ),
@@ -65,6 +71,8 @@ abstract class PP_Market_System {
 			add_action( 'manage_posts_custom_column', array( &$this, 'add_post_column_contents' ), 10, 2 );
 		}
 
+		add_filter( 'bid_table_actions', array( &$this, 'add_bid_table_actions' ), 10, 2 );
+
 		// Determine if any of this class's functions should be called
 		add_action( 'init', array( &$this, 'controller' ) );
 
@@ -94,8 +102,8 @@ abstract class PP_Market_System {
 	// Process the bid form fields upon submission.
 	abstract protected function bid_form_submit( $post_id = NULL, $bid_value = NULL, $bidder_id = NULL );
 
-	// Validate and sanitize a bid upon submission.
-	abstract protected function bid_form_validate( $post_id, $bid_value, $bidder_id );
+	// Validate and sanitize a bid upon submission, set bid_status and bid_message as needed
+	abstract protected function validate_bid( $post_id, $bid_value, $bidder_id );
 
 	// Form fields for receiving input from the edit and add new post type pages.
 	abstract public function post_fields();
@@ -103,6 +111,9 @@ abstract class PP_Market_System {
 	// Processes data taken from the post edit and add new post forms.
 	abstract protected function post_fields_submit( $post_id, $post );
 
+	public function add_bid_table_actions( $actions, $post_id ) {
+		return $actions;
+	}
 
 	/************************************************************************************************
 	 * Functions that you may wish to override, but don't need to change to create a new market system
@@ -131,18 +142,14 @@ abstract class PP_Market_System {
 	public function bid_form( $post_id = NULL ) {
 		global $post;
 
-		$post_id = ( $post_id === NULL ) ? $post->ID : $post_id;
+		$post_id = ( $post_id === NULL ) ? $post->ID : (int)$post_id;
 		$the_post = ( empty ( $post ) ) ? get_post( $post_id) : $post;
 
-		if ( $the_post->post_status == 'completed' ) {
-			$form .= '<p class="bid-form">' . __( 'This post has ended. Bidding is closed.', 'prospress' ) . '</p>';
-		} else {
+		if ( $this->is_post_valid( $post_id ) ) {
 			$form .= '<form id="bid_form-' . $post_id . '" class="bid-form" method="post" action="">';
+			$form .= '<div class="bid-updated bid_msg" >' . $this->get_message() . '</div>';
 
-			if( $message = $this->get_bid_message() ) 
-				$form .= '<em class="bid-updated bid_msg" >' . $message . '</em>';
-
-			$form .= ( $post->post_status != 'completed' ) ? $this->bid_form_fields( $post_id ) : '<p>' . __( 'This post has ended. Bidding is closed.', 'prospress' ) . '</p>';
+			$form .= $this->bid_form_fields( $post_id );
 
 			apply_filters( 'bid_form_hidden_fields', $form );
 
@@ -150,37 +157,61 @@ abstract class PP_Market_System {
 			$form .= '<input type="hidden" name="post_ID" value="' . $post_id . '" id="post_ID" /> ';
 			$form .= '<input name="bid_submit" type="submit" id="bid_submit" value="' . $this->bid_button_value .'" />';
 			$form .= '</form>';
-
-			$form = apply_filters( 'bid_form', $form );
+		} else {
+			$form .= '<div class="bid-form">';
+			$form .= '<div class="bid-updated bid_msg" >' . $this->get_message() . '</div>';
+			$form .= '</div>';
 		}
 
+		$form = apply_filters( 'bid_form', $form );
+
+		//error_log('$form = ' . print_r( $form, true ) );
 		return $form;		
+	}
+	
+	protected function is_bid_valid( $post_id, $bid_value, $bidder_id ) {
+
+		$this->validate_bid( $post_id, $bid_value, $bidder_id );
+
+		if( $this->bid_status != 'invalid' )
+			return true;
+		else
+			return false;
+	}
+
+	protected function is_post_valid( $post_id = '' ) {
+
+		if( $this->validate_post( $post_id ) == 'valid' )
+			return true;
+		else
+			return false;
 	}
 
 	/**
 	 * Check's a post's status and verify's that it may receive bids. 
 	 */
-	private function verify_post_status( $post_id = '' ) {
+	protected function validate_post( $post_id = '' ) {
 		global $post, $wpdb;
-		
+
 		if( empty( $post_id ))
 			$post_id = $post->ID;
 
-		$post_status = $wpdb->get_var( $wpdb->prepare( "SELECT post_status FROM $wpdb->posts WHERE ID = %d", $post_id ) );
+		//$post_status = $wpdb->get_var( $wpdb->prepare( "SELECT post_status FROM $wpdb->posts WHERE ID = %d", $post_id ) );
+		$post_status = get_post( $post_id )->post_status;
 
-		/** @TODO Have a more graceful failure on varied post status */
-		if ( $post_status === NULL ) {
+		if ( $post_status == 'completed' ){
+			do_action( 'bid_on_completed_post', $post_id);
+			$this->message_id = 12;
+		} elseif ( $post_status === NULL ) {
 			do_action( 'bid_post_not_found', $post_id);
-			wp_die( __( 'Sorry, this post can not be found.' ) );
-			exit;
+			$this->message_id = 13;
+			$post_status = 'invalid';
 		} elseif ( in_array( $post_status, array( 'draft', 'pending' ) ) ) {
 			do_action( 'bid_on_draft', $post_id);
-			wp_die( __( 'Sorry, but you can not bid on a draft or pending post.' ) );
-			exit;
-		} elseif ( $post_status == 'ended' ){ // || $bid_date_gmt < post_end_date_gmt
-			do_action( 'bid_on_ended', $post_id);
-			wp_die( __( 'Sorry, this post has ended.' ) );
-			exit;
+			$this->message_id = 14;
+			$post_status = 'invalid';
+		} else {
+			return 'valid';
 		}
 
 		return $post_status;
@@ -189,11 +220,11 @@ abstract class PP_Market_System {
 	// Calculates the value of the new winning bid and updates it in the DB if necessary
 	// Returns the value of the winning bid (either new or existing)
 	// function update_winning_bid( $bid_ms, $post_id, $bid_value, $bidder_id ){
-	public function update_bid( $bid, $bid_ms ){
+	protected function update_bid( $bid ){
 		global $wpdb;
 
-		if ( $bid_ms[ 'bid_status' ] == 'invalid' ) // nothing to update
-			return $current_winning_bid_value;
+		if ( $this->bid_status == 'invalid' ) // nothing to update
+			return $this->get_winning_bid_value( $bid[ 'post_id' ] );
 
 		$wpdb->insert( $wpdb->bids, $bid );
 
@@ -405,55 +436,63 @@ abstract class PP_Market_System {
 	 * A message can be passed to a bid form using the URL. This function pulls any messages
 	 * passed to a page containing a bid form and prints the messages. 
 	 */
-	private function get_bid_message(){
-		global $pp_bid_status;
+	private function get_message(){
 
 		// Avoid showing messages passed in latent url parameters
 		if ( !is_user_logged_in() )
 			return;
 
-		if ( isset( $pp_bid_status ) )
-			$message_id = $pp_bid_status;
+		if ( isset( $this->message_id ) )
+			$message_id = $this->message_id;
 		elseif ( isset( $_GET[ 'bid_msg' ] ) )
 			$message_id = $_GET[ 'bid_msg' ];
-			
+
 		$message = '';
 
 		if ( isset( $message_id ) ){
 			switch( $message_id ) {
 				case 0:
 				case 1:
-					$message = __("Congratulations, you are the winning bidder.", 'prospress' );
+					$message = __( 'Congratulations, you are the winning bidder.', 'prospress' );
 					break;
 				case 2:
-					$message = __("You have been outbid.", 'prospress' );
+					$message = __( 'You have been outbid.', 'prospress' );
 					break;
 				case 3:
-					$message = __("You must bid more than the winning bid.", 'prospress' );
+					$message = __( 'You must bid more than the winning bid.', 'prospress' );
 					break;
 				case 4:
-					$message = __("Your maximum bid has been increased.", 'prospress' );
+					$message = __( 'Your maximum bid has been increased.', 'prospress' );
 					break;
 				case 5:
-					$message = __("You can not decrease your maximum bid.", 'prospress' );
+					$message = __( 'You can not decrease your maximum bid.', 'prospress' );
 					break;
 				case 6:
-					$message = __("You have entered a bid equal to your current maximum bid.", 'prospress' );
+					$message = __( 'You have entered a bid equal to your current maximum bid.', 'prospress' );
 					break;
 				case 7:
-					$message = __("Invalid bid. Please enter a valid number. e.g. 11.23 or 58", 'prospress' );
+					$message = __( 'Invalid bid. Please enter a valid number. e.g. 11.23 or 58', 'prospress' );
 					break;
 				case 8:
-					$message = __("Invalid bid. Bid nonce did not validate.", 'prospress' );
+					$message = __( 'Invalid bid. Bid nonce did not validate.', 'prospress' );
 					break;
 				case 9:
-					$message = __("Invalid bid. Please enter a bid greater than the starting price.", 'prospress' );
+					$message = __( 'Invalid bid. Please enter a bid greater than the starting price.', 'prospress' );
 					break;
 				case 10:
-					$message = __("Bid submitted.", 'prospress' );
+					$message = __( 'Bid submitted.', 'prospress' );
 					break;
 				case 11:
-					$message = __("You cannot bid on your own post.", 'prospress' );
+					$message = __( 'You cannot bid on your own post.', 'prospress' );
+					break;
+				case 12:
+					$message = __( 'This post has completed, your bid was not accepted.', 'prospress' );
+					break;
+				case 13:
+					$message = __( 'Fail: this post can not be found.', 'prospress' );
+					break;
+				case 14:
+					$message = __( 'You cannot bid on a draft or pending post', 'prospress' );
 					break;
 			}
 			$message = apply_filters( 'bid_message', $message );
@@ -607,7 +646,6 @@ abstract class PP_Market_System {
 		return $query;
 	}
 
-
 	protected function print_admin_bids_table( $bids = array(), $title = 'Bids', $page ){
 		global $wpdb, $user_ID, $wp_locale;
 
@@ -697,7 +735,7 @@ abstract class PP_Market_System {
 								<td><?php echo mysql2date( __( 'g:ia d M Y' , 'prospress' ), $bid[ 'bid_date' ] ); ?></td>
 								<td><?php echo mysql2date( __( 'g:ia d M Y' , 'prospress' ), $post_end_date ); ?></td>
 								<?php if( strpos( $_SERVER['REQUEST_URI' ], 'bids' ) !== false ){
-									$actions = apply_filters( 'winning_bid_actions', array(), $post->ID );
+									$actions = apply_filters( 'bid_table_actions', array(), $post->ID );
 									echo '<td>';
 									if( is_array( $actions ) && !empty( $actions ) ){
 									?><div class="prospress-actions">
@@ -756,10 +794,10 @@ abstract class PP_Market_System {
 	}
 
 	/**
-	 * It's private, don't worry about it, you shouldn't need to create the bid table columns, instead
-	 * you can rely on this bad boy to call the function assigned to the column
+	 * Don't worry about it this confusing function, you shouldn't need to create the bid table columns,
+	 * instead you can rely on this bad boy to call the function assigned to the column through the constructor
 	 **/
-	private function add_post_column_contents( $column_name, $post_id ) {
+	public function add_post_column_contents( $column_name, $post_id ) {
 		if( array_key_exists( $column_name, $this->post_table_columns ) ) {
 			$function = $this->post_table_columns[ $column_name ][ 'function' ];
 			$this->$function( $post_id );
@@ -806,7 +844,6 @@ abstract class PP_Market_System {
 	// Hooked to init to determine if a bid has been submitted. If it has, bid_form_submit is called.
 	// Takes care of the logic of the class, determining if and when to call a function.
 	public function controller(){
-		global $pp_bid_status;
 
 		// If a bid is not being sumbited, exist asap to avoid wasting user's time
 		if( !isset( $_REQUEST[ 'bid_submit' ] ) )
@@ -814,7 +851,6 @@ abstract class PP_Market_System {
 
 		if ( !is_user_logged_in() ){ 
 			do_action( 'bidder_not_logged_in' );
-
 			$redirect = wp_get_referer();
 			$redirect = add_query_arg( urlencode_deep( $_POST ), $redirect );
 			$redirect = add_query_arg( 'bid_redirect', wp_get_referer(), $redirect );
@@ -832,25 +868,24 @@ abstract class PP_Market_System {
 
 		// Verify bid nonce if bid is not coming from a login redirect
 		if ( !isset( $_REQUEST[ 'bid_redirect' ] ) && ( !isset( $_REQUEST[ 'bid_nonce' ] ) || !wp_verify_nonce( $_REQUEST['bid_nonce' ], __FILE__) ) ) {
-			$bid_status = 8;
+			$this->bid_status = 8;
 		} elseif ( isset( $_GET[ 'bid_redirect' ] ) ) {
-			$bid_status = $this->bid_form_submit( $_GET[ 'post_ID' ], $_GET[ 'bid_value' ] );
+			//$this->bid_status = $this->bid_form_submit( $_GET[ 'post_ID' ], $_GET[ 'bid_value' ] );
+			$this->bid_form_submit( $_GET[ 'post_ID' ], $_GET[ 'bid_value' ] );
 		} else {
-			$bid_status = $this->bid_form_submit( $_POST[ 'post_ID' ], $_POST[ 'bid_value' ] );
+			//$this->bid_status = $this->bid_form_submit( $_POST[ 'post_ID' ], $_POST[ 'bid_value' ] );
+			$this->bid_form_submit( $_POST[ 'post_ID' ], $_POST[ 'bid_value' ] );
 		}
 
 		// Redirect user back to post
 		if ( !empty( $_REQUEST[ 'bid_redirect' ] ) ){
 			$location = $_REQUEST[ 'bid_redirect' ];
-			$location = add_query_arg( 'bid_msg', $bid_status, $location );
+			$location = add_query_arg( 'bid_msg', $this->message_id, $location );
 			$location = add_query_arg( 'bid_nonce', wp_create_nonce( __FILE__ ), $location );
 			wp_safe_redirect( $location );
 			exit();
 		}
 
-		$pp_bid_status = $bid_status;
-
-		// If bid was submitted using Ajax
 		if( $_POST[ 'bid_submit' ] == 'ajax' ){
 			echo $this->bid_form( $_POST[ 'post_ID' ] );
 			die();
