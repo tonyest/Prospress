@@ -54,18 +54,36 @@ directory. If you are using your own custom themes, they will continue to work w
 
 Yes.
 
+= Is this safe for use in production? =
+
+Using Prospress in a production environment is not recommended, yet. 
+
+Prospress is a major plugin that has been in development for long time. But during that time, it's only been testing in a few environments and never used in production. 
+
+There will be bugs. Those bugs will be fixed, but you'll be glad you waited. 
+
+Download & explore Prospress in a test environment, but please wait until a non-beta release before using in a production environment. 
+
+If you want to hasten the official release of Prospress, you can help by [contributing](http://prospress.org/contribute).
+
+= Is this an auction site in a box? =
+
+Yep.
+
 = Where can I get support? =
 
-The support forums can be found here: http://prospress.org/forums
+In the Prospress [support forums](http://prospress.org/forums).
 
 = Where can I find documentation? =
 
-The documentation codex can be found here: http://codex.prospress.org/
+Prospress has it's very own [codex](http://codex.prospress.org/), thought its knowledge is sparse as of release.
 
 = Where can I report a bug? =
 
-Bugs can be reported here: http://trac.prospress.org/newticket
+Bugs can be reported on the Prospress Github site (http://github.com:Prospress/Prospress/issues).
 
-= Where can I checkout the bleeding edge? =
+= Where can I checkout the latest? =
 
-Prospress git repository can be found at: git@github.com:thenbrent/Prospress.git
+Prospress git repository can be found at: git@github.com:Prospress/Prospress.git
+
+Github is also the primary development site for Prospress.

@@ -2,13 +2,18 @@
 /**
  * The Core Market System: this is where it get's exciting... and a little messy. 
  * 
- * This asbtract class provides a solid foundation for creating a variety of market systems. 
- * It takes care of much of the logic and other generic functions. It defines a few abstract 
- * functions for implementing your market specific code, but you can also overide most of its
- * other functions if you feel the need. 
+ * This class forms the basis for all market systems. It provides a framework for creating a new market
+ * systems and is extended to implement the core market systems, eg. Auction, that ship with Prospress.
  * 
+ * The class takes care of the control logic and other generic functions and defines a few abstract 
+ * functions for implementing your market specific code, but you can also overide many of its
+ * other functions to create novel market types.
+ * 
+ * Extend this class to create a new bid system and implement PP_Market_System::bid_form_fields(), 
+ * PP_Market_System::bid_form_submit(), PP_Market_System::bid_form_validate(), PP_Market_System::view_details(),
+ * PP_Market_System::view_list() and PP_Market_System::post_fields().
+ *
  * @package Prospress
- * @author Brent Shepherd
  * @version 0.1
  */
 

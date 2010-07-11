@@ -135,20 +135,21 @@ function the_post_end_countdown( $post_id = '', $units = 3, $separator = ' ' ) {
  * Based on WP Crontrol's Interval function
  **/
 function human_interval( $time_period, $units = 3, $separator = ' ' ) {
-    // array of time period chunks
-	$chunks = array(
-    	array(60 * 60 * 24 * 365 , _n_noop('%s year', '%s years')),
-    	array(60 * 60 * 24 * 30 , _n_noop('%s month', '%s months')),
-    	array(60 * 60 * 24 * 7, _n_noop('%s week', '%s weeks')),
-    	array(60 * 60 * 24 , _n_noop('%s day', '%s days')),
-    	array(60 * 60 , _n_noop('%s hour', '%s hours')),
-    	array(60 , _n_noop('%s minute', '%s minutes')),
-    	array( 1 , _n_noop('%s second', '%s seconds')),
-	);
 
 	if( $time_period <= 0 ) {
 	    return __('Now', 'prospress' );
 	}
+
+    // array of time period chunks
+	$chunks = array(
+    	array( 60 * 60 * 24 * 365 , _n_noop( '%s year', '%s years' ) ),
+    	array( 60 * 60 * 24 * 30 , _n_noop( '%s month', '%s months' ) ),
+    	array( 60 * 60 * 24 * 7, _n_noop( '%s week', '%s weeks' ) ),
+    	array( 60 * 60 * 24 , _n_noop( '%s day', '%s days' ) ),
+    	array( 60 * 60 , _n_noop( '%s hour', '%s hours' ) ),
+    	array( 60 , _n_noop( '%s minute', '%s minutes' ) ),
+    	array( 1 , _n_noop( '%s second', '%s seconds' ) ),
+	);
 
 	// 1st chunk
 	for ($i = 0, $j = count($chunks); $i < $j; $i++) {
@@ -158,7 +159,6 @@ function human_interval( $time_period, $units = 3, $separator = ' ' ) {
 
 		// finding the biggest chunk (if the chunk fits, break)
 		if ( ( $count = floor( $time_period / $seconds ) ) != 0 ) {
-
 			break;
 		}
 	}

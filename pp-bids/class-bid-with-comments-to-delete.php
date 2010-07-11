@@ -18,7 +18,6 @@
  * @package Prospress
  * @since 0.1
  */
-/** @TODO Make abstract class when PHP4.x is no longer supported */
 class PP_Market_System {
 
 	//Requirements:
