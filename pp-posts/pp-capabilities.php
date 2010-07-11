@@ -28,8 +28,8 @@ function pp_capabilities_settings_page() {
 	$roles = array();
 
 	foreach ( $role_names as $key => $value ) {
-		$roles[ $key] = get_role( $key);
-		$roles[ $key]->display_name = $value;
+		$roles[ $key ] = get_role( $key );
+		$roles[ $key ]->display_name = $value;
 	}
 	?>
 

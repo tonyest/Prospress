@@ -491,7 +491,7 @@ abstract class PP_Market_System {
 					$message = __( 'You cannot bid on your own post.', 'prospress' );
 					break;
 				case 12:
-					$message = __( 'This post has completed, your bid was not accepted.', 'prospress' );
+					$message = __( 'This post has completed, bids cannot be accepted.', 'prospress' );
 					break;
 				case 13:
 					$message = __( 'Fail: this post can not be found.', 'prospress' );
