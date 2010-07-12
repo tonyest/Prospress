@@ -7,7 +7,7 @@
 /*
 Plugin Name: Capital Quotes
 Plugin URI: http://prospress.org
-Description: This is not just a plugin, it embodies the collective genius behind humanity's heightened prosperity. When activated you will see a random economics related quote at the top of admin page. Its like Hello Dolly, but for budding economists. 
+Description: This plugin retells the collective genius behind humanity's heightened prosperity. When activated you will see a random quote related to economics at the top of admin page. Its like Hello Dolly, but for budding economists. 
 Author: Brent Shepherd
 Version: 0.2
 Author URI: http://brentshepherd.com/
@@ -16,10 +16,8 @@ Author URI: http://brentshepherd.com/
 function get_capital_quote() {
 	$quotes = "Poverty is unnecessary. - <b>Muhammad Yunus</b>
 Underlying most arguments against the free market is a lack of belief in freedom itself. - <b>Milton Friedman</b>
-It's the economy, stupid - <b>Bill Clinton</b>
 Concentrated power is not rendered harmless by the good intentions of those who create it. - <b>Milton Friedman</b>
 An idealist is a person who helps other people to be prosperous. - <b>Henry Ford</b>
-I am not a Marxist. - <b>Karl Marx</b>
 Is the 'invisible hand' attached to a clothed arm? - <b>John McMillan</b>
 The Internet is turning economics inside-out. - <b>Uri Geller</b>
 Life is full of chances and changes, and the most prosperous of men may...meet with great misfortunes. - <b>Aristotle</b>

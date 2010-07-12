@@ -211,7 +211,6 @@ class PP_Auction_Bid_System extends PP_Market_System {
 
 	// Called on bid_table_actions hook
 	public function add_bid_table_actions( $actions, $post_id ) {
-		global $user_ID, $market_system, $blog_id;
 
 		$post = get_post( $post_id );
 

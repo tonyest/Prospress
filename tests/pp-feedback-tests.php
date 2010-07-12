@@ -66,7 +66,6 @@ function create_feedback_mocks( $number, $author_id, $winner_id, $blog_id = 1 ) 
 	
 	$winning_bid_value = 123;
 	// Insert a winning bid on the post 
-	//$market_system->bid_form_submit( $post_id, 123, $winner_id );
 	$bid = array('post_id' 	=> $post_id,
 				'bidder_id' => $winner_id,
 				'bid_value' => $winning_bid_value,

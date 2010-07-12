@@ -9,9 +9,8 @@
 
 class PP_Feedback_Score_Widget extends WP_Widget {
 	function PP_Feedback_Score_Widget() {
-		global $market_system; 
 		/* Widget settings. */
-		$widget_ops = array( 'classname' => 'pp-feedback-score', 'description' => sprintf( __('The feedback score for an author of an %s', 'prospress' ), $market_system->singular_name() ) );
+		$widget_ops = array( 'classname' => 'pp-feedback-score', 'description' => __( 'Displays a user\'s feedback score', 'prospress' ) );
 
 		/* Widget control settings. */
 		$control_ops = array( 'id_base' => 'pp-feedback-score' );
@@ -61,9 +60,8 @@ add_action( 'widgets_init', create_function( '', 'return register_widget("PP_Fee
 
 class PP_Feedback_Latest_Widget extends WP_Widget {
 	function PP_Feedback_Latest_Widget() {
-		global $market_system; 
 		/* Widget settings. */
-		$widget_ops = array( 'classname' => 'pp-feedback-latest', 'description' => sprintf( __('The most recent feedback comment received by the author of an %s', 'prospress' ), $market_system->singular_name() ) );
+		$widget_ops = array( 'classname' => 'pp-feedback-latest', 'description' => __( 'Displays the most recent feedback comment a user has received', 'prospress' ) );
 
 		/* Widget control settings. */
 		$control_ops = array( 'id_base' => 'pp-feedback-latest' );

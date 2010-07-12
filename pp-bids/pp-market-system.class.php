@@ -21,6 +21,7 @@
 abstract class PP_Market_System {
 
 	public $name;					// Public name of the market system e.g. "Auctions".
+	public $pp_post;				// PP_Post object for this market system.
 	protected $singular_name;		// Name of a single market system object e.g. "Auction".
 	public $bid_form_title;			// Title for the bid form.
 	public $bid_button_value;		// Text used on the submit button of the bid form.
@@ -510,26 +511,6 @@ abstract class PP_Market_System {
 	 * Private Functions: don't worry about these, unless you want to get really tricky.
 	 * Even if they're declared public, it's only because they are attached to a hook
 	 ************************************************************************************************/
-	public function get_index_id() {
-		global $wpdb;
-
-		$index_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . $this->name . "'" );
-
-		if( $index_id == NULL)
-			return false; 
-		else 
-			return $index_id;
-	}
-
-	public function get_index_url() {
-
-		$index_id = $this->get_index_id();
-
-		if( $index_id == NULL)
-			return false; 
-		else 
-			return get_permalink( $index_id );
-	}
 
 	/**
 	 * 	Adds bid pages to admin menu

@@ -10,7 +10,7 @@
  * @version 0.1
  */
 
-global $pp_use_custom_taxonomies, $market_system;
+global $market_system;
 
 if ( !defined( 'PP_POSTS_DIR' ) )
 	define( 'PP_POSTS_DIR', PP_PLUGIN_DIR . '/pp-posts' );
@@ -27,14 +27,10 @@ include_once( PP_POSTS_DIR . '/pp-post-sort.php' );
 
 include_once( PP_POSTS_DIR . '/pp-post-widgets.php' );
 
-if( get_option( 'pp_use_custom_taxonomies' ) == 'true' ){
-	$pp_use_custom_taxonomies = true;
+if( is_using_custom_taxonomies() ){
 	include_once( PP_POSTS_DIR . '/pp-custom-taxonomy.php' );
 	include_once( PP_POSTS_DIR . '/qmt/query-multiple-taxonomies.php' );
-} else {
-	$pp_use_custom_taxonomies = false;
 }
-
 
 /**
  * Sets up Prospress environment with any settings required and/or shared across the 
@@ -49,19 +45,7 @@ if( get_option( 'pp_use_custom_taxonomies' ) == 'true' ){
  * @global WP_Rewrite $wp_rewrite WordPress Rewrite Component.
  */
 function pp_posts_install(){
-	global $wpdb, $market_system, $wp_rewrite;
-
-	// Need an index page for Prospress posts
-	if( !$market_system->get_index_url() ){
-		$index_page = array();
-		$index_page['post_title'] = $market_system->display_name();
-		$index_page['post_name'] = $market_system->name();
-		$index_page['post_status'] = 'publish';
-		$index_page['post_content'] = __( 'This is the index for your ' . $market_system->display_name() . '.' );
-		$index_page['post_type'] = 'page';
-
-		wp_insert_post( $index_page );
-	}
+	global $wpdb, $wp_rewrite;
 
 	//pp_add_sidebars_widgets();
 
@@ -440,8 +424,8 @@ add_action( 'admin_enqueue_scripts', 'pp_posts_admin_head' );
 
 /** 
  * Prospress posts end and a post's end date/time is important enough to be shown on the posts 
- * admin table. Completed posts also require follow up actions, so these actions should also be 
- * shown on the posts admin table, but only for completed posts. 
+ * admin table. Completed posts also require follow up actions, so these actions are shown on 
+ * the posts admin table, but only for completed posts. 
  *
  * This function adds the end date and completed posts actions columns to the column headings array
  * for Prospress posts admin tables. 
@@ -451,7 +435,6 @@ add_action( 'admin_enqueue_scripts', 'pp_posts_admin_head' );
  * @since 0.1
  */
 function pp_post_columns( $column_headings ) {
-	global $market_system;
 
 	if( !is_pp_post_admin_page() )
 		return $column_headings;
@@ -579,6 +562,40 @@ function pp_taxonomies_whitelist( $whitelist_options ) {
 add_filter( 'pp_options_whitelist', 'pp_taxonomies_whitelist' );
 
 
+/**
+ * A boolean function to centralise the logic for whether the current page is an admin page for this post type.
+ *
+ * This is required when enqueuing scripts, styles and performing other Prospress post admin page 
+ * specific functions so it makes sense to centralise it. 
+ * 
+ * @package Prospress
+ * @subpackage Posts
+ * @since 0.1
+ */
+public function is_pp_post_admin_page(){
+	global $post;
+
+	// loop through market system post objects and check ->is_post_admin_page()
+}
+
+
+
+/** 
+ * Simple boolean function to check if current site is using custom taxonomies.
+ * 
+ * @package Prospress
+ * @subpackage Posts
+ * @since 0.1
+ */
+function is_using_custom_taxonomies(){
+
+	if( get_option( 'pp_use_custom_taxonomies' ) == 'true' )
+		return true;
+	else
+		return false;
+}
+
+
 /** 
  * Clean up anything added on activation that does not need to persist incase of reactivation. 
  * 
@@ -588,20 +605,6 @@ add_filter( 'pp_options_whitelist', 'pp_taxonomies_whitelist' );
  */
 function pp_posts_deactivate(){
 	global $market_system, $wp_roles;
-
-	//delete_option( 'widget_bid-filter' );
-	//delete_option( 'widget_pp-sort' );
-
-	//$sidebars_widgets = get_option( 'sidebars_widgets' );
-
-	//if( isset( $sidebars_widgets[ $market_system->name() . '-index-sidebar' ] ) ){
-	//	unset( $sidebars_widgets[ $market_system->name() . '-index-sidebar' ] );
-	//	update_option( 'sidebars_widgets', $sidebars_widgets );
-	//}
-	//if( isset( $sidebars_widgets[ $market_system->name() . '-single-sidebar' ] ) ){
-	//	unset( $sidebars_widgets[ $market_system->name() . '-single-sidebar' ] );
-	//	update_option( 'sidebars_widgets', $sidebars_widgets );
-	//}
 
 	foreach ( $wp_roles->get_names() as $key => $role ) {
 

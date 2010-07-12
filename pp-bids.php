@@ -37,7 +37,7 @@ require_once( PP_BIDS_DIR . '/pp-auction-system.class.php' );
 global $market_system;
 
 $market_system = new PP_Auction_Bid_System();
-
+//$market_systems[name?] = new PP_Auction_Bid_System();
 
 /**
  * To save updating/installing the bids tables when they already exist and are up-to-date, check 
