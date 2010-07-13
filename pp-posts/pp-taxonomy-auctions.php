@@ -53,7 +53,7 @@ $tax_title = sprintf( __( '%s %s' ), $term, $tax->labels->name );
 						<?php _e( 'by ', 'prospress'); the_author(); ?>
 					</div>
 				</div>
-				<div class="pp-end"><?php the_post_end_countdown( $the_ID, 3, '<br/>' ); ?></div>
+				<div class="pp-end"><?php the_post_end_time( $the_ID, 3, '<br/>' ); ?></div>
 				<div class="pp-price"><?php $market_system->the_winning_bid_value(); ?></div>
 			</div>
 

@@ -154,7 +154,7 @@ class PP_Countdown_Widget extends WP_Widget {
 		echo $after_title;
 
 		echo '<span class="countdown">';
-		the_post_end_countdown();
+		the_post_end_time();
 		echo '</span>';
 
 		echo $after_widget;

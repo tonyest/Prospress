@@ -8,7 +8,7 @@
  */
 function pp_get_index_permalink( $echo = 'echo' ){
 	global $market_system, $wpdb;
-	
+
 	$pp_index_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . $market_system->name() . "'" );
 
 	if( !$pp_index_id )
@@ -18,6 +18,7 @@ function pp_get_index_permalink( $echo = 'echo' ){
 	else
 		return get_permalink( $pp_index_id );
 }
+
 
 /**
  * Print the details of an individual post, including custom taxonomies.  
@@ -49,7 +50,11 @@ function pp_get_the_term_list(){
  * @return returns false if post has no end time, or a string representing the time stamp or sql
  */
 function get_post_end_time( $post_id, $type = 'timestamp', $gmt = true ) {
-	
+	global $post;
+
+	if( empty( $post_id ) )
+		$post_id = $post->ID;
+
 	$time = wp_next_scheduled( 'schedule_end_post', array( "ID" => $post_id ) );
 
 	// If a post has not yet ended, use it's actual scheduled end time, if that doesn't exist, 
@@ -73,42 +78,11 @@ function get_post_end_time( $post_id, $type = 'timestamp', $gmt = true ) {
 	return $time;
 }
 
-function the_post_end_date(){
-	global $post;
-
-	$end_time = wp_next_scheduled( 'schedule_end_post', array( "ID" => $post->ID ) );
-
-	if( empty( $end_time ) )
-		$end_time = strtotime( get_post_meta( $post->ID, 'post_end_date_gmt', true ) );
-
-	if( $end_time == false )
-	 	return $date;
-
-	echo date( 'F, j Y, G:i e', $end_time );
-}
-
-function post_end_time_filter( $date ){
-	global $post;
-
-	if( !in_the_loop() || get_post_type( $post ) != 'post' || is_admin() )
-		return $content;
-		
-	$end_time = wp_next_scheduled( 'schedule_end_post', array( "ID" => $post->ID ) );
-
-	if( empty( $end_time ) )
-		$end_time = strtotime( get_post_meta( $post->ID, 'post_end_date_gmt', true ) );
-
-	if( $end_time == false )
-	 	return $date;
-	
-	$content .= __(' ending on ', 'prospress' ) . date( 'j F Y, G:i e', $end_time );
-	//$date .= ' ending on ' . date( 'r', $end_time );
-
-	return $content;
-}
 
 /**
- * Get's the end time for a post.
+ * Prints the end time for a post. If the post is ending within a week, it will print
+ * it as a countdown, eg. 2 days 1 hour 3 minutes. If the post ends in more than a week
+ * it prints the date, in the user's time.
  *
  * @uses $post
  * @uses $wpdb
@@ -116,15 +90,16 @@ function post_end_time_filter( $date ){
  * @param int $post_id Optional, default 0. The post id for which you want the max bid. 
  * @return object Returns the row in the bids 
  */
-function get_post_end_countdown( $post_id = '', $units = 3, $separator = ' ' ) {
-	global $post;
+function the_post_end_time( $post_id = '', $units = 3, $separator = ' ' ) {
 
-	return human_interval( wp_next_scheduled( 'schedule_end_post', array( "ID" => $post->ID ) ) - time(), $units, $separator );
-}
+	$post_end = get_post_end_time( $post_id, 'timestamp', $gmt = true );
 
-function the_post_end_countdown( $post_id = '', $units = 3, $separator = ' ' ) {
-
-	echo get_post_end_countdown( $post_id, $units, $separator );
+	if( $post_end == false )
+	 	echo __('Now', 'prospress' );
+	elseif( $post_end > ( 60 * 60 * 24 * 7 ) ) // Show date if ending more than a week in the future
+		echo get_post_end_time( $post_id, 'mysql', false );
+	else
+		echo human_interval( $post_end - time(), $units, $separator );
 }
 
 

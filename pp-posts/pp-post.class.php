@@ -32,7 +32,7 @@ class PP_Post {
 		add_filter( 'posts_search', array( &$this, 'remove_index' ) );
 
 		if( is_using_custom_taxonomies() )
-			
+			// $this->taxonomy = new PP_Taxonomy;
 	}
 
 
