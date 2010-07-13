@@ -2,14 +2,11 @@
 
 class PP_Taxonomy {
 
-	//define( 'PP_TAX_URL', admin_url( '/admin.php?page=pp_tax' ) );
-	//const PP_TAX_URL = admin_url( '/admin.php?page=pp_tax' );
-	//const PP_TAX_URL = 'http://localhost.localdomain/trunk/wp-admin/admin.php?page=pp_tax';
-	public $name;
-	public $admin_url;
+	private $market_system;	// An array with details of the market system to which this taxonomy belongs
 	protected $add_tax;
 	protected $edit_tax;
-	private $market_system;	// An array with details of the market system to which this taxonomy belongs
+	public $admin_url;
+	public $name;
 
 	public function __construct( $market_system ) {
 
@@ -255,21 +252,21 @@ class PP_Taxonomy {
 			unset( $tax_type[ 'object_type' ] );
 
 			// Define most of the taxonomy parameters dynamically to improve forward compatability
-			$tax_type[ 'public' ] 		= true;
+			$tax_type[ 'public' ] 			= true;
 			$tax_type[ 'hierarchical' ] 	= true;
-			$tax_type[ 'show_ui' ] 		= true;
+			$tax_type[ 'show_ui' ] 			= true;
 			$tax_type[ 'show_tagcloud' ]	= false;
-			$tax_type[ 'query_var' ] 	= $tax_name;
-			$tax_type[ 'rewrite' ] 		= array( 'slug' => $object_type . '/' . $tax_name, 'with_front' => false );
+			$tax_type[ 'query_var' ] 		= $tax_name;
+			$tax_type[ 'rewrite' ] 			= array( 'slug' => $object_type . '/' . $tax_name, 'with_front' => false );
 			$tax_type[ 'capabilities' ] 	= array( 'assign_terms' => 'edit_prospress_posts' );
 			$tax_type[ 'labels' ][ 'search_items' ] 	= __( 'Search ', 'prospress' ) . $tax_type[ 'label' ];
 			$tax_type[ 'labels' ][ 'popular_items' ]	= __( 'Popular ', 'prospress' ) . $tax_type[ 'label' ];
-			$tax_type[ 'labels' ][ 'all_items' ] 	= __( 'All ', 'prospress' ) . $tax_type[ 'label' ];
-			$tax_type[ 'labels' ][ 'parent_item' ] 	= __( 'Parent ', 'prospress' ) . $tax_type[ 'label' ];
-			$tax_type[ 'labels' ][ 'parent_item_colon' ] 	= __( 'Parent ', 'prospress' ) . $tax_type[ 'label' ] . ':';
+			$tax_type[ 'labels' ][ 'all_items' ] 		= __( 'All ', 'prospress' ) . $tax_type[ 'label' ];
+			$tax_type[ 'labels' ][ 'parent_item' ] 		= __( 'Parent ', 'prospress' ) . $tax_type[ 'label' ];
+			$tax_type[ 'labels' ][ 'parent_item_colon' ]= __( 'Parent ', 'prospress' ) . $tax_type[ 'label' ] . ':';
 			$tax_type[ 'labels' ][ 'edit_item' ]		= __( 'Edit ', 'prospress' ) . $tax_type[ 'labels' ][ 'singular_label' ];
-			$tax_type[ 'labels' ][ 'update_item' ]	= __( 'Update ', 'prospress' ) . $tax_type[ 'labels' ][ 'singular_label' ];
-			$tax_type[ 'labels' ][ 'add_new_item' ]	= __( 'Add New ', 'prospress' ) . $tax_type[ 'labels' ][ 'singular_label' ];
+			$tax_type[ 'labels' ][ 'update_item' ]		= __( 'Update ', 'prospress' ) . $tax_type[ 'labels' ][ 'singular_label' ];
+			$tax_type[ 'labels' ][ 'add_new_item' ]		= __( 'Add New ', 'prospress' ) . $tax_type[ 'labels' ][ 'singular_label' ];
 			$tax_type[ 'labels' ][ 'new_item_name' ]	= __( 'New ', 'prospress' ) . $tax_type[ 'labels' ][ 'singular_label' ];
 
 			register_taxonomy( $tax_name,

@@ -9,7 +9,9 @@ Template Name: Prospress Index
  * @subpackage Theme
  * @since 0.1
  */
-global $market_system;
+global $market_systems;
+
+$market = $market_systems[ 'auctions' ];
 
 wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 
@@ -27,7 +29,7 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 
 		<?php endwhile; ?>
 
-		<?php $pp_loop = new WP_Query( array( 'post_type' => $market_system->name() ) ); ?>
+		<?php $pp_loop = new WP_Query( array( 'post_type' => $market->name() ) ); ?>
 
 		<?php if ( $pp_loop->have_posts() ) : while ( $pp_loop->have_posts() ) : $pp_loop->the_post(); ?>
 
@@ -47,12 +49,12 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 					</div>
 				</div>
 				<div class="pp-end"><?php the_post_end_time( $the_ID, 3, '<br/>' ); ?></div>
-				<div class="pp-price"><?php $market_system->the_winning_bid_value(); ?></div>
+				<div class="pp-price"><?php $market->the_winning_bid_value(); ?></div>
 			</div>
 
 			<?php endwhile; else: ?>
 
-				<p>No <?php echo $market_system->display_name(); ?>.</p>
+				<p>No <?php echo $market->display_name(); ?>.</p>
 
 			<?php endif; ?>
 		</div>
@@ -60,7 +62,7 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 
 	<div id="sidebar" class="prospress-sidebar">
 		<ul class="xoxo">
-			<?php dynamic_sidebar( $market_system->name() . '-index-sidebar' ); ?>
+			<?php dynamic_sidebar( $market->name() . '-index-sidebar' ); ?>
 		</ul>
 	</div>
 <?php get_footer(); ?>

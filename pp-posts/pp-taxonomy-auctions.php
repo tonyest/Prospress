@@ -9,9 +9,9 @@ Template Name: Auctions Taxonomy Index
  * @subpackage Theme
  * @since 0.1
  */
-global $market_system, $wp_query;
+global $market_systems, $wp_query;
 
-wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
+$market = $market_systems[ 'auctions' ];
 
 $taxonomy = esc_attr( get_query_var( 'taxonomy' ) );
 $tax = get_taxonomy( $taxonomy );
@@ -20,6 +20,8 @@ $term = get_term_by( 'slug', $term, $taxonomy );
 $term_description = term_description( $term->term_id, $taxonomy );
 $term = $term->name;
 $tax_title = sprintf( __( '%s %s' ), $term, $tax->labels->name );
+
+wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 
 ?>
 <?php get_header(); ?>
@@ -54,12 +56,12 @@ $tax_title = sprintf( __( '%s %s' ), $term, $tax->labels->name );
 					</div>
 				</div>
 				<div class="pp-end"><?php the_post_end_time( $the_ID, 3, '<br/>' ); ?></div>
-				<div class="pp-price"><?php $market_system->the_winning_bid_value(); ?></div>
+				<div class="pp-price"><?php $market->the_winning_bid_value(); ?></div>
 			</div>
 
 			<?php endwhile; else: ?>
 
-				<p>No <?php echo $market_system->display_name(); ?>.</p>
+				<p>No <?php echo $market->display_name(); ?>.</p>
 
 			<?php endif; ?>
 		</div>
@@ -67,7 +69,7 @@ $tax_title = sprintf( __( '%s %s' ), $term, $tax->labels->name );
 
 	<div id="sidebar" class="prospress-sidebar">
 		<ul class="xoxo">
-			<?php dynamic_sidebar( $market_system->name() . '-index-sidebar' ); ?>
+			<?php dynamic_sidebar( $market->name() . '-index-sidebar' ); ?>
 		</ul>
 	</div>
 <?php get_footer(); ?>
