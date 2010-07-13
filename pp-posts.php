@@ -29,7 +29,7 @@ include_once( PP_POSTS_DIR . '/pp-post-widgets.php' );
 
 if( is_using_custom_taxonomies() ){
 	include_once( PP_POSTS_DIR . '/pp-custom-taxonomy.php' );
-	include_once( PP_POSTS_DIR . '/qmt/query-multiple-taxonomies.php' );
+	//include_once( PP_POSTS_DIR . '/qmt/query-multiple-taxonomies.php' );
 }
 
 /**
@@ -224,11 +224,12 @@ add_action( 'deleted_post', 'pp_unschedule_post_end' );
 
 
 /**
- * What happens to Prospress posts when they completed? They need to be marked with a special status. 
- * This function registers the "Completed" to designate to posts upon their completion. 
+ * What happens to Prospress posts when they end? They need to be marked with a special status. 
+ * This function registers the "Completed" status to designate to posts upon their completion. 
  * 
- * For now, a post earns this status with the passing of a given period of time. However, eventually a 
- * post may be completed due to a number of other circumstances. 
+ * Typically, a post will earns this status with the passing of a given period of time. However, 
+ * eventually a post may complete due to a number of other circumstances, for example, the post 
+ * may choose the winning bidder or a set goal may be achieved.
  *
  * @package Prospress
  * @subpackage Posts
@@ -250,7 +251,7 @@ function pp_register_completed_status() {
 	       )
 	);
 }
-add_action('init', 'pp_register_completed_status' );
+add_action( 'init', 'pp_register_completed_status' );
 
 
 /**
@@ -422,84 +423,6 @@ function pp_posts_admin_head() {
 add_action( 'admin_enqueue_scripts', 'pp_posts_admin_head' );
 
 
-/** 
- * Prospress posts end and a post's end date/time is important enough to be shown on the posts 
- * admin table. Completed posts also require follow up actions, so these actions are shown on 
- * the posts admin table, but only for completed posts. 
- *
- * This function adds the end date and completed posts actions columns to the column headings array
- * for Prospress posts admin tables. 
- * 
- * @package Prospress
- * @subpackage Posts
- * @since 0.1
- */
-function pp_post_columns( $column_headings ) {
-
-	if( !is_pp_post_admin_page() )
-		return $column_headings;
-
-	if( strpos( $_SERVER['REQUEST_URI'], 'completed' ) !== false ) {
-		$column_headings[ 'end_date' ] = __( 'Ended', 'prospress' );
-		$column_headings[ 'post_actions' ] = __( 'Action', 'prospress' );
-		unset( $column_headings[ 'date' ] );
-	} else {
-		$column_headings[ 'date' ] = __( 'Date Published', 'prospress' );
-		$column_headings[ 'end_date' ] = __( 'Ending', 'prospress' );
-	}
-
-	return $column_headings;
-}
-add_filter( 'manage_' . $market_system->name() . '_posts_columns', 'pp_post_columns' );
-
-
-/** 
- * The admin tables for Prospress posts have custom columns for Prospress specific information. 
- * This function fills those columns with their appropriate information.
- * 
- * @package Prospress
- * @subpackage Posts
- * @since 0.1
- */
-function pp_post_columns_custom( $column_name, $post_id ) {
-	global $wpdb;
-
-	// Need to manually populate $post var. Global $post contains post_status of "publish"...
-	$post = $wpdb->get_row( "SELECT post_status FROM $wpdb->posts WHERE ID = $post_id" );
-
-	if( $column_name == 'end_date' ) {
-		$end_time_gmt = get_post_end_time( $post_id );
-
-		if ( $end_time_gmt == false || empty( $end_time_gmt ) ) {
-			$m_time = $human_time = __('Not set.', 'prospress' );
-			$time_diff = 0;
-		} else {
-			$human_time = human_interval( $end_time_gmt - time(), 3 );
-			$human_time .= '<br/>' . get_post_end_time( $post_id, 'mysql', false );
-		}
-		echo '<abbr title="' . $m_time . '">';
-		echo apply_filters('post_end_date_column', $human_time, $post_id, $column_name) . '</abbr>';
-	}
-
-	if( $column_name == 'post_actions' ) {
-		$actions = apply_filters( 'completed_post_actions', array(), $post_id );
-		if( is_array( $actions ) && !empty( $actions ) ){?>
-			<div class="prospress-actions">
-				<ul class="actions-list">
-					<li class="base"><?php _e( 'Take action:', 'prospress' ) ?></li>
-				<?php foreach( $actions as $action => $attributes )
-					echo "<li class='action'><a href='" . add_query_arg ( array( 'action' => $action, 'post' => $post_id ) , $attributes['url'] ) . "'>" . $attributes['label'] . "</a></li>";
-				 ?>
-				</ul>
-			</div>
-		<?php
-		} else {
-			echo '<p>' . __( 'No action can be taken.', 'prospress' ) . '</p>';
-		}
-	}
-}
-add_action( 'manage_posts_custom_column', 'pp_post_columns_custom', 10, 2 );
-
 
 /** 
  * Prospress includes a widget & function for sorting Prospress posts. This function adds post
@@ -572,7 +495,7 @@ add_filter( 'pp_options_whitelist', 'pp_taxonomies_whitelist' );
  * @subpackage Posts
  * @since 0.1
  */
-public function is_pp_post_admin_page(){
+function is_pp_post_admin_page(){
 	global $post;
 
 	/** @TODO loop through market system post objects and check ->is_post_admin_page() */

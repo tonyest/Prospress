@@ -17,7 +17,7 @@ if ( !defined( 'PP_VERSION' ) )
  * The code is messy, undocumentated and will change over the coming months. For example, feedback items may become a
  * custom post type instead of having their own table. 
  * 
- * I hacked out too many features without enough polish. That will change over time, but don't expect poetry here
+ * I hacked out too many features without polish. That will change over time, but don't expect poetry here
  * until approximately December.
  */
 
@@ -37,9 +37,9 @@ load_plugin_textdomain( 'prospress', PP_PLUGIN_DIR . '/languages', dirname( plug
 
 require_once( PP_PLUGIN_DIR . '/pp-core.php' );
 
-require_once( PP_PLUGIN_DIR . '/pp-bids.php' );
-
 require_once( PP_PLUGIN_DIR . '/pp-posts.php' );
+
+require_once( PP_PLUGIN_DIR . '/pp-bids.php' );
 
 require_once( PP_PLUGIN_DIR . '/pp-feedback.php' );
 

@@ -168,24 +168,6 @@ function pp_money_format( $number, $decimals = 2, $currency = '' ){
 
 
 /** 
- * The default WordPress admin menu icon has nothing on the Prospress jumping koi. This function adds 
- * the fish to menu pages under the Prospress top-level admin menu.
- *
- * @package Prospress
- * @since 0.1
- */
-function pp_add_icon_css() {
-
-	if ( strpos( $_SERVER['REQUEST_URI'], 'Prospress' ) !== false || strpos( $_SERVER['REQUEST_URI'], 'pp_tax' ) !== false || strpos( $_SERVER['REQUEST_URI'], 'invoice_settings' ) !== false ) {
-		echo "<style type='text/css'>";
-		echo "#icon-prospress{background: url(" . PP_PLUGIN_URL . "/images/prospress35.png) no-repeat center transparent}";
-		echo "</style>";
-	}
-}
-add_action( 'admin_head', 'pp_add_icon_css' );
-
-
-/** 
  * Add admin style and scripts that are required by more than one component. 
  * 
  * @package Prospress
@@ -193,7 +175,7 @@ add_action( 'admin_head', 'pp_add_icon_css' );
  */
 function pp_core_admin_head() {
 
-	if( strpos( $_SERVER['REQUEST_URI'], 'pp_tax' ) !== false  || strpos( $_SERVER['REQUEST_URI'], 'completed' ) !== false  || strpos( $_SERVER['REQUEST_URI'], 'bids' ) !== false )
+	if( strpos( $_SERVER['REQUEST_URI'], 'Prospress' ) !== false || strpos( $_SERVER['REQUEST_URI'], 'invoice_settings' ) !== false || strpos( $_SERVER['REQUEST_URI'], '_tax' ) !== false || strpos( $_SERVER['REQUEST_URI'], 'completed' ) !== false  || strpos( $_SERVER['REQUEST_URI'], 'bids' ) !== false )
 		wp_enqueue_style( 'prospress-admin',  PP_CORE_URL . '/prospress-admin.css' );
 }
 add_action('admin_menu', 'pp_core_admin_head');

@@ -9,9 +9,12 @@
  * @package Prospress
  * @version 0.1
  */
+//require_once( PP_POSTS_DIR . '/pp-custom-taxonomy.php' );
+
 class PP_Post {
 
-	private $market_system;	// An array with details of the market system to which this post type belongs.
+	private $market_system;	// An array with details of the market system to which this post object belongs.
+	private $taxonomy;		// An PP_Taxonomy object for this post type
 
 	public function __construct( $market_system ) {
 
@@ -31,8 +34,12 @@ class PP_Post {
 		
 		add_filter( 'posts_search', array( &$this, 'remove_index' ) );
 
-		if( is_using_custom_taxonomies() )
-			// $this->taxonomy = new PP_Taxonomy;
+		add_filter( 'manage_' . $this->market_system[ 'internal_name' ] . '_posts_columns', array( &$this, 'post_columns' ) );
+
+		add_action( 'manage_posts_custom_column', array( &$this, 'post_custom_columns' ), 10, 2 );
+
+		if( is_using_custom_taxonomies() ) //&& class_exists( 'PP_Taxonomy' ) )
+			$this->taxonomy = new PP_Taxonomy( $this->market_system );
 	}
 
 
@@ -356,5 +363,83 @@ class PP_Post {
 			foreach ( $pp_post_ids as $pp_post_id )
 				wp_delete_post( $pp_post_id );
 	}
+
+
+	/** 
+	 * Prospress posts end and a post's end date/time is important enough to be shown on the posts 
+	 * admin table. Completed posts also require follow up actions, so these actions are shown on 
+	 * the posts admin table, but only for completed posts. 
+	 *
+	 * This function adds the end date and completed posts actions columns to the column headings array
+	 * for Prospress posts admin tables. 
+	 * 
+	 * @package Prospress
+	 * @subpackage Posts
+	 * @since 0.1
+	 */
+	public function post_columns( $column_headings ) {
+
+		if( !is_pp_post_admin_page() )
+			return $column_headings;
+
+		if( strpos( $_SERVER['REQUEST_URI'], 'completed' ) !== false ) {
+			$column_headings[ 'end_date' ] = __( 'Ended', 'prospress' );
+			$column_headings[ 'post_actions' ] = __( 'Action', 'prospress' );
+			unset( $column_headings[ 'date' ] );
+		} else {
+			$column_headings[ 'date' ] = __( 'Date Published', 'prospress' );
+			$column_headings[ 'end_date' ] = __( 'Ending', 'prospress' );
+		}
+
+		return $column_headings;
+	}
+
+
+	/** 
+	 * The admin tables for Prospress posts have custom columns for Prospress specific information. 
+	 * This function fills those columns with their appropriate information.
+	 * 
+	 * @package Prospress
+	 * @subpackage Posts
+	 * @since 0.1
+	 */
+	public function post_custom_columns( $column_name, $post_id ) {
+		global $wpdb;
+
+		// Need to manually populate $post var. Global $post contains post_status of "publish"...
+		$post = $wpdb->get_row( "SELECT post_status FROM $wpdb->posts WHERE ID = $post_id" );
+
+		if( $column_name == 'end_date' ) {
+			$end_time_gmt = get_post_end_time( $post_id );
+
+			if ( $end_time_gmt == false || empty( $end_time_gmt ) ) {
+				$m_time = $human_time = __('Not set.', 'prospress' );
+				$time_diff = 0;
+			} else {
+				$human_time = human_interval( $end_time_gmt - time(), 3 );
+				$human_time .= '<br/>' . get_post_end_time( $post_id, 'mysql', false );
+			}
+			echo '<abbr title="' . $m_time . '">';
+			echo apply_filters('post_end_date_column', $human_time, $post_id, $column_name) . '</abbr>';
+		}
+
+		if( $column_name == 'post_actions' ) {
+			$actions = apply_filters( 'completed_post_actions', array(), $post_id );
+			if( is_array( $actions ) && !empty( $actions ) ){?>
+				<div class="prospress-actions">
+					<ul class="actions-list">
+						<li class="base"><?php _e( 'Take action:', 'prospress' ) ?></li>
+					<?php foreach( $actions as $action => $attributes )
+						echo "<li class='action'><a href='" . add_query_arg ( array( 'action' => $action, 'post' => $post_id ) , $attributes['url'] ) . "'>" . $attributes['label'] . "</a></li>";
+					 ?>
+					</ul>
+				</div>
+			<?php
+			} else {
+				echo '<p>' . __( 'No action can be taken.', 'prospress' ) . '</p>';
+			}
+		}
+	}
+
 
 }

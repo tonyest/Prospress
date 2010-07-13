@@ -17,11 +17,13 @@
  * @version 0.1
  */
 
+
+
 /** @TODO Refactor this class to create a bid object. The class currently fulfills too many roles, need a separate bid object class. */
 abstract class PP_Market_System {
 
 	public $name;					// Public name of the market system e.g. "Auctions".
-	public $pp_post;				// PP_Post object for this market system.
+	public $post;				// PP_Post object for this market system.
 	protected $singular_name;		// Name of a single market system object e.g. "Auction".
 	public $bid_form_title;			// Title for the bid form.
 	public $bid_button_value;		// Text used on the submit button of the bid form.
@@ -39,6 +41,7 @@ abstract class PP_Market_System {
 
 		$this->name 			= (string)$name;
 		$this->singular_name 	= (string)$singular_name;
+		$this->post				= new PP_Post( array( 'internal_name' => $this->name, 'singular_name' => $this->singular_name, 'display_name' => $this->display_name() ) );
 		$this->bid_form_title 	= empty( $bid_form_title ) ? __( 'Make a bid', 'prospress' ) : $bid_form_title;
 		$this->bid_button_value	= empty( $bid_button_value ) ? __( 'Bid now!', 'prospress' ) : $bid_button_value;
 
@@ -117,12 +120,13 @@ abstract class PP_Market_System {
 	// Processes data taken from the post edit and add new post forms.
 	abstract protected function post_fields_submit( $post_id, $post );
 
+	// Psuedo abstract
 	public function add_bid_table_actions( $actions, $post_id ) {
 		return $actions;
 	}
 
 	/************************************************************************************************
-	 * Functions that you may wish to override, but don't need to change to create a new market system
+	 * Functions that you may wish to override, but don't need to in order to create a new market system
 	 ************************************************************************************************/
 	/**
 	 * A getter for the market system's name. This is called from various places to refer to the both the market system and
