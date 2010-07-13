@@ -2,6 +2,10 @@
 	background: url(../images/prospress35.png) no-repeat center transparent;
 }
 
+.taxonomies{
+	margin-top:10px;
+}
+
 .prospress-actions{
 	height: 2.5em;
 }

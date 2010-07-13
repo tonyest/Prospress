@@ -77,7 +77,7 @@ class PP_QMT_Core {
 	function query( $wp_query ) {
 		global $market_system;
 
-		self::$url = $market_system->get_index_url();
+		self::$url = $market_system->post->get_index_url();
 
 		$post_type = $market_system->name();
 

@@ -34,10 +34,11 @@ require_once( PP_BIDS_DIR . '/pp-auction-system.class.php' );
 /**
  * @global PP_Auction_Bid_System $market_system Stores the market system object, defaults to PP_Auction_Bid_System.
  */
-global $market_system;
+global $market_system, $market_systems;
 
 $market_system = new PP_Auction_Bid_System();
 //$market_systems[name?] = new PP_Auction_Bid_System();
+$market_systems[ $market_system->name ] = $market_system;
 
 /**
  * To save updating/installing the bids tables when they already exist and are up-to-date, check 
@@ -130,3 +131,59 @@ function pp_bids_uninstall() {
 }
 add_action( 'pp_uninstall', 'pp_bids_uninstall' );
 
+
+/**
+ * Function to test if a given user is classified as a winning bidder for a given post. 
+ * 
+ * As some market systems may have multiple winners, it is important to use this function 
+ * instead of testing a user id directly against a user id provided with get_winning_bid.
+ * 
+ * Optionally takes $user_id and $post_id, if not specified, using the ID of the currently
+ * logged in user and post in the loop.
+ */
+function is_winning_bidder( $user_id = '', $post_id = '' ){
+	global $user_ID, $post, $market_systems;
+
+	if ( empty( $post_id ) )
+		$post_id = $post->ID;
+
+	if ( $user_id == '' )
+		$user_id = $user_ID;
+	
+	$market = $market_systems[ get_post_type( $post_id ) ];
+
+	return ( $user_id == $market->get_winning_bid( $post_id )->bidder_id ) ? true : false;
+	
+}
+
+/**
+ * Get's all the details of the winning bid on a post, optionally specified with $post_id.
+ *
+ * If no post id is specified, the global $post var is used. 
+ */
+function get_winning_bid( $post_id = '' ) {
+	global $post, $market_systems;
+
+	if ( empty( $post_id ) )
+		$post_id = $post->ID;
+
+	$market = $market_systems[ get_post_type( $post_id ) ];
+
+	return $market->get_winning_bid( $post_id );
+}
+
+function get_winning_bidder( $post_id = '' ) {
+	return get_winning_bid( $post_id )->bidder_id; 
+}
+
+// Gets the number of bids for a post, optionally specified with $post_id.
+function get_bid_count( $post_id = '' ) {
+	global $post, $market_systems;
+
+	if ( empty( $post_id ) )
+		$post_id = $post->ID;
+
+	$market = $market_systems[ get_post_type( $post_id ) ];
+
+	return $market->get_bid_count( $post_id );
+}

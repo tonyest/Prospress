@@ -17,8 +17,6 @@
  * @version 0.1
  */
 
-
-
 /** @TODO Refactor this class to create a bid object. The class currently fulfills too many roles, need a separate bid object class. */
 abstract class PP_Market_System {
 
@@ -243,7 +241,7 @@ abstract class PP_Market_System {
 
 
 	/**
-	 * Get's all the details of the highest bid on a post, optionally specified with $post_id.
+	 * Gets all the details of the highest bid on a post, optionally specified with $post_id.
 	 *
 	 * If no post id is specified, the global $post var is used. 
 	 */
@@ -273,7 +271,7 @@ abstract class PP_Market_System {
 	}
 
 	/**
-	 * Get's all the details of the winning bid on a post, optionally specified with $post_id.
+	 * Gets all the details of the winning bid on a post, optionally specified with $post_id.
 	 *
 	 * At first glance, it may seem to be redundant having functions for both "max" and "winning" bid. 
 	 * However, in some market systems, the winning bid is no determined by the "max" bid. 
@@ -376,14 +374,12 @@ abstract class PP_Market_System {
 		
 		if ( $user_id == '' )
 			$user_id = $user_ID;
-		
-		$winner = $this->get_winning_bid( $post_id )->bidder_id;
 
 		return ( $user_id == $this->get_winning_bid( $post_id )->bidder_id ) ? true : false;
 	}
 
 	/**
-	 * Get's the max bid for a post and user, optionally specified with $post_id and $user_id.
+	 * Gets the max bid for a post and user, optionally specified with $post_id and $user_id.
 	 *
 	 * If no user ID or post ID is specified, the function uses the global $post ad $user_ID 
 	 * variables. 
@@ -414,7 +410,7 @@ abstract class PP_Market_System {
 			return $users_max_bid;
 	}
 
-	// Get's the number of bids for a post, optionally specified with $post_id.
+	// Gets the number of bids for a post, optionally specified with $post_id.
 	public function get_bid_count( $post_id = '' ) {
 		global $post, $wpdb;
 

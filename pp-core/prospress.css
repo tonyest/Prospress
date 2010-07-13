@@ -31,14 +31,12 @@ Index & Single Page Layouts
 	float:right;
 	width:12%;
 	margin:0 5px;
-	text-align:right;
+	text-align:center;
 	font-size:0.85em;
 }
 .price-header,.end-header{
-	text-align:right;
 	font-weight:bold;
 	font-size:1.1em;
-	margin-right:0px;
 }
 .pp-publish-details{
 	font-size:0.8em;

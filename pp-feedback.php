@@ -242,7 +242,7 @@ function pp_can_edit_feedback( $bidder_id, $from_user_id, $post ) {
 		wp_die( __( 'Error: could not determine winning bidder.', 'prospress' ) );
 	if( $bidder_id == $from_user_id && $from_user_id == $post->post_author )
 		wp_die( __( 'You can not leave feedback for yourself, in fact, you should not have even been able to win your own post!', 'prospress' ) );
-	if ( ( !$is_winning_bidder && $from_user_id != $post->post_author ) )
+	if ( $from_user_id != $post->post_author && !is_winning_bidder( $from_user_id, $post->ID ) )
 		wp_die( __( 'You can not leave feedback for this post. It appears you are neither the author author of the post nor the winning bidder.', 'prospress' ) );
 	if ( NULL == $post->post_status || 'completed' != $post->post_status )
 		wp_die( __( 'You can not leave feedback for this post. The post has either not completed or does not exist.', 'prospress' ) );
@@ -255,7 +255,7 @@ function pp_can_edit_feedback( $bidder_id, $from_user_id, $post ) {
  * transaction and then determines the contents of the feedback form.  
  **/
 function pp_edit_feedback( $post_id, $blog_ID = '' ) {
-  	global $wpdb, $user_ID, $market_system, $blog_id;
+  	global $wpdb, $user_ID, $blog_id;
 
 	$post_id = (int)$post_id;
 	$blog_ID = ( empty( $blog_ID ) ) ? $blog_id : (int)$blog_ID;
@@ -269,9 +269,9 @@ function pp_edit_feedback( $post_id, $blog_ID = '' ) {
 
 	$post = get_post( $post_id );
 
-	$bidder_id = $market_system->get_winning_bid( $post_id )->bidder_id;
+	$bidder_id = get_winning_bidder( $post_id );
 
-	$is_winning_bidder = $market_system->is_winning_bidder( $from_user_id, $post_id );
+	$is_winning_bidder = is_winning_bidder( $from_user_id, $post_id );
 
 	pp_can_edit_feedback( $bidder_id, $from_user_id, $post );
 
@@ -311,7 +311,7 @@ function pp_edit_feedback( $post_id, $blog_ID = '' ) {
  * @param feedback array with feedback fields conforming to the column structure of the feedback table.
  **/
 function pp_feedback_form_submit( $feedback ) {
-	global $wpdb, $market_system;
+	global $wpdb;
 
 	$feedback = pp_feedback_sanitize( $feedback );
 
@@ -320,9 +320,9 @@ function pp_feedback_form_submit( $feedback ) {
 
 	$post = get_post( $feedback[ 'post_id' ] );
 
-	$is_winning_bidder = $market_system->is_winning_bidder( $feedback[ 'from_user_id' ], $feedback[ 'post_id' ] );
+	$is_winning_bidder = is_winning_bidder( $feedback[ 'from_user_id' ], $feedback[ 'post_id' ] );
 
-	pp_can_edit_feedback( $market_system->get_winning_bid( $post_id )->bidder_id, $feedback[ 'from_user_id' ], $post );
+	pp_can_edit_feedback( get_winning_bidder( $post_id ), $feedback[ 'from_user_id' ], $post );
 	
 	$feedback[ 'feedback_status' ] = 'publish';
 
@@ -423,13 +423,13 @@ function pp_update_feedback( $feedback ) {
  * @return array of actions for the hook, including the feedback action
  */
 function pp_add_feedback_action( $actions, $post_id ) {
-	global $user_ID, $market_system, $blog_id;
+	global $user_ID, $blog_id;
  
 	$post = get_post( $post_id );
 
-	$is_winning_bidder = $market_system->is_winning_bidder( $user_ID, $post_id );
+	$is_winning_bidder = is_winning_bidder( $user_ID, $post_id );
 
-	if ( $post->post_status != 'completed' || $market_system->get_bid_count( $post_id ) == false || ( !$is_winning_bidder && $user_ID != $post->post_author && !is_super_admin() ) ) 
+	if ( $post->post_status != 'completed' || get_bid_count( $post_id ) == false || ( !$is_winning_bidder && $user_ID != $post->post_author && !is_super_admin() ) ) 
 		return $actions;
 
 	$feedback_url = ( is_super_admin() ) ? 'users.php?page=feedback' : 'profile.php?page=feedback';
@@ -506,10 +506,10 @@ function pp_feedback_settings_section() {
 	$edit_feedback = get_option( 'edit_feedback' );
 	?>
 	<h3><?php _e( 'Feedback' , 'prospress' )?></h3>
-	<p><?php _e( 'Allowing feedback to be modified helps make it more accurate.' , 'prospress' ); ?></p>
+	<p><?php _e( 'Allowing feedback to be amended helps to make it more accurate. Mistakes happen and circumstances change.' , 'prospress' ); ?></p>
 	<label for='edit_feedback'>
 		<input type='checkbox' value='true' name='edit_feedback' id='edit_feedback' <?php checked( (boolean)$edit_feedback ); ?> />
-		  <?php _e( 'Allow users to edit feedback.' , 'prospress' );?>
+		  <?php _e( 'Allow feedback amendment' , 'prospress' ); ?>
 	</label>
 <?php
 }

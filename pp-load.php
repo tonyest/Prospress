@@ -2,7 +2,7 @@
 /*
 Plugin Name: Prospress
 Plugin URI: http://prospress.org
-Description: Publishing and trade - two prosperous human endeavours. WordPress advances the first, Prospress the second. This plugin slips your very own auction site along side your WordPress blog.
+Description: Publishing and trade - two prosperous human endeavours. WordPress advances the first, Prospress the second. This plugin adjoins your very own auction marketplace along side your WordPress site.
 Author: Brent Shepherd
 Version: 0.1
 Author URI: http://prospress.org/
@@ -57,7 +57,7 @@ function pp_deactivate(){
 register_deactivation_hook( __FILE__, 'pp_deactivate' );
 
 function pp_uninstall(){
-	do_action( 'pp_uninstall' );
+	//do_action( 'pp_uninstall' ); // some people don't want their plugin to delete all its data upon uninstallation
 }
 register_uninstall_hook( __FILE__, 'pp_uninstall' );
 

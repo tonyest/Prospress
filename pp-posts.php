@@ -28,8 +28,8 @@ include_once( PP_POSTS_DIR . '/pp-post-sort.php' );
 include_once( PP_POSTS_DIR . '/pp-post-widgets.php' );
 
 if( is_using_custom_taxonomies() ){
-	include_once( PP_POSTS_DIR . '/pp-custom-taxonomy.php' );
-	//include_once( PP_POSTS_DIR . '/qmt/query-multiple-taxonomies.php' );
+	include_once( PP_POSTS_DIR . '/pp-taxonomy.class.php' );
+	include_once( PP_POSTS_DIR . '/qmt/query-multiple-taxonomies.php' );
 }
 
 /**
@@ -496,9 +496,12 @@ add_filter( 'pp_options_whitelist', 'pp_taxonomies_whitelist' );
  * @since 0.1
  */
 function is_pp_post_admin_page(){
-	global $post;
+	global $post, $market_systems;
 
-	/** @TODO loop through market system post objects and check ->is_post_admin_page() */
+	foreach( $market_systems as $market )
+		if( $market->post->is_post_admin_page() )
+			return true;
+	return false;
 }
 
 

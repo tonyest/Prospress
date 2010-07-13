@@ -22,7 +22,9 @@
  * @since 0.1
  */
 function pp_capabilities_settings_page() { 
-	global $wp_roles, $market_system;
+	global $wp_roles;
+	
+	$post_type = 'Auctions'; // Less confusing referring to Prospress posts as Auctions when that is the only option for a Prospress post, this will be changed once there are more options available
 
 	$role_names = $wp_roles->get_names();
 	$roles = array();
@@ -36,9 +38,9 @@ function pp_capabilities_settings_page() {
 	<?php wp_nonce_field( 'pp_capabilities_settings' ); ?>
 	<div class="prospress-capabilities">
 		<h3><?php _e( 'Capabilities', 'prospress' ); ?></h3>
-		<p><?php printf( __( 'All registered users can make bids, but you can control which users are able to publish and edit %s.', 'prospress' ), $market_system->display_name() ); ?></p>
+		<p><?php printf( __( 'All registered users can make bids, but you can control which users are able to publish and edit %s.', 'prospress' ), $post_type ); ?></p>
 		<div class="prospress-capability">
-			<h4><?php printf( __( "Publish %s", 'prospress' ), $market_system->display_name() ); ?></h4>
+			<h4><?php printf( __( "Publish %s", 'prospress' ), $post_type ); ?></h4>
 			<?php foreach ( $roles as $role ): if( $role->name == 'administrator' ) continue; ?>
 			<label for="<?php echo $role->name; ?>-publish">
 				<input type="checkbox" id="<?php echo $role->name; ?>-publish" name="<?php echo $role->name; ?>-publish"<?php checked( $role->capabilities[ 'publish_prospress_posts' ], 1 ); ?> />
@@ -47,7 +49,7 @@ function pp_capabilities_settings_page() {
 			<?php endforeach; ?>
 		</div>
 		<div class="prospress-capability">
-			<h4><?php printf( __( "Edit own %s", 'prospress' ), $market_system->display_name() ); ?></h4>
+			<h4><?php printf( __( "Edit Own %s", 'prospress' ), $post_type ); ?></h4>
 			<?php foreach ( $roles as $role ): if( $role->name == 'administrator' ) continue; ?>
 			<label for="<?php echo $role->name; ?>-edit">
 			  	<input type="checkbox" id="<?php echo $role->name; ?>-edit" name="<?php echo $role->name; ?>-edit"<?php checked( $role->capabilities[ 'edit_published_prospress_posts' ], 1 ); ?> />
@@ -56,7 +58,7 @@ function pp_capabilities_settings_page() {
 			<?php endforeach; ?>
 		</div>
 		<div class="prospress-capability">
-			<h4><?php printf( __( "Edit others' %s", 'prospress' ), $market_system->display_name() ); ?></h4>
+			<h4><?php printf( __( "Edit Others' %s", 'prospress' ), $post_type ); ?></h4>
 			<?php foreach ( $roles as $role ): if( $role->name == 'administrator' ) continue; ?>
 			<label for="<?php echo $role->name; ?>-edit-others">
 				<input type="checkbox" id="<?php echo $role->name; ?>-edit-others" name="<?php echo $role->name; ?>-edit-others"<?php checked( $role->capabilities[ 'edit_others_prospress_posts' ], 1 ); ?> />
@@ -65,7 +67,7 @@ function pp_capabilities_settings_page() {
 			<?php endforeach; ?>
 		</div>
 		<div class="prospress-capability">
-			<h4><?php printf( __( "View private %s", 'prospress' ), $market_system->display_name() ); ?></h4>
+			<h4><?php printf( __( "View Private %s", 'prospress' ), $post_type ); ?></h4>
 			<?php foreach ( $roles as $role ): if( $role->name == 'administrator' ) continue; ?>
 			<label for="<?php echo $role->name; ?>-private">
 				<input type="checkbox" id="<?php echo $role->name; ?>-private" name="<?php echo $role->name; ?>-private"<?php checked( $role->capabilities[ 'read_private_prospress_posts' ], 1 ); ?> />
@@ -98,7 +100,7 @@ add_action( 'pp_core_settings_page', 'pp_capabilities_settings_page' );
  * @since 0.1
  */
 function pp_capabilities_whitelist( $whitelist_options ) {
-	global $wp_roles, $market_system;
+	global $wp_roles;
 
     if ( $_POST['_wpnonce' ] && check_admin_referer( 'pp_capabilities_settings' ) && current_user_can( 'manage_options' ) ){
 

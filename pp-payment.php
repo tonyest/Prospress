@@ -54,13 +54,13 @@ add_action( 'pp_activation', array( $WP_Invoice, 'install' ) );
  * @return array of actions for the hook, including the payment system's action
  */
 function pp_add_payment_action( $actions, $post_id ) {
-	global $user_ID, $market_system, $blog_id, $wpdb;
+	global $user_ID, $blog_id, $wpdb;
  
 	$post = get_post( $post_id );
 
-	$is_winning_bidder = $market_system->is_winning_bidder( $user_ID, $post_id );
+	$is_winning_bidder = is_winning_bidder( $user_ID, $post_id );
 
-	if ( $post->post_status != 'completed' || $market_system->get_bid_count( $post_id ) == false || ( !$is_winning_bidder && $user_ID != $post->post_author ) ) 
+	if ( $post->post_status != 'completed' || get_bid_count( $post_id ) == false || ( !$is_winning_bidder && $user_ID != $post->post_author ) ) 
 		return $actions;
 
 	$invoice_id = $wpdb->get_var( "SELECT id FROM $wpdb->payments WHERE post_id = $post_id" );

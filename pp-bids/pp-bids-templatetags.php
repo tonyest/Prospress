@@ -3,13 +3,15 @@
  * Print the bid form
  *
  * @since 0.1
- * @global object $market_system The marketplace's market system.
- *
- * @return null Returns null if no bids appear
  */
-function the_bid_form() {
-	global $market_system;
+function the_bid_form( $post_id = '' ) {
+	global $post, $market_systems;
 
-	echo $market_system->bid_form();
+	if ( empty( $post_id ) )
+		$post_id = $post->ID;
+
+	$market = $market_systems[ get_post_type( $post_id ) ];
+
+	echo $market->bid_form();
 }
 
