@@ -20,7 +20,7 @@ class PP_Post {
 
 		$this->market_system = $market_system;
 
-		add_action( 'pp_activation', array( &$this, 'install' ) );
+		add_action( 'pp_activation', array( &$this, 'activate' ) );
 
 		add_action( 'init', array( &$this, 'register_post_type' ) );
 
@@ -28,7 +28,7 @@ class PP_Post {
 
 		add_action( 'template_redirect', array( &$this, 'template_redirects' ) );
 
-		add_action( 'pp_deactivation', array( &$this, 'post_deactivate' ) );
+		add_action( 'pp_deactivation', array( &$this, 'deactivate' ) );
 
 		add_action( 'pp_uninstall', array( &$this, 'uninstall' ) );
 		
@@ -55,7 +55,7 @@ class PP_Post {
 	 * @global PP_Market_System $market_system Prospress market system object for this marketplace.
 	 * @global WP_Rewrite $wp_rewrite WordPress Rewrite Component.
 	 */
-	public function install(){
+	public function activate(){
 		global $wpdb, $market_system, $wp_rewrite;
 
 		if( $this->get_index_id() == false ){ // Need an index page for this post type
@@ -67,6 +67,12 @@ class PP_Post {
 			$index_page['post_type'] = 'page';
 
 			wp_insert_post( $index_page );
+
+		} else { // Index page exists, make sure it's published as it get's trashed on plugin deactivation
+			$index_page = get_post( $this->get_index_id(), ARRAY_A );
+			$index_page[ 'post_status' ] = 'publish';
+
+			wp_update_post( $index_page );
 		}
 
 		$this->add_sidebars_widgets();
@@ -243,7 +249,7 @@ class PP_Post {
 			array_push( $sidebars_widgets[ $this->market_system[ 'internal_name' ] . '-index-sidebar' ], 'pp-sort-0' );
 		}
 
-		$filter_widget = '';
+		$filter_widget = get_option( 'widget_bid-filter' );
 		if( empty( $filter_widget ) ){
 
 			$filter_widget[] = array( 'title' => __( 'Price:', 'prospress' ) );
@@ -294,33 +300,6 @@ class PP_Post {
 	}
 
 
-	/** 
-	 * Clean up anything added on activation that does not need to persist incase of reactivation. 
-	 * 
-	 * @package Prospress
-	 * @subpackage Posts
-	 * @since 0.1
-	 */
-	public function post_deactivate(){
-		global $market_system;
-
-		//delete_option( 'widget_bid-filter' );
-		//delete_option( 'widget_pp-sort' );
-
-		//$sidebars_widgets = get_option( 'sidebars_widgets' );
-
-		//if( isset( $sidebars_widgets[ $this->market_system[ 'internal_name' ] . '-index-sidebar' ] ) ){
-		//	unset( $sidebars_widgets[ $this->market_system[ 'internal_name' ] . '-index-sidebar' ] );
-		//	update_option( 'sidebars_widgets', $sidebars_widgets );
-		//}
-		//if( isset( $sidebars_widgets[ $this->market_system[ 'internal_name' ] . '-single-sidebar' ] ) ){
-		//	unset( $sidebars_widgets[ $this->market_system[ 'internal_name' ] . '-single-sidebar' ] );
-		//	update_option( 'sidebars_widgets', $sidebars_widgets );
-		//}
-
-	}
-
-
 	public function get_index_id() {
 		global $wpdb;
 
@@ -343,7 +322,24 @@ class PP_Post {
 	}
 
 	/** 
-	 * When Prospress is uninstalled completely, remove that nasty index page created on activation. 
+	 * Clean up anything added on activation, including the index page. 
+	 * 
+	 * @package Prospress
+	 * @subpackage Posts
+	 * @since 0.1
+	 */
+	public function deactivate(){
+		global $market_system;
+
+		if ( !current_user_can( 'edit_plugins' ) || !function_exists( 'delete_site_option' ) )
+			return false;
+
+		wp_delete_post( $this->get_index_id() );
+	}
+
+
+	/** 
+	 * When Prospress is uninstalled completely, remove the index page created on activation. 
 	 * 
 	 * @package Prospress
 	 * @subpackage Posts
@@ -355,7 +351,7 @@ class PP_Post {
 		if ( !current_user_can( 'edit_plugins' ) || !function_exists( 'delete_site_option' ) )
 			return false;
 
-		wp_delete_post( $market_system->get_index_id() );
+		wp_delete_post( $this->get_index_id() );
 
 		$pp_post_ids = $wpdb->get_col($wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type = '" . $this->market_system[ 'internal_name' ] . "'" ) );
 

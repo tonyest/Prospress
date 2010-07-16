@@ -29,7 +29,7 @@ include_once( PP_POSTS_DIR . '/pp-post-widgets.php' );
 
 if( is_using_custom_taxonomies() ){
 	include_once( PP_POSTS_DIR . '/pp-taxonomy.class.php' );
-	include_once( PP_POSTS_DIR . '/qmt/query-multiple-taxonomies.php' );
+	//include_once( PP_POSTS_DIR . '/qmt/query-multiple-taxonomies.php' );
 }
 
 /**
@@ -163,6 +163,7 @@ function pp_post_save_postdata( $post_id, $post ) {
 			do_action( 'publish_end_date_change', $post_status, $post_end_date );
 		}
 	}
+	update_option( 'pp_show_welcome', 'false' );
 }
 add_action( 'save_post', 'pp_post_save_postdata', 10, 2 );
 
@@ -520,6 +521,21 @@ function is_using_custom_taxonomies(){
 		return false;
 }
 
+
+/** 
+ * Check is a query is for multiple Prospress taxonomies. A wrapper for
+ * the QMT function that may or may not exist. 
+ * 
+ * @package Prospress
+ * @subpackage Posts
+ * @since 0.1
+ */
+function is_pp_multitax(){
+	if( function_exists( '_is_pp_multitax' ) )
+		return _is_pp_multitax();
+	else
+		return false;
+}
 
 /** 
  * Clean up anything added on activation that does not need to persist incase of reactivation. 

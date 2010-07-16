@@ -73,6 +73,7 @@ function pp_settings_page(){
 			if( $option == 'currency_type' )
 				$currency = $value;
 		}
+		update_option( 'pp_show_welcome', 'false' );
 		$updated_message = __( 'Settings Updated.' );
 	}
 	?>
@@ -179,3 +180,27 @@ function pp_core_admin_head() {
 		wp_enqueue_style( 'prospress-admin',  PP_CORE_URL . '/prospress-admin.css' );
 }
 add_action('admin_menu', 'pp_core_admin_head');
+
+
+/**
+ * A welcome message with a few handy links to help people get started and encourage exploration of their
+ * site's new Prospress features.
+ *
+ * @package Prospress
+ * @since 0.1
+ */
+function pp_welcome_notice(){
+	global $market_systems;
+	
+	if( get_option( 'pp_show_welcome' ) == 'false' )
+		return;
+
+	$index_id = $market_systems['auctions']->post->get_index_id();
+
+	echo "<div id='prospress-welcome' class='updated fade'><p><strong>".__('Congratulations.', 'prospress')."</strong> ".
+	sprintf( __('Your WordPress site is now prosperous. Go add your first <a href="%1$s">Auction</a>, '), "post-new.php?post_type=auctions").
+	sprintf( __('modify your Auctions\' <a href="%1$s">index page</a> or '), "post.php?post=$index_id&action=edit").
+	sprintf( __('configure your Prospress marketplace <a href="%1$s">settings</a>.'), "admin.php?page=Prospress")."</p></div>";
+}
+add_action( 'admin_notices', 'pp_welcome_notice' );
+

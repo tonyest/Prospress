@@ -38,7 +38,7 @@ class PP_Taxonomy_Filter_Widget extends scbWidget {
 			if ( ! empty($tax->label) )
 				$taxonomies[$taxonomy] = $tax->label;
 		}
-		error_log('$taxonomies ' . print_r( $taxonomies, true ));
+
 		echo $this->input(array(
 			'type' => 'select',
 			'name' => 'taxonomy',

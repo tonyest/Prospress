@@ -213,7 +213,7 @@ class PP_QMT_Core {
 	}
 }
 
-function is_pp_multitax() {
+function _is_pp_multitax() {
 	global $wp_query;
 
 	return @$wp_query->is_pp_multitax;

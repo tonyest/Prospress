@@ -173,7 +173,6 @@ abstract class PP_Market_System {
 
 		$form = apply_filters( 'bid_form', $form );
 
-		//error_log('$form = ' . print_r( $form, true ) );
 		return $form;		
 	}
 	
