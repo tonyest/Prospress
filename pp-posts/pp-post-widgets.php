@@ -7,8 +7,6 @@
  * @version 0.1
  */
 
-global $pp_use_custom_taxonomies; 
-
 /**
  * Prospress custom taxonomy cloud widget
  *
@@ -69,7 +67,7 @@ class PP_Tag_Cloud_Widget extends WP_Widget {
 			return $instance['taxonomy'];
 	}
 }
-if( $pp_use_custom_taxonomies )
+if( is_using_custom_taxonomies() )
 	add_action( 'widgets_init', create_function( '', 'return register_widget("PP_Tag_Cloud_Widget");' ) );
 
 /**
@@ -122,7 +120,7 @@ class PP_Taxonomies_List_Widget extends WP_Widget {
 		return $instance;
 	}
 }
-if( $pp_use_custom_taxonomies )
+if( is_using_custom_taxonomies() )
 	add_action( 'widgets_init', create_function( '', 'return register_widget("PP_Taxonomies_List_Widget");' ) );
 
 

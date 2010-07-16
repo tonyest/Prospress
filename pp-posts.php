@@ -29,7 +29,7 @@ include_once( PP_POSTS_DIR . '/pp-post-widgets.php' );
 
 if( is_using_custom_taxonomies() ){
 	include_once( PP_POSTS_DIR . '/pp-taxonomy.class.php' );
-	//include_once( PP_POSTS_DIR . '/qmt/query-multiple-taxonomies.php' );
+	include_once( PP_POSTS_DIR . '/qmt/query-multiple-taxonomies.php' );
 }
 
 /**
