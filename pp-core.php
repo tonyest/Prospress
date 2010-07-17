@@ -22,6 +22,7 @@ function pp_core_install(){
 	if( !get_option( 'currency_type' ) )
 		update_option( 'currency_type', 'USD' ); //default to the mighty green back
 
+	update_option( 'wp_invoice_user_level','read' );
 }
 add_action( 'pp_activation', 'pp_core_install' );
 
