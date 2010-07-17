@@ -23,7 +23,7 @@ $WP_Invoice = new WP_Invoice();
 class WP_Invoice {
 
 	var $Invoice;
-	var $wp_invoice_user_level = 0;
+	var $wp_invoice_user_level = 'read';
 	var $uri;
 	var $the_path;
 	var $frontend_path;
@@ -91,11 +91,11 @@ class WP_Invoice {
 		$unsent_invoices = (count( $this->unsent_invoices) > 0 ? "(" . count( $this->unsent_invoices) . ")" : "");
 		$unpaid_invoices = (count( $this->unpaid_invoices) > 0 ? "(" . count( $this->unpaid_invoices) . ")" : "");
 
-		$wp_invoice_page_names[ 'web_invoice' ] 			= add_menu_page( 'Payments', 'Payments',  $this->wp_invoice_user_level,'outgoing_invoices', array(&$this,'outgoing_invoices' ),$this->uri."/core/images/payments16.png", $_wp_last_object_menu);		
+		$wp_invoice_page_names[ 'web_invoice' ] 		= add_menu_page( 'Payments', 'Payments',  $this->wp_invoice_user_level,'outgoing_invoices', array(&$this,'outgoing_invoices' ),$this->uri."/core/images/payments16.png", $_wp_last_object_menu);		
 		$wp_invoice_page_names[ 'outgoing_invoices' ] 	= add_submenu_page( 'outgoing_invoices', "Incoming Payments $unsent_invoices", "Incoming $unsent_invoices", $this->wp_invoice_user_level, 'outgoing_invoices', array(&$this,'outgoing_invoices' ) );
 		$wp_invoice_page_names[ 'incoming_invoices' ] 	= add_submenu_page( 'outgoing_invoices', "Outgoing Payments $unpaid_invoices", "Outgoing $unpaid_invoices", $this->wp_invoice_user_level, 'incoming_invoices', array(&$this,'incoming_invoices' ) );
 		$wp_invoice_page_names[ 'user_settings' ] 		= add_submenu_page( 'outgoing_invoices', "Settings", "Settings", $this->wp_invoice_user_level, 'user_settings_page', array(&$this,'user_settings_page' ) );
-		$wp_invoice_page_names[ 'global_settings' ] 		= add_submenu_page( 'Prospress', 'Payment Settings', 'Payment Settings', $this->admin_user_level, 'invoice_settings', array(&$this,'settings_page' ) );
+		$wp_invoice_page_names[ 'global_settings' ] 	= add_submenu_page( 'Prospress', 'Payment Settings', 'Payment Settings', $this->admin_user_level, 'invoice_settings', array(&$this,'settings_page' ) );
 
 		$wp_invoice_page_names[ 'make_payment' ] = add_submenu_page( 'hidden', "View Invoice", "View Invoice", $this->wp_invoice_user_level, 'make_payment', array(&$this,'make_payment' ) );
 		$wp_invoice_page_names[ 'send_invoice' ] = add_submenu_page( 'hidden', "Send Invoice", "Send Invoice", $this->wp_invoice_user_level, 'send_invoice', array(&$this,'send_invoice' ) );
@@ -614,7 +614,7 @@ class WP_Invoice {
 			add_option( 'wp_invoice_business_address', '' );
 			add_option( 'wp_invoice_show_business_address', 'no' );
 			add_option( 'wp_invoice_payment_method','' );
-			add_option( 'wp_invoice_user_level','level_8' );
+			add_option( 'wp_invoice_user_level','read' );
 			add_option( 'wp_invoice_web_invoice_page','' );
 			add_option( 'wp_invoice_where_to_display','overwrite' );
 			add_option( 'wp_invoice_paypal_address','' );
