@@ -38,7 +38,7 @@ function pp_get_the_term_list(){
 		echo get_the_term_list( $post->ID, $pp_tax_name, $pp_tax_type[ 'labels' ][ 'singular_label' ] . ': ', ', ', '' );		
 		echo '</div>';
 	}
-	
+
 }
 
 
@@ -49,7 +49,7 @@ function pp_get_the_term_list(){
  * @param int $post_id Optional, default 0. The post id for which you want the max bid. 
  * @return returns false if post has no end time, or a string representing the time stamp or sql
  */
-function get_post_end_time( $post_id, $type = 'timestamp', $gmt = true ) {
+function get_post_end_time( $post_id, $type = 'timestamp', $timezone = 'gmt' ) {
 	global $post;
 
 	if( empty( $post_id ) )
@@ -65,7 +65,7 @@ function get_post_end_time( $post_id, $type = 'timestamp', $gmt = true ) {
 	if( $time == false )
 	 	return false;
 
-	if( $gmt == false ){
+	if( $timezone = 'gmt' ){
 		$time = date( 'Y-m-d H:i:s', $time );
 		$time = get_date_from_gmt( $time );
 		if( $type == 'timestamp' ){
@@ -92,12 +92,12 @@ function get_post_end_time( $post_id, $type = 'timestamp', $gmt = true ) {
  */
 function the_post_end_time( $post_id = '', $units = 3, $separator = ' ' ) {
 
-	$post_end = get_post_end_time( $post_id, 'timestamp', $gmt = true );
+	$post_end = get_post_end_time( $post_id, 'timestamp', 'gmt' );
 
 	if( $post_end == false )
 	 	echo __('Now', 'prospress' );
 	elseif( $post_end > ( 60 * 60 * 24 * 7 ) ) // Show date if ending more than a week in the future
-		echo get_post_end_time( $post_id, 'mysql', false );
+		echo get_post_end_time( $post_id, 'mysql', 'user' );
 	else
 		echo human_interval( $post_end - time(), $units, $separator );
 }

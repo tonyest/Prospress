@@ -73,6 +73,8 @@ class PP_Post {
 			$index_page[ 'post_status' ] = 'publish';
 
 			wp_update_post( $index_page );
+
+			update_option( 'pp_show_welcome', 'false' );
 		}
 
 		$this->add_sidebars_widgets();
@@ -84,7 +86,7 @@ class PP_Post {
 	 * be presented in a special way. They also need to be sorted and filtered to make them easier to
 	 * browse and compare. That's why this function redirects individual Prospress posts to a default
 	 * template for single posts - pp-single.php - and the auto-generated Prospress index page to a 
-	 * special index template - pp-index.php. 
+	 * special index template - pp-index.php.
 	 * 
 	 * However, before doing so, it provides a hook for overriding the templates and also checks if the 
 	 * current theme has Prospress compatible templates.
@@ -413,7 +415,7 @@ class PP_Post {
 				$time_diff = 0;
 			} else {
 				$human_time = human_interval( $end_time_gmt - time(), 3 );
-				$human_time .= '<br/>' . get_post_end_time( $post_id, 'mysql', false );
+				$human_time .= '<br/>' . get_post_end_time( $post_id, 'mysql', 'user' );
 			}
 			echo '<abbr title="' . $m_time . '">';
 			echo apply_filters('post_end_date_column', $human_time, $post_id, $column_name) . '</abbr>';

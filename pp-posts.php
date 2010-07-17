@@ -47,8 +47,6 @@ if( is_using_custom_taxonomies() ){
 function pp_posts_install(){
 	global $wpdb, $wp_rewrite;
 
-	//pp_add_sidebars_widgets();
-
 	pp_default_caps();
 
 	$wp_rewrite->flush_rules();
@@ -281,7 +279,7 @@ function pp_post_submit_meta_box() {
 
 	//Set up post end date and time variables
 	if ( 0 != $post->ID ) {
-		$post_end = get_post_end_time( $post->ID, 'mysql', false );
+		$post_end = get_post_end_time( $post->ID, 'mysql', 'user' );
 
 		if ( !empty( $post_end ) && '0000-00-00 00:00:00' != $post_end )
 			$end_date = date_i18n( $datef, strtotime( $post_end ) );
@@ -310,10 +308,6 @@ add_action('post_submitbox_misc_actions', 'pp_post_submit_meta_box' );
  * @package Prospress
  * @subpackage Posts
  * @since 0.1
- *
- * @param unknown_type $edit
- * @param unknown_type $tab_index
- * @param unknown_type $multi
  */
 function pp_touch_end_time( $edit = 1, $tab_index = 0, $multi = 0 ) {
 	global $wp_locale, $post, $comment;
@@ -329,7 +323,7 @@ function pp_touch_end_time( $edit = 1, $tab_index = 0, $multi = 0 ) {
 	$time_adj = time() + ( get_option( 'gmt_offset' ) * 3600 );
 	$time_adj_end = time() + 604800 + ( get_option( 'gmt_offset' ) * 3600 );
 
-	$post_end_date = get_post_end_time( $post->ID, 'mysql', false );
+	$post_end_date = get_post_end_time( $post->ID, 'mysql', 'user' );
 	if(empty( $post_end_date))
 		$post_end_date = gmdate( 'Y-m-d H:i:s', ( time() + 604800 + ( get_option( 'gmt_offset' ) * 3600 ) ) );
 
@@ -533,9 +527,12 @@ function is_using_custom_taxonomies(){
 function is_pp_multitax(){
 	if( function_exists( '_is_pp_multitax' ) )
 		return _is_pp_multitax();
+	elseif( function_exists( 'is_multitax' ) )
+		return is_multitax();
 	else
 		return false;
 }
+
 
 /** 
  * Clean up anything added on activation that does not need to persist incase of reactivation. 
@@ -545,7 +542,7 @@ function is_pp_multitax(){
  * @since 0.1
  */
 function pp_posts_deactivate(){
-	global $market_system, $wp_roles;
+	global $wp_roles;
 
 	foreach ( $wp_roles->get_names() as $key => $role ) {
 
