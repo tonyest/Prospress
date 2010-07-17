@@ -108,7 +108,7 @@ class PP_Taxonomy {
 			<?php
 			}else{ ?>
 				<p><?php printf( __( 'Taxonomies provide a way to categorise items based on common characteristics. Well thought out taxonomies make it easier for visitors to find items matching specific criteria.', 'prospress' ), $this->market_system[ 'display_name' ] ) ?></p>
-				<p><?php _e( 'An obvious taxonomy for a 17th Century Dutch Masterpiece auction site would be <i>Artist</i>. The taxonomy would likely include <i>Vermeer</i>, <i>Rembrandt</i> and <i>Cuyp</i>.', 'prospress' ) ?></p>
+				<p><?php _e( 'For example, auctions of Dutch Masterpieces could use an <i>Artist</i> taxonomy, which includes <i>Vermeer</i>, <i>Rembrandt</i> and <i>Cuyp</i>.', 'prospress' ) ?></p>
 				<p><a href="<?php echo $add_url; ?>" class="button add-new-h2"><?php _e( "Add New", 'prospress' ); ?></a></p>
 			<?php
 			}

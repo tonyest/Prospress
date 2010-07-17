@@ -10,8 +10,6 @@
  * @version 0.1
  */
 
-global $market_system;
-
 if ( !defined( 'PP_POSTS_DIR' ) )
 	define( 'PP_POSTS_DIR', PP_PLUGIN_DIR . '/pp-posts' );
 if ( !defined( 'PP_POSTS_URL' ) )
@@ -41,7 +39,6 @@ if( is_using_custom_taxonomies() ){
  * @uses get_role() WP function to get the administrator role object and add capabilities to it.
  *
  * @global wpdb $wpdb WordPress DB access object.
- * @global PP_Market_System $market_system Prospress market system object for this marketplace.
  * @global WP_Rewrite $wp_rewrite WordPress Rewrite Component.
  */
 function pp_posts_install(){
@@ -449,10 +446,11 @@ add_filter( 'pp_sort_options', 'pp_post_sort_options' );
  * @since 0.1
  */
 function pp_taxonomies_option_page() {
-	global $market_system;
+	global $market_systems;
+	$market = $market_systems['auctions'];
 ?>
 	<h3><?php _e( 'Custom Taxonomies', 'prospress' )?></h3>
-	<p><?php echo sprintf( __( 'Custom taxonomies provide a way to classify %s. If your site lists more than 20 %s at a time, you should use custom taxonomies.', 'prospress' ), $market_system->display_name(), $market_system->display_name() ); ?></p>
+	<p><?php echo sprintf( __( 'Custom taxonomies provide a way to classify %s. If your site lists more than 20 %s at a time, you should use custom taxonomies.', 'prospress' ), $market->display_name(), $market->display_name() ); ?></p>
 
 	<label for="pp_use_custom_taxonomies">
 		<input type="checkbox" value='true' id="pp_use_custom_taxonomies" name="pp_use_custom_taxonomies"<?php checked( (boolean)get_option( 'pp_use_custom_taxonomies' ) ); ?> />

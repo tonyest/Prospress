@@ -823,7 +823,7 @@ abstract class PP_Market_System {
 	/**
 	 * The logic for the market system class.
 	 * 
-	 * 
+	 * Handles AJAX bid submission and makes sure a user is logged in before making a bid.
 	 *
 	 **/
 	// Hooked to init to determine if a bid has been submitted. If it has, bid_form_submit is called.

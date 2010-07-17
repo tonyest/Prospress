@@ -11,9 +11,9 @@
 
 class PP_Sort_Widget extends WP_Widget {
 	function PP_Sort_Widget() {
-		global $market_system; 
+		global $market_systems; 
 		/* Widget settings. */
-		$widget_ops = array( 'classname' => 'pp-sort', 'description' => sprintf( __('Sort %s in your marketplace.', 'prospress' ), $market_system->name() ) );
+		$widget_ops = array( 'classname' => 'pp-sort', 'description' => sprintf( __('Sort %s in your marketplace.', 'prospress' ), $market_systems['auctions']->name() ) );
 
 		/* Widget control settings. */
 		$control_ops = array( 'id_base' => 'pp-sort' );
@@ -100,24 +100,24 @@ class PP_Sort_Query {
 	}
 
 	static function add_filters( $obj ) {
-		global $market_system;
+		global $market_systems;
 
 		// Don't touch the main query or queries for non-Prospress posts
-		if ( $GLOBALS['wp_query'] == $obj || $obj->query_vars['post_type'] != $market_system->name() )
+		if ( $GLOBALS[ 'wp_query' ] == $obj || !array_key_exists( $obj->query_vars['post_type'], $market_systems ) )
 			return;
 
-		add_filter('posts_orderby', array(__CLASS__, 'posts_orderby'));
+		add_filter( 'posts_orderby', array(__CLASS__, 'posts_orderby' ) );
 	}
 
 	static function posts_orderby( $sql ) {
-		remove_filter(current_filter(), array(__CLASS__, __FUNCTION__));
+		remove_filter( current_filter(), array( __CLASS__, __FUNCTION__ ) );
 
 		global $wpdb;
 
 		if ( !$sort = trim( @$_GET[ 'pp-sort' ] ) )
 			return $sql;
 
-		list($orderby, $order) = explode('-', $sort);
+		list( $orderby, $order ) = explode( '-', $sort );
 
 		if ( 'asc' == $order )
 			$order = 'ASC';
@@ -141,18 +141,14 @@ class PP_Sort_Query {
 						WHERE $wpdb->postmeta.post_id = $wpdb->posts.ID
 						AND $wpdb->postmeta.meta_key = '" . self::START_PRICE . "'
 						)) $order";
-		}
-
-		if ( 'end' == $orderby ) {
+		} elseif ( 'end' == $orderby ) {
 			$sql = "(
 				SELECT meta_value
 				FROM $wpdb->postmeta
 				WHERE $wpdb->postmeta.post_id = $wpdb->posts.ID
 				AND $wpdb->postmeta.meta_key = '" . self::POST_END . "'
 			) $order";
-		}
-
-		if ( 'post' == $orderby ) {
+		} elseif ( 'post' == $orderby ) {
 			$sql = "$wpdb->posts.post_date $order";
 		}
 

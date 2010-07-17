@@ -21,7 +21,7 @@ class PP_Tag_Cloud_Widget extends WP_Widget {
 
 	function widget( $args, $instance ) {
 		extract( $args );
-		$current_taxonomy = $this->_get_current_taxonomy($instance);
+		$current_taxonomy = $this->get_current_taxonomy($instance);
 		if ( !empty($instance['title']) ) {
 			$title = $instance['title'];
 		} else {
@@ -48,7 +48,7 @@ class PP_Tag_Cloud_Widget extends WP_Widget {
 	function form( $instance ) {
 		global $market_system; 
 
-		$current_taxonomy = $this->_get_current_taxonomy($instance);
+		$current_taxonomy = $this->get_current_taxonomy($instance);
 		?>
 		<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:') ?></label>
 		<input type="text" class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" value="<?php if (isset ( $instance['title'])) {echo esc_attr( $instance['title'] );} ?>" /></p>
@@ -62,7 +62,7 @@ class PP_Tag_Cloud_Widget extends WP_Widget {
 		</select></p><?php
 	}
 
-	function _get_current_taxonomy($instance) {
+	private function get_current_taxonomy($instance) {
 		if ( !empty($instance['taxonomy']) && taxonomy_exists($instance['taxonomy']) )
 			return $instance['taxonomy'];
 	}

@@ -4,8 +4,9 @@
 class Bid_Filter_Widget extends WP_Widget {
 
 	function Bid_Filter_Widget() {
-		global $market_system;
-		$widget_ops = array('description' => sprintf( __('Filter %s by price.', 'prospress' ), $market_system->name() ) );
+		global $market_systems;
+		$market = $market_systems['auctions'];
+		$widget_ops = array('description' => sprintf( __('Filter %s by price.', 'prospress' ), $market->name() ) );
 		$this->WP_Widget('bid-filter', __('Prospress Price Filter', 'prospress' ), $widget_ops);
 	}
 
@@ -72,10 +73,10 @@ class Bid_Filter_Query {
 	}
 
 	static function add_filters($obj) {
-		global $market_system;
+		global $market_systems;
 
 		// Don't touch the main query or queries for non-Prospress posts
-		if ( $GLOBALS['wp_query'] == $obj || $obj->query_vars['post_type'] != $market_system->name() )
+		if ( $GLOBALS[ 'wp_query' ] == $obj || !array_key_exists( $obj->query_vars['post_type'], $market_systems ) )
 			return;
 
 		add_filter('posts_where', array(__CLASS__, 'posts_where'));

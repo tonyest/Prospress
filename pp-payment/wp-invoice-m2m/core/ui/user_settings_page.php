@@ -63,7 +63,7 @@
 			<tr>
 				<th width="200">Basic Settings</th>
 				<td>
-				<?php echo wpi_checkbox("group=wp_invoice_user_settings&name=show_address_on_invoice&label=Display my address on invoice page.&value=true", $user_settings[show_address_on_invoice]); ?><br />
+				<?php echo wpi_checkbox("group=wp_invoice_user_settings&name=show_address_on_invoice&label=Display my address on invoice page (set your address under Profile).&value=true", $user_settings[show_address_on_invoice]); ?><br />
 				Tax Label: <?php echo wpi_input("group=wp_invoice_user_settings&name=tax_label&value={$user_settings[tax_label]}&style=width: 80px;"); ?><br />
 				</td>
 			</tr>
