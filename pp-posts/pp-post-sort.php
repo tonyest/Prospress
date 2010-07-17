@@ -102,10 +102,12 @@ class PP_Sort_Query {
 	static function add_filters( $obj ) {
 		global $market_systems;
 
+		echo '<code>filter about to be added; </code>';
 		// Don't touch the main query or queries for non-Prospress posts
 		if ( $GLOBALS[ 'wp_query' ] == $obj || !array_key_exists( $obj->query_vars['post_type'], $market_systems ) )
 			return;
 
+		echo '<code>filter being added</code>';
 		add_filter( 'posts_orderby', array(__CLASS__, 'posts_orderby' ) );
 	}
 
@@ -117,6 +119,7 @@ class PP_Sort_Query {
 		if ( !$sort = trim( @$_GET[ 'pp-sort' ] ) )
 			return $sql;
 
+		var_dump($sort);
 		list( $orderby, $order ) = explode( '-', $sort );
 
 		if ( 'asc' == $order )
