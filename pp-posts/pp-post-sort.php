@@ -102,7 +102,6 @@ class PP_Sort_Query {
 	static function add_filters( $obj ) {
 		global $market_systems;
 
-		echo '<code>filter about to be added; </code>';
 		// Don't touch the main query or queries for non-Prospress posts
 		if ( $GLOBALS[ 'wp_query' ] == $obj || !array_key_exists( $obj->query_vars['post_type'], $market_systems ) )
 			return;
@@ -116,6 +115,7 @@ class PP_Sort_Query {
 
 		global $wpdb;
 
+		var_dump($_GET);
 		if ( !$sort = trim( @$_GET[ 'pp-sort' ] ) )
 			return $sql;
 
