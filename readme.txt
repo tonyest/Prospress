@@ -11,7 +11,7 @@ Add an auction marketplace to your WordPress site.
 
 Publishing and trade - two prosperous human endeavours. WordPress advances the first, Prospress the second. 
 
-You can add an auction marketplace to your WordPress site with Prospress.
+How? Prospress adds an auction marketplace to your WordPress site.
 
 After a 30 second install, your community can post auctions, make bids, give each other feedback and make payments to each other.
 
