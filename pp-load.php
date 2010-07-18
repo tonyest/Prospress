@@ -2,7 +2,7 @@
 /*
 Plugin Name: Prospress
 Plugin URI: http://prospress.org
-Description: Publishing and trade - two prosperous human endeavours. WordPress advances the first, Prospress the second. This plugin adjoins your very own auction marketplace along side your WordPress site.
+Description: Add an auction marketplace to your WordPress site.
 Author: Brent Shepherd
 Version: 0.1
 Author URI: http://prospress.org/
