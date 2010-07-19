@@ -75,11 +75,13 @@ class PP_QMT_Core {
 	}
 
 	function query( $wp_query ) {
-		global $market_system;
+		global $market_systems;
+		
+		$market = $market_systems['auctions'];
 
-		self::$url = $market_system->post->get_index_url();
+		self::$url = $market->get_index_permalink();
 
-		$post_type = $market_system->name();
+		$post_type = $market->name();
 
 		$query = array();
 		foreach ( get_object_taxonomies($post_type) as $taxname ) {
@@ -199,7 +201,7 @@ class PP_QMT_Core {
 	}
 
 	public function get_url( $key, $value, $base = '' ) {
-		global $wpdb, $market_system;
+		global $wpdb;
 
 		if ( empty( $base ) )
 			$base = self::$url;

@@ -17,13 +17,11 @@
  * @version 0.1
  */
 
-/** @TODO Refactor this class to create a bid object. The class currently fulfills too many roles, need a separate bid object class. */
 abstract class PP_Market_System {
 
 	public $name;					// Public name of the market system e.g. "Auctions".
-	public $post;				// PP_Post object for this market system.
 	protected $singular_name;		// Name of a single market system object e.g. "Auction".
-	public $bid_form_title;			// Title for the bid form.
+	public $post;					// PP_Post object for this market system.
 	public $bid_button_value;		// Text used on the submit button of the bid form.
 	public $post_fields;			// Array of flags representing the fields which the market system implements e.g. array( 'post_fields' )
 	public $post_table_columns;		// Array of arrays, each array is used to create a column in the post tables. By default it adds two columns, 
@@ -31,16 +29,16 @@ abstract class PP_Market_System {
 									// e.g. 'current_bid' => array( 'title' => 'Winning Bid', 'function' => 'get_winning_bid' ), 'bid_count' => array( 'title => 'Number of Bids', 'function' => 'get_bid_count' )
 	public $bid_table_headings;		// Array of name/value pairs to be used as column headings when printing table of bids. 
 									// e.g. 'bid_id' => 'Bid ID', 'post_id' => 'Post', 'bid_value' => 'Amount', 'bid_date' => 'Date'
-	private $capability = 'read';	// the capability for making bids and viewing bid menus etc.
+	public $taxonomy;				// A PP_Taxonomy object for this post type
 	protected $bid_status;
 	protected $message;
+	private $capability = 'read';	// the capability for making bids and viewing bid menus etc.
 
-	public function __construct( $name, $singular_name, $bid_form_title = "", $bid_button_value = "", $post_fields = array(), $post_table_columns = array(), $bid_table_headings = array() ) {
+	public function __construct( $name, $singular_name, $bid_button_value = "", $post_fields = array(), $post_table_columns = array(), $bid_table_headings = array() ) {
 
 		$this->name 			= (string)$name;
 		$this->singular_name 	= (string)$singular_name;
 		$this->post				= new PP_Post( array( 'internal_name' => $this->name, 'singular_name' => $this->singular_name, 'display_name' => $this->display_name() ) );
-		$this->bid_form_title 	= empty( $bid_form_title ) ? __( 'Make a bid', 'prospress' ) : $bid_form_title;
 		$this->bid_button_value	= empty( $bid_button_value ) ? __( 'Bid now!', 'prospress' ) : $bid_button_value;
 
 		if( empty( $post_table_columns ) || !is_array( $post_table_columns ) ){
@@ -70,7 +68,7 @@ abstract class PP_Market_System {
 
 		if( !empty( $this->post_fields ) && in_array( 'post_fields', $this->post_fields ) ){
 			add_action( 'admin_menu', array( &$this, 'post_fields_meta_box' ) );
-			add_action( 'save_post', array( &$this, 'post_fields_submit' ), 10, 2 );
+			add_action( 'save_post', array( &$this, 'post_fields_save' ), 10, 2 );
 		}
 
 		if( !empty( $this->post_table_columns ) && is_array( $this->post_table_columns ) ){
@@ -95,6 +93,8 @@ abstract class PP_Market_System {
 		
 		add_filter( 'pp_sort_options', array( &$this, 'add_sort_options' ) );
 
+		if( is_using_custom_taxonomies() && class_exists( 'PP_Taxonomy' ) )
+			$this->taxonomy = new PP_Taxonomy( array( 'internal_name' => $this->name, 'singular_name' => $this->singular_name, 'display_name' => $this->display_name() ) );
 	}
 
 	/************************************************************************************************
@@ -116,7 +116,7 @@ abstract class PP_Market_System {
 	abstract public function post_fields();
 
 	// Processes data taken from the post edit and add new post forms.
-	abstract protected function post_fields_submit( $post_id, $post );
+	abstract protected function post_fields_save( $post_id, $post );
 
 	// Psuedo abstract
 	public function add_bid_table_actions( $actions, $post_id ) {
@@ -505,6 +505,26 @@ abstract class PP_Market_System {
 		}
 	}
 
+
+	/**
+	 * Convenience wrapper for the post object's get index id function.
+	 */
+	public function get_index_id() {
+		return $this->post->get_index_id();
+	}
+
+	/**
+	 * Convenience wrapper for the post object's get index permalink function.
+	 */
+	public function get_index_permalink() {
+
+		$index_id = $this->get_index_id();
+
+		if( $index_id == false )
+			return false;
+		else 
+			return get_permalink( $index_id );
+	}
 
 	/************************************************************************************************
 	 * Private Functions: don't worry about these, unless you want to get really tricky.

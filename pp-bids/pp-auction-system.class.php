@@ -18,7 +18,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		if ( !defined( 'BID_INCREMENT' ) )
 			define( 'BID_INCREMENT', '0.05' );
 
-		parent::__construct( __( 'auctions', 'prospress' ), __( 'auction', 'prospress' ), __( 'Auction Bid', 'prospress' ), __('Bid!', 'prospress' ), array( 'post_fields' ) );
+		parent::__construct( __( 'auctions', 'prospress' ), __( 'auction', 'prospress' ), __('Bid!', 'prospress' ), array( 'post_fields' ) );
 	}
 
 	protected function bid_form_fields( $post_id = NULL ) { 
@@ -127,9 +127,9 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		$posts_max_bid			= $this->get_max_bid( $bid[ 'post_id' ] );
 		$current_winning_bid_id	= $this->get_winning_bid( $bid[ 'post_id' ] )->bid_id;
 
-		if( $this->message_id == 0 ) { //if first bid
-			$start_price = get_post_meta( $post_id, 'start_price', true );
-			if( $start_price ){
+		if( $this->message_id == 0 ) { // first bid
+			$start_price = get_post_meta( $bid[ 'post_id' ], 'start_price', true );
+			if( (float)$start_price != 0 ){
 				$new_winning_bid_value = $start_price;
 			} else {
 				$new_winning_bid_value = ( $bid[ 'bid_value' ] * BID_INCREMENT );
@@ -187,7 +187,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		<?php
 	}
 
-	public function post_fields_submit( $post_id, $post ){
+	public function post_fields_save( $post_id, $post ){
 		global $wpdb;
 
 		if(wp_is_post_revision($post_id))
@@ -199,7 +199,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 			return $post_id;
 
 		/** @TODO casting start_price as a float and removing ',' and ' ' will cause a bug for international currency formats. */
-		$_POST[ 'start_price' ] = (float)str_replace( array(",", " "), "", $_POST[ 'start_price' ]);
+		$_POST[ 'start_price' ] = (float)str_replace( array(",", " "), "", $_POST[ 'start_price' ] );
 
 		// Verify options nonce because save_post can be triggered at other times
 		if ( !isset( $_POST[ 'selling_options_nonce' ] ) || !wp_verify_nonce( $_POST['selling_options_nonce'], __FILE__) ) {

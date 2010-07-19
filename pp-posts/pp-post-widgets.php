@@ -71,16 +71,16 @@ if( is_using_custom_taxonomies() )
 	add_action( 'widgets_init', create_function( '', 'return register_widget("PP_Tag_Cloud_Widget");' ) );
 
 /**
- * A list of the taxonomy items that apply to the current post
+ * A list of the taxonomy items that apply to the current Prospress post
  *
  * @since 0.1
  */
 class PP_Taxonomies_List_Widget extends WP_Widget {
 
 	function PP_Taxonomies_List_Widget() {
-		global $market_system;
+		global $market_systems;
 
-		$widget_ops = array( 'description' => sprintf( __('List of taxonomy items that apply to a single %s', 'prospress' ), $market_system->singular_name() ) );
+		$widget_ops = array( 'description' => sprintf( __('List of taxonomy items that apply to a single %s', 'prospress' ), $market_systems['auctions']->singular_name() ) );
 		$this->WP_Widget( 'pp_single_tax', __( 'Prospress Taxonomy List' ), $widget_ops );
 	}
 
@@ -97,7 +97,9 @@ class PP_Taxonomies_List_Widget extends WP_Widget {
 		echo ( $instance['title'] ) ? $instance['title'] : __( 'Details:', 'prospress' );
 		echo $after_title;
 
+		echo '<div class="textwidget">';
 		pp_get_the_term_list();
+		echo '</div>';
 
 		echo $after_widget;
 	}

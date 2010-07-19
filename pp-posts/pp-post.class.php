@@ -14,7 +14,6 @@
 class PP_Post {
 
 	private $market_system;	// An array with details of the market system to which this post object belongs.
-	private $taxonomy;		// An PP_Taxonomy object for this post type
 
 	public function __construct( $market_system ) {
 
@@ -38,8 +37,6 @@ class PP_Post {
 
 		add_action( 'manage_posts_custom_column', array( &$this, 'post_custom_columns' ), 10, 2 );
 
-		if( is_using_custom_taxonomies() ) //&& class_exists( 'PP_Taxonomy' ) )
-			$this->taxonomy = new PP_Taxonomy( $this->market_system );
 	}
 
 
@@ -313,7 +310,7 @@ class PP_Post {
 			return $index_id;
 	}
 
-	public function get_index_url() {
+	public function get_index_permalink() {
 
 		$index_id = $this->get_index_id();
 

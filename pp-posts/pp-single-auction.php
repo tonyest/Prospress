@@ -31,7 +31,7 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 			</div>
 
 			<div id="nav-below" class="navigation">
-				<div class="nav-index"><a href="<?php pp_get_index_permalink(); ?>"><?php printf( __("&larr; Return to %s Index", 'Prospress'), $market->name() ); ?></a></div>
+				<div class="nav-index"><a href="<?php echo $market->get_index_permalink(); ?>"><?php printf( __("&larr; Return to %s Index", 'Prospress'), $market->name() ); ?></a></div>
 			</div>
 
 			<?php comments_template( '', true ); ?>

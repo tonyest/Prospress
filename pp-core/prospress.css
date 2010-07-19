@@ -44,7 +44,7 @@ Index & Single Page Layouts
 .pp-excerpt,.pp-content{
 	clear:both;
 }
-.pp-publish-date,.pp-end-date,.pp-tax,.pp-author,.pp-author-feedback{
+.pp-publish-date,.pp-end-date,.pp-author,.pp-author-feedback{
 	float:left;
 	clear:both;
 	margin: 0.5em 0;

@@ -41,6 +41,10 @@ class PP_Taxonomy {
 			$this->manage_taxonomies();
 	}
 
+	public function get_taxonomies() {
+		return get_option( $this->name );
+	}
+
 	public function manage_taxonomies( $message = '' ) {
 		?>
 		<div class="wrap">

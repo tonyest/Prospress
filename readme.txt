@@ -11,15 +11,15 @@ Add an auction marketplace to your WordPress site.
 
 Prospress is a new plugin that goes where no plugin has gone before.
 
-After Prospress' 30 second install, your WordPress site will have its very own auction marketplace. Your registered users will be able to post auctions, place bids, provide feedback and make payments. Everything need for a fully functioning marketplace.
+After its 30 second install, your WordPress site will have its very own auction marketplace. Your registered users will be able to post auctions, place bids, provide feedback and make payments. Everything needed for a fully functioning marketplace.
 
-Prospress is so new, it's still in beta. So please only use Prospress on test sites for now. There will be bugs. Those bugs will be fixed, but it's better they occur in a sandbox.
+One caveat - Prospress is so new, it's still in beta. So please only use Prospress on test sites for now. There will be bugs. Those bugs will be fixed, but it's better they occur in a sandbox.
 
 = Why is Prospress here when it's beta? =
 
-If you're the type who can't wait to try a game changer, this beta is for you. Feel free to download, install & explore what you'll soon be able to do with WordPress, but please do so on a test site.
+For those who can't wait to try a game changer, this beta is for you. Download, install & explore what you'll soon be able to do with WordPress, but please do so on a test site.
 
-If you'd prefer to wait for a stable release, we've made a special [demo site](http://demo.prospress.org/auctions/) just for you. You can register, post auctions & make bids on some priceless paintings to experience Prospress in action.
+If you'd prefer to wait for a stable release, we've made a special [demo site](http://demo.prospress.org/auctions/) for you. You can register, post auctions & make bids on some priceless paintings in the safety of a Prospress.org sandbox.
 
 = Want to know more? =
 
@@ -86,7 +86,7 @@ In the Prospress [support forums](http://prospress.org/forums "Prospress Forums"
 
 Don't you hate it when you can't learn how to use new software? So do we, which is why Prospress *will* have a codex. But at this stage, too many hours have been consumed writing code, leaving too few for writing documentation.
 
-If you're savvy at learning new software, and could improve this sentence, you can help document Prospress. [Contact us](http://prospress.org/contact "Prospress Contact Page") to get an early-stage author account for the Prospress Codex.
+If have a knack for learning new software, and could improve this sentence, you can help document Prospress. [Contact us](http://prospress.org/contact "Prospress Contact Page") to get an early-stage author account for the Prospress Codex.
 
 = Where can I report a bug? =
 
@@ -102,7 +102,7 @@ GitHub makes it easy to contribute. They also have great [documentation](http://
 
 = Is that it? =
 
-Nope. There are a few surprises but you'll have to download & explore Prospress to discover.
+Nope. There are a few surprises but you'll have to download & explore Prospress to find them.
 
 
 == Screenshots ==
