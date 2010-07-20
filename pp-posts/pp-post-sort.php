@@ -36,7 +36,7 @@ class PP_Sort_Widget extends WP_Widget {
 		echo $after_title;
 
 		echo '<form id="pp-sort" method="get" action="">';
-		echo '<select name="pp-sort">';
+		echo '<select id="pp-sort">';
 		foreach ( $pp_sort_options as $key => $label ) {
 			if( $instance[ $key ] != 'on' )
 				continue;
