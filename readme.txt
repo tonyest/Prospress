@@ -42,19 +42,21 @@ Just because Prospress does so much doesn't mean its installation should be toug
 
 If you have a question not answered here, please ask in the Prospress [support forums](http://prospress.org/forums).
 
-= Is this an auction site in a box? =
+= How is Prospress different to other shopping cart plugins =
 
-Yep. You can pretty much create your own eBay, right along side your existing WordPress site.
+There are many great shopping cart plugins for WordPress; Prospress isn’t one of them. 
+
+With Prospress, registered users can post their own auctions, place bids on the auctions of others, provide feedback and make payments. It creates a many-to-many exchange that differs to the one-to-many exchange of a shopping cart plugin.
 
 = Do I need a special theme to use Prospress? =
 
-Prospress attempts to work out of the box with your existing theme. 
+Prospress attempts to work with your existing theme. 
 
-Due to the gamut of themes, it's not possible to support all themes, so the built-in templates may display with quirks. If this happens on your site, not to worry, you can add two custom template files to your theme's directory - `index-auctions.php` and `single-auction.php`.
+Due to the gamut of themes, it's not possible to support them all, so the built-in templates may display with quirks. If this happens on your site, not to worry, you can add two custom template files to your theme's directory - `index-auctions.php` and `single-auction.php`.
 
 If you're comfortable with HTML/CSS, check out the `pp-index-auctions.php` and `pp-single-auction.php` for a guide. It's really quite easy to make your own templates. 
 
-If you need help, make a post in the Prospress [Theme Compatibility forum](http://prospress.org/forums/forum/theme-compatibility). 
+If you need help, ask in the Prospress [Theme Compatibility forum](http://prospress.org/forums/forum/theme-compatibility). 
 
 = Where do I view Auctions? =
 
@@ -84,9 +86,9 @@ In the Prospress [support forums](http://prospress.org/forums "Prospress Forums"
 
 = Where can I find documentation? =
 
-Don't you hate it when you can't learn how to use new software? So do we, which is why Prospress *will* have a codex. But at this stage, too many hours have been consumed writing code, leaving too few for writing documentation.
+Don't you hate it when you can't learn how to use new software? Same, which is why Prospress *will* have a codex. But at this stage, too many hours were consumed writing code, leaving too few for writing documentation.
 
-If have a knack for learning new software, and could improve this sentence, you can help document Prospress. [Contact us](http://prospress.org/contact "Prospress Contact Page") to get an early-stage author account for the Prospress Codex.
+If have a knack for learning new software, and could improve this sentence, you can help document Prospress. [Contact us](http://prospress.org/contact "Prospress Contact Page") to get an early-stage author account for the upcoming Prospress Codex.
 
 = Where can I report a bug? =
 
@@ -96,9 +98,9 @@ Please report bugs in the Prospress [Bug Report forum](http://prospress.org/foru
 
 During beta, regular updates will be made. But if you can't wait, Prospress is hosted in a git repository at [GitHub](git@github.com:Prospress/Prospress.git "Prospress GitHub Project"). GitHub is also the primary development site for the project.
 
-If your dreams occasionally contain curly braces, and you want to help give the world a free and open marketplace platform, you can contribute to the Prospress code base on GitHub.
+If your dreams occasionally contain curly braces, and you want to help give the world a free and open marketplace platform, you can contribute to the Prospress code base on [GitHub](git@github.com:Prospress/Prospress.git "Prospress GitHub Project").
 
-GitHub makes it easy to contribute. They also have great [documentation](http://help.github.com/ "GitHub Documentation") and [getting started guides](http://help.github.com/ "GitHub Getting Started Docs") for how to contribute and use Git.
+GitHub makes it easy to contribute. They also have great [documentation](http://help.github.com/ "GitHub Documentation") and [getting started guides](http://help.github.com/ "GitHub Getting Started Docs") to get you up and running with Git & GitHub.
 
 = Is that it? =
 
