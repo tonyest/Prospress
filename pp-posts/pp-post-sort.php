@@ -43,7 +43,7 @@ class PP_Sort_Widget extends WP_Widget {
 			echo "<option value='".$key."' ".selected($key, $sorted_by, false).">".$label."</option>";
 		}
 		echo '</select>';
-		echo '<input type="submit" value="' . __("Sort", 'prospress' ) . '">';
+		echo '<input type="submit" value="' . __("Sort", 'prospress' ) . '" />';
 		foreach( $_GET as $name => $value ){ // allow other get parameters to persist
 			if( $name == 'pp-sort' ) continue;
 			echo '<input type="hidden" name="' . esc_html( $name ) . '" value="' . esc_html( $value ) . '" />';
