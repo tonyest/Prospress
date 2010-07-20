@@ -155,7 +155,7 @@ abstract class PP_Market_System {
 
 		if ( $this->is_post_valid( $post_id ) ) {
 			$form .= '<form id="bid_form-' . $post_id . '" class="bid-form" method="post" action="">';
-			$form .= '<div class="bid-updated bid_msg" >' . $this->get_message() . '</div>';
+			$form .= '<div class="bid-updated bid_msg" >' . $this->get_message() . '</div><div';
 
 			$form .= $this->bid_form_fields( $post_id );
 
@@ -164,7 +164,7 @@ abstract class PP_Market_System {
 			$form .= wp_nonce_field( __FILE__, 'bid_nonce', false, false );
 			$form .= '<input type="hidden" name="post_ID" value="' . $post_id . '" id="post_ID" /> ';
 			$form .= '<input name="bid_submit" type="submit" id="bid_submit" value="' . $this->bid_button_value .'" />';
-			$form .= '</form>';
+			$form .= '</div></form>';
 		} else {
 			$form .= '<div class="bid-form">';
 			$form .= '<div class="bid-updated bid_msg" >' . $this->get_message() . '</div>';
