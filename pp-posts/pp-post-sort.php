@@ -35,7 +35,7 @@ class PP_Sort_Widget extends WP_Widget {
 		echo ( $instance['title'] ) ? $instance['title'] : __( 'Sort By:', 'prospress' );
 		echo $after_title;
 
-		echo '<form id="pp-sort" method="get" action="">';
+		echo '<form id="pp-sort" method="get" action=""><div>';
 		echo '<select id="pp-sort-select" name="pp-sort">';
 		foreach ( $pp_sort_options as $key => $label ) {
 			if( $instance[ $key ] != 'on' )
@@ -48,7 +48,7 @@ class PP_Sort_Widget extends WP_Widget {
 			if( $name == 'pp-sort' ) continue;
 			echo '<input type="hidden" name="' . esc_html( $name ) . '" value="' . esc_html( $value ) . '" />';
 		}
-		echo '</form>';
+		echo '</div></form>';
 
 		echo $after_widget;
 	}

@@ -29,7 +29,7 @@ class Bid_Filter_Widget extends WP_Widget {
 		if ( !$max )
 			$max = '';
 
-		echo '<form id="bid-filter-form" method="get" action="">';
+		echo '<form id="bid-filter-form" method="get" action=""><div>';
 		echo $currency_symbol . ' ';
 		echo '<input type="text" id="p-min" name="p-min" size="5" value="' . esc_attr($min) . '" /> ';
 		echo __('to', 'prospress' ) . ' ';
@@ -39,7 +39,7 @@ class Bid_Filter_Widget extends WP_Widget {
 			if( $name == 'p-min' || $name == 'p-max' ) continue;
 			echo '<input type="hidden" name="' . esc_html( $name ) . '" value="' . esc_html( $value ) . '">';
 		}
-		echo '</form>';
+		echo '</div></form>';
 
 		echo $after_widget;
 	}
