@@ -155,7 +155,7 @@ abstract class PP_Market_System {
 
 		if ( $this->is_post_valid( $post_id ) ) {
 			$form .= '<form id="bid_form-' . $post_id . '" class="bid-form" method="post" action="">';
-			$form .= '<div class="bid-updated bid_msg" >' . $this->get_message() . '</div><div';
+			$form .= '<div class="bid-updated bid_msg" >' . $this->get_message() . '</div><div>';
 
 			$form .= $this->bid_form_fields( $post_id );
 
