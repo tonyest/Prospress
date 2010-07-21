@@ -30,14 +30,13 @@ Index & Single Page Layouts
 .pp-price,.pp-end{
 	float:right;
 	width:12%;
-	margin:2px 5px;
+	margin:112px 5px;
 	text-align:center;
 	font-size:0.85em;
 }
 .price-header,.end-header{
 	font-weight:bold;
 	font-size:1.1em;
-	display:inline;
 }
 .pp-publish-details{
 	font-size:0.8em;
