@@ -17,7 +17,7 @@ Index & Single Page Layouts
 	width:100%;
 	clear:both;
 	border-bottom: 1px solid #ccc;
-	margin: 25px 5px 5px;
+	margin: 20px 5px 5px;
 	padding-bottom:1em;
 	display:block;
 }
@@ -38,7 +38,7 @@ Index & Single Page Layouts
 .price-header,.end-header{
 	float:right;
 	width:12%;
-	margin:2px 5px;
+	margin:2px 5px 0;
 	text-align:center;
 	font-weight:bold;
 	font-size:1.1em;
