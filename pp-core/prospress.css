@@ -36,8 +36,6 @@ Index & Single Page Layouts
 	font-size:0.85em;
 }
 .price-header,.end-header{
-	float:right;
-	display:inline;
 	width:12%;
 	margin:2px 5px;
 	text-align:center;
