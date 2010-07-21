@@ -24,8 +24,8 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 
 			<h1 class="prospress-title entry-title"><?php the_title(); ?></h1>
 			<div class="prospres-content entry-content"><?php the_content(); ?></div>
-			<div class="end-header pp-end"><?php _e( 'Ending', 'prospress' ); ?></div>
-			<div class="price-header pp-price"><?php _e( 'Price', 'prospress' ); ?></div>
+			<div class="end-header"><?php _e( 'Ending', 'prospress' ); ?></div>
+			<div class="price-header"><?php _e( 'Price', 'prospress' ); ?></div>
 
 		<?php endwhile; ?>
 
