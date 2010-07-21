@@ -32,7 +32,7 @@ function pp_get_the_term_list( $post_id = '' ){
  * @param int $post_id Optional, default 0. The post id for which you want the max bid. 
  * @return returns false if post has no end time, or a string representing the time stamp or sql
  */
-function get_post_end_time( $post_id, $type = 'timestamp', $timezone = 'gmt' ) {
+function get_post_end_time( $post_id, $format = 'timestamp', $timezone = 'gmt' ) {
 	global $post;
 
 	if( empty( $post_id ) )
@@ -51,13 +51,15 @@ function get_post_end_time( $post_id, $type = 'timestamp', $timezone = 'gmt' ) {
 	if( $timezone = 'gmt' ){
 		$time = date( 'Y-m-d H:i:s', $time );
 		$time = get_date_from_gmt( $time );
-		if( $type == 'timestamp' ){
-			$time = strtotime( $time );
-		}
-	}elseif( $type == 'mysql' ){
-		$time = date( 'H:i Y/m/d', $time );
-	}
+		$time = strtotime( $time );
 
+	}
+	if( $format != 'timestamp' ){
+		if( $format == 'mysql' )
+			$time = date( 'H:i Y/m/d', $time );
+		else
+			$time = date( $format, $time );
+	}
 	return $time;
 }
 
@@ -80,9 +82,9 @@ function the_post_end_time( $post_id = '', $units = 3, $separator = ' ' ) {
 	if( $post_end == false )
 	 	echo __('Now', 'prospress' );
 	elseif( $post_end > ( 60 * 60 * 24 * 7 ) ) // Show date if ending more than a week in the future
-		echo get_post_end_time( $post_id, 'mysql', 'user' );
+		echo get_post_end_time( $post_id, 'g:ia j-M-Y', 'user' );
 	else
-		echo human_interval( $post_end - time(), $units, $separator );
+		echo pp_human_interval( $post_end - time(), $units, $separator );
 }
 
 
@@ -92,7 +94,7 @@ function the_post_end_time( $post_id = '', $units = 3, $separator = ' ' ) {
  * 
  * Based on WP Crontrol's Interval function
  **/
-function human_interval( $time_period, $units = 3, $separator = ' ' ) {
+function pp_human_interval( $time_period, $units = 3, $separator = ' ' ) {
 
 	if( $time_period <= 0 ) {
 	    return __('Now', 'prospress' );
