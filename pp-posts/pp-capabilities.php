@@ -41,7 +41,7 @@ function pp_capabilities_settings_page() {
 		<p><?php printf( __( 'All registered users can make bids, but you can control which users are able to publish and edit %s.', 'prospress' ), $post_type ); ?></p>
 		<div class="prospress-capability">
 			<h4><?php printf( __( "Publish %s", 'prospress' ), $post_type ); ?></h4>
-			<?php foreach ( $roles as $role ): if( $role->name == 'administrator' ) continue; ?>
+			<?php foreach ( $roles as $role ): ?>
 			<label for="<?php echo $role->name; ?>-publish">
 				<input type="checkbox" id="<?php echo $role->name; ?>-publish" name="<?php echo $role->name; ?>-publish"<?php checked( $role->capabilities[ 'publish_prospress_posts' ], 1 ); ?> />
 				<?php echo $role->display_name; ?>
@@ -50,7 +50,7 @@ function pp_capabilities_settings_page() {
 		</div>
 		<div class="prospress-capability">
 			<h4><?php printf( __( "Edit Own %s", 'prospress' ), $post_type ); ?></h4>
-			<?php foreach ( $roles as $role ): if( $role->name == 'administrator' ) continue; ?>
+			<?php foreach ( $roles as $role ): ?>
 			<label for="<?php echo $role->name; ?>-edit">
 			  	<input type="checkbox" id="<?php echo $role->name; ?>-edit" name="<?php echo $role->name; ?>-edit"<?php checked( $role->capabilities[ 'edit_published_prospress_posts' ], 1 ); ?> />
 				<?php echo $role->display_name; ?>
@@ -59,7 +59,7 @@ function pp_capabilities_settings_page() {
 		</div>
 		<div class="prospress-capability">
 			<h4><?php printf( __( "Edit Others' %s", 'prospress' ), $post_type ); ?></h4>
-			<?php foreach ( $roles as $role ): if( $role->name == 'administrator' ) continue; ?>
+			<?php foreach ( $roles as $role ): ?>
 			<label for="<?php echo $role->name; ?>-edit-others">
 				<input type="checkbox" id="<?php echo $role->name; ?>-edit-others" name="<?php echo $role->name; ?>-edit-others"<?php checked( $role->capabilities[ 'edit_others_prospress_posts' ], 1 ); ?> />
 				<?php echo $role->display_name; ?>
@@ -68,7 +68,7 @@ function pp_capabilities_settings_page() {
 		</div>
 		<div class="prospress-capability">
 			<h4><?php printf( __( "View Private %s", 'prospress' ), $post_type ); ?></h4>
-			<?php foreach ( $roles as $role ): if( $role->name == 'administrator' ) continue; ?>
+			<?php foreach ( $roles as $role ): ?>
 			<label for="<?php echo $role->name; ?>-private">
 				<input type="checkbox" id="<?php echo $role->name; ?>-private" name="<?php echo $role->name; ?>-private"<?php checked( $role->capabilities[ 'read_private_prospress_posts' ], 1 ); ?> />
 				<?php echo $role->display_name; ?>
@@ -77,7 +77,7 @@ function pp_capabilities_settings_page() {
 		</div>
 		<div class="prospress-capability">
 			<h4><?php printf( __( "Upload Media", 'prospress' ) ); ?></h4>
-			<?php foreach ( $roles as $role ): if( $role->name == 'administrator' ) continue; ?>
+			<?php foreach ( $roles as $role ): ?>
 			<label for="<?php echo $role->name; ?>-media">
 				<input type="checkbox" id="<?php echo $role->name; ?>-media" name="<?php echo $role->name; ?>-media"<?php checked( $role->capabilities[ 'upload_files' ], 1 ); ?> />
 				<?php echo $role->display_name; ?>
