@@ -1,5 +1,5 @@
 === Plugin Name ===
-Contributors: prospress, thenbrent
+Contributors: Prospress.org, thenbrent
 Tags: marketplace, prospress, auction, ecommerce
 Requires at least: WordPress 3.0
 Tested up to: 3.0
@@ -27,7 +27,7 @@ Read the plugin's [FAQ](http://wordpress.org/extend/plugins/prospress/faq/) or v
 
 = Get Involved =
 
-To hasten the official release of Prospress, or just help give the world a free and open marketplace platform, you can [contribute](http://prospress.org/contribute) to the Prospress project.
+To hasten the official release of Prospress, or just help give the world a free and open marketplace platform, you can [contribute](http://prospress.org/contribute/) to the Prospress project.
 
 
 == Installation ==
@@ -35,12 +35,12 @@ To hasten the official release of Prospress, or just help give the world a free 
 1. Upload everything into the "/wp-content/plugins/" directory of your WordPress installation.
 2. Activate Prospress in the "Plugins" admin panel.
 
-Prospress supports the default TwentyTen and will attempt to work with other themes. If you find quirks with your theme, make a post in the [Theme Compatibility forum](http://prospress.org/forums/forum/theme-compatibility). 
+Prospress supports the default TwentyTen theme and will attempt to work with other themes. If you find quirks with your theme, make a post in the [Theme Compatibility forum](http://prospress.org/forums/forum/theme-compatibility/). 
 
 
 == Frequently Asked Questions ==
 
-If you have a question not answered here, please ask in the Prospress [support forums](http://prospress.org/forums).
+If you have a question not answered here, please ask in the Prospress [support forums](http://prospress.org/forums/).
 
 = How is Prospress different to other shopping cart plugins? =
 
@@ -50,17 +50,17 @@ With Prospress, registered users can post their own auctions, place bids on the 
 
 = Do I need a special theme to use Prospress? =
 
-A goal of the Prospress project is to support existing WordPress themes rather than require a new one.
+Prospress attempts to work with your existing theme. It's a primary goal of the Prospress project to support existing WordPress themes rather than require a new one.
 
 Due to the gamut of themes, it's not possible to support them all just yet, so the built-in templates may display with quirks. If this happens on your site, not to worry, you can add two custom template files to your theme's directory - `index-auctions.php` and `single-auction.php`.
 
 If you're comfortable with HTML/CSS, check out the `pp-index-auctions.php` and `pp-single-auction.php` for a guide. It's really quite easy to make your own templates. 
 
-If you need help, ask in the Prospress [Theme Compatibility forum](http://prospress.org/forums/forum/theme-compatibility). 
+If you need help, ask in the Prospress [Theme Compatibility forum](http://prospress.org/forums/forum/theme-compatibility/). 
 
 = Where do I view Auctions? =
 
-Prospress creates it's own special index page, called `Auctions`. Once you've added an action, visit this page to view the list of your auctions.
+Prospress creates it's own special index page, called, appropriately enough, Auctions. Once you've published a few auctions, visit this page to see them live.
 
 = Can any registered user post an auction? =
 
@@ -74,21 +74,19 @@ Not yet. Prospress is a major plugin that has been in development for some time.
 
 There will be bugs. Those bugs will be fixed, but it's better they occur in a sandbox.
 
-Please download & explore Prospress in a test environment, but wait until a non-beta release before using on your live site. 
+Please download & explore Prospress in a test environment, but wait until a non-beta release before using on your live site. If you'd prefer to wait for a stable release before even downloading, you can still explore Prospress on the [demo site](http://demo.prospress.org/auctions/).
 
-If you'd prefer to wait for a stable release before even downloading, check out the [demo site](http://demo.prospress.org/auctions/).
-
-If you want to hasten the release of a stable version, you can help by [contributing](http://prospress.org/contribute) to the project.
+To hasten the release of a stable version, you can help by [contributing](http://prospress.org/contribute/) to the project.
 
 = Where can I get support? =
 
-In the Prospress [support forums](http://prospress.org/forums "Prospress Forums").
+In the Prospress [support forums](http://prospress.org/forums/ "Prospress Forums").
 
 = Where can I find documentation? =
 
 Don't you hate it when you can't learn how to use new software? Same, which is why Prospress *will* have a codex. But at this stage, too many hours were consumed writing code, leaving too few for writing documentation.
 
-If have a knack for learning new software, and could improve this sentence, you can help document Prospress. [Contact us](http://prospress.org/contact "Prospress Contact Page") to get an early-stage author account for the upcoming Prospress Codex.
+If have a knack for learning new software, and could improve this sentence, you can help document Prospress. [Contact us](http://prospress.org/contact/ "Prospress Contact Page") to get an early-stage author account for the upcoming Prospress Codex.
 
 = Where can I report a bug? =
 
@@ -96,9 +94,9 @@ Please report bugs in the Prospress [Bug Report forum](http://prospress.org/foru
 
 = Where can I try the latest? =
 
-During beta, regular updates will be checked-in to the WordPress plugin directory. But if you can't wait, Prospress is hosted in a git repository at [GitHub](git@github.com:Prospress/Prospress.git "Prospress GitHub Project"). GitHub is also the primary development site for the project.
+During beta, regular updates will be checked-in to the WordPress plugin directory. But if you can't wait, Prospress is hosted in a git repository at [GitHub](http://github.com/Prospress/Prospress "Prospress GitHub Project"). GitHub is also the primary development site for the project.
 
-If your dreams occasionally contain curly braces, you can contribute to the Prospress code base on [GitHub](git@github.com:Prospress/Prospress.git "Prospress GitHub Project"). GitHub makes it easy to contribute. They also have great [documentation](http://help.github.com/ "GitHub Documentation") and [getting started guides](http://help.github.com/ "GitHub Getting Started Docs") to get you up and running.
+If your dreams occasionally contain curly braces, you can contribute to the Prospress code base on [GitHub](http://github.com/Prospress/Prospress "Prospress GitHub Project"). GitHub makes it easy to contribute. They also have great [documentation](http://help.github.com/ "GitHub Documentation") and [getting started guides](http://help.github.com/ "GitHub Getting Started Docs") to get you up and running.
 
 = Is that it? =
 
