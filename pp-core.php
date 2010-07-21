@@ -192,15 +192,20 @@ add_action('admin_menu', 'pp_core_admin_head');
 function pp_welcome_notice(){
 	global $market_systems;
 	
-	if( get_option( 'pp_show_welcome' ) == 'false' )
+	if( get_option( 'pp_show_welcome' ) == 'false' ){
 		return;
+	}elseif( isset( $_GET[ 'pp_hide_wel' ] ) && $_GET[ 'pp_hide_wel' ] == 1 ) {
+		update_option( 'pp_show_welcome', 'false' );
+		return;
+	}
 
 	$index_id = $market_systems['auctions']->post->get_index_id();
 
 	echo "<div id='prospress-welcome' class='updated fade'><p><strong>".__('Congratulations.', 'prospress')."</strong> ".
-	sprintf( __('Your WordPress site is now prosperous. Go add your first <a href="%1$s">Auction</a>, '), "post-new.php?post_type=auctions").
-	sprintf( __('modify your Auctions\' <a href="%1$s">index page</a> or '), "post.php?post=$index_id&action=edit").
-	sprintf( __('configure your Prospress marketplace <a href="%1$s">settings</a>.'), "admin.php?page=Prospress")."</p></div>";
+	sprintf( __('Your WordPress site is now prosperous. Go add your first <a href="%1$s">auction</a>, '), "post-new.php?post_type=auctions").
+	sprintf( __('modify your auctions\' <a href="%1$s">index page</a> or '), "post.php?post=$index_id&action=edit").
+	sprintf( __('configure your marketplace <a href="%1$s">settings</a>. '), "admin.php?page=Prospress").
+	sprintf( __('<a href="%1$s">&raquo; Hide &laquo;</a>'), add_query_arg( 'pp_hide_wel', '1', $_SERVER['REQUEST_URI'] ))."</p></div>";
 }
 add_action( 'admin_notices', 'pp_welcome_notice' );
 
