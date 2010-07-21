@@ -37,6 +37,7 @@ Index & Single Page Layouts
 }
 .price-header,.end-header{
 	float:right;
+	display:inline;
 	width:12%;
 	margin:2px 5px;
 	text-align:center;
