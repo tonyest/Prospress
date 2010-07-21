@@ -19,7 +19,7 @@ Index & Single Page Layouts
 	border-bottom: 1px solid #ccc;
 	margin: 5px;
 	padding-bottom:1em;
-	display:block;
+	display:inline;
 }
 .pp-post-content{
 	float:left;
