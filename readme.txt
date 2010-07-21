@@ -13,7 +13,7 @@ Prospress is a new plugin that goes where no plugin has gone before.
 
 After its 30 second install, your WordPress site will have its very own auction marketplace. Your registered users will be able to post auctions, place bids, provide feedback and make payments. Everything needed for a fully functioning marketplace.
 
-One caveat - Prospress is so new, it's still in beta. So please only use Prospress on test sites for now. There will be bugs. Those bugs will be fixed, but it's better they occur in a sandbox.
+Well, hopefully. Prospress is so new, it's still in beta. So please only use Prospress on test sites for now. There will be bugs. Those bugs will be fixed, but it's better they occur in a sandbox.
 
 = Why is Prospress here when it's beta? =
 
@@ -32,27 +32,27 @@ To hasten the official release of Prospress, or just help give the world a free 
 
 == Installation ==
 
-1. Upload everything into the "/wp-content/plugins/" directory of your installation.
+1. Upload everything into the "/wp-content/plugins/" directory of your WordPress installation.
 2. Activate Prospress in the "Plugins" admin panel.
 
-Just because Prospress does so much doesn't mean its installation should be tough.
+Prospress supports the default TwentyTen and will attempt to work with other themes. If you find quirks with your theme, make a post in the [Theme Compatibility forum](http://prospress.org/forums/forum/theme-compatibility). 
 
 
 == Frequently Asked Questions ==
 
 If you have a question not answered here, please ask in the Prospress [support forums](http://prospress.org/forums).
 
-= How is Prospress different to other shopping cart plugins =
+= How is Prospress different to other shopping cart plugins? =
 
 There are many great shopping cart plugins for WordPress; Prospress isn’t one of them. 
 
-With Prospress, registered users can post their own auctions, place bids on the auctions of others, provide feedback and make payments. It creates a many-to-many exchange that differs to the one-to-many exchange of a shopping cart plugin.
+With Prospress, registered users can post their own auctions, place bids on the auctions of others, provide feedback and make payments. It creates a many-to-many exchange that differs to the one-to-many exchange of an online store.
 
 = Do I need a special theme to use Prospress? =
 
-Prospress attempts to work with your existing theme. 
+A goal of the Prospress project is to support existing WordPress themes rather than require a new one.
 
-Due to the gamut of themes, it's not possible to support them all, so the built-in templates may display with quirks. If this happens on your site, not to worry, you can add two custom template files to your theme's directory - `index-auctions.php` and `single-auction.php`.
+Due to the gamut of themes, it's not possible to support them all just yet, so the built-in templates may display with quirks. If this happens on your site, not to worry, you can add two custom template files to your theme's directory - `index-auctions.php` and `single-auction.php`.
 
 If you're comfortable with HTML/CSS, check out the `pp-index-auctions.php` and `pp-single-auction.php` for a guide. It's really quite easy to make your own templates. 
 
@@ -60,7 +60,7 @@ If you need help, ask in the Prospress [Theme Compatibility forum](http://prospr
 
 = Where do I view Auctions? =
 
-Prospress creates it's own special index page, called `Auctions`. Visit this page to view the list of your auctions.
+Prospress creates it's own special index page, called `Auctions`. Once you've added an action, visit this page to view the list of your auctions.
 
 = Can any registered user post an auction? =
 
@@ -76,9 +76,9 @@ There will be bugs. Those bugs will be fixed, but it's better they occur in a sa
 
 Please download & explore Prospress in a test environment, but wait until a non-beta release before using on your live site. 
 
-If you'd prefer to wait for a stable release, we've made a <a href="http://demo.prospress.org/">demo site</a>.
+If you'd prefer to wait for a stable release before even downloading, check out the [demo site](http://demo.prospress.org/auctions/).
 
-If you want to hasten the official release of Prospress, you can help by [contributing](http://prospress.org/contribute) to the project.
+If you want to hasten the release of a stable version, you can help by [contributing](http://prospress.org/contribute) to the project.
 
 = Where can I get support? =
 
@@ -96,15 +96,13 @@ Please report bugs in the Prospress [Bug Report forum](http://prospress.org/foru
 
 = Where can I try the latest? =
 
-During beta, regular updates will be made. But if you can't wait, Prospress is hosted in a git repository at [GitHub](git@github.com:Prospress/Prospress.git "Prospress GitHub Project"). GitHub is also the primary development site for the project.
+During beta, regular updates will be checked-in to the WordPress plugin directory. But if you can't wait, Prospress is hosted in a git repository at [GitHub](git@github.com:Prospress/Prospress.git "Prospress GitHub Project"). GitHub is also the primary development site for the project.
 
-If your dreams occasionally contain curly braces, and you want to help give the world a free and open marketplace platform, you can contribute to the Prospress code base on [GitHub](git@github.com:Prospress/Prospress.git "Prospress GitHub Project").
-
-GitHub makes it easy to contribute. They also have great [documentation](http://help.github.com/ "GitHub Documentation") and [getting started guides](http://help.github.com/ "GitHub Getting Started Docs") to get you up and running with Git & GitHub.
+If your dreams occasionally contain curly braces, you can contribute to the Prospress code base on [GitHub](git@github.com:Prospress/Prospress.git "Prospress GitHub Project"). GitHub makes it easy to contribute. They also have great [documentation](http://help.github.com/ "GitHub Documentation") and [getting started guides](http://help.github.com/ "GitHub Getting Started Docs") to get you up and running.
 
 = Is that it? =
 
-Nope. There are a few surprises but you'll have to download & explore Prospress to find them.
+Nope. There are a few surprises but you'll have to download & explore Prospress to find them or at least try the [demo](http://demo.prospress.org/auctions/).
 
 
 == Screenshots ==
