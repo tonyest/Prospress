@@ -19,6 +19,7 @@ Index & Single Page Layouts
 	border-bottom: 1px solid #ccc;
 	margin: 5px;
 	padding-bottom:1em;
+	display:block;
 }
 .pp-post-content{
 	float:left;
@@ -37,7 +38,6 @@ Index & Single Page Layouts
 .price-header,.end-header{
 	font-weight:bold;
 	font-size:1.1em;
-	margin:10px 5px;
 }
 .pp-publish-details{
 	font-size:0.8em;
