@@ -411,7 +411,7 @@ class PP_Post {
 				$m_time = $human_time = __('Not set.', 'prospress' );
 				$time_diff = 0;
 			} else {
-				$human_time = human_interval( $end_time_gmt - time(), 3 );
+				$human_time = pp_human_interval( $end_time_gmt - time(), 3 );
 				$human_time .= '<br/>' . get_post_end_time( $post_id, 'mysql', 'user' );
 			}
 			echo '<abbr title="' . $m_time . '">';
