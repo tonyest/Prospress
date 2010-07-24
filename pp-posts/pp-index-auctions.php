@@ -42,6 +42,9 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 					</h2>
 					<div class="pp-excerpt">
 						<?php the_excerpt(); ?>
+						<a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>">
+							<?php printf( __( 'View %s &raquo', 'prospress' ), $market->singular_name() ); ?>
+						</a>
 					</div>
 					<div class="pp-publish-details">
 						<?php  _e( 'Published: ', 'prospress' ); the_time('F jS, Y'); ?>
