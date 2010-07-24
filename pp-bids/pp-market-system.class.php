@@ -488,7 +488,7 @@ abstract class PP_Market_System {
 					$message = __( 'Bid submitted.', 'prospress' );
 					break;
 				case 11:
-					$message = __( 'You cannot bid on your own post.', 'prospress' );
+					$message = __( 'You cannot bid on your own ', 'prospress' ) . $this->singular_name() . '.';
 					break;
 				case 12:
 					$message = __( 'This post has completed, bids cannot be accepted.', 'prospress' );
