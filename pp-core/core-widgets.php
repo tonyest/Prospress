@@ -58,7 +58,7 @@ class PP_Admin_Widget extends WP_Widget {
 
 	function form( $instance ) {
 		?>
-		<p><?php _e( 'Provide quick links to backend tasks, including posting a new auction and viewing payment/bid/feedback history.', 'prospress' ); ?></p>
+		<p><?php _e( 'Make it easy for traders to get into the backend by including links to add a new auction and view payment/bid/feedback history.', 'prospress' ); ?></p>
 		<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:') ?></label>
 		<input type="text" class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" value="<?php if (isset ( $instance['title'])) {echo esc_attr( $instance['title'] );} ?>" /></p>
 		<?php
