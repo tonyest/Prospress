@@ -43,8 +43,8 @@ class PP_Admin_Widget extends WP_Widget {
 		}
 		echo '<li>&raquo; ' . $market_systems[ 'auctions' ]->post->the_add_new_url() . '</li>';
 		echo '<li>&raquo; ' . $market_systems[ 'auctions' ]->the_bids_url() . '</li>';
-		echo '<li>&raquo; ' . pp_the_payments_url() . '</li>';
-		echo '<li>&raquo; ' . pp_the_feedback_url() . '</li>';
+		echo '<li>&raquo; ' . pp_the_payments_url( 'Your Payments' ) . '</li>';
+		echo '<li>&raquo; ' . pp_the_feedback_url( 'Your Feedback' ) . '</li>';
 		echo '</ul>';
 		echo "</div>\n";
 		echo $after_widget;
