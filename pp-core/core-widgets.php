@@ -36,11 +36,11 @@ class PP_Admin_Widget extends WP_Widget {
 			echo $before_title . $title . $after_title;
 		echo '<div class="prospress-meta">';
 		echo '<ul>';
-		echo '<li>&raquo; ';
-		wp_register('', '');
-		echo ' | ';
-		wp_loginout();
-		echo '</li>';
+		if( !is_user_logged_in() ) {
+			wp_register('<li>&raquo; ', ' | ');
+			wp_loginout();
+			echo '</li>';
+		}
 		echo '<li>&raquo; ' . $market_systems[ 'auctions' ]->post->the_add_new_url() . '</li>';
 		echo '<li>&raquo; ' . $market_systems[ 'auctions' ]->the_bids_url() . '</li>';
 		echo '<li>&raquo; ' . pp_the_payments_url() . '</li>';
