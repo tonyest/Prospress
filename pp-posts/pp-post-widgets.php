@@ -46,7 +46,7 @@ class PP_Tag_Cloud_Widget extends WP_Widget {
 	}
 
 	function form( $instance ) {
-		global $market_system; 
+		global $market_systems; 
 
 		$current_taxonomy = $this->get_current_taxonomy($instance);
 		?>
@@ -54,8 +54,8 @@ class PP_Tag_Cloud_Widget extends WP_Widget {
 		<input type="text" class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" value="<?php if (isset ( $instance['title'])) {echo esc_attr( $instance['title'] );} ?>" /></p>
 		<p><label for="<?php echo $this->get_field_id('taxonomy'); ?>"><?php _e('Taxonomy:') ?></label>
 		<select class="widefat" id="<?php echo $this->get_field_id('taxonomy'); ?>" name="<?php echo $this->get_field_name('taxonomy'); ?>">
-		<?php foreach ( get_object_taxonomies($market_system->name()) as $taxonomy ) :
-				$tax = get_taxonomy($taxonomy);
+		<?php foreach ( get_object_taxonomies( $market_systems[ 'auctions' ]->name() ) as $taxonomy ) :
+				$tax = get_taxonomy( $taxonomy );
 		?>
 			<option value="<?php echo esc_attr($taxonomy) ?>" <?php selected($taxonomy, $current_taxonomy) ?>><?php echo $tax->labels->name; ?></option>
 		<?php endforeach; ?>
@@ -134,9 +134,9 @@ if( is_using_custom_taxonomies() )
 class PP_Countdown_Widget extends WP_Widget {
 
 	function PP_Countdown_Widget() {
-		global $market_system;
+		global $market_systems;
 
-		$widget_ops = array( 'description' => sprintf( __('The time until the end of an %s', 'prospress' ), $market_system->singular_name() ) );
+		$widget_ops = array( 'description' => sprintf( __('The time until the end of an %s', 'prospress' ), $market_systems[ 'auctions' ]->singular_name() ) );
 		$this->WP_Widget( 'pp_countdown', __( 'Prospress Countdown' ), $widget_ops );
 	}
 

@@ -320,6 +320,30 @@ class PP_Post {
 			return get_permalink( $index_id );
 	}
 
+	/**
+	 * Creates an anchor tag linking to the user's payments, optionally prints.
+	 * 
+	 */
+	function the_add_new_url( $desc = "Add New", $echo = '' ) {
+
+		$add_new_tag = "<a href='" . $this->get_add_new_url() . "' title='$desc'>$desc " . $this->market_system[ 'singular_name' ] . "</a>";
+
+		if( $echo == 'echo' )
+			echo $add_new_tag;
+		else
+			return $add_new_tag;
+	}
+
+
+	/**
+	 * Gets the url to the user's feedback table.
+	 * 
+	 */
+	function get_add_new_url() {
+		 return admin_url( '/post-new.php?post_type=' . $this->market_system[ 'internal_name' ] );
+	}
+
+
 	/** 
 	 * Clean up anything added on activation, including the index page. 
 	 * 

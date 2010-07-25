@@ -44,3 +44,32 @@ function the_most_recent_feedback( $user_id = '' ){
 	echo get_userdata( $latest['from_user_id'] )->user_nicename;
 	echo '</div>';
 }
+
+
+/**
+ * Creates an anchor tag linking to the user's feedback table, optionally prints.
+ * 
+ */
+function pp_the_feedback_url( $desc = "View Feedback", $echo = '' ) {
+
+	$feedback_tag = "<a href='" . pp_get_feedback_url() . "' title='$desc'>$desc</a>";
+
+	if( $echo == 'echo' )
+		echo $feedback_tag;
+	else
+		return $feedback_tag;
+}
+
+
+/**
+ * Gets the url to the user's feedback table.
+ * 
+ */
+function pp_get_feedback_url() {
+	if( current_user_can( 'edit_users' ) )
+		$feedback_url = admin_url( 'users.php?page=feedback' );
+	else
+		$feedback_url = admin_url( 'profile.php?page=feedback' );
+
+	 return $feedback_url;
+}

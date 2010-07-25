@@ -38,7 +38,7 @@ abstract class PP_Market_System {
 
 		$this->name 			= (string)$name;
 		$this->singular_name 	= (string)$singular_name;
-		$this->post				= new PP_Post( array( 'internal_name' => $this->name, 'singular_name' => $this->singular_name, 'display_name' => $this->display_name() ) );
+		$this->post				= new PP_Post( array( 'internal_name' => $this->name, 'singular_name' => $this->singular_name(), 'display_name' => $this->display_name() ) );
 		$this->bid_button_value	= empty( $bid_button_value ) ? __( 'Bid now!', 'prospress' ) : $bid_button_value;
 
 		if( empty( $post_table_columns ) || !is_array( $post_table_columns ) ){
@@ -526,6 +526,32 @@ abstract class PP_Market_System {
 			return get_permalink( $index_id );
 	}
 
+
+	/**
+	 * Creates an anchor tag linking to the user's payments, optionally prints.
+	 * 
+	 */
+	function the_bids_url( $desc = "Your Bids", $echo = '' ) {
+
+		$bids_tag = "<a href='" . $this->get_bids_url() . "' title='$desc'>$desc</a>";
+
+		if( $echo == 'echo' )
+			echo $bids_tag;
+		else
+			return $bids_tag;
+	}
+
+
+	/**
+	 * Gets the url to the user's feedback table.
+	 * 
+	 */
+	function get_bids_url() {
+
+		 return admin_url( 'admin.php?page=' . $this->name . '-bids' );
+	}
+
+
 	/************************************************************************************************
 	 * Private Functions: don't worry about these, unless you want to get really tricky.
 	 * Even if they're declared public, it's only because they are attached to a hook
@@ -799,8 +825,8 @@ abstract class PP_Market_System {
 	}
 
 	/**
-	 * Don't worry about it this confusing function, you shouldn't need to create the bid table columns,
-	 * instead you can rely on this bad boy to call the function assigned to the column through the constructor
+	 * Don't worry about this confusing function, you shouldn't need to create the bid table columns,
+	 * instead you can rely on this to call the function assigned to the column through the constructor
 	 **/
 	public function add_post_column_contents( $column_name, $post_id ) {
 		if( array_key_exists( $column_name, $this->post_table_columns ) ) {

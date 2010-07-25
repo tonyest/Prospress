@@ -37,6 +37,8 @@ require_once( PP_INVOICE_DIR . '/WP-Invoice.php' );
 
 add_action( 'pp_activation', array( $WP_Invoice, 'install' ) );
 
+include_once( PP_PAYMENT_DIR . '/pp-payment-templatetags.php' );
+
 
 /** 
  * Certain administration pages in Prospress provide a hook for other components to add an "action" link. This function 
