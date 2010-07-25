@@ -38,7 +38,7 @@ abstract class PP_Market_System {
 
 		$this->name 			= (string)$name;
 		$this->singular_name 	= (string)$singular_name;
-		$this->post				= new PP_Post( array( 'internal_name' => $this->name, 'singular_name' => $this->singular_name(), 'display_name' => $this->display_name() ) );
+		$this->post				= new PP_Post( array( 'internal_name' => $this->name, 'singular_name' => $this->singular_name, 'display_name' => $this->display_name() ) );
 		$this->bid_button_value	= empty( $bid_button_value ) ? __( 'Bid now!', 'prospress' ) : $bid_button_value;
 
 		if( empty( $post_table_columns ) || !is_array( $post_table_columns ) ){
