@@ -36,7 +36,7 @@ class PP_Admin_Widget extends WP_Widget {
 			echo $before_title . $title . $after_title;
 		echo '<div class="prospress-meta">';
 		echo '<ul>';
-		if( !is_user_logged_in() ) {
+		if( !is_user_logged_in() || is_super_admin() ) {
 			wp_register('<li>&raquo; ', ' | ');
 			wp_loginout();
 			echo '</li>';
