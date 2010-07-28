@@ -15,7 +15,7 @@
  * 
  * Admin's may want to allow or disallow users to create, edit and delete prospress marketplace 
  * posts. To do this without relying on the built-in post capability types, Prospress creates it's 
- * own type, prospress_post. This function provides an admin menu for selecting which roles can do 
+ * own type, 'prospress_post'. This function provides an admin menu for selecting which roles can do 
  * what to posts. Meaning, subscribers & custom roles can be given the capabiltiy to publish 
  * Prospress posts.
  * 
