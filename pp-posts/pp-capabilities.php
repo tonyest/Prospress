@@ -11,11 +11,13 @@
 
 
 /** 
- * Admin's may want to allow or disallow users to create, edit and delete marketplace posts. 
- * To do this without relying on the post capability type, Prospress creates it's own type. 
- * This function provides an admin menu for selecting which roles can do what to posts. 
+ * Allow site admins to choose which roles can do what to marketplace posts.
  * 
- * Allow site admin to choose which roles can do what to marketplace posts.
+ * Admin's may want to allow or disallow users to create, edit and delete prospress marketplace 
+ * posts. To do this without relying on the built-in post capability types, Prospress creates it's 
+ * own type, prospress_post. This function provides an admin menu for selecting which roles can do 
+ * what to posts. Meaning, subscribers & custom roles can be given the capabiltiy to publish 
+ * Prospress posts.
  * 
  * @package Prospress
  * @subpackage Posts
@@ -168,6 +170,14 @@ function pp_capabilities_whitelist( $whitelist_options ) {
 add_filter( 'pp_options_whitelist', 'pp_capabilities_whitelist' );
 
 
+/** 
+ * Custom Post meta capabilities are not mapped by WordPress, so need to manually
+ * map them.
+ * 
+ * @package Prospress
+ * @subpackage Posts
+ * @since 0.1
+ */
 function pp_map_meta_cap( $caps, $cap, $user_id, $args ){
 
 	if( $cap == 'edit_prospress_post' ) {
