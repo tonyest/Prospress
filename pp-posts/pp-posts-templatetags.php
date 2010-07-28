@@ -78,13 +78,10 @@ function get_post_end_time( $post_id, $format = 'timestamp', $timezone = 'gmt' )
 function the_post_end_time( $post_id = '', $units = 3, $separator = ' ' ) {
 
 	$post_end = get_post_end_time( $post_id, 'timestamp', 'gmt' );
-	$aweek = 60 * 60 * 24 * 7;
-	error_log('$post_end = ' . $post_end );
-	error_log('( $post_end - time() ) > $aweek ) = ' . ( $post_end - time() > $aweek ) ? 'true' : 'false' );
-	error_log('$aweek = ' . $aweek );
+
 	if( $post_end == false )
 	 	echo __('Now', 'prospress' );
-	elseif( $post_end - time() > $aweek ) // Show date if ending more than a week in the future
+	elseif( $post_end - time() > 60 * 60 * 24 * 7 ) // Show date if ending more than a week in the future
 		echo get_post_end_time( $post_id, 'g:ia', 'user' ) . $separator . get_post_end_time( $post_id, 'j-M-Y', 'user' );
 	else
 		echo pp_human_interval( $post_end - time(), $units, $separator );
