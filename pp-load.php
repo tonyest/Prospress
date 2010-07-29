@@ -50,7 +50,7 @@ require_once( PP_PLUGIN_DIR . '/pp-payment.php' );
 function pp_activate(){
 	if ( !function_exists( 'register_post_status' ) ) { // Don't register on installations pre 3.0
 		deactivate_plugins( basename( dirname( __FILE__ ) ) . '/' . basename( __FILE__ ) );
-		wp_die(__( "Sorry, but you can not run Prospress. It requires WordPress 3.0 or newer. <a href=" . admin_url( 'plugins.php' ) . ">Return to Plugins Admin &raquo;</a>"), 'prospress' );
+		wp_die(__( "Sorry, but you can not run Prospress. It requires WordPress 3.0 or newer. Consider <a href='http://codex.wordpress.org/Updating_WordPress'>upgrading</a> your WordPress installation, it's worth the effort.<br/><a href=" . admin_url( 'plugins.php' ) . ">Return to Plugins Admin page &raquo;</a>"), 'prospress' );
 	}
 
 	do_action( 'pp_activation' );
