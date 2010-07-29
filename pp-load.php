@@ -14,16 +14,18 @@ if ( !defined( 'PP_VERSION' ) )
 /***
  * Ye be a brave soul who enters these waters. Feel free to delve into the dark depths of this code; but be warned: 
  * this code is released as a real beta, not that Google style we-use-beta-for-awesome-finished-versions type of beta.
- * The code is messy, undocumentated and will change over the coming months. For example, feedback items may become a
+ * The code is improving and will change over the coming months. For example, feedback items may become a
  * custom post type instead of having their own table. 
  * 
  * I hacked out too many features without polish. That will change over time, but don't expect poetry here
  * until approximately December.
+ *
+ * Still interested? Then go forth brave hacker. 
  */
 
 /*
- * Prospress uses a component architecture. I copied the idea from BuddyPress as it seemed like a great way to help with testing 
- * individual components and also to help me get my little brain around the enormity of creating an online marketplace. There is 
+ * Prospress uses a component architecture, inspired by BuddyPress as it seemed like a great way to help with testing 
+ * individual components and also to help me get my brain around the enormity of creating an online marketplace. There is 
  * a post system, feedback system and market/bid system. Each has it's own central file, which is called here to create Prospress.
  */
 
@@ -45,8 +47,12 @@ require_once( PP_PLUGIN_DIR . '/pp-feedback.php' );
 
 require_once( PP_PLUGIN_DIR . '/pp-payment.php' );
 
-
 function pp_activate(){
+	if ( !function_exists( 'register_post_status' ) ) { // Don't register on installations pre 3.0
+		deactivate_plugins( basename( dirname( __FILE__ ) ) . '/' . basename( __FILE__ ) );
+		wp_die(__( "Sorry, but you can not run Prospress. It requires WordPress 3.0 or newer. <a href=" . admin_url( 'plugins.php' ) . ">Return to Plugins Admin &raquo;</a>"), 'prospress' );
+	}
+
 	do_action( 'pp_activation' );
 }
 register_activation_hook( __FILE__, 'pp_activate' );
