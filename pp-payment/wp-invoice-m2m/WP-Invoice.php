@@ -121,24 +121,24 @@ class WP_Invoice {
 		register_column_headers("web-invoice_page_incoming_invoices", array(
 			'cb' => '<input type="checkbox" />',
 			'subject' => __( 'Subject' ),
-			'balance' => __( 'Balance' ),
+			'balance' => __( 'Amount' ),
 			'display_name' => __( 'Recipient' ),
 			'user_email' => __( 'User Email' ),
 			'company_name' => __( 'Company Name' ),
 			'status' => __( 'Status' ),
-			'date_sent' => __( 'Date Received' ),
+			'date_sent' => __( 'Invoice Received' ),
 			'due_date' => __( 'Due Date' ),
 		) );	
 
 		register_column_headers("toplevel_page_outgoing_invoices", array(
 			'cb' => '<input type="checkbox" />',
 			'subject' => __( 'Subject' ),
-			'balance' => __( 'Balance' ),
+			'balance' => __( 'Amount' ),
 			'display_name' => __( 'From' ),
 			'user_email' => __( 'User Email' ),
 			'company_name' => __( 'Company Name' ),
 			'status' => __( 'Status' ),
-			'date_sent' => __( 'Date Sent' ),
+			'date_sent' => __( 'Invoice Sent' ),
 			'due_date' => __( 'Due Date' ),
 		) );		
  	}
