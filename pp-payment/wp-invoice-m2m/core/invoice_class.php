@@ -80,7 +80,7 @@ class wp_invoice_get {
 		if(!empty( $this->data->tax)){
 			$this->data->amount = $this->data->amount + ( $this->data->amount * ( $this->data->tax / 100 ) );
 		}
-		//$this->data->display_amount = pp_money_format( $this->data->amount );
+		$this->data->display_amount = pp_money_format( $this->data->amount );
 
 		return $this->data;		
 	}

@@ -15,6 +15,18 @@ After its 30 second install, your WordPress site will have its very own auction 
 
 Well, hopefully. Prospress is so new, it's still in beta. So please only use Prospress on test sites for now. There will be bugs. Those bugs will be fixed, but it's better they occur in a sandbox.
 
+= Features =
+
+Custom Post - Prospress uses WordPress' publishing system, so it's as enjoyable to publish auctions as blog posts.
+
+Custom Categories - If it’s easy to find items in your marketplace, it will attract more buyers, which will attract more sellers. That’s why Prospress provides custom taxonomies and filter widgets. 
+
+Templates not Themes - Your site is already stunning, which is why Prospress wants to look like it. Instead of requiring a new theme, Prospress uses a few simple templates that attempt to fit in with your existing theme. 
+
+Invoicing & Payments - To finalize a transaction, eventually currency is going to change hands. Prospress makes managing this exchange easy. It supports PayPal, Credit Card Gateways & Bank Transfers, all using a human usable invoicing system.
+
+Feedback - Trust is a requirement for trade, which is why Prospress provides a feedback system. Traders in your marketplace can rate each other after a transaction and feel confident about a potential exchange.
+
 = Why is Prospress here when it's beta? =
 
 For those who can't wait to try a game changer, this beta is for you. Download, install & explore what you'll soon be able to do with WordPress, but please do so on a test site.

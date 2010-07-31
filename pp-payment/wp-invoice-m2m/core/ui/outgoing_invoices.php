@@ -26,12 +26,6 @@
 		<option value="mark_as_sent" name="mark_as_sent" ><?php _e('Mark as Sent', 'prospress'); ?></option>
 		<option value="mark_as_paid" name="mark_as_paid" ><?php _e('Mark as Paid', 'prospress'); ?></option>
 		<option value="mark_as_unpaid" name="mark_as_unpaid" ><?php _e('Unset Paid Status', 'prospress'); ?></option>
-
-		<?php /*
-		<option value="send_invoice" name="sendit" ><?php _e('Send Invoice(s)', 'prospress'); ?></option>
-		<option value="send_reminder" name="sendit" ><?php _e('Send Reminder(s)', 'prospress'); ?></option>
-		<option  value="delete_invoice" name="deleteit" ><?php _e('Delete', 'prospress'); ?></option>
-		*/ ?>
 	</select>
 	<input type="submit" value="Apply" id="submit_bulk_action" class="button-secondary action" />
 	</div>
