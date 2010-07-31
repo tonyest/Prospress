@@ -152,10 +152,6 @@ function wp_invoice_lookup() {  ?>
 				$r .= "<td $attributes><a href='mailto:{{$user_class->user_email}'>{$user_class->user_email}</a></td>";
 			break;			
 
-			case 'user':
-				$r .= "<td $attributes>{$user_class->nickname}</td>";
-			break;	
-
 			case 'display_name':
 				$r .= "<td $attributes>{$user_class->display_name}</td>";
 			break;	
