@@ -13,7 +13,7 @@ Prospress is a new plugin that goes where no plugin has gone before.
 
 After its 30 second install, your WordPress site will have its very own auction marketplace. Your registered users will be able to post auctions, place bids, provide feedback and make payments. Everything needed for a fully functioning marketplace.
 
-Well, hopefully. Prospress is so new, it's still in beta. So please only use Prospress on test sites for now. There will be unforeseen bugs. Those bugs will be fixed, but it's better they occur in a sandbox.
+Well, hopefully. Prospress is so new, it's still in beta. So please only use Prospress on test sites for now. There will be bugs. They will be fixed, but it's better they occur in a sandbox.
 
 = Why is Prospress here when it's beta? =
 
@@ -23,13 +23,11 @@ If you'd prefer to wait for a stable release, we've made a special [demo site](h
 
 = Features =
 
-**Custom Post** - Prospress uses WordPress' publishing system, so it's as enjoyable to publish auctions as blog posts.
+**Auction Posts** - Prospress uses the WordPress publishing system, so publishing auctions is as enjoyable as publishing blog posts.
 
-**Invoicing & Payments** - To finalize a transaction, currency needs to change hands. Prospress makes this easy with support for PayPal, credit card gateways & bank transfers.
+**Invoicing & Payments** - To finalize transactions, Prospress provides an invoicing system that supports payment with PayPal, credit cards & bank transfers.
 
-**Feedback** - Traders in your marketplace can rate each other after a transaction and view sellers feedback to be confident in making a purchase.
-
-**Templates not Themes** - Your site is already stunning, so instead of requiring a new theme, Prospress uses a few simple templates to fit in with your existing look and feel.
+**Feedback** - Traders in your marketplace can rate each other after a transaction and view each other's feedback to gain confidence when entering a transaction.
 
 See all the great features on the [Prospress Features page](http://prospress.org/features/).
 
