@@ -1,7 +1,7 @@
 	   
 	
 	
-	function wp_invoice_add_time(add_days) {
+	function pp_invoice_add_time(add_days) {
 	
 	if(add_days == 'clear') {
 	
@@ -26,37 +26,37 @@
 		
 }
 
-function wp_invoice_calculate_owed() {
+function pp_invoice_calculate_owed() {
  
-		jQuery("#wp_invoice_total_owed").html(jQuery("#invoice_sorter_table tr:visible .column-balance").sum());
-		jQuery("#wp_invoice_total_owed").formatCurrency({useHtml:true});
+		jQuery("#pp_invoice_total_owed").html(jQuery("#invoice_sorter_table tr:visible .column-balance").sum());
+		jQuery("#pp_invoice_total_owed").formatCurrency({useHtml:true});
 	
 }
 
-function wp_invoice_restore_original() {
-	if(confirm('Do you want to restore the WP-Invoice generated message?')) {jQuery(".email_message_content textarea").val(jQuery(".email_message_content_original textarea").val());}
+function pp_invoice_restore_original() {
+	if(confirm('Do you want to restore the default generated message?')) {jQuery(".email_message_content textarea").val(jQuery(".email_message_content_original textarea").val());}
 }
 
 
-function wp_invoice_cancel_recurring() {
-	jQuery("#wp_invoice_subscription_name").val('');
-	jQuery("#wp_invoice_subscription_unit").val('');
-	jQuery("#wp_invoice_subscription_length").val('');
-	jQuery("#wp_invoice_subscription_start_month").val('');
-	jQuery("#wp_invoice_subscription_start_day").val('');
-	jQuery("#wp_invoice_subscription_start_year").val('');
-	jQuery("#wp_invoice_subscription_total_occurances").val('');
+function pp_invoice_cancel_recurring() {
+	jQuery("#pp_invoice_subscription_name").val('');
+	jQuery("#pp_invoice_subscription_unit").val('');
+	jQuery("#pp_invoice_subscription_length").val('');
+	jQuery("#pp_invoice_subscription_start_month").val('');
+	jQuery("#pp_invoice_subscription_start_day").val('');
+	jQuery("#pp_invoice_subscription_start_year").val('');
+	jQuery("#pp_invoice_subscription_total_occurances").val('');
 	
-	//jQuery(".wp_invoice_enable_recurring_billing").toggle();
-	jQuery("#wp_invoice_enable_recurring_billing").toggle();
-	jQuery(".wp_invoice_enable_recurring_billing").toggle();
+	//jQuery(".pp_invoice_enable_recurring_billing").toggle();
+	jQuery("#pp_invoice_enable_recurring_billing").toggle();
+	jQuery(".pp_invoice_enable_recurring_billing").toggle();
 	
 	
 
 }
 
 
-function wp_invoice_subscription_start_time(add_days) {
+function pp_invoice_subscription_start_time(add_days) {
 	
 	function formatNum(num){
 	var mynum = num * 1;
@@ -66,9 +66,9 @@ function wp_invoice_subscription_start_time(add_days) {
 
 	if(add_days == 'clear') {
 	
-	jQuery("#wp_invoice_subscription_start_month").val('');
-	jQuery("#wp_invoice_subscription_start_day").val('');
-	jQuery("#wp_invoice_subscription_start_year").val('');
+	jQuery("#pp_invoice_subscription_start_month").val('');
+	jQuery("#pp_invoice_subscription_start_day").val('');
+	jQuery("#pp_invoice_subscription_start_year").val('');
 	}
 	 else
 	 {
@@ -77,9 +77,9 @@ function wp_invoice_subscription_start_time(add_days) {
 	var week_from_now = new Date(myDate.getTime() + add_days*24*60*60*1000);;
 	month = week_from_now.getMonth() + 1;
 
-	jQuery("#wp_invoice_subscription_start_month").val(formatNum(month));
-	jQuery("#wp_invoice_subscription_start_day").val(week_from_now.getDate());
-	jQuery("#wp_invoice_subscription_start_year").val(week_from_now.getFullYear());
+	jQuery("#pp_invoice_subscription_start_month").val(formatNum(month));
+	jQuery("#pp_invoice_subscription_start_day").val(week_from_now.getDate());
+	jQuery("#pp_invoice_subscription_start_year").val(week_from_now.getFullYear());
 		}
 		
 		
@@ -87,21 +87,21 @@ function wp_invoice_subscription_start_time(add_days) {
 		
 }
 
-function wp_invoice_create_username() {
-	first_name = jQuery("#wp_invoice_first_name").val();
-	last_name = jQuery("#wp_invoice_last_name").val();
-	company_name = jQuery("#wp_invoice_company_name").val();
+function pp_invoice_create_username() {
+	first_name = jQuery("#pp_invoice_first_name").val();
+	last_name = jQuery("#pp_invoice_last_name").val();
+	company_name = jQuery("#pp_invoice_company_name").val();
 	
 	first_name = first_name.replace(/[^a-zA-Z 0-9]+/g,'').replace(/ /g, "-");
 	last_name = last_name.replace(/[^a-zA-Z 0-9]+/g,'').replace(/ /g, "-");
 	company_name = company_name.replace(/[^a-zA-Z 0-9]+/g,'').replace(/ /g, "-");
 	
-	if(first_name != '' && last_name != '') {  jQuery("#wp_invoice_new_user_username").val(first_name + "." + last_name);}
-	if(first_name == '' || last_name == '') {  jQuery("#wp_invoice_new_user_username").val(company_name);}
+	if(first_name != '' && last_name != '') {  jQuery("#pp_invoice_new_user_username").val(first_name + "." + last_name);}
+	if(first_name == '' || last_name == '') {  jQuery("#pp_invoice_new_user_username").val(company_name);}
 }
 		
 		
-	function wp_invoice_confirm_delete() {
+	function pp_invoice_confirm_delete() {
 
 		var r=confirm("Are you sure you want to delete this invoice?");
 		if (r==true)
@@ -116,16 +116,16 @@ function wp_invoice_create_username() {
 	
 jQuery(document).ready(function(){
 
-	jQuery("#wp_invoice_first_name").blur(function (){ wp_invoice_create_username();})
-	jQuery("#wp_invoice_last_name").blur(function (){ wp_invoice_create_username();})
-	jQuery("#wp_invoice_company_name").blur(function (){ wp_invoice_create_username();})
+	jQuery("#pp_invoice_first_name").blur(function (){ pp_invoice_create_username();})
+	jQuery("#pp_invoice_last_name").blur(function (){ pp_invoice_create_username();})
+	jQuery("#pp_invoice_company_name").blur(function (){ pp_invoice_create_username();})
 	
-	wp_invoice_calculate_owed();
+	pp_invoice_calculate_owed();
 	
 	tooltip();
 	
 	jQuery("#submit_bulk_action").click( function(){
-	if(jQuery("#wp_invoice_action :selected").text() == 'Delete') {
+	if(jQuery("#pp_invoice_action :selected").text() == 'Delete') {
 	
 	var r=confirm("Are you sure you want to delete the selected invoice(s)?");
 	if (r==true)
@@ -142,7 +142,7 @@ jQuery(document).ready(function(){
 
 	});
 	
-	jQuery(".wp_invoice_make_editable").click( function() {
+	jQuery(".pp_invoice_make_editable").click( function() {
 	var element_name = jQuery(this).attr('id');
 	var width = jQuery(this).width() * 2;
 	var original_content = jQuery(this).html();
@@ -158,7 +158,7 @@ jQuery(document).ready(function(){
 	  
 	jQuery("#invoices-filter").submit(function() {  if(jQuery("#invoices-filter select").val() == '-1') { return false;} })
 
-	jQuery("#wp_invoice_tax").keyup(function() { recalc(); }) 
+	jQuery("#pp_invoice_tax").keyup(function() { recalc(); }) 
 	
 	
 	jQuery('.itemized_list input') 
@@ -167,24 +167,24 @@ jQuery(document).ready(function(){
         return false; 
     }); 
 	
-	jQuery('#wp_invoice_subscription_total_occurances input') 
+	jQuery('#pp_invoice_subscription_total_occurances input') 
     .livequery('keyup', function(event) { 
         recalc(); 
         return false; 
     }); 
 
 	
-	jQuery("a.wp_invoice_custom_invoice_id").click(function() { jQuery("input.wp_invoice_custom_invoice_id").toggle(); return false;}) 
+	jQuery("a.pp_invoice_custom_invoice_id").click(function() { jQuery("input.pp_invoice_custom_invoice_id").toggle(); return false;}) 
 	
-	jQuery("#wp_invoice_show_archived").click(function() { jQuery(".wp_invoice_archived").toggle();  wp_invoice_calculate_owed(); return false; }) 
-	jQuery("#wp_invoice_enable_recurring_billing").click(function() { jQuery(".wp_invoice_enable_recurring_billing").toggle(); jQuery("#wp_invoice_enable_recurring_billing").toggle();  }) 
-	jQuery("#wp_invoice_need_mm").click(function() { jQuery(".wp_invoice_credit_card_processors").toggle();  }) 
-	jQuery("#wp_invoice_copy_invoice").click(function() { jQuery(".wp_invoice_copy_invoice").toggle();jQuery("#wp_invoice_create_new_invoice").toggle();jQuery("#wp_invoice_copy_invoice").toggle();  }) 
-	jQuery("#wp_invoice_copy_invoice_cancel").click(function() { jQuery(".wp_invoice_copy_invoice").toggle();jQuery("#wp_invoice_create_new_invoice").toggle();jQuery("#wp_invoice_copy_invoice").toggle();  }) 
+	jQuery("#pp_invoice_show_archived").click(function() { jQuery(".pp_invoice_archived").toggle();  pp_invoice_calculate_owed(); return false; }) 
+	jQuery("#pp_invoice_enable_recurring_billing").click(function() { jQuery(".pp_invoice_enable_recurring_billing").toggle(); jQuery("#pp_invoice_enable_recurring_billing").toggle();  }) 
+	jQuery("#pp_invoice_need_mm").click(function() { jQuery(".pp_invoice_credit_card_processors").toggle();  }) 
+	jQuery("#pp_invoice_copy_invoice").click(function() { jQuery(".pp_invoice_copy_invoice").toggle();jQuery("#pp_invoice_create_new_invoice").toggle();jQuery("#pp_invoice_copy_invoice").toggle();  }) 
+	jQuery("#pp_invoice_copy_invoice_cancel").click(function() { jQuery(".pp_invoice_copy_invoice").toggle();jQuery("#pp_invoice_create_new_invoice").toggle();jQuery("#pp_invoice_copy_invoice").toggle();  }) 
 
 
-	jQuery("#wp_invoice_merchantexpress_prefill").click(function() { jQuery("#wp_invoice_gateway_url").val('https://gateway.merchantexpress.com');  }) 
-	jQuery("#wp_invoice_merchantwarehouse_prefill").click(function() { jQuery("#wp_invoice_gateway_url").val('https://gateway.merchantwarehouse.com');  }) 
+	jQuery("#pp_invoice_merchantexpress_prefill").click(function() { jQuery("#pp_invoice_gateway_url").val('https://gateway.merchantexpress.com');  }) 
+	jQuery("#pp_invoice_merchantwarehouse_prefill").click(function() { jQuery("#pp_invoice_gateway_url").val('https://gateway.merchantwarehouse.com');  }) 
 
 	if(jQuery('#first_name').val() == '') {jQuery('#first_name').addClass("error"); }
 	if(jQuery('#last_name').val() == '') {jQuery('#last_name').addClass("error"); }
@@ -193,9 +193,9 @@ jQuery(document).ready(function(){
 	if(jQuery('#city').val() == '') {jQuery('#city').addClass("error"); }
 	if(jQuery('#zip').val() == '') {jQuery('#zip').addClass("error"); }
 	
-	jQuery('#delete_all_wp_invoice_databases').click(function() {
+	jQuery('#delete_all_pp_invoice_databases').click(function() {
 		var txt = 'Are you sure you want to delete all the databases?  All your invoice and log data will be lost forever. ';
-		jQuery.prompt(txt,{	buttons:{Delete:true, Cancel:false}, callback: function(v,m){ if(v){  document.location = "admin.php?page=new_invoice&wp_invoice_action=complete_removal"; }	}
+		jQuery.prompt(txt,{	buttons:{Delete:true, Cancel:false}, callback: function(v,m){ if(v){  document.location = "admin.php?page=new_invoice&pp_invoice_action=complete_removal"; }	}
 	});
 	return false
 	});
@@ -206,9 +206,9 @@ jQuery(document).ready(function(){
 	  tog = !tog;
 	 }); 
 	 
-	//jQuery('#wp_invoice_main_info .invoice_description').autogrow();
-	//jQuery('#wp_invoice_main_info .autogrow').autogrow();
-	jQuery('#wp_invoice_main_info #add_itemized_item').bind('click', add_itemized_list_row);
+	//jQuery('#pp_invoice_main_info .invoice_description').autogrow();
+	//jQuery('#pp_invoice_main_info .autogrow').autogrow();
+	jQuery('#pp_invoice_main_info #add_itemized_item').bind('click', add_itemized_list_row);
 		
 	jQuery('#invoices-filter .subsubsub a').click(function() {
 		jQuery("#FilterTextBox").val(jQuery(this).attr('class'));
@@ -218,7 +218,7 @@ jQuery(document).ready(function(){
 		   jQuery("#invoice_sorter_table tr:visible .indexColumn:not(:contains('"
 			  + this + "'))").parent().hide();
 		});
-		wp_invoice_calculate_owed();
+		pp_invoice_calculate_owed();
 		return false; 
 	});
 
@@ -229,7 +229,7 @@ jQuery(document).ready(function(){
 	});//each tr
  
 	jQuery("#FilterTextBox").keyup(function(){
-			wp_invoice_calculate_owed();
+			pp_invoice_calculate_owed();
 			var s = jQuery(this).val().toLowerCase().split(" ");
 			//show all rows.
 
@@ -267,9 +267,9 @@ function recalc(){
 			return s.toFixed(2);
 		},
 		function ($this){
-			var tax = jQuery('#wp_invoice_tax').val() / 100;
+			var tax = jQuery('#pp_invoice_tax').val() / 100;
 			var sum = $this.sum() + ($this.sum() * tax);
-			var total_occurances = jQuery("#wp_invoice_subscription_total_occurances").val();
+			var total_occurances = jQuery("#pp_invoice_subscription_total_occurances").val();
 			if(total_occurances) {
 				var total_overtime = sum*total_occurances;
 				jQuery("#recurring_total").html(total_overtime.toFixed(2));
@@ -317,20 +317,20 @@ this.tooltip = function(){
 		// these 2 variable determine popup's distance from the cursor
 		// you might want to adjust to get the right result		
 	/* END CONFIG */		
-	jQuery(".wp_invoice_tooltip").hover(function(e) {									  
+	jQuery(".pp_invoice_tooltip").hover(function(e) {									  
 		this.t = this.title;
 		this.title = "";									  
-		jQuery("body").append("<p id='wp_invoice_tooltip'>"+ this.t +"</p>");
-		jQuery("#wp_invoice_tooltip")
+		jQuery("body").append("<p id='pp_invoice_tooltip'>"+ this.t +"</p>");
+		jQuery("#pp_invoice_tooltip")
 			.css("top",(e.pageY - xOffset) + "px")
 			.css("left",(e.pageX + yOffset) + "px")
 			.fadeIn("fast");		
     },
 	function(){
 		this.title = this.t;		
-		jQuery("#wp_invoice_tooltip").remove();
+		jQuery("#pp_invoice_tooltip").remove();
     });	
-	jQuery("a.wp_invoice_tooltip").mousemove(function(e){
+	jQuery("a.pp_invoice_tooltip").mousemove(function(e){
 		jQuery("#tooltip")
 			.css("top",(e.pageY - xOffset) + "px")
 			.css("left",(e.pageX + yOffset) + "px");

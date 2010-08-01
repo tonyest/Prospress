@@ -2,7 +2,7 @@
 		//<![CDATA[
 		jQuery(document).ready(function(){
 
-			jQuery("#wp_invoice_payment_form").submit(function() {
+			jQuery("#pp_invoice_payment_form").submit(function() {
 
 				// Prevent doubleclick
 				jQuery(':submit', this).click(function() {  
@@ -37,9 +37,9 @@
 		jQuery("#credit_card_information select").removeClass('cc_error');
 		jQuery("#wp_cc_response ol li").remove();
 
-		jQuery.post ( ajaxurl, jQuery('#wp_invoice_payment_form').serialize(), function(html){
+		jQuery.post ( ajaxurl, jQuery('#pp_invoice_payment_form').serialize(), function(html){
 
-			if(html == '<?php echo wp_create_nonce('wp_invoice_process_cc_' . $invoice->id); ?>') {
+			if(html == '<?php echo wp_create_nonce('pp_invoice_process_cc_' . $invoice->id); ?>') {
 				
 				alert("transaction succesfful");
 				//window.location = "<?php echo admin_url("admin.php?page=incoming_invoices&message=Invoice $invoice_id Paid"); ?>";
@@ -50,7 +50,7 @@
 			var explode = html.toString().split('\n');
  			
 			// Remove all errors
-			jQuery(".wp_invoice_error_wrapper div").remove();
+			jQuery(".pp_invoice_error_wrapper div").remove();
 
 			for ( var i in explode ) {
 				var explode_again = explode[i].toString().split('|');
@@ -75,14 +75,14 @@
 	//]]>
 	</script>
 
-	<form id='wp_invoice_payment_form' action="#" method='POST' >
+	<form id='pp_invoice_payment_form' action="#" method='POST' >
 
-	<input type="hidden" name="action" value="wp_invoice_process_cc_ajax">
+	<input type="hidden" name="action" value="pp_invoice_process_cc_ajax">
 	<input type="hidden" name="user_id" value="<?php echo $invoice->payer_class->ID; ?>">
 	<input type="hidden" name="invoice_id" value="<?php echo $invoice->id; ?>">
 	<input type="hidden" name="amount" id="total_amount" value="<?php echo round( $invoice->amount, 2 ); ?>" />
 	<?php 
-	wp_nonce_field( 'wp_invoice_process_cc_' . $invoice->id, 'wp_invoice_process_cc' , false );
+	wp_nonce_field( 'pp_invoice_process_cc_' . $invoice->id, 'pp_invoice_process_cc' , false );
 	?>
 
 	<input type="hidden" name="amount" value="<?php echo $invoice->amount; ?>">
@@ -93,17 +93,17 @@
 		<ol>
 	<li>
 		<label for="first_name"><?php _e('First Name', 'prospress'); ?></label>
-		<?php echo wp_invoice_draw_inputfield("first_name",$invoice->payer_class->first_name); ?>
+		<?php echo pp_invoice_draw_inputfield("first_name",$invoice->payer_class->first_name); ?>
 		</li>
 
 		<li>
 		<label for="last_name"><?php _e('Last Name', 'prospress'); ?></label>
-		<?php echo wp_invoice_draw_inputfield("last_name",$invoice->payer_class->last_name); ?>
+		<?php echo pp_invoice_draw_inputfield("last_name",$invoice->payer_class->last_name); ?>
 		</li>
 
 		<li>
 		<label for="email"><?php _e('Email Address', 'prospress'); ?></label>
-		<?php echo wp_invoice_draw_inputfield("email_address",$invoice->payer_class->user_email); ?>
+		<?php echo pp_invoice_draw_inputfield("email_address",$invoice->payer_class->user_email); ?>
 		</li>
 
 		<li>
@@ -113,27 +113,27 @@
 
 		<li>
 		<label for="address"><?php _e('Address', 'prospress'); ?></label>
-		<?php echo wp_invoice_draw_inputfield("address",$invoice->payer_class->streetaddress); ?>
+		<?php echo pp_invoice_draw_inputfield("address",$invoice->payer_class->streetaddress); ?>
 		</li>
 
 		<li>
 		<label for="city"><?php _e('City', 'prospress'); ?></label>
-		<?php echo wp_invoice_draw_inputfield("city",$invoice->payer_class->city); ?>
+		<?php echo pp_invoice_draw_inputfield("city",$invoice->payer_class->city); ?>
 		</li>
 
 		<li id="state_field">
 		<label for="state"><?php _e('State', 'prospress'); ?></label>
-		<?php echo wp_invoice_draw_inputfield("state",$invoice->payer_class->state); ?>
+		<?php echo pp_invoice_draw_inputfield("state",$invoice->payer_class->state); ?>
 		</li>
 
 		<li>
 		<label for="zip"><?php _e('Zip Code', 'prospress'); ?></label>
-		<?php echo wp_invoice_draw_inputfield("zip",$invoice->payer_class->zip); ?>
+		<?php echo pp_invoice_draw_inputfield("zip",$invoice->payer_class->zip); ?>
 		</li>
 
 		<li>
 		<label for="country"><?php _e('Country', 'prospress'); ?></label>
-		<?php echo wp_invoice_draw_select('country',wp_invoice_country_array(),$invoice->payer_class->country); ?>
+		<?php echo pp_invoice_draw_select('country',pp_invoice_country_array(),$invoice->payer_class->country); ?>
 		</li>
 
 		<li class="hide_after_success">
@@ -141,13 +141,13 @@
 		<input name="card_num" autocomplete="off" onkeyup="cc_card_pick();"  id="card_num" class="credit_card_number input_field"  type="text"  size="22"  maxlength="22" />
 		</li>
 
-		<li class="hide_after_success nocard"  id="cardimage" style=" background: url(<?php echo WP_Invoice::frontend_path(); ?>/core/images/card_array.png) no-repeat;">
+		<li class="hide_after_success nocard"  id="cardimage" style=" background: url(<?php echo PP_Invoice::frontend_path(); ?>/core/images/card_array.png) no-repeat;">
 		</li>
 
 		<li class="hide_after_success">
 		<label class="inputLabel" for="exp_month"><?php _e('Expiration Date', 'prospress'); ?></label>
-		<?php _e('Month', 'prospress'); ?> <?php echo wp_invoice_draw_select('exp_month',wp_invoice_month_array()); ?>
-		<?php _e('Year', 'prospress'); ?> <select name="exp_year" id="exp_year"><?php print wp_invoice_printYearDropdown(); ?></select>
+		<?php _e('Month', 'prospress'); ?> <?php echo pp_invoice_draw_select('exp_month',pp_invoice_month_array()); ?>
+		<?php _e('Year', 'prospress'); ?> <select name="exp_year" id="exp_year"><?php print pp_invoice_printYearDropdown(); ?></select>
 		</li>
 
 		<li class="hide_after_success">

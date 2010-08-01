@@ -17,8 +17,6 @@ if( !defined( 'PP_PAYMENT_DIR' ) )
 	define( 'PP_PAYMENT_DIR', PP_PLUGIN_DIR . '/pp-payment' );
 if( !defined( 'PP_PAYMENT_URL' ) )
 	define( 'PP_PAYMENT_URL', PP_PLUGIN_URL . '/pp-payment' );
-if( !defined( 'PP_INVOICE_DIR' ) )
-	define( 'PP_INVOICE_DIR', PP_PAYMENT_DIR . '/wp-invoice-m2m' );
 
 global $wpdb;
 
@@ -33,9 +31,9 @@ if ( !isset($wpdb->payments_log) || empty($wpdb->payments_log))
  * The engine behind the payment system - TwinCitiesTech's WP Invoice modified for marketplace payments. 
  * All the payment system action happens in there. 
  */
-require_once( PP_INVOICE_DIR . '/WP-Invoice.php' );
+require_once( PP_PAYMENT_DIR . '/PP-Invoice.php' );
 
-add_action( 'pp_activation', array( $WP_Invoice, 'install' ) );
+add_action( 'pp_activation', array( $PP_Invoice, 'install' ) );
 
 include_once( PP_PAYMENT_DIR . '/pp-payment-templatetags.php' );
 

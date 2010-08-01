@@ -2,7 +2,7 @@
 
 class AuthnetARBException extends Exception {}
 
-class WP_Invoice_AuthnetARB
+class PP_Invoice_AuthnetARB
 {
     private $login;
     private $transkey;
@@ -21,9 +21,9 @@ class WP_Invoice_AuthnetARB
     public function __construct()
     {
 	
-        $this->url = stripslashes(get_option("wp_invoice_recurring_gateway_url"));
-        $this->login = stripslashes(get_option("wp_invoice_gateway_username"));
-        $this->transkey = stripslashes(get_option("wp_invoice_gateway_tran_key"));
+        $this->url = stripslashes(get_option("pp_invoice_recurring_gateway_url"));
+        $this->login = stripslashes(get_option("pp_invoice_gateway_username"));
+        $this->transkey = stripslashes(get_option("pp_invoice_gateway_tran_key"));
 
     }
 
@@ -35,7 +35,7 @@ class WP_Invoice_AuthnetARB
             $ch = curl_init();
 		
 			//required for GoDaddy
-			if(get_option('wp_invoice_using_godaddy') == 'yes') {
+			if(get_option('pp_invoice_using_godaddy') == 'yes') {
 			curl_setopt ($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
 			curl_setopt ($ch, CURLOPT_PROXY,"http://proxy.shr.secureserver.net:3128");
 			curl_setopt ($ch, CURLOPT_TIMEOUT, 120);

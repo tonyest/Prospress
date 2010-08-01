@@ -18,7 +18,7 @@
 		<tr class="invoice_main">
 			<th><?php _e('Subject:', 'prospress'); ?></th>
 			<td style="font-size: 1.1em; padding-top:7px;">
-			<?php echo preg_replace_callback('/(%([a-z_]+)%)/', 'wp_invoice_email_apply_variables', get_option('wp_invoice_email_send_invoice_subject')); ?>
+			<?php echo preg_replace_callback('/(%([a-z_]+)%)/', 'pp_invoice_email_apply_variables', get_option('pp_invoice_email_send_invoice_subject')); ?>
 			</td>
 		</tr>
 	
@@ -33,14 +33,14 @@
 			<th><?php _e('Email Message:', 'prospress'); ?></th>
 			<td style="font-size: 1.1em; padding-top:7px;">
 			<div class="email_message_content">
-			<?php echo wp_invoice_draw_textarea("wp_invoice_payment_request[email_message_content]", wp_invoice_show_email($invoice_id), 'style="width: 95%; height: 250px;"'); ?>
+			<?php echo pp_invoice_draw_textarea("pp_invoice_payment_request[email_message_content]", pp_invoice_show_email($invoice_id), 'style="width: 95%; height: 250px;"'); ?>
 			</div>
 			
 			<div class="email_message_content_original">
-			<?php echo wp_invoice_draw_textarea("email_message_content_original", wp_invoice_show_email($invoice_id, true), ' style="display:none; "'); ?>
+			<?php echo pp_invoice_draw_textarea("email_message_content_original", pp_invoice_show_email($invoice_id, true), ' style="display:none; "'); ?>
 			</div>
 			
-			<span class="wp_invoice_click_me" onclick="wp_invoice_restore_original()"><?php _e('Reset Email Based on Template', 'prospress'); ?></span>
+			<span class="pp_invoice_click_me" onclick="pp_invoice_restore_original()"><?php _e('Reset Email Based on Template', 'prospress'); ?></span>
 			</td>
 		</tr>
 
@@ -52,8 +52,8 @@
 	<div id="major-publishing-actions">
 
 	<div id="publishing-action">
-		<input type="submit" value="<?php _e('Save for Later', 'prospress'); ?>" name="wp_invoice_action" class="button-secondary" />
- 		<input type="submit" value="<?php _e('Email to Client', 'prospress'); ?>"  name="wp_invoice_action" class="button-primary" />
+		<input type="submit" value="<?php _e('Save for Later', 'prospress'); ?>" name="pp_invoice_action" class="button-secondary" />
+ 		<input type="submit" value="<?php _e('Email to Client', 'prospress'); ?>"  name="pp_invoice_action" class="button-primary" />
 	</div>
 	<div class="clear"></div>
 	</div>

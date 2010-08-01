@@ -1,6 +1,6 @@
- <form action="https://www<?php if($invoice->payee_class->wp_invoice_settings[paypal_sandbox] == 'true') echo ".sandbox"; ?>.paypal.com/cgi-bin/webscr" method="post" class="clearfix">
+ <form action="https://www<?php if($invoice->payee_class->pp_invoice_settings[paypal_sandbox] == 'true') echo ".sandbox"; ?>.paypal.com/cgi-bin/webscr" method="post" class="clearfix">
 	<input type="hidden" name="cmd" value="_xclick">
- 	<input type="hidden" name="business" value="<?php echo $invoice->payee_class->wp_invoice_settings[paypal_address]; ?>">
+ 	<input type="hidden" name="business" value="<?php echo $invoice->payee_class->pp_invoice_settings[paypal_address]; ?>">
 	<input type="hidden" name="item_name" value="<?php echo $invoice->post_title; ?>">	
     <input type="hidden" name="no_note" value="1">
 	<input type="hidden" name="currency_code" value="<?php echo $invoice->currency_code; ?>">

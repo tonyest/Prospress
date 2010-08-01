@@ -1,6 +1,6 @@
 <?php
 
-class WP_Invoice_Authnet
+class PP_Invoice_Authnet
 {
     private $login;
     private $transkey;
@@ -21,18 +21,18 @@ class WP_Invoice_Authnet
         if (self::$instances == 0)
         {
 
-			$this->url = wp_invoice_user_settings("gateway_url");
+			$this->url = pp_invoice_user_settings("gateway_url");
 
-            $this->params['x_delim_data']     = wp_invoice_user_settings("gateway_delim_data");
-            $this->params['x_delim_char']     = wp_invoice_user_settings("gateway_delim_char");
-            $this->params['x_encap_char']     = wp_invoice_user_settings("gateway_encap_char");
+            $this->params['x_delim_data']     = pp_invoice_user_settings("gateway_delim_data");
+            $this->params['x_delim_char']     = pp_invoice_user_settings("gateway_delim_char");
+            $this->params['x_encap_char']     = pp_invoice_user_settings("gateway_encap_char");
             $this->params['x_relay_response'] = "FALSE";
             $this->params['x_url']            = "FALSE";
             $this->params['x_version']        = "3.1";
             $this->params['x_method']         = "CC";
             $this->params['x_type']           = "AUTH_CAPTURE";
-            $this->params['x_login']          = wp_invoice_user_settings("gateway_username");
-            $this->params['x_tran_key']       = wp_invoice_user_settings("gateway_tran_key");
+            $this->params['x_login']          = pp_invoice_user_settings("gateway_username");
+            $this->params['x_tran_key']       = pp_invoice_user_settings("gateway_tran_key");
             $this->params['x_test_request']   = "false";
 
             self::$instances++;
@@ -59,7 +59,7 @@ class WP_Invoice_Authnet
         {
 		
 			//required for GoDaddy
-			if(get_option('wp_invoice_using_godaddy') == 'yes') {
+			if(get_option('pp_invoice_using_godaddy') == 'yes') {
 			curl_setopt ($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
 			curl_setopt ($ch, CURLOPT_PROXY,"http://proxy.shr.secureserver.net:3128");
 			curl_setopt ($ch, CURLOPT_SSL_VERIFYPEER, FALSE);

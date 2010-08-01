@@ -3,14 +3,14 @@
 /*
 	Gets an invoice
 */
-class wp_invoice_get {
+class pp_invoice_get {
 	
 	var $invoice_id; 
 	var $data;
 	var $error;
-	
+
 	//Load invoice variables
-	function wp_invoice_get( $invoice_id) {
+	function pp_invoice_get( $invoice_id) {
 		global $wpdb, $user_ID, $currency, $currency_symbol;
 
 		$this->invoice_id = $invoice_id;
@@ -49,7 +49,7 @@ class wp_invoice_get {
 		}
 
 		// Determine if current user owes money or is owned
-		$this->data->current_user_is = wp_invoice_user_has_permissions( $invoice_id);
+		$this->data->current_user_is = pp_invoice_user_has_permissions( $invoice_id);
 
 		// Determine if invoice has been paid
 		if( $this->data->paid_status == 'paid')

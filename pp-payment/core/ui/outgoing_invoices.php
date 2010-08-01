@@ -19,7 +19,7 @@
 	<div class="tablenav clearfix">
 	
 	<div class="alignleft">
-	<select id="wp_invoice_action" name="wp_invoice_action">
+	<select id="pp_invoice_action" name="pp_invoice_action">
 		<option value="-1" selected="selected"><?php _e('-- Actions --', 'prospress'); ?></option>
 		<option value="archive_invoice" name="archive" ><?php _e('Archive', 'prospress'); ?></option>
 		<option value="unrachive_invoice" name="unarchive" ><?php _e('Un-Archive', 'prospress'); ?></option>
@@ -58,8 +58,8 @@
 			if( !empty( $outgoing_invoices ) ){
 				foreach ($outgoing_invoices as $invoice_id) {			
 					$style = ( ' class="alternate"' == $style ) ? '' : ' class="alternate"';
-					$invoice_class = new wp_invoice_get($invoice_id);
-					echo "\n\t" . wp_invoice_invoice_row($invoice_class->data, 'outgoing');
+					$invoice_class = new pp_invoice_get($invoice_id);
+					echo "\n\t" . pp_invoice_invoice_row($invoice_class->data, 'outgoing');
 				}
 			} else { ?>
 				<tr>
@@ -72,9 +72,9 @@
 			<?php }	?>
 		</tbody>
 	</table>
-	<a href="" id="wp_invoice_show_archived">Show / Hide Archived</a>
+	<a href="" id="pp_invoice_show_archived">Show / Hide Archived</a>
 	</form>
-	<div class="wp_invoice_stats">
-		Total of Displayed Invoices: <span id="wp_invoice_total_owed"></span>
+	<div class="pp_invoice_stats">
+		Total of Displayed Invoices: <span id="pp_invoice_total_owed"></span>
 	</div>
 </div>

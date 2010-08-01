@@ -3,7 +3,7 @@
 <div class='wrap'>
 	<h2>Make Payment</h2>
  
-	<div class="wp_invoice_error_wrapper">
+	<div class="pp_invoice_error_wrapper">
 	<?php if( count( $errors ) > 0): ?>
 	<div class="error"><p>
 		<?php foreach( $errors as $error ): ?>
@@ -25,7 +25,7 @@
 		//<![CDATA[
 		jQuery(document).ready( function(jQuery) {
 			jQuery('.if-js-closed').removeClass('if-js-closed').addClass('closed');
-			postboxes.add_postbox_toggles('<?php echo $wp_invoice_page_names['view_invoice']; ?>');
+			postboxes.add_postbox_toggles('<?php echo $pp_invoice_page_names['view_invoice']; ?>');
 
 		});
 	//]]>
@@ -41,7 +41,7 @@
 		<div id="side-info-column" class="inner-sidebar">
 			<?php 
 			if(!$invoice->is_paid)
-				add_meta_box('wp_invoice_metabox_submit_payment', __('Payment Details','prospress'), 'wp_invoice_metabox_submit_payment', 'admin_page_make_payment', 'side', 'high');
+				add_meta_box('pp_invoice_metabox_submit_payment', __('Payment Details','prospress'), 'pp_invoice_metabox_submit_payment', 'admin_page_make_payment', 'side', 'high');
 				
 			do_meta_boxes('admin_page_make_payment', 'side', $invoice); ?>				
 		</div>

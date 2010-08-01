@@ -1,6 +1,6 @@
 <?php
 
-function wp_invoice_metabox_submit_payment( $invoice ) {
+function pp_invoice_metabox_submit_payment( $invoice ) {
 	?>
 	<div id="misc-publishing-actions">
 		<div class="misc-pub-section">
@@ -16,8 +16,8 @@ function wp_invoice_metabox_submit_payment( $invoice ) {
 <?php
 }
 
-function wp_invoice_metabox_invoice_details( $invoice ) { ?>
-	<table class="form-table" id="wp_invoice_main_info">
+function pp_invoice_metabox_invoice_details( $invoice ) { ?>
+	<table class="form-table" id="pp_invoice_main_info">
 
 		<tr class="invoice_main">
 			<th><?php _e("Post Title", 'prospress') ?></th>
@@ -36,15 +36,15 @@ function wp_invoice_metabox_invoice_details( $invoice ) { ?>
 	<?php
 }
 
-function wp_invoice_metabox_billing_details( $invoice ) {
+function pp_invoice_metabox_billing_details( $invoice ) {
 
 	// Create payment array
-	$payment_array = wp_invoice_user_accepted_payments( $invoice->payee_class->ID );
+	$payment_array = pp_invoice_user_accepted_payments( $invoice->payee_class->ID );
 	?>
 <script type="text/javascript">
 //<![CDATA[
 	function changePaymentOption(){
-		var dropdown = document.getElementById("wp_invoice_select_payment_method_selector");
+		var dropdown = document.getElementById("pp_invoice_select_payment_method_selector");
 		var index = dropdown.selectedIndex;
 		var ddVal = dropdown.options[index].value;
 		var ddText = dropdown.options[index].text;
@@ -65,21 +65,21 @@ function wp_invoice_metabox_billing_details( $invoice ) {
 </script>
 <style>
 .payment_info {display: none;}
-.<?php echo wp_invoice_user_settings('default_payment_venue', $invoice->payee_class->ID); ?>_ui {display: block; } 
+.<?php echo pp_invoice_user_settings('default_payment_venue', $invoice->payee_class->ID); ?>_ui {display: block; } 
 </style>
 
 	<?php
 	//show dropdown if it is allowed, and there is more than one payment option
-	if( wp_invoice_user_settings( 'can_change_payment_method', $invoice->payee_class->ID ) && count( $payment_array ) > 1 ) { ?>
+	if( pp_invoice_user_settings( 'can_change_payment_method', $invoice->payee_class->ID ) && count( $payment_array ) > 1 ) { ?>
 
-	<fieldset id="wp_invoice_select_payment_method">
+	<fieldset id="pp_invoice_select_payment_method">
 		<ol>
 			<li>
 				<label for="first_name">Select Payment Method </label>
-				<select id="wp_invoice_select_payment_method_selector" onChange="changePaymentOption()">
+				<select id="pp_invoice_select_payment_method_selector" onChange="changePaymentOption()">
 					<?php foreach ($payment_array as $payment_name => $allowed) { 
 						$name =  str_replace('_allow', '', $payment_name); ?>
-						<option name="<?php echo $name; ?>" <?php if(wp_invoice_user_settings('default_payment_venue', $invoice->payee_class->ID) == $name) { echo "SELECTED"; } ?>><?php echo wp_invoice_payment_nicename($name); ?></option>
+						<option name="<?php echo $name; ?>" <?php if(pp_invoice_user_settings('default_payment_venue', $invoice->payee_class->ID) == $name) { echo "SELECTED"; } ?>><?php echo pp_invoice_payment_nicename($name); ?></option>
 					<?php } ?>
 				</select>
 			</li>
@@ -91,14 +91,14 @@ function wp_invoice_metabox_billing_details( $invoice ) {
 	if( is_array( $payment_array ) ) {
 		foreach ( $payment_array as $payment_name => $allowed ) { 
 			$name =  str_replace( '_allow', '', $payment_name );?>
-		 	<div class="<?php echo $name; ?>_ui payment_info"><?php include WP_INVOICE_UI_PATH . "payment_{$name}.php"; ?></div>
+		 	<div class="<?php echo $name; ?>_ui payment_info"><?php include PP_INVOICE_UI_PATH . "payment_{$name}.php"; ?></div>
 	 	<?php }
 	} else { ?>
 		The payee has not set up any billing options yet.  You cannot make a payment until this is done.  Contact the payee to resolve this.
 	<?php }
 }
 
-function wp_invoice_metabox_payee_details( $invoice ) { ?>
+function pp_invoice_metabox_payee_details( $invoice ) { ?>
 	<dl class="payee_details clearfix">
 		<dt>Email</dt>
 		<dd><?php echo $invoice->payee_class->user_email; ?></dd>

@@ -1,11 +1,11 @@
 #icon-outgoing_invoices,#icon-incoming_invoices{background: transparent url(../images/payments32.png) no-repeat scroll;}
 
-#wp_invoice_metabox_billing_details #cardimage {margin-bottom: 10px; height: 23px;}
-#wp_invoice_metabox_billing_details .nocard {background-position: 0px 0px !important;}
-#wp_invoice_metabox_billing_details .visa_card {background-position: 0px -23px !important;}
-#wp_invoice_metabox_billing_details .mastercard {background-position:0px -46px !important; }
-#wp_invoice_metabox_billing_details .discover_card { background-position: 0px -69px !important;}
-#wp_invoice_metabox_billing_details .amex {background-position: 0px -92px !important;}
+#pp_invoice_metabox_billing_details #cardimage {margin-bottom: 10px; height: 23px;}
+#pp_invoice_metabox_billing_details .nocard {background-position: 0px 0px !important;}
+#pp_invoice_metabox_billing_details .visa_card {background-position: 0px -23px !important;}
+#pp_invoice_metabox_billing_details .mastercard {background-position:0px -46px !important; }
+#pp_invoice_metabox_billing_details .discover_card { background-position: 0px -69px !important;}
+#pp_invoice_metabox_billing_details .amex {background-position: 0px -92px !important;}
 
 
 #wp_cc_response{background:#FFFAE4 none repeat scroll 0 0;border-bottom:3px solid #FFE787;padding:10px;display:none; }
@@ -19,16 +19,16 @@
 	border: 1px solid red !important;
 }
 
-#wp_invoice_metabox_submit_payment .inside {
+#pp_invoice_metabox_submit_payment .inside {
 	margin: 0;
 }
 
-#wp_invoice_metabox_submit_payment #major-publishing-actions {
+#pp_invoice_metabox_submit_payment #major-publishing-actions {
 	text-align: right;
 }
 
 
-#wp_invoice_metabox_submit_payment .price_information {
+#pp_invoice_metabox_submit_payment .price_information {
 	margin-top: 10px;
 	padding:6px;
 	text-align:center;
@@ -36,41 +36,41 @@
 }
 
 
-#wp_invoice_metabox_billing_details #major-publishing-actions .button-primary{
+#pp_invoice_metabox_billing_details #major-publishing-actions .button-primary{
 	margin-left: 20px;
 }
 
-#wp_invoice_metabox_billing_details #wp_invoice_select_payment_method{
+#pp_invoice_metabox_billing_details #pp_invoice_select_payment_method{
 	margin-left: 0px;
 	margin-top: 15px;
 }
 
-#wp_invoice_metabox_billing_details form fieldset{
+#pp_invoice_metabox_billing_details form fieldset{
 	margin: 0px;
 }
 
-#wp_invoice_metabox_billing_details .inside{
+#pp_invoice_metabox_billing_details .inside{
 	margin: 0;
 }
 
-#wp_invoice_metabox_billing_details ol {
+#pp_invoice_metabox_billing_details ol {
 	list-style-type: none;
 	margin-left: 15px;
 }
 
-#wp_invoice_metabox_billing_details li {
+#pp_invoice_metabox_billing_details li {
 	height: 25px;
 	margin-bottom: 15px;
 	
 }
 
-#wp_invoice_metabox_billing_details #cardimage {
+#pp_invoice_metabox_billing_details #cardimage {
 	margin-left: 220px;
 	
 }
 
 
-#wp_invoice_metabox_billing_details label,
+#pp_invoice_metabox_billing_details label,
 .draft_isntructions {
 	width: 220px;
 	float: left;
@@ -81,7 +81,7 @@
 	margin-bottom:1em;
 }
 
-#wp_invoice_metabox_billing_details .input_field{
+#pp_invoice_metabox_billing_details .input_field{
 	width: 200px;
 	float: left;
 	}
@@ -128,11 +128,11 @@ dl.payee_details
 
 
 
-.wp_invoice_status {
+.pp_invoice_status {
 	padding: 10px;
 }
 
-.wp_invoice_status h2{
+.pp_invoice_status h2{
 	padding: 0;
 }
 
@@ -162,32 +162,32 @@ dl.payee_details
 }
 
 
-#wp_invoice_user_metabox .input_field {
+#pp_invoice_user_metabox .input_field {
 	width: 200px;
 }
 
-#wp_invoice_metabox_recurring_billing .input_field {
+#pp_invoice_metabox_recurring_billing .input_field {
 	width: 160px;
 }
 
-#wp_invoice_metabox_recurring_billing #wp_invoice_subscription_start_year.input_field {
+#pp_invoice_metabox_recurring_billing #pp_invoice_subscription_start_year.input_field {
 	width: 30px;
 }
-#wp_invoice_metabox_recurring_billing #wp_invoice_subscription_start_day.input_field {
+#pp_invoice_metabox_recurring_billing #pp_invoice_subscription_start_day.input_field {
 	width: 30px;
 }
-#wp_invoice_metabox_recurring_billing #wp_invoice_subscription_total_occurances.input_field {
+#pp_invoice_metabox_recurring_billing #pp_invoice_subscription_total_occurances.input_field {
 	width: 30px;
 }
-#wp_invoice_metabox_recurring_billing #wp_invoice_subscription_length.input_field {
+#pp_invoice_metabox_recurring_billing #pp_invoice_subscription_length.input_field {
 	width: 30px;
 }
 
-#wp_invoice_metabox_publish .inside {
+#pp_invoice_metabox_publish .inside {
 	margin: 0;
 }
 
-#wp_invoice_metabox_publish td{
+#pp_invoice_metabox_publish td{
 	width:70%;
 }
 
@@ -198,22 +198,22 @@ dl.payee_details
 	margin-bottom: 10px;
 }
 
-.wp_invoice_tabbed_content  ul {
+.pp_invoice_tabbed_content  ul {
 	margin-left:10px;
 	position:relative;
 	top:1px;
 	z-index:100;
 }
 
-.wp_invoice_email_templates textarea {height: 150px;  }
+.pp_invoice_email_templates textarea {height: 150px;  }
 
 
 
-.wp_invoice_explanation{background: #F1F1F1;}
+.pp_invoice_explanation{background: #F1F1F1;}
 
 
-.wp_invoice_tabbed_content li { list-style:none; float:left; margin-bottom:0;}
-.wp_invoice_tabbed_content ul a {
+.pp_invoice_tabbed_content li { list-style:none; float:left; margin-bottom:0;}
+.pp_invoice_tabbed_content ul a {
 text-decoration:none;
   -moz-border-radius-bottomleft:0;
 -moz-border-radius-bottomright:0;
@@ -243,7 +243,7 @@ border-color:#DFDFDF;
 padding:2px;
 }
 
-.wp_invoice_tab {
+.pp_invoice_tab {
 -moz-border-radius-bottomleft:0;
 -moz-border-radius-bottomright:0;
 -moz-border-radius-topleft:6px;
@@ -256,10 +256,10 @@ border-color:#DFDFDF;
 padding-bottom: 15px;
 }
 
-.wp_invoice_tabbed_content ul a:hover {
+.pp_invoice_tabbed_content ul a:hover {
   }
 
-.wp_invoice_tabbed_content ul a.selected {
+.pp_invoice_tabbed_content ul a.selected {
 	background-color:#FFFFFF;
 	border-bottom:0 none;
 	color:#333333;
@@ -267,14 +267,14 @@ padding-bottom: 15px;
 	padding-bottom:3px;
 }
 
-.wp_invoice_tabbed_content div {
+.pp_invoice_tabbed_content div {
   clear:left;
 }
-.wp_invoice_tabbed_content .wrap {
+.pp_invoice_tabbed_content .wrap {
 	padding:0;
 }
 
-#wp_invoice_email_message_content {
+#pp_invoice_email_message_content {
 border:1px dotted #000000;
 height:300px;
 padding:10px;
@@ -291,7 +291,7 @@ width:100%;
 .itemized_list th {padding: 3px;}
 .itemized_list .id {display:none; visibility:hidden;}
 
-.wp_invoice_tamp_stamp {
+.pp_invoice_tamp_stamp {
 	width: 170px;
 	float: left;
 	
@@ -300,7 +300,7 @@ width:100%;
 }
 
 
-#wp_invoice_tooltip{
+#pp_invoice_tooltip{
 	position:absolute;
 	border:1px solid #E6DB55;
 	background:#FFFBCC;
@@ -310,39 +310,39 @@ width:100%;
 	display:none;
 	}	
 #new_invoice_form option {padding-right: 10px;}
-.wp_invoice_timestamp select{
+.pp_invoice_timestamp select{
 	height:20px !important;
 	line-height:20px !important;
 	padding:0 !important;
 }
-.wp_invoice_timestamp input{
+.pp_invoice_timestamp input{
 	border-style:solid;
 	border-width:1px;
 	font-size:12px;
 	padding:1px;
 }
 
-.wp_invoice_status {}
+.pp_invoice_status {}
 #get_user_info select option { padding-right: 10px; }
-.wp_invoice_copy_invoice {display:none; margin-top:5px;}
-.wp_invoice_hidden {display:none;}
-.wp_invoice_make_editable:hover {cursor: pointer; color:#FF7200;}
-.wp_invoice_unset {color: #8F8F8F;}
-.wp_invoice_click_me, .wp_invoice_click_me a{cursor: pointer; color:#FF7200; text-decoration:none; font-size: 11px;}
-#wp_invoice_first_time_setup input {width: 300px;}
-#wp_invoice_first_time_setup select{margin-left: 10px; }
-#wp_invoice_first_time_setup select option{padding-right: 10px;}
-#wp_invoice_first_time_setup li {font-size: 1.3em; padding: 5px; }
-#wp_invoice_first_time_setup  {padding-top: 20px;}
-.wp_invoice_archived{display:none; background: #EFEFEF}	
-#wp_invoice_show_archived {text-decoration:none;font-size:.9em;color:#8F8F8F;}	
-.wp_invoice_credit_card_processors {display:none;}
-.wp_invoice_rounded_box {width: 99%; margin: 20px 0; background: #FFF; border: 5px solid #eaeaea; -moz-border-radius:15px; }
-.wp_invoice_rounded_box p{font-size: 1.2em; font-family: calibri; padding: 0 10px; }
+.pp_invoice_copy_invoice {display:none; margin-top:5px;}
+.pp_invoice_hidden {display:none;}
+.pp_invoice_make_editable:hover {cursor: pointer; color:#FF7200;}
+.pp_invoice_unset {color: #8F8F8F;}
+.pp_invoice_click_me, .pp_invoice_click_me a{cursor: pointer; color:#FF7200; text-decoration:none; font-size: 11px;}
+#pp_invoice_first_time_setup input {width: 300px;}
+#pp_invoice_first_time_setup select{margin-left: 10px; }
+#pp_invoice_first_time_setup select option{padding-right: 10px;}
+#pp_invoice_first_time_setup li {font-size: 1.3em; padding: 5px; }
+#pp_invoice_first_time_setup  {padding-top: 20px;}
+.pp_invoice_archived{display:none; background: #EFEFEF}	
+#pp_invoice_show_archived {text-decoration:none;font-size:.9em;color:#8F8F8F;}	
+.pp_invoice_credit_card_processors {display:none;}
+.pp_invoice_rounded_box {width: 99%; margin: 20px 0; background: #FFF; border: 5px solid #eaeaea; -moz-border-radius:15px; }
+.pp_invoice_rounded_box p{font-size: 1.2em; font-family: calibri; padding: 0 10px; }
 #merchant_table	 th {color: #464646; text-align: right; font-weight: bold;}
-#merchant_table	 .wp_invoice_merchant_phones td{font-weight: bold; font-size: 1.3em; color: #eb7908;}
-#merchant_table	 .wp_invoice_standard_price {text-decoration:line-through; color: red;}
-#merchant_table	 .wp_invoice_special_price { color: #2555b9;}
+#merchant_table	 .pp_invoice_merchant_phones td{font-weight: bold; font-size: 1.3em; color: #eb7908;}
+#merchant_table	 .pp_invoice_standard_price {text-decoration:line-through; color: red;}
+#merchant_table	 .pp_invoice_special_price { color: #2555b9;}
 .itemized_list .name {width: 36%;}
 .itemized_list .name input {width: 95%;}
 
@@ -354,10 +354,10 @@ width:100%;
 
 .itemized_list .price {width: 14%; text-align:right;}
 .itemized_list .price input {width: 40px; text-align:right;}
-.wp_invoice_tooltip {cursor: help;}
+.pp_invoice_tooltip {cursor: help;}
 .itemized_list .item_total {width: 12%;}
 .itemized_list .item_total {font-weight:bold;font-size:1.2em; text-align:right;}
-#wp_invoice_need_mm {color:#FF7200;cursor:pointer; font-size: 12px;}
+#pp_invoice_need_mm {color:#FF7200;cursor:pointer; font-size: 12px;}
 #invoice_sorter_table  .header {cursor:pointer;}
 #invoice_sorter_table   {cursor:pointer;margin-bottom: 3px;}
 #add_new_invoice .error {background: #FFF; border:1px solid red; padding}
@@ -388,5 +388,5 @@ div.jqi .jqimessage{ background-color: #ababca; padding: 10px; }
 div.jqi .jqibuttons{ text-align: center; padding: 5px 0 0 0; }
 div.jqi button{ padding: 3px 10px 3px 10px; margin: 0 10px; }
 
-.wp_invoice_stats {color: #9F9F9F; padding-bottom: 10px;}
-#wp_invoice_total_owed {font-weight: bold;}
+.pp_invoice_stats {color: #9F9F9F; padding-bottom: 10px;}
+#pp_invoice_total_owed {font-weight: bold;}

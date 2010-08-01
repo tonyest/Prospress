@@ -11,24 +11,6 @@ Author URI: http://prospress.org/
 if ( !defined( 'PP_VERSION' ) )
 	define( 'PP_VERSION', '0.1' );
 
-/***
- * Ye be a brave soul who enters these waters. Feel free to delve into the dark depths of this code; but be warned: 
- * this code is released as a real beta, not that Google style we-use-beta-for-awesome-finished-versions type of beta.
- * The code is improving and will change over the coming months. For example, feedback items may become a
- * custom post type instead of having their own table. 
- * 
- * I hacked out too many features without polish. That will change over time, but don't expect poetry here
- * until approximately December.
- *
- * Still interested? Then go forth brave hacker. 
- */
-
-/*
- * Prospress uses a component architecture, inspired by BuddyPress as it seemed like a great way to help with testing 
- * individual components and also to help me get my brain around the enormity of creating an online marketplace. There is 
- * a post system, feedback system and market/bid system. Each has it's own central file, which is called here to create Prospress.
- */
-
 if( !defined( 'PP_PLUGIN_DIR' ) )
 	define( 'PP_PLUGIN_DIR', WP_PLUGIN_DIR . '/prospress' );
 if( !defined( 'PP_PLUGIN_URL' ) )
@@ -53,7 +35,7 @@ function pp_activate(){
 		if( !function_exists( 'register_post_status' ) )
 			wp_die(__( "Sorry, but you can not run Prospress. It requires WordPress 3.0 or newer. Consider <a href='http://codex.wordpress.org/Updating_WordPress'>upgrading</a> your WordPress installation, it's worth the effort.<br/><a href=" . admin_url( 'plugins.php' ) . ">Return to Plugins Admin page &raquo;</a>"), 'prospress' );
 		else
-			wp_die(__( "Sorry, but you can not run Prospress. It requires PHP 5.0 or newer. Please <a href='http://www.php.net/manual/en/migration5.php'>migrate</a> to PHP 5.0 or newer.<br/><a href=" . admin_url( 'plugins.php' ) . ">Return to Plugins Admin page &raquo;</a>"), 'prospress' );
+			wp_die(__( "Sorry, but you can not run Prospress. It requires PHP 5.0 or newer. Please <a href='http://www.php.net/manual/en/migration5.php'>migrate</a> your PHP installation to run Prospress.<br/><a href=" . admin_url( 'plugins.php' ) . ">Return to Plugins Admin page &raquo;</a>"), 'prospress' );
 	}
 
 	do_action( 'pp_activation' );
