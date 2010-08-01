@@ -56,7 +56,7 @@ function pp_invoice_metabox_billing_details( $invoice ) {
 			jQuery(".payment_info").hide();
 			jQuery(".cc_ui").show();
 		}
-		if(ddVal == 'Bank Draft') {
+		if(ddVal == 'Bank Transfer') {
 			jQuery(".payment_info").hide();
  			jQuery(".draft_ui").show();
 		}

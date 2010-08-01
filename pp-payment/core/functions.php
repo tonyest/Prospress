@@ -48,7 +48,7 @@ function pp_invoice_payment_nicename( $slug) {
 			return "Credit Card";
 		break;
 		case 'draft':
-			return "Bank Draft";
+			return "Bank Transfer";
 		break;
 
 	}

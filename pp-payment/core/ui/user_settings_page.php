@@ -80,7 +80,7 @@
 					<div class="pp_invoice_payment_option"><?php // Do not remove div.pp_invoice_payment_option -> it is used by jQuery to select payment venue checkboxes ?>
 					<?php echo wpi_checkbox("group=pp_invoice_user_settings&name=paypal_allow&label=PayPal.&value=true&id=paypal", $user_settings[paypal_allow]); ?><br />
 					<?php echo wpi_checkbox("group=pp_invoice_user_settings&name=cc_allow&label=Credit Cards.&value=true&id=cc", $user_settings[cc_allow]); ?><br />
-					<?php echo wpi_checkbox("group=pp_invoice_user_settings&name=draft_allow&label=Bank Draft.&value=true&id=draft", $user_settings[draft_allow]); ?><br />
+					<?php echo wpi_checkbox("group=pp_invoice_user_settings&name=draft_allow&label=Bank Transfer.&value=true&id=draft", $user_settings[draft_allow]); ?><br />
 					</div>
 				</td>
 			</tr>
@@ -95,7 +95,7 @@
 					<option class="cc" value="cc"  <?php selected( $user_settings[default_payment_venue], 'cc' ); ?>>Credit Card</option>
 					<?php endif; ?>
 					<?php if($user_settings['draft_allow']): ?>
-					<option class="draft" value="draft"  <?php selected( $user_settings[default_payment_venue], 'draft' ); ?>>Bank Draft</option>
+					<option class="draft" value="draft"  <?php selected( $user_settings[default_payment_venue], 'draft' ); ?>>Bank Transfer</option>
 					<?php endif; ?>
 				</select>
 			</td>

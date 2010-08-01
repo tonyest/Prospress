@@ -13,19 +13,19 @@ Prospress is a new plugin that goes where no plugin has gone before.
 
 After its 30 second install, your WordPress site will have its very own auction marketplace. Your registered users will be able to post auctions, place bids, provide feedback and make payments. Everything needed for a fully functioning marketplace.
 
-Well, hopefully. Prospress is so new, it's still in beta. So please only use Prospress on test sites for now. There will be bugs. Those bugs will be fixed, but it's better they occur in a sandbox.
+Well, hopefully. Prospress is so new, it's still in beta. So please only use Prospress on test sites for now. There will be unforeseen bugs. Those bugs will be fixed, but it's better they occur in a sandbox.
 
 = Features =
 
 **Custom Post** - Prospress uses WordPress' publishing system, so it's as enjoyable to publish auctions as blog posts.
 
-**Invoicing & Payments** - To finalize a transaction, currency needs to change hands. Prospress makes this easy with support for PayPal, Credit Card Gateways & Bank Transfers.
+**Invoicing & Payments** - To finalize a transaction, currency needs to change hands. Prospress makes this easy with support for PayPal, credit card gateways & bank transfers.
 
-**Feedback** - Trust is a requirement for trade, which is why Prospress provides a feedback system. Traders in your marketplace can rate each other after a transaction and feel confident about a potential exchange.
+**Feedback** - Traders in your marketplace can rate each other after a transaction and view sellers feedback to be confident in making a purchase.
 
-**Templates not Themes** - Your site is already stunning, so instead of requiring a new theme, Prospress uses a few simple templates to fit in with your existing theme.
+**Templates not Themes** - Your site is already stunning, so instead of requiring a new theme, Prospress uses a few simple templates to fit in with your existing look and feel.
 
-See them all on the [Prospress Feature page](http://prospress.org/features/).
+See all the great features on the [Prospress Features page](http://prospress.org/features/).
 
 = Why is Prospress here when it's beta? =
 
@@ -126,10 +126,16 @@ Nope. There are a few surprises but you'll have to download & explore Prospress 
 
 = 0.2 =
 * Beta 2 
-* Preventing activation on WP < 3.0 and PHP < 5.0
-* Modified Invoice tables
+* Now prevents activation on WP < 3.0 and PHP < 5.0
+* Modified payment tables & internal semantics
 * Post end time function now displays countown when post ending within a week
 * New widget for quick links to backend tasks (adding an Auction, viewing bids etc.)
 
 = 0.1 =
 * Initial beta release. 
+
+
+== Upgrade Notice ==
+
+= 0.2 =
+Upgrade to fix bug when activating on WP < 3.0 or PHP < 5.0, ensure Prospress plays nice with other plugins and get new widgets.
