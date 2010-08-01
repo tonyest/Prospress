@@ -63,7 +63,7 @@
 				}
 			} else { ?>
 				<tr>
-					<td colspan="10" align="center">
+					<td colspan="9" align="center">
 						<div>
 							<?php _e('You have no incoming payments.', 'prospress'); ?>
 						</div>
