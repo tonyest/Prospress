@@ -1,5 +1,5 @@
 === Plugin Name ===
-Contributors: Prospress.org, thenbrent
+Contributors: Prospress, thenbrent
 Tags: marketplace, prospress, auction, ecommerce
 Requires at least: 3.0
 Tested up to: 3.0.1
@@ -23,7 +23,7 @@ If you'd prefer to wait for a stable release, we've made a special [demo site](h
 
 = Features =
 
-**Auction Posts** - Prospress uses the WordPress publishing system, so publishing auctions is as enjoyable as publishing blog posts.
+**Auction Posts** - Prospress uses the WordPress publishing system, so publishing an auction is as enjoyable as publishing a blog post.
 
 **Invoicing & Payments** - To finalize transactions, Prospress provides an invoicing system that supports payment with PayPal, credit cards & bank transfers.
 
