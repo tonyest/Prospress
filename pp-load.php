@@ -48,9 +48,12 @@ require_once( PP_PLUGIN_DIR . '/pp-feedback.php' );
 require_once( PP_PLUGIN_DIR . '/pp-payment.php' );
 
 function pp_activate(){
-	if ( !function_exists( 'register_post_status' ) ) { // Don't register on installations pre 3.0
+	if ( !function_exists( 'register_post_status' ) || version_compare( PHP_VERSION, '5.0.0', '<' ) ) { // Don't register on installations pre 3.0 with less than php 5
 		deactivate_plugins( basename( dirname( __FILE__ ) ) . '/' . basename( __FILE__ ) );
-		wp_die(__( "Sorry, but you can not run Prospress. It requires WordPress 3.0 or newer. Consider <a href='http://codex.wordpress.org/Updating_WordPress'>upgrading</a> your WordPress installation, it's worth the effort.<br/><a href=" . admin_url( 'plugins.php' ) . ">Return to Plugins Admin page &raquo;</a>"), 'prospress' );
+		if( !function_exists( 'register_post_status' ) )
+			wp_die(__( "Sorry, but you can not run Prospress. It requires WordPress 3.0 or newer. Consider <a href='http://codex.wordpress.org/Updating_WordPress'>upgrading</a> your WordPress installation, it's worth the effort.<br/><a href=" . admin_url( 'plugins.php' ) . ">Return to Plugins Admin page &raquo;</a>"), 'prospress' );
+		else
+			wp_die(__( "Sorry, but you can not run Prospress. It requires PHP 5.0 or newer. Please <a href='http://www.php.net/manual/en/migration5.php'>migrate</a> to PHP 5.0 or newer.<br/><a href=" . admin_url( 'plugins.php' ) . ">Return to Plugins Admin page &raquo;</a>"), 'prospress' );
 	}
 
 	do_action( 'pp_activation' );
