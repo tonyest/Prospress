@@ -15,6 +15,12 @@ After its 30 second install, your WordPress site will have its very own auction 
 
 Well, hopefully. Prospress is so new, it's still in beta. So please only use Prospress on test sites for now. There will be unforeseen bugs. Those bugs will be fixed, but it's better they occur in a sandbox.
 
+= Why is Prospress here when it's beta? =
+
+For those who can't wait to try a game changer, this beta is for you. Download, install & explore what you'll soon be able to do with WordPress, but please do so on a test site.
+
+If you'd prefer to wait for a stable release, we've made a special [demo site](http://demo.prospress.org/auctions/) for you. You can register, post auctions & make bids on some priceless paintings in the safety of a Prospress.org sandbox.
+
 = Features =
 
 **Custom Post** - Prospress uses WordPress' publishing system, so it's as enjoyable to publish auctions as blog posts.
@@ -26,12 +32,6 @@ Well, hopefully. Prospress is so new, it's still in beta. So please only use Pro
 **Templates not Themes** - Your site is already stunning, so instead of requiring a new theme, Prospress uses a few simple templates to fit in with your existing look and feel.
 
 See all the great features on the [Prospress Features page](http://prospress.org/features/).
-
-= Why is Prospress here when it's beta? =
-
-For those who can't wait to try a game changer, this beta is for you. Download, install & explore what you'll soon be able to do with WordPress, but please do so on a test site.
-
-If you'd prefer to wait for a stable release, we've made a special [demo site](http://demo.prospress.org/auctions/) for you. You can register, post auctions & make bids on some priceless paintings in the safety of a Prospress.org sandbox.
 
 = Want to know more? =
 

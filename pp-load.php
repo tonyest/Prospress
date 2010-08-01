@@ -48,7 +48,7 @@ function pp_deactivate(){
 register_deactivation_hook( __FILE__, 'pp_deactivate' );
 
 function pp_uninstall(){
-	//do_action( 'pp_uninstall' ); // some people don't want their plugin to delete all its data upon uninstallation
+	//do_action( 'pp_uninstall' ); // some don't want their plugin to delete all its data upon uninstallation
 }
 register_uninstall_hook( __FILE__, 'pp_uninstall' );
 
