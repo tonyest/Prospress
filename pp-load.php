@@ -9,7 +9,7 @@ Author URI: http://prospress.org/
 */
 
 if ( !defined( 'PP_VERSION' ) )
-	define( 'PP_VERSION', '0.1' );
+	define( 'PP_VERSION', '0.2' );
 
 if( !defined( 'PP_PLUGIN_DIR' ) )
 	define( 'PP_PLUGIN_DIR', WP_PLUGIN_DIR . '/prospress' );
