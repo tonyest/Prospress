@@ -2,19 +2,19 @@
 
 class PP_Taxonomy {
 
-	private $market_system;	// An array with details of the market system to which this taxonomy belongs
+	private $labels;	// An array with details of the market system to which this taxonomy belongs
 	protected $add_tax;
 	protected $edit_tax;
 	public $admin_url;
 	public $name;
 
-	public function __construct( $market_system ) {
+	public function __construct( $name, $args ) {
 
-		$this->market_system 	= $market_system;
-		$this->name 			= $this->market_system[ 'internal_name' ] . '_taxonomies';
-		$this->admin_url 		= admin_url( '/admin.php?page=' . $this->name );
-		$this->add_tax			= 'add_' . $this->market_system[ 'internal_name' ] . '_tax';
-		$this->edit_tax			= 'edit_' . $this->market_system[ 'internal_name' ] . '_tax';
+		$this->name 		= $name;
+		$this->labels 		= $args[ 'labels' ];
+		$this->admin_url	= admin_url( '/admin.php?page=' . $this->name );
+		$this->add_tax		= 'add_' . $this->name . '_tax';
+		$this->edit_tax		= 'edit_' . $this->name . '_tax';
 
 		add_action( 'admin_menu', array( &$this, 'add_menu_page' ) );
 
@@ -22,8 +22,8 @@ class PP_Taxonomy {
 	}
 
 	public function add_menu_page() {
-		$page_title = sprintf( __( 'Custom %s Taxonomies', 'prospress' ), $this->market_system[ 'display_name' ] );
-		$menu_title = sprintf( __( '%s Taxonomies', 'prospress' ), $this->market_system[ 'display_name' ] );
+		$page_title = sprintf( __( 'Custom %s Taxonomies', 'prospress' ), $this->labels[ 'name' ] );
+		$menu_title = sprintf( __( '%s Taxonomies', 'prospress' ), $this->labels[ 'name' ] );
 		$menu_slug = $this->name;
 
 		add_submenu_page( 'Prospress', $page_title, $menu_title, 'manage_categories', $menu_slug, array( &$this, 'controller' ) );
@@ -59,7 +59,7 @@ class PP_Taxonomy {
 			screen_icon( 'prospress' );
 			$add_url = add_query_arg( 'action', 'add_new', $this->admin_url );
 			?>
-			<h2><?php echo $this->market_system[ 'display_name' ] . ' '; _e( 'Taxonomies', 'prospress' ) ?><a href="<?php echo $add_url ?>" class="button add-new-h2">Add New</a></h2>
+			<h2><?php echo $this->labels[ 'name' ] . ' '; _e( 'Taxonomies', 'prospress' ) ?><a href="<?php echo $add_url ?>" class="button add-new-h2">Add New</a></h2>
 			<?php 
 			$taxonomy_types = get_option( $this->name );
 			if( !empty( $taxonomy_types ) ) { ?>
@@ -87,7 +87,7 @@ class PP_Taxonomy {
 						$del_url = ( function_exists('wp_nonce_url') ) ? wp_nonce_url( $del_url, 'pp_delete_tax' ) : $del_url;
 						$edit_url = add_query_arg( 'edittax', $tax_name, $add_url );
 						$edit_url = ( function_exists('wp_nonce_url') ) ? wp_nonce_url( $edit_url, 'pp_custom_taxonomy' ) : $edit_url;
-						$edit_types_url = add_query_arg( array( 'taxonomy' => $tax_name, 'post_type' => $this->market_system[ 'internal_name' ] ), admin_url( 'edit-tags.php' ) );
+						$edit_types_url = add_query_arg( array( 'taxonomy' => $tax_name, 'post_type' => $this->name ), admin_url( 'edit-tags.php' ) );
 					?>
 			        	<tr>
 			            	<td valign="top"><?php echo stripslashes( $tax_name ); ?></td>
@@ -108,10 +108,10 @@ class PP_Taxonomy {
 					} ?>
 					</tbody>
 				</table>
-				<p><?php printf( __( 'Note: Deleting a taxonomy does not delete the %s and taxonomy types associated with it.', 'prospress' ), $this->market_system[ 'display_name' ] ); ?></p>
+				<p><?php printf( __( 'Note: Deleting a taxonomy does not delete the %s and taxonomy types associated with it.', 'prospress' ), $this->labels[ 'name' ] ); ?></p>
 			<?php
 			}else{ ?>
-				<p><?php printf( __( 'Taxonomies provide a way to categorise items based on unique characteristics. Well thought out taxonomies make it easier for buyers to find an item matching specific criteria.', 'prospress' ), $this->market_system[ 'display_name' ] ) ?></p>
+				<p><?php printf( __( 'Taxonomies provide a way to categorise items based on unique characteristics. Well thought out taxonomies make it easier for buyers to find an item matching specific criteria.', 'prospress' ), $this->labels[ 'name' ] ) ?></p>
 				<p><?php _e( 'For example, auctions of Dutch Masterpieces could use an <i>Artist</i> taxonomy, which includes <i>Vermeer</i>, <i>Rembrandt</i> and <i>Cuyp</i>.', 'prospress' ) ?></p>
 				<p><a href="<?php echo $add_url; ?>" class="button add-new-h2"><?php _e( "Add New", 'prospress' ); ?></a></p>
 			<?php
@@ -206,7 +206,7 @@ class PP_Taxonomy {
 		}
 
 		$new_tax[ 'label' ] 		= ( !$_POST[ 'label' ] ) ? $tax_name : strip_tags( $_POST[ 'label' ] );
-		$new_tax[ 'object_type' ] 	= $this->market_system[ 'internal_name' ];
+		$new_tax[ 'object_type' ] 	= $this->name;
 		$new_tax[ 'capabilities' ] 	= array( 'assign_terms' => 'edit_prospress_posts' );
 		$new_tax[ 'labels' ] 		= array();
 		$new_tax[ 'labels' ][ 'singular_label' ]	= ( !$_POST[ 'singular_label' ] ) ? $tax_name : strip_tags( $_POST[ 'singular_label' ] );
@@ -215,7 +215,7 @@ class PP_Taxonomy {
 		$taxonomies = get_option( $this->name );
 
 		if( isset( $_POST[ $this->add_tax ] ) ) {
-			$edit_tax_url = '<a href="' . add_query_arg( array( 'post_type' => $this->market_system[ 'internal_name' ], 'taxonomy' => $tax_name ), admin_url( 'edit-tags.php' ) ) . '">' . $this->market_system[ 'display_name' ] . '</a>';
+			$edit_tax_url = '<a href="' . add_query_arg( array( 'post_type' => $this->name, 'taxonomy' => $tax_name ), admin_url( 'edit-tags.php' ) ) . '">' . $this->labels[ 'name' ] . '</a>';
 			$msg = sprintf( __( 'Taxonomy created. You can add elements under the %s menu.', 'prospress' ), $edit_tax_url );
 		} elseif ( isset( $_POST[ $this->edit_tax ] ) ) {
 			unset( $taxonomies[ $_GET['edittax'] ] );

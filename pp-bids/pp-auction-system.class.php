@@ -13,12 +13,19 @@ class PP_Auction_Bid_System extends PP_Market_System {
 
 	// Constructors
 
-	// PHP5 constructor
 	public function __construct() {
+		do_action( 'auction_init' );
+
 		if ( !defined( 'BID_INCREMENT' ) )
 			define( 'BID_INCREMENT', '0.05' );
 
-		parent::__construct( __( 'auctions', 'prospress' ), __( 'auction', 'prospress' ), __('Bid!', 'prospress' ), array( 'post_fields' ) );
+		$args = array(
+				'description' => 'The Default Prospress Standard Auction System.',
+				'bid_button_value' => __( 'Bid!', 'prospress' ),
+				'adds_adds_post_fields' => true
+				);
+
+		parent::__construct( __( 'auctions', 'prospress' ), $args );
 	}
 
 	protected function bid_form_fields( $post_id = NULL ) { 

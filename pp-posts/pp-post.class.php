@@ -13,11 +13,13 @@
 
 class PP_Post {
 
-	private $market_system;	// An array with details of the market system to which this post object belongs.
+	public $name;
+	private $labels;
 
-	public function __construct( $market_system ) {
+	public function __construct( $name, $args ) {
 
-		$this->market_system = $market_system;
+		$this->name = $name;
+		$this->labels = $args[ 'labels' ];
 
 		add_action( 'pp_activation', array( &$this, 'activate' ) );
 
@@ -33,7 +35,7 @@ class PP_Post {
 		
 		add_filter( 'posts_search', array( &$this, 'remove_index' ) );
 
-		add_filter( 'manage_' . $this->market_system[ 'internal_name' ] . '_posts_columns', array( &$this, 'post_columns' ) );
+		add_filter( 'manage_' . $this->name . '_posts_columns', array( &$this, 'post_columns' ) );
 
 		add_action( 'manage_posts_custom_column', array( &$this, 'post_custom_columns' ), 10, 2 );
 
@@ -53,14 +55,14 @@ class PP_Post {
 	 * @global WP_Rewrite $wp_rewrite WordPress Rewrite Component.
 	 */
 	public function activate(){
-		global $wpdb, $market_system, $wp_rewrite;
+		global $wpdb, $wp_rewrite;
 
 		if( $this->get_index_id() == false ){ // Need an index page for this post type
 			$index_page = array();
-			$index_page['post_title'] = $this->market_system[ 'display_name' ];
-			$index_page['post_name'] = $this->market_system[ 'internal_name' ];
+			$index_page['post_title'] = $this->labels[ 'name' ];
+			$index_page['post_name'] = $this->name;
 			$index_page['post_status'] = 'publish';
-			$index_page['post_content'] = __( 'This is the index for your ' . $this->market_system[ 'display_name' ] . '. Your ' . $this->market_system[ 'display_name' ] . ' will automatically show up here, but you change this text to provide an introduction or instructions.', 'prospress' );
+			$index_page['post_content'] = __( 'This is the index for your ' . $this->labels[ 'name' ] . '. Your ' . $this->labels[ 'name' ] . ' will automatically show up here, but you change this text to provide an introduction or instructions.', 'prospress' );
 			$index_page['post_type'] = 'page';
 
 			wp_insert_post( $index_page );
@@ -99,36 +101,36 @@ class PP_Post {
 
 			do_action( 'pp_taxonomy_template_redirect' );
 
-			if( file_exists( TEMPLATEPATH . '/taxonomy-' . $this->market_system[ 'internal_name' ] . '.php' ) )
-				include( TEMPLATEPATH . '/taxonomy-' . $this->market_system[ 'internal_name' ] . '.php' );
-			elseif( file_exists( TEMPLATEPATH . '/pp-taxonomy-' . $this->market_system[ 'internal_name' ] . '.php' ) )
-				include( TEMPLATEPATH . '/pp-taxonomy-' . $this->market_system[ 'internal_name' ] . '.php' );
+			if( file_exists( TEMPLATEPATH . '/taxonomy-' . $this->name . '.php' ) )
+				include( TEMPLATEPATH . '/taxonomy-' . $this->name . '.php' );
+			elseif( file_exists( TEMPLATEPATH . '/pp-taxonomy-' . $this->name . '.php' ) )
+				include( TEMPLATEPATH . '/pp-taxonomy-' . $this->name . '.php' );
 			else
-				include( PP_POSTS_DIR . '/pp-taxonomy-' . $this->market_system[ 'internal_name' ] . '.php' );
+				include( PP_POSTS_DIR . '/pp-taxonomy-' . $this->name . '.php' );
 			exit;
 
-		} elseif( $post->post_name == $this->market_system[ 'internal_name' ] && TEMPLATEPATH . '/page.php' == get_page_template() ){ // No template set for default Prospress index
+		} elseif( $post->post_name == $this->name && TEMPLATEPATH . '/page.php' == get_page_template() ){ // No template set for default Prospress index
 
 			do_action( 'pp_index_template_redirect' );
 
-			if( file_exists( TEMPLATEPATH . '/index-' . $this->market_system[ 'internal_name' ] . '.php' ) )	// Copied the default template to the them directory?
-				include( TEMPLATEPATH . '/index-' . $this->market_system[ 'internal_name' ] . '.php' );
-			elseif( file_exists( TEMPLATEPATH . '/pp-index-' . $this->market_system[ 'internal_name' ] . '.php' ) )	// Theme supports Prospress
-				include( TEMPLATEPATH . '/pp-index-' . $this->market_system[ 'internal_name' ] . '.php' );
+			if( file_exists( TEMPLATEPATH . '/index-' . $this->name . '.php' ) )	// Copied the default template to the them directory?
+				include( TEMPLATEPATH . '/index-' . $this->name . '.php' );
+			elseif( file_exists( TEMPLATEPATH . '/pp-index-' . $this->name . '.php' ) )	// Theme supports Prospress
+				include( TEMPLATEPATH . '/pp-index-' . $this->name . '.php' );
 			else   																				// Default
-				include( PP_POSTS_DIR . '/pp-index-' . $this->market_system[ 'internal_name' ] . '.php' );
+				include( PP_POSTS_DIR . '/pp-index-' . $this->name . '.php' );
 			exit;
 
-		} elseif ( $post->post_type == $this->market_system[ 'internal_name' ] && is_single() && !isset( $_GET[ 's' ] ) ) {
+		} elseif ( $post->post_type == $this->name && is_single() && !isset( $_GET[ 's' ] ) ) {
 
 			do_action( 'pp_single_template_redirect' );
 
-			if( file_exists( TEMPLATEPATH . '/single-' . $this->market_system[ 'singular_name' ] . '.php' ) )
-				include( TEMPLATEPATH . '/single-' . $this->market_system[ 'singular_name' ] . '.php' );
-			elseif( file_exists( TEMPLATEPATH . '/pp-single-' . $this->market_system[ 'singular_name' ] . '.php' ) )
-				include( TEMPLATEPATH . '/pp-single-' . $this->market_system[ 'singular_name' ] . '.php' );
+			if( file_exists( TEMPLATEPATH . '/single-' . $this->name . '.php' ) )
+				include( TEMPLATEPATH . '/single-' . $this->name . '.php' );
+			elseif( file_exists( TEMPLATEPATH . '/pp-single-' . $this->name . '.php' ) )
+				include( TEMPLATEPATH . '/pp-single-' . $this->name . '.php' );
 			else
-				include( PP_POSTS_DIR . '/pp-single-' . $this->market_system[ 'singular_name' ] . '.php' );
+				include( PP_POSTS_DIR . '/pp-single-' . $this->name . '.php' );
 			exit;
 		}
 	}
@@ -148,10 +150,10 @@ class PP_Post {
 	public function register_post_type() {
 
 		$args = array(
-				'label' 	=> $this->market_system[ 'internal_name' ],
+				'label' 	=> $this->name,
 				'public' 	=> true,
 				'show_ui' 	=> true,
-				'rewrite' 	=> array( 'slug' => $this->market_system[ 'internal_name' ], 'with_front' => false ),
+				'rewrite' 	=> array( 'slug' => $this->name, 'with_front' => false ),
 				'capability_type' => 'prospress_post', //generic to cover multiple Prospress marketplace types
 				'show_in_nav_menus' => false,
 				'exclude_from_search' => true,
@@ -163,18 +165,18 @@ class PP_Post {
 								'post-thumbnails',
 								'comments',
 								'revisions' ),
-				'labels'	=> array( 'name'	=> $this->market_system[ 'display_name' ],
-								'singular_name'	=> $this->market_system[ 'singular_name' ],
-								'add_new_item'	=> sprintf( __( 'Add New %s', 'prospress' ), $this->market_system[ 'singular_name' ] ),
-								'edit_item'		=> sprintf( __( 'Edit %s', 'prospress' ), $this->market_system[ 'singular_name' ] ),
-								'new_item'		=> sprintf( __( 'New %s', 'prospress' ), $this->market_system[ 'singular_name' ] ),
-								'view_item'		=> sprintf( __( 'View %s', 'prospress' ), $this->market_system[ 'singular_name' ] ),
-								'search_items'	=> sprintf( __( 'Seach %s', 'prospress' ), $this->market_system[ 'display_name' ] ),
-								'not_found'		=> sprintf( __( 'No %s found', 'prospress' ), $this->market_system[ 'display_name' ] ),
-								'not_found_in_trash' => sprintf( __( 'No %s found in Trash', 'prospress' ), $this->market_system[ 'display_name' ] ) )
+				'labels'	=> array( 'name'	=> $this->labels[ 'name' ],
+								'singular_name'	=> $this->labels[ 'singular_name' ],
+								'add_new_item'	=> sprintf( __( 'Add New %s', 'prospress' ), $this->labels[ 'singular_name' ] ),
+								'edit_item'		=> sprintf( __( 'Edit %s', 'prospress' ), $this->labels[ 'singular_name' ] ),
+								'new_item'		=> sprintf( __( 'New %s', 'prospress' ), $this->labels[ 'singular_name' ] ),
+								'view_item'		=> sprintf( __( 'View %s', 'prospress' ), $this->labels[ 'singular_name' ] ),
+								'search_items'	=> sprintf( __( 'Seach %s', 'prospress' ), $this->labels[ 'name' ] ),
+								'not_found'		=> sprintf( __( 'No %s found', 'prospress' ), $this->labels[ 'name' ] ),
+								'not_found_in_trash' => sprintf( __( 'No %s found in Trash', 'prospress' ), $this->labels[ 'name' ] ) )
 					);
 
-		register_post_type( $this->market_system[ 'internal_name' ], $args );
+		register_post_type( $this->name, $args );
 	}
 
 
@@ -189,11 +191,11 @@ class PP_Post {
 	 */
 	public function register_sidebars(){
 
-		if ( !file_exists( TEMPLATEPATH . '/index-' . $this->market_system[ 'singular_name' ] . '.php' ) && !file_exists( TEMPLATEPATH . '/pp-index-' . $this->market_system[ 'internal_name' ] . '.php' ) ) {
+		if ( !file_exists( TEMPLATEPATH . '/index-' . $this->name . '.php' ) && !file_exists( TEMPLATEPATH . '/pp-index-' . $this->name . '.php' ) ) {
 			register_sidebar( array (
-				'name' => $this->market_system[ 'display_name' ] . ' ' . __( 'Index Sidebar', 'prospress' ),
-				'id' => $this->market_system[ 'internal_name' ] . '-index-sidebar',
-				'description' => sprintf( __( "The sidebar on the %s index.", 'prospress' ), $this->market_system[ 'display_name' ] ),
+				'name' => $this->labels[ 'name' ] . ' ' . __( 'Index Sidebar', 'prospress' ),
+				'id' => $this->name . '-index-sidebar',
+				'description' => sprintf( __( "The sidebar for the %s index.", 'prospress' ), $this->labels[ 'name' ] ),
 				'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
 				'after_widget' => "</li>",
 				'before_title' => '<h3 class="widget-title">',
@@ -201,11 +203,11 @@ class PP_Post {
 			) );
 		}
 
-		if ( !file_exists( TEMPLATEPATH . '/single-' . $this->market_system[ 'singular_name' ] . '.php' ) && !file_exists( TEMPLATEPATH . '/pp-single-' . $this->market_system[ 'singular_name' ] . '.php' ) ) {
+		if ( !file_exists( TEMPLATEPATH . '/single-' . $this->name . '.php' ) && !file_exists( TEMPLATEPATH . '/pp-single-' . $this->name . '.php' ) ) {
 			register_sidebar( array (
-				'name' => sprintf( __( 'Single %s Sidebar', 'prospress' ), $this->market_system[ 'singular_name' ] ),
-				'id' => $this->market_system[ 'internal_name' ] . '-single-sidebar',
-				'description' => sprintf( __( "The sidebar on a single %s.", 'prospress' ), $this->market_system[ 'singular_name' ] ),
+				'name' => sprintf( __( 'Single %s Sidebar', 'prospress' ), $this->labels[ 'singular_name' ] ),
+				'id' => $this->name . '-single-sidebar',
+				'description' => sprintf( __( "The sidebar for a single %s.", 'prospress' ), $this->labels[ 'singular_name' ] ),
 				'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
 				'after_widget' => "</li>",
 				'before_title' => '<h3 class="widget-title">',
@@ -227,8 +229,8 @@ class PP_Post {
 
 		$sidebars_widgets = get_option( 'sidebars_widgets' );
 
-		if( !isset( $sidebars_widgets[ $this->market_system[ 'internal_name' ] . '-index-sidebar' ] ) )
-			$sidebars_widgets[ $this->market_system[ 'internal_name' ] . '-index-sidebar' ] = array();
+		if( !isset( $sidebars_widgets[ $this->name . '-index-sidebar' ] ) )
+			$sidebars_widgets[ $this->name . '-index-sidebar' ] = array();
 
 		$sort_widget = get_option( 'widget_pp-sort' );
 		if( empty( $sort_widget ) ){
@@ -245,7 +247,7 @@ class PP_Post {
 
 			$sort_widget['_multiwidget'] = 1;
 			update_option( 'widget_pp-sort',$sort_widget );
-			array_push( $sidebars_widgets[ $this->market_system[ 'internal_name' ] . '-index-sidebar' ], 'pp-sort-0' );
+			array_push( $sidebars_widgets[ $this->name . '-index-sidebar' ], 'pp-sort-0' );
 		}
 
 		$filter_widget = get_option( 'widget_bid-filter' );
@@ -255,7 +257,7 @@ class PP_Post {
 
 			$filter_widget['_multiwidget'] = 1;
 			update_option( 'widget_bid-filter', $filter_widget );
-			array_push( $sidebars_widgets[ $this->market_system[ 'internal_name' ] . '-index-sidebar' ], 'bid-filter-0' );
+			array_push( $sidebars_widgets[ $this->name . '-index-sidebar' ], 'bid-filter-0' );
 		}
 
 		update_option( 'sidebars_widgets', $sidebars_widgets );
@@ -275,7 +277,7 @@ class PP_Post {
 	public function is_post_admin_page(){
 		global $post;
 
-		if( $_GET[ 'post_type' ] == $this->market_system[ 'internal_name' ] || $_GET[ 'post' ] == $this->market_system[ 'internal_name' ] || $post->post_type == $this->market_system[ 'internal_name' ] )
+		if( $_GET[ 'post_type' ] == $this->name || $_GET[ 'post' ] == $this->name || $post->post_type == $this->name )
 			return true;
 		else
 			return false;
@@ -302,7 +304,7 @@ class PP_Post {
 	public function get_index_id() {
 		global $wpdb;
 
-		$index_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . $this->market_system[ 'internal_name' ] . "'" );
+		$index_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . $this->name . "'" );
 
 		if( $index_id == NULL)
 			return false; 
@@ -326,7 +328,7 @@ class PP_Post {
 	 */
 	function the_add_new_url( $desc = "Add New", $echo = '' ) {
 
-		$add_new_tag = "<a href='" . $this->get_add_new_url() . "' title='$desc'>$desc " . $this->market_system[ 'singular_name' ] . "</a>";
+		$add_new_tag = "<a href='" . $this->get_add_new_url() . "' title='$desc'>$desc " . $this->labels[ 'singular_name' ] . "</a>";
 
 		if( $echo == 'echo' )
 			echo $add_new_tag;
@@ -340,7 +342,7 @@ class PP_Post {
 	 * 
 	 */
 	function get_add_new_url() {
-		 return admin_url( '/post-new.php?post_type=' . $this->market_system[ 'internal_name' ] );
+		 return admin_url( '/post-new.php?post_type=' . $this->name );
 	}
 
 
@@ -352,7 +354,6 @@ class PP_Post {
 	 * @since 0.1
 	 */
 	public function deactivate(){
-		global $market_system;
 
 		if ( !current_user_can( 'edit_plugins' ) || !function_exists( 'delete_site_option' ) )
 			return false;
@@ -369,14 +370,14 @@ class PP_Post {
 	 * @since 0.1
 	 */
 	public function uninstall(){
-		global $wpdb, $market_system;
+		global $wpdb;
 
 		if ( !current_user_can( 'edit_plugins' ) || !function_exists( 'delete_site_option' ) )
 			return false;
 
 		wp_delete_post( $this->get_index_id() );
 
-		$pp_post_ids = $wpdb->get_col($wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type = '" . $this->market_system[ 'internal_name' ] . "'" ) );
+		$pp_post_ids = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type = '" . $this->name . "'" ) );
 
 		if ( $pp_post_ids )
 			foreach ( $pp_post_ids as $pp_post_id )

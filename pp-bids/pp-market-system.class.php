@@ -21,9 +21,10 @@ abstract class PP_Market_System {
 
 	public $name;					// Public name of the market system e.g. "Auctions".
 	protected $singular_name;		// Name of a single market system object e.g. "Auction".
+	public $labels;					// PP_Post object for this market system.
 	public $post;					// PP_Post object for this market system.
 	public $bid_button_value;		// Text used on the submit button of the bid form.
-	public $post_fields;			// Array of flags representing the fields which the market system implements e.g. array( 'post_fields' )
+	public $adds_post_fields;		// Flag indicating whether the market system adds new post fields. If anything but null, the post_fields_meta_box and post_fields_save functions are hooked
 	public $post_table_columns;		// Array of arrays, each array is used to create a column in the post tables. By default it adds two columns, 
 									// one for number of bids on the post and the other for the current winning bid on the post 
 									// e.g. 'current_bid' => array( 'title' => 'Winning Bid', 'function' => 'get_winning_bid' ), 'bid_count' => array( 'title => 'Number of Bids', 'function' => 'get_bid_count' )
@@ -32,46 +33,52 @@ abstract class PP_Market_System {
 	public $taxonomy;				// A PP_Taxonomy object for this post type
 	protected $bid_status;
 	protected $message;
-	private $capability = 'read';	// the capability for making bids and viewing bid menus etc.
+	private $capability;	// the capability for making bids and viewing bid menus etc.
 
-	public function __construct( $name, $singular_name, $bid_button_value = "", $post_fields = array(), $post_table_columns = array(), $bid_table_headings = array() ) {
+	public function __construct( $name, $args = array() ) {
 
-		$this->name 			= (string)$name;
-		$this->singular_name 	= (string)$singular_name;
-		$this->post				= new PP_Post( array( 'internal_name' => $this->name, 'singular_name' => $this->singular_name, 'display_name' => $this->display_name() ) );
-		$this->bid_button_value	= empty( $bid_button_value ) ? __( 'Bid now!', 'prospress' ) : $bid_button_value;
+		$this->name = sanitize_user( $name, true );
 
-		if( empty( $post_table_columns ) || !is_array( $post_table_columns ) ){
-			$this->post_table_columns = array (	'current_bid' => array( 'title' => 'Price', 'function' => 'the_winning_bid_value' ),
-												'bid_count' => array( 'title' => 'Number of Bids', 'function' => 'the_bid_count' ) );
-		} else {
-			$this->post_table_columns = $post_table_columns;
-		}
+		$defaults = array(
+						'description' => '',
+						'labels' => array(
+							'name' => ucfirst( $name ),
+							'singular_name' => ucfirst( substr( $name, 0, -1) ), // Remove 's' - certainly not a catch all default!
+							),
+						'bid_button_value' => __( 'Bid Now!', 'prospress' ),
+						'adds_post_fields' => null,
+						'post_table_columns' => array (
+											'current_bid' => array( 'title' => 'Price', 'function' => 'the_winning_bid_value' ),
+											'bid_count' => array( 'title' => 'Number of Bids', 'function' => 'the_bid_count' ) ),
+						'bid_table_headings' => array( 
+											'post_id' => 'Post', 
+											'bid_value' => 'Amount',
+											'bid_status' => 'Bid Status', 
+											'bid_date' => 'Bid Date',
+											'post_end' => 'Post End Date'
+											),
+						'capability' => 'read'
+						);
 
-		if( empty( $bid_table_headings ) || !is_array( $bid_table_headings ) ){
-			$this->bid_table_headings = array( 
-										'post_id' => 'Post', 
-										'bid_value' => 'Amount',
-										'bid_status' => 'Bid Status', 
-										'bid_date' => 'Bid Date',
-										'post_end' => 'Post End Date'
-										);
-		} else {
-			$this->bid_table_headings = $bid_table_headings;
-		}
+		$args = wp_parse_args( $args, $defaults );
 
-		if( !is_array( $post_fields ) ){
-			$this->post_fields = array();
-		} else {
-			$this->post_fields = $post_fields;
-		}
+		$this->labels 				= $args[ 'labels' ];
+		$this->bid_button_value		= $args[ 'bid_button_value' ];
+		$this->post_table_columns 	= $args[ 'post_table_columns' ];
+		$this->bid_table_headings 	= $args[ 'bid_table_headings' ];
+		$this->adds_post_fields 	= $args[ 'adds_post_fields' ];
 
-		if( !empty( $this->post_fields ) && in_array( 'post_fields', $this->post_fields ) ){
+		$this->post	= new PP_Post( $this->name, array( 'labels' => $this->labels ) );
+
+		if( is_using_custom_taxonomies() && class_exists( 'PP_Taxonomy' ) )
+			$this->taxonomy = new PP_Taxonomy( $this->name, array( 'labels' => $this->labels ) );
+
+		if( $this->adds_post_fields != null ){
 			add_action( 'admin_menu', array( &$this, 'post_fields_meta_box' ) );
 			add_action( 'save_post', array( &$this, 'post_fields_save' ), 10, 2 );
 		}
 
-		if( !empty( $this->post_table_columns ) && is_array( $this->post_table_columns ) ){
+		if( !empty( $this->post_table_columns ) ){
 			add_filter( 'manage_posts_columns', array( &$this, 'add_post_column_headings' ) );
 			add_action( 'manage_posts_custom_column', array( &$this, 'add_post_column_contents' ), 10, 2 );
 		}
@@ -85,16 +92,13 @@ abstract class PP_Market_System {
 		add_action( 'admin_menu', array( &$this, 'add_admin_pages' ) );
 
 		// Columns for printing bid history table
-		add_filter( 'manage_' . $this->name() . '_columns', array( &$this, 'get_column_headings' ) );
+		add_filter( 'manage_' . $this->name . '_columns', array( &$this, 'get_column_headings' ) );
 
 		// For Ajax & other scripts
 		add_action( 'wp_print_scripts', array( &$this, 'enqueue_bid_form_scripts' ) );
 		add_action( 'admin_menu', array( &$this, 'enqueue_bid_admin_scripts' ) );
-		
-		add_filter( 'pp_sort_options', array( &$this, 'add_sort_options' ) );
 
-		if( is_using_custom_taxonomies() && class_exists( 'PP_Taxonomy' ) )
-			$this->taxonomy = new PP_Taxonomy( array( 'internal_name' => $this->name, 'singular_name' => $this->singular_name, 'display_name' => $this->display_name() ) );
+		add_filter( 'pp_sort_options', array( &$this, 'add_sort_options' ) );
 	}
 
 	/************************************************************************************************
@@ -112,17 +116,15 @@ abstract class PP_Market_System {
 	// Validate and sanitize a bid upon submission, set bid_status and bid_message as needed
 	abstract protected function validate_bid( $post_id, $bid_value, $bidder_id );
 
-	// Form fields for receiving input from the edit and add new post type pages.
-	abstract public function post_fields();
-
-	// Processes data taken from the post edit and add new post forms.
-	abstract protected function post_fields_save( $post_id, $post );
-
 	// Psuedo abstract
-	public function add_bid_table_actions( $actions, $post_id ) {
-		return $actions;
-	}
+	public function add_bid_table_actions( $actions, $post_id ) { return $actions; }
 
+	// Form fields for receiving input from the edit and add new post type pages. Optionally abstract - only called if adds_post_fields flag set.
+	public function post_fields() { return; }
+
+	// Processes data taken from the post edit and add new post forms. Optionally abstract - only called if adds_post_fields flag set.
+	protected function post_fields_save( $post_id, $post ) { return; }
+	
 	/************************************************************************************************
 	 * Functions that you may wish to override, but don't need to in order to create a new market system
 	 ************************************************************************************************/
@@ -568,7 +570,7 @@ abstract class PP_Market_System {
 	 **/
 	public function add_admin_pages() {
 
-		$base_page = $this->name() . "-bids";
+		$base_page = $this->name . "-bids";
 
 		$bids_title = apply_filters( 'bids_admin_title', __( $this->singular_name() . ' Bids', 'prospress' ) );
 
@@ -748,7 +750,7 @@ abstract class PP_Market_System {
 			<table class="widefat fixed" cellspacing="0">
 				<thead>
 					<tr class="thead">
-						<?php print_column_headers( $this->name() ); // Calls get_column_headings() added by add_filter( manage_$this->name()_columns ?>
+						<?php print_column_headers( $this->name ); // Calls get_column_headings() added by add_filter( manage_$this->name_columns ?>
 					</tr>
 				</thead>
 				<tbody id="bids" class="list:user user-list">
@@ -794,7 +796,7 @@ abstract class PP_Market_System {
 				</tbody>
 				<tfoot>
 					<tr class="thead">
-						<?php print_column_headers( $this->name() ); ?>
+						<?php print_column_headers( $this->name ); ?>
 					</tr>
 				</tfoot>
 			</table>
@@ -815,7 +817,7 @@ abstract class PP_Market_System {
 	// Add market system columns to tables of posts
 	public function add_post_column_headings( $column_headings ) {
 
-		if( !( ( $_GET[ 'post_type' ] == $this->name() ) || ( get_post_type( $_GET[ 'post' ] ) ==  $this->name() ) ) )
+		if( !( ( $_GET[ 'post_type' ] == $this->name ) || ( get_post_type( $_GET[ 'post' ] ) ==  $this->name ) ) )
 			return $column_headings;
 
 		foreach( $this->post_table_columns as $key => $column )
@@ -861,8 +863,8 @@ abstract class PP_Market_System {
 	// Adds the meta box with post fields to the edit and add new post forms. 
 	// This function is hooked in the constructor and is only called if post fields is defined. 
 	public function post_fields_meta_box(){
-		if( function_exists( 'add_meta_box' )) {
-			add_meta_box( 'pp-bidding-options', __( 'Bidding Options', 'prospress' ), array(&$this, 'post_fields' ), $this->name(), 'normal', 'core' );
+		if( function_exists( 'add_meta_box' ) ) {
+			add_meta_box( 'pp-bidding-options', sprintf( __( '%s Options', 'prospress' ), $this->labels->singular_name ), array(&$this, 'post_fields' ), $this->name, 'normal', 'core' );
 		}
 	}
 
