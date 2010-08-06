@@ -22,7 +22,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		$args = array(
 				'description' => 'The Default Prospress Standard Auction System.',
 				'bid_button_value' => __( 'Bid!', 'prospress' ),
-				'adds_adds_post_fields' => true
+				'adds_post_fields' => true
 				);
 
 		parent::__construct( __( 'auctions', 'prospress' ), $args );

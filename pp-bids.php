@@ -37,7 +37,7 @@ require_once( PP_BIDS_DIR . '/pp-auction-system.class.php' );
 global $market_system, $market_systems;
 
 $market_system = new PP_Auction_Bid_System(); // for legacy
-$market_systems[ $market_system->name ] = $market_system;
+$market_systems[ $market_system->name() ] = $market_system;
 
 $market_systems = apply_filters( 'add_market_system', $market_systems );
 

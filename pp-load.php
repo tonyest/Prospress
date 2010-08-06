@@ -29,6 +29,7 @@ require_once( PP_PLUGIN_DIR . '/pp-feedback.php' );
 require_once( PP_PLUGIN_DIR . '/pp-payment.php' );
 
 function pp_activate(){
+
 	if ( !function_exists( 'register_post_status' ) || version_compare( PHP_VERSION, '5.0.0', '<' ) ) { // Don't register on installations pre 3.0 with less than php 5
 		deactivate_plugins( basename( dirname( __FILE__ ) ) . '/' . basename( __FILE__ ) );
 		if( !function_exists( 'register_post_status' ) )
@@ -47,7 +48,7 @@ function pp_deactivate(){
 register_deactivation_hook( __FILE__, 'pp_deactivate' );
 
 function pp_uninstall(){
-	//do_action( 'pp_uninstall' ); // some don't want their plugin to delete all its data upon uninstallation
+	//do_action( 'pp_uninstall' ); // some don't want their plugins to delete all its data upon uninstallation
 }
 register_uninstall_hook( __FILE__, 'pp_uninstall' );
 

@@ -19,7 +19,7 @@
 
 abstract class PP_Market_System {
 
-	public $name;					// Internal name of the market system, probably plural e.g. "auctions".
+	private $name;					// Internal name of the market system, probably plural e.g. "auctions".
 	public $labels;					// Array of labels used to represent market system elements publicly, includes name & singular_name
 	public $post;					// Hold the custom PP_Post object for this market system.
 	public $bid_button_value;		// Text used on the submit button of the bid form.

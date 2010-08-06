@@ -78,7 +78,7 @@ class PP_Post {
 
 		$this->add_sidebars_widgets();
 		
-		// Update rewrites to work for this post type
+		// Update rewrites to account for this post type
 		$this->register_post_type();
 		flush_rewrite_rules();
 	}
