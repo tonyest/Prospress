@@ -55,7 +55,7 @@ class PP_Post {
 	 * @global WP_Rewrite $wp_rewrite WordPress Rewrite Component.
 	 */
 	public function activate(){
-		global $wpdb, $wp_rewrite;
+		global $wpdb;
 
 		if( $this->get_index_id() == false ){ // Need an index page for this post type
 			$index_page = array();
@@ -77,6 +77,10 @@ class PP_Post {
 		}
 
 		$this->add_sidebars_widgets();
+		
+		// Update rewrites to work for this post type
+		$this->register_post_type();
+		flush_rewrite_rules();
 	}
 
 
@@ -359,6 +363,8 @@ class PP_Post {
 			return false;
 
 		wp_delete_post( $this->get_index_id() );
+
+		flush_rewrite_rules();
 	}
 
 

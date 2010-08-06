@@ -42,11 +42,9 @@ if( is_using_custom_taxonomies() ){
  * @global WP_Rewrite $wp_rewrite WordPress Rewrite Component.
  */
 function pp_posts_install(){
-	global $wpdb, $wp_rewrite;
 
-	pp_default_caps();
+	pp_add_default_caps();
 
-	$wp_rewrite->flush_rules();
 }
 add_action( 'pp_activation', 'pp_posts_install' );
 
@@ -60,7 +58,7 @@ add_action( 'pp_activation', 'pp_posts_install' );
  * @subpackage Posts
  * @since 0.1
  */
-function pp_default_caps(){
+function pp_add_default_caps(){
 	global $wp_roles;
 
 	foreach ( $wp_roles->get_names() as $key => $role ) {

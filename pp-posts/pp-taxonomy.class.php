@@ -226,7 +226,8 @@ class PP_Taxonomy {
 
 		update_option( $this->name , $taxonomies );
 
-		$wp_rewrite->flush_rules();
+		//$wp_rewrite->flush_rules();
+		flush_rewrite_rules();
 
 		$this->manage_taxonomies( $msg );
 	}

@@ -193,10 +193,10 @@ class PP_Invoice {
 				$messages[] = __( 'You have not yet paid this invoice.', 'prospress' );
 
 			if(!$invoice->is_paid && $has_invoice_permissions == 'payee' )
-				$messages[] = sprintf( __( '%s has not paid this invoice.', 'prospress' ), {$invoice->payer_class->user_nicename} );
+				$messages[] = sprintf( __( '%s has not paid this invoice.', 'prospress' ), $invoice->payer_class->user_nicename );
 
 			if( $invoice->is_paid)
-				$messages[] = "{$paid_data->value} on $paid_date.";
+				$messages[] = sprintf( __( '%s on $paid_date.', 'prospress' ), $paid_data->value );
 
 			// UI Modifications
 			// Remove payment metabox if current user is not the payer, or if the invoice has already been paid
@@ -211,7 +211,7 @@ class PP_Invoice {
 			include PP_INVOICE_UI_PATH . 'send_invoice.php';
 
 		} else {
-			pp_invoice_backend_wrap("Error", "You are not allowed to view this invoice.");
+			pp_invoice_backend_wrap( "Error", __( 'You are not allowed to view this invoice.', 'prospress' ) );
 		}
 
 	}
@@ -231,7 +231,7 @@ class PP_Invoice {
 			if (wp_verify_nonce( $_REQUEST[ 'pp_invoice_process_cc' ], 'pp_invoice_process_cc_' . $invoice_id) ) {
 				$draft_message = nl2br( $_REQUEST[ 'draft_message' ]);
 				pp_invoice_update_invoice_meta( $invoice_id,'paid_status','paid' );
-				pp_invoice_update_log( $invoice_id,'paid', sprintf( __( "Invoice paid via draft. Message from payer:", 'prospress' ), $draft_message ) );
+				pp_invoice_update_log( $invoice_id,'paid', sprintf( __( "Invoice paid via bank transfer. Message from payer: %s", 'prospress' ), $draft_message ) );
 			}
 
 			// PayPal return
@@ -241,7 +241,7 @@ class PP_Invoice {
 
 			if( $_REQUEST[ 'return_info' ] == 'success' ) {
 				pp_invoice_update_invoice_meta( $invoice_id, 'paid_status', 'paid' );
-				pp_invoice_update_log( $invoice_id, 'paid', __( "Invoice paid via PayPal.", 'prospress' ) );
+				pp_invoice_update_log( $invoice_id, 'paid', __( 'Invoice paid via PayPal.', 'prospress' ) );
  			}
 
 			// Load invoice
@@ -256,14 +256,14 @@ class PP_Invoice {
 			}
 
 			if(!$invoice->is_paid && $has_invoice_permissions == 'payer' )
-				$messages[] = __( "You have not paid this invoice.", 'prospress' );
+				$messages[] = __( 'You have not paid this invoice.', 'prospress' );
 
 			if(!$invoice->is_paid && $has_invoice_permissions == 'payee' )
 				$messages[] = sprintf( __( "%s has not paid this invoice.", 'prospress' ), $invoice->payer_class->user_nicename );
 
 			if( $invoice->is_paid){
 				$messages[] = $paid_data->value;				
-				$messages[] = __( "Payment processed on $paid_date.", 'prospress' );
+				$messages[] = sprintf( __( "Payment processed on %s.", 'prospress' ), $paid_date );
 			}
 
 			// UI Modifications
@@ -275,9 +275,8 @@ class PP_Invoice {
 			include PP_INVOICE_UI_PATH . 'metaboxes/make_payment.php';			
 			include PP_INVOICE_UI_PATH . 'make_payment.php';		
 		} else {
-			pp_invoice_backend_wrap("Error", "You are not allowed to view this invoice.");
+			pp_invoice_backend_wrap( "Error", __( 'You are not allowed to view this invoice.', 'prospress' ) );
 		}
-
 	}
 
 	function save_and_preview() {
@@ -290,7 +289,6 @@ class PP_Invoice {
 		if( $has_invoice_permissions) {
 
 			// Update invoice settings that can be modified at invoice management page
-
 			if( is_array( $_REQUEST[ 'pp_invoice' ] ) ) {
 				$nonce = $_REQUEST[ 'pp_invoice_update_single' ];
 			 	if (!wp_verify_nonce( $nonce, 'pp_invoice_update_single_' . $invoice_id) ) die( 'Security check' );
@@ -307,7 +305,7 @@ class PP_Invoice {
 
 			include PP_INVOICE_UI_PATH . 'save_and_preview.php';
 		} else {
-			pp_invoice_backend_wrap("Error", "You are not allowed to view this invoice.");
+			pp_invoice_backend_wrap( "Error", __( 'You are not allowed to view this invoice.', 'prospress' ) );
 		}
 
 	}
@@ -333,9 +331,8 @@ class PP_Invoice {
 			}
 		}
 
-		$incoming_invoices = $wpdb->get_col("SELECT id FROM ".$wpdb->payments." WHERE payer_id = '$user_ID'");
+		$incoming_invoices = $wpdb->get_col( "SELECT id FROM ".$wpdb->payments." WHERE payer_id = '$user_ID'" );
 
-		//wpi_qc( $incoming_invoices);
 		include PP_INVOICE_UI_PATH . 'incoming_invoices.php';
  	}
 
@@ -444,8 +441,8 @@ class PP_Invoice {
 	function admin_init() {
 
 		// Admin Redirections. Has to go here to load before headers
-		if( $_REQUEST[ 'pp_invoice_action' ] == __( 'Continue Editing', 'prospress' ) ) {		
-			wp_redirect(admin_url("admin.php?page=new_invoice&pp_invoice_action=doInvoice&invoice_id={$_REQUEST[ 'invoice_id' ]}") );
+		if( $_REQUEST[ 'pp_invoice_action' ] == __( 'Continue Editing', 'prospress' ) ) {
+			wp_redirect( admin_url( "admin.php?page=new_invoice&pp_invoice_action=doInvoice&invoice_id={$_REQUEST[ 'invoice_id' ]}" ) );
 			die();
 		}
 
