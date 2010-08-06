@@ -16,7 +16,7 @@ $PP_Invoice = new PP_Invoice();
 class PP_Invoice {
 
 	var $Invoice;
-	var $pp_invoice_user_level = 'read';
+	var $pp_invoice_user_level;
 	var $uri;
 	var $the_path;
 	var $frontend_path;
@@ -33,10 +33,11 @@ class PP_Invoice {
 	}
 
 	function PP_Invoice() {
-		global $user_ID;
+		global $user_ID, $pp_core_capability;
 
 		$version = get_option( 'pp_invoice_version' );
 
+		$this->pp_invoice_user_level = $pp_core_capability;
 		$this->path = dirname(__FILE__);
 		$this->file = basename(__FILE__);
 		$this->directory = basename( $this->path);
@@ -67,7 +68,7 @@ class PP_Invoice {
 		// Only run the content script if we are not using the replace_tag method.  We want to avoid running the function twice
 		if(get_option( 'pp_invoice_where_to_display' ) != 'replace_tag' ) { add_filter( 'the_content', 'pp_invoice_the_content' );  } else { add_shortcode( 'pp-invoice', 'pp_invoice_the_content' ); 	}
 
-		$this->SetUserAccess(get_option( 'pp_invoice_user_level' ) );
+		$this->SetUserAccess( get_option( 'pp_invoice_user_level' ) );
 	}
 
 	function SetUserAccess( $level = 8) {
@@ -81,22 +82,22 @@ class PP_Invoice {
 		$_wp_last_object_menu++;
 
 		// outgoing_invoices is currently sent to main
-		$unsent_invoices = (count( $this->unsent_invoices) > 0 ? "(" . count( $this->unsent_invoices) . ")" : "");
-		$unpaid_invoices = (count( $this->unpaid_invoices) > 0 ? "(" . count( $this->unpaid_invoices) . ")" : "");
+		$unsent_invoices = ( count( $this->unsent_invoices) > 0 ? "(" . count( $this->unsent_invoices) . ")" : "");
+		$unpaid_invoices = ( count( $this->unpaid_invoices) > 0 ? "(" . count( $this->unpaid_invoices) . ")" : "");
 
-		$pp_invoice_page_names[ 'web_invoice' ] 		= add_menu_page( 'Payments', 'Payments',  $this->pp_invoice_user_level,'outgoing_invoices', array(&$this,'outgoing_invoices' ),$this->uri."/core/images/payments16.png", $_wp_last_object_menu);		
-		$pp_invoice_page_names[ 'outgoing_invoices' ] 	= add_submenu_page( 'outgoing_invoices', "Incoming Payments $unsent_invoices", "Incoming $unsent_invoices", $this->pp_invoice_user_level, 'outgoing_invoices', array(&$this,'outgoing_invoices' ) );
-		$pp_invoice_page_names[ 'incoming_invoices' ] 	= add_submenu_page( 'outgoing_invoices', "Outgoing Payments $unpaid_invoices", "Outgoing $unpaid_invoices", $this->pp_invoice_user_level, 'incoming_invoices', array(&$this,'incoming_invoices' ) );
-		$pp_invoice_page_names[ 'user_settings' ] 		= add_submenu_page( 'outgoing_invoices', "Settings", "Settings", $this->pp_invoice_user_level, 'user_settings_page', array(&$this,'user_settings_page' ) );
-		$pp_invoice_page_names[ 'global_settings' ] 	= add_submenu_page( 'Prospress', 'Payment Settings', 'Payment Settings', $this->admin_user_level, 'invoice_settings', array(&$this,'settings_page' ) );
+		$pp_invoice_page_names[ 'global_settings' ] 	= add_submenu_page( 'Prospress',  __( 'Payment Settings', 'prospress' ),  __( 'Payment Settings', 'prospress' ), $this->admin_user_level, 'invoice_settings', array( &$this,'settings_page' ) );
 
-		$pp_invoice_page_names[ 'make_payment' ] = add_submenu_page( 'hidden', "View Invoice", "View Invoice", $this->pp_invoice_user_level, 'make_payment', array(&$this,'make_payment' ) );
-		$pp_invoice_page_names[ 'send_invoice' ] = add_submenu_page( 'hidden', "Send Invoice", "Send Invoice", $this->pp_invoice_user_level, 'send_invoice', array(&$this,'send_invoice' ) );
-		$pp_invoice_page_names[ 'save_and_preview' ] = add_submenu_page( 'hidden', "Save and Preview", "Save and Preview", $this->pp_invoice_user_level, 'save_and_preview', array(&$this,'save_and_preview' ) );
+		$pp_invoice_page_names[ 'web_invoice' ] 		= add_menu_page( __( 'Payments', 'prospress' ), __( 'Payments', 'prospress' ), $this->pp_invoice_user_level,'outgoing_invoices', array( &$this,'outgoing_invoices' ), $this->uri."/core/images/payments16.png", $_wp_last_object_menu );
+		$pp_invoice_page_names[ 'outgoing_invoices' ] 	= add_submenu_page( 'outgoing_invoices', __( "Incoming Payments $unsent_invoices", 'prospress' ), __( "Incoming $unsent_invoices", 'prospress' ), $this->pp_invoice_user_level, 'outgoing_invoices', array( &$this,'outgoing_invoices' ) );
+		$pp_invoice_page_names[ 'incoming_invoices' ] 	= add_submenu_page( 'outgoing_invoices', __( "Outgoing Payments $unpaid_invoices", 'prospress' ), __( "Outgoing $unpaid_invoices", 'prospress' ), $this->pp_invoice_user_level, 'incoming_invoices', array( &$this,'incoming_invoices' ) );
+		$pp_invoice_page_names[ 'user_settings' ] 		= add_submenu_page( 'outgoing_invoices', __( 'Settings', 'prospress' ),  __( 'Settings', 'prospress' ), $this->pp_invoice_user_level, 'user_settings_page', array( &$this,'user_settings_page' ) );
+
+		$pp_invoice_page_names[ 'make_payment' ]		= add_submenu_page( 'hidden', __( 'View Invoice', 'prospress' ), __( 'View Invoice', 'prospress' ), $this->pp_invoice_user_level, 'make_payment', array( &$this,'make_payment' ) );
+		$pp_invoice_page_names[ 'send_invoice' ] 		= add_submenu_page( 'hidden', __( 'Send Invoice', 'prospress' ), __( 'Send Invoice', 'prospress' ), $this->pp_invoice_user_level, 'send_invoice', array( &$this,'send_invoice' ) );
+		$pp_invoice_page_names[ 'save_and_preview' ] 	= add_submenu_page( 'hidden', __( 'Save and Preview', 'prospress' ), __( 'Save and Preview', 'prospress' ), $this->pp_invoice_user_level, 'save_and_preview', array( &$this,'save_and_preview' ) );
 
 		foreach( $pp_invoice_page_names as $name => $menu) {
  			add_action("admin_print_scripts-$menu", array( $this, 'admin_print_scripts' ) );
-			//add_action("admin_print_styles-$menu", array( $this, 'admin_print_styles' ) );
 		}
 
 		//Make Payment Page Metaboxes
@@ -109,30 +110,30 @@ class PP_Invoice {
 		add_meta_box( 'pp_invoice_metabox_invoice_details', __( 'Invoice Details','prospress' ), 'pp_invoice_metabox_invoice_details','admin_page_send_invoice', 'normal', 'default' );
   		add_meta_box( 'pp_invoice_metabox_payer_details', __( 'Recipient','prospress' ), 'pp_invoice_metabox_payer_details','admin_page_send_invoice', 'side', 'default' );
 
-		add_filter( 'screen_layout_columns', array(&$this, 'on_screen_layout_columns' ), 10, 2);		
+		add_filter( 'screen_layout_columns', array( &$this, 'on_screen_layout_columns' ), 10, 2);		
 
 		register_column_headers("web-invoice_page_incoming_invoices", array(
 			'cb' => '<input type="checkbox" />',
-			'subject' => __( 'Subject' ),
-			'balance' => __( 'Amount' ),
-			'display_name' => __( 'Recipient' ),
-			'user_email' => __( 'User Email' ),
-			'company_name' => __( 'Company Name' ),
-			'status' => __( 'Status' ),
-			'date_sent' => __( 'Invoice Received' ),
-			'due_date' => __( 'Payment Due' ),
-		) );	
+			'subject' => __( 'Subject', 'prospress' ),
+			'balance' => __( 'Amount', 'prospress' ),
+			'display_name' => __( 'Recipient', 'prospress' ),
+			'user_email' => __( 'User Email', 'prospress' ),
+			'company_name' => __( 'Company Name', 'prospress' ),
+			'status' => __( 'Status', 'prospress' ),
+			'date_sent' => __( 'Invoice Received', 'prospress' ),
+			'due_date' => __( 'Payment Due', 'prospress' ),
+		) );
 
 		register_column_headers("toplevel_page_outgoing_invoices", array(
 			'cb' => '<input type="checkbox" />',
-			'subject' => __( 'Subject' ),
-			'balance' => __( 'Amount' ),
-			'display_name' => __( 'From' ),
-			'user_email' => __( 'User Email' ),
-			'company_name' => __( 'Company Name' ),
-			'status' => __( 'Status' ),
-			'date_sent' => __( 'Invoice Sent' ),
-			'due_date' => __( 'Payment Due' ),
+			'subject' => __( 'Subject', 'prospress' ),
+			'balance' => __( 'Amount', 'prospress' ),
+			'display_name' => __( 'From', 'prospress' ),
+			'user_email' => __( 'User Email', 'prospress' ),
+			'company_name' => __( 'Company Name', 'prospress' ),
+			'status' => __( 'Status', 'prospress' ),
+			'date_sent' => __( 'Invoice Sent', 'prospress' ),
+			'due_date' => __( 'Payment Due', 'prospress' ),
 		) );		
  	}
 
@@ -142,7 +143,7 @@ class PP_Invoice {
 	function on_screen_layout_columns( $columns, $screen) {
 		global $pp_invoice_page_names;
 
-			//$columns[$pp_invoice_page_names[ 'make_payment' ]] = '2';
+			$columns[$pp_invoice_page_names[ 'make_payment' ]] = '2';
 
 		return $columns;
 	}	
@@ -189,10 +190,10 @@ class PP_Invoice {
 			}
 
 			if(!$invoice->is_paid && $has_invoice_permissions == 'payer' )
-				$messages[] = "You have not yet paid this invoice.";
+				$messages[] = __( 'You have not yet paid this invoice.', 'prospress' );
 
 			if(!$invoice->is_paid && $has_invoice_permissions == 'payee' )
-				$messages[] = "{$invoice->payer_class->user_nicename} has not paid this invoice.";
+				$messages[] = sprintf( __( '%s has not paid this invoice.', 'prospress' ), {$invoice->payer_class->user_nicename} );
 
 			if( $invoice->is_paid)
 				$messages[] = "{$paid_data->value} on $paid_date.";

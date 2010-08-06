@@ -19,10 +19,9 @@
 
 abstract class PP_Market_System {
 
-	public $name;					// Public name of the market system e.g. "Auctions".
-	protected $singular_name;		// Name of a single market system object e.g. "Auction".
-	public $labels;					// PP_Post object for this market system.
-	public $post;					// PP_Post object for this market system.
+	public $name;					// Internal name of the market system, probably plural e.g. "auctions".
+	public $labels;					// Array of labels used to represent market system elements publicly, includes name & singular_name
+	public $post;					// Hold the custom PP_Post object for this market system.
 	public $bid_button_value;		// Text used on the submit button of the bid form.
 	public $adds_post_fields;		// Flag indicating whether the market system adds new post fields. If anything but null, the post_fields_meta_box and post_fields_save functions are hooked
 	public $post_table_columns;		// Array of arrays, each array is used to create a column in the post tables. By default it adds two columns, 
@@ -33,9 +32,10 @@ abstract class PP_Market_System {
 	public $taxonomy;				// A PP_Taxonomy object for this post type
 	protected $bid_status;
 	protected $message;
-	private $capability;	// the capability for making bids and viewing bid menus etc.
+	private $capability;			// the capability for making bids and viewing bid menus etc.
 
 	public function __construct( $name, $args = array() ) {
+		global $pp_core_capability;
 
 		$this->name = sanitize_user( $name, true );
 
@@ -57,7 +57,7 @@ abstract class PP_Market_System {
 											'bid_date' => 'Bid Date',
 											'post_end' => 'Post End Date'
 											),
-						'capability' => 'read'
+						'capability' => $pp_core_capability
 						);
 
 		$args = wp_parse_args( $args, $defaults );
@@ -67,6 +67,7 @@ abstract class PP_Market_System {
 		$this->post_table_columns 	= $args[ 'post_table_columns' ];
 		$this->bid_table_headings 	= $args[ 'bid_table_headings' ];
 		$this->adds_post_fields 	= $args[ 'adds_post_fields' ];
+		$this->capability 	= $args[ 'capability' ];
 
 		$this->post	= new PP_Post( $this->name, array( 'labels' => $this->labels ) );
 
@@ -141,11 +142,11 @@ abstract class PP_Market_System {
 	}
 
 	public function singular_name() {
-		return ucfirst( $this->singular_name );
+		return $this->labels[ 'singular_name' ];
 	}
 
 	public function display_name() {
-		return ucfirst( $this->name );
+		return $this->labels[ 'name' ];
 	}
 
 	// The function that brings all the bid form elements together.

@@ -10,6 +10,9 @@ if( !defined( 'PP_CORE_DIR' ) )
 if( !defined( 'PP_CORE_URL' ) )
 	define( 'PP_CORE_URL', PP_PLUGIN_URL . '/pp-core' );
 
+global $pp_core_capability; 
+$pp_core_capability = apply_filters( 'pp_core_capability', 'read' );
+
 include_once( PP_CORE_DIR . '/core-widgets.php' );
 
 /**

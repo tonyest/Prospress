@@ -19,7 +19,7 @@ Well, hopefully. Prospress is so new, it's still in beta. So please only use Pro
 
 For those who can't wait to try a game changer, this beta is for you. Download, install & explore what you'll soon be able to do with WordPress, but please do so on a test site.
 
-If you'd prefer to wait for a stable release, we've made a special [demo site](http://demo.prospress.org/auctions/) for you. You can register, post auctions & make bids on some priceless paintings in the safety of a Prospress.org sandbox.
+If you'd prefer to wait for a stable release, we've made a special [Demo Marketplace](http://demo.prospress.org/auctions/) for you. You can register, post auctions & make bids on some priceless paintings in the safety of a Prospress.org sandbox.
 
 = Features =
 
@@ -29,11 +29,11 @@ If you'd prefer to wait for a stable release, we've made a special [demo site](h
 
 **Feedback** - Traders in your marketplace can rate each other after a transaction and view each other's feedback to gain confidence when entering a transaction.
 
-See all the great features on the [Prospress Features page](http://prospress.org/features/).
+See all the great features on the Prospress [Marketplace Features](http://prospress.org/features/) page.
 
 = Want to know more? =
 
-Read the plugin's [FAQ](http://wordpress.org/extend/plugins/prospress/faq/) or visit the project's site - [Prospress.org](http://prospress.org).
+Read the plugin's [FAQ](http://wordpress.org/extend/plugins/prospress/faq/) or visit the [Prospress Marketplace Plugin](http://prospress.org) website.
 
 = Get Involved =
 
@@ -66,7 +66,7 @@ Due to the gamut of themes, it's not possible to support them all just yet, so t
 
 If you're comfortable with HTML/CSS, check out the `pp-index-auctions.php` and `pp-single-auction.php` for a guide. It's really quite easy to make your own templates. 
 
-If you need help, ask in the Prospress [Theme Compatibility forum](http://prospress.org/forums/forum/theme-compatibility/). 
+If you need help, ask in the Prospress [Theme Compatibility](http://prospress.org/forums/forum/theme-compatibility/) forum.
 
 = Where do I view Auctions? =
 
@@ -84,9 +84,9 @@ Not yet. Prospress is a major plugin that has been in development for some time.
 
 There will be bugs. Those bugs will be fixed, but it's better they occur in a sandbox.
 
-Please download & explore Prospress in a test environment, but wait until a non-beta release before using on your live site. If you'd prefer to wait for a stable release before even downloading, you can still explore Prospress on the [demo site](http://demo.prospress.org/auctions/).
+Please download & explore Prospress in a test environment, but wait until a non-beta release before using on your live site. If you'd prefer to wait for a stable release before even downloading, you can still explore Prospress on the [Demo Marketplace](http://demo.prospress.org/auctions/).
 
-To hasten the release of a stable version, you can help by [contributing](http://prospress.org/contribute/) to the project.
+To hasten the release of a stable version, you can [contribute](http://prospress.org/contribute/) to the Prospress project.
 
 = Where can I get support? =
 
@@ -100,7 +100,7 @@ If have a knack for learning new software, and could improve this sentence, you 
 
 = Where can I report a bug? =
 
-Please report bugs in the Prospress [Bug Report forum](http://prospress.org/forums/forum/bug-reports "Prospress Bug Report Forum").
+Please report bugs in the Prospress [Bug Report](http://prospress.org/forums/forum/bug-reports "Prospress Bug Report Forum") forum.
 
 = Where can I try the latest? =
 
@@ -110,14 +110,14 @@ If your dreams occasionally contain curly braces, you can contribute to the Pros
 
 = Is that it? =
 
-Nope. There are a few surprises but you'll have to download & explore Prospress to find them or at least try the [demo](http://demo.prospress.org/auctions/).
+Nope. There are a few surprises but you'll have to download & explore Prospress to find them, or at least try the [Demo Marketplace](http://demo.prospress.org/auctions/).
 
 
 == Screenshots ==
 
 1. **Add an Auction** - Publishing an auction is just like publishing a post, except you also need to add a start price and end date.
 2. **Give Feedback** - When an auction completes, the two parties can provide feedback for each other.
-3. **Set Capabilities** - All registered users can make bids & payments, but admins can choose which roles can publish & edit auctions.
+3. **Set Capabilities** - All registered users can make bids & payments, but administrators can choose who can publish & edit auctions.
 
 
 == Changelog ==

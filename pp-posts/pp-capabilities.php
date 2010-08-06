@@ -116,9 +116,6 @@ function pp_capabilities_whitelist( $whitelist_options ) {
 
 		foreach ( $roles as $key => $role ) {
 
-			if( $role->name == 'administrator' )
-				continue;
-
 			// Shared capability
 			if ( ( isset( $_POST[ $key . '-publish' ] )  && $_POST[ $key . '-publish' ] == 'on' ) || ( isset( $_POST[ $key . '-edit' ] )  && $_POST[ $key . '-edit' ] == 'on' ) || ( isset( $_POST[ $key . '-edit-others' ] )  && $_POST[ $key . '-edit-others' ] == 'on' ) ) {
 				$role->add_cap( 'edit_prospress_posts' );

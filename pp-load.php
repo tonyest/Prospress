@@ -16,8 +16,7 @@ if( !defined( 'PP_PLUGIN_DIR' ) )
 if( !defined( 'PP_PLUGIN_URL' ) )
 	define( 'PP_PLUGIN_URL', WP_PLUGIN_URL . '/prospress' );
 
-load_plugin_textdomain( 'prospress', PP_PLUGIN_DIR . '/languages', dirname( plugin_basename(__FILE__) ) . '/languages' );
-
+load_plugin_textdomain( 'prospress', PP_PLUGIN_DIR . '/languages', dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 
 require_once( PP_PLUGIN_DIR . '/pp-core.php' );
 
