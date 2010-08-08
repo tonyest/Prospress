@@ -31,9 +31,7 @@ if ( !isset($wpdb->payments_log) || empty($wpdb->payments_log))
  * The engine behind the payment system - TwinCitiesTech's WP Invoice modified for marketplace payments. 
  * All the payment system action happens in there. 
  */
-require_once( PP_PAYMENT_DIR . '/PP-Invoice.php' );
-
-add_action( 'pp_activation', array( $PP_Invoice, 'install' ) );
+require_once( PP_PAYMENT_DIR . '/pp-invoice.php' );
 
 include_once( PP_PAYMENT_DIR . '/pp-payment-templatetags.php' );
 

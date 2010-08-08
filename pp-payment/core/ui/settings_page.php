@@ -18,6 +18,16 @@
 			<?php _e( 'A special proxy must be used for credit card transactions on GoDaddy servers.', 'prospress'); ?>
 		</td>
 	</tr>
+	<tr>
+		<th><?php _e('Enforce HTTPS:', 'prospress' ); ?></a></th>
+		<td>
+		<select  name="pp_invoice_force_https">
+		<option value="true" style="padding-right: 10px;"<?php if(get_option('pp_invoice_force_https') == 'true') echo 'selected="yes"';?>><?php _e('Yes', 'prospress' ); ?></option>
+		<option value="false" style="padding-right: 10px;"<?php if(get_option('pp_invoice_force_https') == 'false') echo 'selected="yes"';?>><?php _e('No', 'prospress' ); ?></option>
+		</select> 
+		<?php _e('If enforced, Prospress will reload the invoice page into a secure mode.', 'prospress' ); ?>
+		</td>
+	</tr>
 </table>
 <h3>Email Templates</h3>
 <table class="form-table pp_invoice_email_templates">

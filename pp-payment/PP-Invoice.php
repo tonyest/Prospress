@@ -419,6 +419,8 @@ class PP_Invoice {
 			update_option( 'pp_invoice_default_currency_code', $_REQUEST[pp_invoice_default_currency_code]);
 		if(!empty( $_REQUEST[pp_invoice_using_godaddy] ) )
 			update_option( 'pp_invoice_using_godaddy', $_REQUEST[pp_invoice_using_godaddy]);
+		if(!empty( $_REQUEST[ pp_invoice_force_https ] ) )
+			update_option( 'pp_invoice_force_https', $_REQUEST[ pp_invoice_force_https ] );
 		if(!empty( $_REQUEST[pp_invoice_email_send_invoice_subject] ) )
 			update_option( 'pp_invoice_email_send_invoice_subject', $_REQUEST[pp_invoice_email_send_invoice_subject]);
 		if(!empty( $_REQUEST[pp_invoice_email_send_invoice_content] ) )

@@ -27,160 +27,160 @@ function pp_invoice_lookup() {  ?>
 /*
 	Draw invoice row for overview tables
 */
-	function pp_invoice_invoice_row($invoice, $page) {
+function pp_invoice_invoice_row($invoice, $page) {
 
-		$invoice_id = $invoice->id;
+	$invoice_id = $invoice->id;
 
-		if($page == 'outgoing') {
-			$overview_link = admin_url("admin.php?page=outgoing_invoices");;
-			$columns = get_column_headers("toplevel_page_outgoing_invoices");
-			$hidden = get_hidden_columns("toplevel_page_outgoing_invoices");
-			$user_class = $invoice->payer_class;
-			$invoice_send_pay_link = admin_url("admin.php?page=send_invoice&invoice_id={$invoice->id}");
+	if($page == 'outgoing') {
+		$overview_link = admin_url("admin.php?page=outgoing_invoices");;
+		$columns = get_column_headers("toplevel_page_outgoing_invoices");
+		$hidden = get_hidden_columns("toplevel_page_outgoing_invoices");
+		$user_class = $invoice->payer_class;
+		$invoice_send_pay_link = admin_url("admin.php?page=send_invoice&invoice_id={$invoice->id}");
+	}
+
+	if($page == 'incoming') {
+		$overview_link = admin_url("admin.php?page=incoming_invoices");;
+		$columns = get_column_headers("web-invoice_page_incoming_invoices");
+		$hidden = get_hidden_columns("web-invoice_page_incoming_invoices");			
+		$user_class = $invoice->payee_class;
+		$invoice_send_pay_link = admin_url("admin.php?page=make_payment&invoice_id={$invoice->id}");
+	}
+
+	// Color coding
+	if($invoice->is_paid) $class_settings .= " alternate ";
+	if($invoice->is_archived) $class_settings .= " pp_invoice_archived ";
+
+	// Days Since Sent
+	if($invoice->is_paid) { 
+		$days_since = "<span style='display:none;'>-1</span>".__(' Paid', 'prospress'); }
+	else { 
+		if($invoice->sent_date) {
+
+		$date1 = $invoice->sent_date;
+		$date2 = date("Y-m-d", time());
+		$difference = abs(strtotime($date2) - strtotime($date1));
+		$days = round(((($difference/60)/60)/24), 0);
+		if($days == 0) { $days_since = "<span style='display:none;'>$days</span>".__('Sent Today. ', 'prospress'); }
+		elseif($days == 1) { $days_since = "<span style='display:none;'>$days</span>".__('Sent Yesterday. ', 'prospress'); }
+		elseif($days > 1) { $days_since = "<span style='display:none;'>$days</span>".sprintf(__('Sent %s days ago. ', 'prospress'),$days); }
 		}
+		else {
+		$days_since ="<span style='display:none;'>999</span>".__('Not Sent', 'prospress');	}
+	}
 
-		if($page == 'incoming') {
-			$overview_link = admin_url("admin.php?page=incoming_invoices");;
-			$columns = get_column_headers("web-invoice_page_incoming_invoices");
-			$hidden = get_hidden_columns("web-invoice_page_incoming_invoices");			
-			$user_class = $invoice->payee_class;
-			$invoice_send_pay_link = admin_url("admin.php?page=make_payment&invoice_id={$invoice->id}");
-		}
+	// Setup row actions
 
-		// Color coding
-		if($invoice->is_paid) $class_settings .= " alternate ";
-		if($invoice->is_archived) $class_settings .= " pp_invoice_archived ";
+	if($page == 'outgoing') {
+		$row_actions = 	"<div class='row-actions'>";
 
-		// Days Since Sent
-		if($invoice->is_paid) { 
-			$days_since = "<span style='display:none;'>-1</span>".__(' Paid', 'prospress'); }
-		else { 
-			if($invoice->sent_date) {
+		if(!$invoice->is_paid)			
+			$row_actions .= "<span class='edit'><a href='$invoice_send_pay_link'>Send Invoice</a> | </span>";
 
-			$date1 = $invoice->sent_date;
-			$date2 = date("Y-m-d", time());
-			$difference = abs(strtotime($date2) - strtotime($date1));
-			$days = round(((($difference/60)/60)/24), 0);
-			if($days == 0) { $days_since = "<span style='display:none;'>$days</span>".__('Sent Today. ', 'prospress'); }
-			elseif($days == 1) { $days_since = "<span style='display:none;'>$days</span>".__('Sent Yesterday. ', 'prospress'); }
-			elseif($days > 1) { $days_since = "<span style='display:none;'>$days</span>".sprintf(__('Sent %s days ago. ', 'prospress'),$days); }
-			}
-			else {
-			$days_since ="<span style='display:none;'>999</span>".__('Not Sent', 'prospress');	}
-		}
+		if($invoice->is_archived)
+			$row_actions .= "<span class='unarchive'><a href='$overview_link&pp_invoice_action=unrachive_invoice&multiple_invoices[0]=$invoice_id' class=''>Un-Archive</a> </span>";
 
-		// Setup row actions
+		if(!$invoice->is_archived)
+			$row_actions .= "<span class='archive'><a href='$overview_link&pp_invoice_action=archive_invoice&multiple_invoices[0]=$invoice_id' class=''>Archive</a>  </span>";
 
-		if($page == 'outgoing') {
-			$row_actions = 	"<div class='row-actions'>";
+		// $row_actions .= "<span class='delete'><a onclick='return pp_invoice_confirm_delete();' href='$overview_link&pp_invoice_action=delete_invoice&multiple_invoices[0]=$invoice_id' class='submitdelete'>Delete</a></span>";		
+		$row_actions .= "</div>";
+	}
 
-			if(!$invoice->is_paid)			
-				$row_actions .= "<span class='edit'><a href='$invoice_send_pay_link'>Send Invoice</a> | </span>";
+	if($page == 'incoming') {
+		$row_actions = 	"<div class='row-actions'>";
 
-			if($invoice->is_archived)
-				$row_actions .= "<span class='unarchive'><a href='$overview_link&pp_invoice_action=unrachive_invoice&multiple_invoices[0]=$invoice_id' class=''>Un-Archive</a> </span>";
+		if(!$invoice->is_paid)
+			$row_actions .= "<span class='edit'><a href='$invoice_send_pay_link'>Make Payment</a> | </span>";
 
-			if(!$invoice->is_archived)
-				$row_actions .= "<span class='archive'><a href='$overview_link&pp_invoice_action=archive_invoice&multiple_invoices[0]=$invoice_id' class=''>Archive</a>  </span>";
+		if($invoice->is_archived)
+			$row_actions .= "<span class='unarchive'><a href='$overview_link&pp_invoice_action=unrachive_invoice&multiple_invoices[0]=$invoice_id' class=''>Un-Archive</a>  </span>";
 
-			// $row_actions .= "<span class='delete'><a onclick='return pp_invoice_confirm_delete();' href='$overview_link&pp_invoice_action=delete_invoice&multiple_invoices[0]=$invoice_id' class='submitdelete'>Delete</a></span>";		
-			$row_actions .= "</div>";
-		}
+		if(!$invoice->is_archived)
+			$row_actions .= "<span class='archive'><a href='$overview_link&pp_invoice_action=archive_invoice&multiple_invoices[0]=$invoice_id' class=''>Archive</a>  </span>";
 
-		if($page == 'incoming') {
-			$row_actions = 	"<div class='row-actions'>";
+		$row_actions .= "</div>";
 
-			if(!$invoice->is_paid)
-				$row_actions .= "<span class='edit'><a href='$invoice_send_pay_link'>Make Payment</a> | </span>";
+	}
 
-			if($invoice->is_archived)
-				$row_actions .= "<span class='unarchive'><a href='$overview_link&pp_invoice_action=unrachive_invoice&multiple_invoices[0]=$invoice_id' class=''>Un-Archive</a>  </span>";
+	// Setup display
 
-			if(!$invoice->is_archived)
-				$row_actions .= "<span class='archive'><a href='$overview_link&pp_invoice_action=archive_invoice&multiple_invoices[0]=$invoice_id' class=''>Archive</a>  </span>";
+	$r = "<tr id='invoice-$invoice_id' class='{$invoice_id}_row $class_settings'>";
 
-			$row_actions .= "</div>";
+	foreach ( $columns as $column_name => $column_display_name ) {
+	$class = "class=\"$column_name column-$column_name\"";
 
-		}
+		$style = '';
+	if ( in_array($column_name, $hidden) )
+		$style = ' style="display:none;"';
 
-		// Setup display
+	$attributes = "$class$style";
 
-		$r = "<tr id='invoice-$invoice_id' class='{$invoice_id}_row $class_settings'>";
+	switch ($column_name) {
+		case 'cb':
+			$r .= "<th scope='row' class='check-column'><input type='checkbox' name='multiple_invoices[]' value='$invoice_id'></th>";
+			break;
+		case 'subject':
+			$r .= "<td $attributes><a class='row-title' href='$invoice_send_pay_link' title='Edit $subject'>{$invoice->post_title}</a>";
+			$r .= $row_actions;
+			$r .= "</td>";
 
-		foreach ( $columns as $column_name => $column_display_name ) {
-		$class = "class=\"$column_name column-$column_name\"";
+			break;
+		case 'balance':
+			$r .= "<td $attributes>{$invoice->display_amount}</td>";
+		break;			
 
- 		$style = '';
-		if ( in_array($column_name, $hidden) )
-			$style = ' style="display:none;"';
+		case 'status':
+			$r .= "<td $attributes>". ($days_since ? " $days_since " : "-")."</td>";
+		break;		
 
-		$attributes = "$class$style";
+		case 'date_sent':
 
-		switch ($column_name) {
-			case 'cb':
-				$r .= "<th scope='row' class='check-column'><input type='checkbox' name='multiple_invoices[]' value='$invoice_id'></th>";
-				break;
-			case 'subject':
-				$r .= "<td $attributes><a class='row-title' href='$invoice_send_pay_link' title='Edit $subject'>{$invoice->post_title}</a>";
-				$r .= $row_actions;
-				$r .= "</td>";
+			$date_sent_string = strtotime(pp_invoice_meta($invoice_id,'sent_date')); 
+			if(!empty($date_sent_string))
+				$r .= "<td $attributes sortvalue='".date("Y-m-d", $date_sent_string)."'>". date("M d, Y", $date_sent_string). "</td>";
+			else 
+				$r .= "<td $attributes>&nbsp;</td>";
 
-				break;
-			case 'balance':
-				$r .= "<td $attributes>{$invoice->display_amount}</td>";
-			break;			
+		break;		
 
-			case 'status':
-				$r .= "<td $attributes>". ($days_since ? " $days_since " : "-")."</td>";
-			break;		
+		case 'invoice_id':
+			$r .= "<td $attributes>{$invoice->id}</td>";
+		break;			
 
-			case 'date_sent':
+		case 'user_email':
+			$r .= "<td $attributes><a href='mailto:{{$user_class->user_email}'>{$user_class->user_email}</a></td>";
+		break;			
 
-				$date_sent_string = strtotime(pp_invoice_meta($invoice_id,'sent_date')); 
-				if(!empty($date_sent_string))
-					$r .= "<td $attributes sortvalue='".date("Y-m-d", $date_sent_string)."'>". date("M d, Y", $date_sent_string). "</td>";
-				else 
-					$r .= "<td $attributes>&nbsp;</td>";
+		case 'display_name':
+			$r .= "<td $attributes>{$user_class->display_name}</td>";
+		break;	
 
-			break;		
+		case 'company_name':
+			$r .= "<td $attributes>{$user_class->company_name}&nbsp;</td>";
+		break;			
 
-			case 'invoice_id':
-				$r .= "<td $attributes>{$invoice->id}</td>";
-			break;			
+		case 'due_date':
 
-			case 'user_email':
-				$r .= "<td $attributes><a href='mailto:{{$user_class->user_email}'>{$user_class->user_email}</a></td>";
-			break;			
+			$due_date_string = strtotime($invoice->due_date_day . "-" . $invoice->due_date_month . "-" . $invoice->due_date_year);
+			if(!empty($due_date_string))
+				$r .= "<td $attributes sortvalue='".date(get_option('date_format'), $due_date_string)."'>" . date(get_option('date_format'), $due_date_string). "</td>";
+			else 
+				$r .= "<td $attributes>&nbsp;</td>";
+		break;			
 
-			case 'display_name':
-				$r .= "<td $attributes>{$user_class->display_name}</td>";
-			break;	
+		default:
+			$r .= "<td $attributes>";
+				$r .= "$column_name";
+			$r .= "</td>";
 
-			case 'company_name':
-				$r .= "<td $attributes>{$user_class->company_name}&nbsp;</td>";
-			break;			
-
-			case 'due_date':
-
-				$due_date_string = strtotime($invoice->due_date_day . "-" . $invoice->due_date_month . "-" . $invoice->due_date_year);
-				if(!empty($due_date_string))
-					$r .= "<td $attributes sortvalue='".date(get_option('date_format'), $due_date_string)."'>" . date(get_option('date_format'), $due_date_string). "</td>";
-				else 
-					$r .= "<td $attributes>&nbsp;</td>";
-			break;			
-
-			default:
-				$r .= "<td $attributes>";
- 				$r .= "$column_name";
-				$r .= "</td>";
-
-		}
-		}
+	}
+	}
 	$r .= '</tr>';
 
 	return $r;		
 
-	}
+}
 
 function pp_invoice_user_selection_screen() {
  	?>
@@ -200,8 +200,7 @@ function pp_invoice_user_selection_screen() {
 }
 
 function pp_invoice_show_welcome_message() {
-
-global $wpdb; ?>
+	global $wpdb; ?>
 
 <h2>Prospress Payments Setup Steps</h2>
 
@@ -310,16 +309,16 @@ function pp_invoice_show_email($invoice_id, $force_original = false) {
 }
 
 function pp_invoice_show_reminder_email($invoice_id) {
-
 	global $pp_invoice_email_variables;
+
 	$pp_invoice_email_variables = pp_invoice_email_variables($invoice_id);
 
 	return preg_replace_callback('/(%([a-z_]+)%)/', 'pp_invoice_email_apply_variables', get_option('pp_invoice_email_send_reminder_content'));
 }
 
 function pp_invoice_show_receipt_email($invoice_id) {
-
 	global $pp_invoice_email_variables;
+	
 	$pp_invoice_email_variables = pp_invoice_email_variables($invoice_id);
 
 	return preg_replace_callback('/(%([a-z_]+)%)/', 'pp_invoice_email_apply_variables', get_option('pp_invoice_email_send_receipt_content'));
@@ -426,10 +425,8 @@ function pp_invoice_draw_itemized_table_plaintext($invoice_id) {
 
 }
 
-function pp_invoice_user_profile_fields()
-{
-	global $wpdb;
-	global $user_id;
+function pp_invoice_user_profile_fields(){
+	global $wpdb, $user_id;
 
 	$profileuser = @get_user_to_edit($user_id);
 	?>
