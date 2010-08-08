@@ -80,7 +80,7 @@ class PP_Taxonomies_List_Widget extends WP_Widget {
 	function PP_Taxonomies_List_Widget() {
 		global $market_systems;
 
-		$widget_ops = array( 'description' => sprintf( __('List of taxonomy items that apply to a single %s', 'prospress' ), $market_systems['auctions']->singular_name() ) );
+		$widget_ops = array( 'description' => sprintf( __('List of taxonomy items that apply to a single %s', 'prospress' ), $market_systems['auctions']->labels[ 'singular_name' ] ) );
 		$this->WP_Widget( 'pp_single_tax', __( 'Prospress Taxonomy List' ), $widget_ops );
 	}
 
@@ -136,7 +136,7 @@ class PP_Countdown_Widget extends WP_Widget {
 	function PP_Countdown_Widget() {
 		global $market_systems;
 
-		$widget_ops = array( 'description' => sprintf( __('The time until the end of an %s', 'prospress' ), $market_systems[ 'auctions' ]->singular_name() ) );
+		$widget_ops = array( 'description' => sprintf( __('The time until the end of an %s', 'prospress' ), $market_systems[ 'auctions' ]->labels[ 'singular_name' ] ) );
 		$this->WP_Widget( 'pp_countdown', __( 'Prospress Countdown' ), $widget_ops );
 	}
 
