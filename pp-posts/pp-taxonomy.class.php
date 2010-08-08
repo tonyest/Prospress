@@ -7,10 +7,12 @@ class PP_Taxonomy {
 	protected $edit_tax;
 	public $admin_url;
 	public $name;
+	public $market_type;
 
 	public function __construct( $name, $args ) {
 
-		$this->name 		= $name;
+		$this->name 		= $name . '_tax';
+		$this->market_type	= $name;
 		$this->labels 		= $args[ 'labels' ];
 		$this->admin_url	= admin_url( '/admin.php?page=' . $this->name );
 		$this->add_tax		= 'add_' . $this->name . '_tax';
@@ -22,8 +24,8 @@ class PP_Taxonomy {
 	}
 
 	public function add_menu_page() {
-		$page_title = sprintf( __( 'Custom %s Taxonomies', 'prospress' ), $this->labels[ 'name' ] );
-		$menu_title = sprintf( __( '%s Taxonomies', 'prospress' ), $this->labels[ 'name' ] );
+		$page_title = sprintf( __( 'Custom %s Taxonomies', 'prospress' ), $this->labels[ 'singular_name' ] );
+		$menu_title = sprintf( __( '%s Taxonomies', 'prospress' ), $this->labels[ 'singular_name' ] );
 		$menu_slug = $this->name;
 
 		add_submenu_page( 'Prospress', $page_title, $menu_title, 'manage_categories', $menu_slug, array( &$this, 'controller' ) );
@@ -206,11 +208,11 @@ class PP_Taxonomy {
 		}
 
 		$new_tax[ 'label' ] 		= ( !$_POST[ 'label' ] ) ? $tax_name : strip_tags( $_POST[ 'label' ] );
-		$new_tax[ 'object_type' ] 	= $this->name;
+		$new_tax[ 'object_type' ] 	= $this->market_type;
 		$new_tax[ 'capabilities' ] 	= array( 'assign_terms' => 'edit_prospress_posts' );
 		$new_tax[ 'labels' ] 		= array();
 		$new_tax[ 'labels' ][ 'singular_label' ]	= ( !$_POST[ 'singular_label' ] ) ? $tax_name : strip_tags( $_POST[ 'singular_label' ] );
-		//other taxonomy properties are defined dynamically to future proof
+		//other taxonomy properties are defined dynamically for future proofing
 
 		$taxonomies = get_option( $this->name );
 
@@ -226,7 +228,6 @@ class PP_Taxonomy {
 
 		update_option( $this->name , $taxonomies );
 
-		//$wp_rewrite->flush_rules();
 		flush_rewrite_rules();
 
 		$this->manage_taxonomies( $msg );

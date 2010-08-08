@@ -43,7 +43,7 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 					<div class="pp-excerpt">
 						<?php the_excerpt(); ?>
 						<a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>">
-							<?php printf( __( 'View %s &raquo', 'prospress' ), $market->singular_name() ); ?>
+							<?php printf( __( 'View %s &raquo', 'prospress' ), $market->labels[ 'singular_name' ] ); ?>
 						</a>
 					</div>
 					<div class="pp-publish-details">
@@ -57,7 +57,7 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 
 			<?php endwhile; else: ?>
 
-				<p>No <?php echo $market->display_name(); ?>.</p>
+				<p>No <?php echo $market->label; ?>.</p>
 
 			<?php endif; ?>
 		</div>

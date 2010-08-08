@@ -1,5 +1,3 @@
-<?php // wpi_qc($_REQUEST); ?>
-
 <div class='wrap'>
 	<h2>Make Payment</h2>
  

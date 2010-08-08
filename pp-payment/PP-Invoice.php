@@ -372,7 +372,7 @@ class PP_Invoice {
 			$invoice_id = $_REQUEST[ 'invoice_id' ];
  			if( $_REQUEST[ 'pp_invoice_action' ] == 'Email to Client' ) {
 				pp_invoice_update_invoice_meta( $invoice_id, 'email_payment_request', $_REQUEST[ 'pp_invoice_payment_request' ][ 'email_message_content' ]);
-				$message = wp_send_single_invoice( $invoice_id);
+				$message = pp_send_single_invoice( $invoice_id);
 			}			
 
 			if( $_REQUEST[ 'pp_invoice_action' ] == 'Save for Later' ) {			

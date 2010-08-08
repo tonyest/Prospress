@@ -61,7 +61,7 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 
 			<?php endwhile; else: ?>
 
-				<p>No <?php echo $market->display_name(); ?>.</p>
+				<p>No <?php echo $market->label; ?>.</p>
 
 			<?php endif; ?>
 		</div>

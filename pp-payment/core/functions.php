@@ -23,7 +23,7 @@ function pp_invoice_delete_post( $post_id) {
 }
 
 //New function for sending invoices 
-function wp_send_single_invoice( $invoice_id, $message = false ) {
+function pp_send_single_invoice( $invoice_id, $message = false ) {
 	$invoice_class = new pp_invoice_get( $invoice_id);
 	$invoice = $invoice_class->data;
 
@@ -66,11 +66,8 @@ function pp_invoice_user_settings( $what, $user_id = false ) {
 	$user_settings = get_usermeta( $user_id, 'pp_invoice_settings' );
 
 	// If there are no settin found, load defaults
- 	if(!is_array( $user_settings) || count( $user_settings) < 1)	{
-			wpi_qc("Calling pp_invoice_load_default_user_settings() from pp_invoice_user_settings()" );
-			wpi_qc( $user_settings, '$user_settings' );
+ 	if( !is_array( $user_settings ) || count( $user_settings ) < 1 )	{
 		$user_settings = pp_invoice_load_default_user_settings( $user_id);
-
 	}
 
 	// Remove slashes from entire array
@@ -101,7 +98,6 @@ function pp_invoice_user_settings( $what, $user_id = false ) {
 // Load default user options into a users settings. Some settings are generated based on user account settings
 function pp_invoice_load_default_user_settings( $user_id) {
 
-	//wpi_qc("Running pp_invoice_load_default_user_settings()" );
 	$user_data = get_userdata( $user_id);
 
 	$settings[ 'business_name' ] = $user_data->display_name;
@@ -646,7 +642,7 @@ function pp_invoice_complete_removal()  {
 	return __("All settings and databases removed.", 'prospress' );
 }
 
-function get_invoice_user_id( $invoice_id) {
+function pp_get_invoice_user_id( $invoice_id) {
 	// in class
 	global $wpdb;
 	$invoice_info = $wpdb->get_row("SELECT * FROM ".$wpdb->payments." WHERE id = '".$invoice_id."'" );

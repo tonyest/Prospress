@@ -656,180 +656,163 @@ function pp_invoice_draw_user_selection_form($user_id) {
 	Function from WPI Premium
 	Shorthand function for drawing input fields
 */
-	function wpi_input($args = '') {
-		$defaults = array('name' => '', 'group' => '','special' => '','value' => '', 'type' => '', 'hidden' => false, 'style' => false, 'readonly' => false, 'label' => false);
-		extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
+function wpi_input($args = '') {
+	$defaults = array('name' => '', 'group' => '','special' => '','value' => '', 'type' => '', 'hidden' => false, 'style' => false, 'readonly' => false, 'label' => false);
+	extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
 
-		// if [ character is present, we do not use the name in class and id field
-		if(!strpos("$name",'[')) {
-			$id = $name;
-			$class_from_name = $name;
-		}
-
-		if($label) $return .= "<label for='$name'>";
-		$return .= "<input ".($type ?  "type=\"$type\" " : '')." ".($style ?  "style=\"$style\" " : '')." id=\"$id\" class=\"".($type ?  "" : "input_field")." $class_from_name $class ".($hidden ?  " hidden " : '').""  .($group ? "group_$group" : ''). " \"  	name=\"" .($group ? $group."[".$name."]" : $name). "\" 	value=\"".stripslashes($value)."\" 	title=\"$title\" $special ".($type == 'forget' ?  " autocomplete='off'" : '')." ".($readonly ?  " readonly=\"readonly\" " : "")." />";		
-		if($label) $return .= "$label </label>";
-
-		return $return;
+	// if [ character is present, we do not use the name in class and id field
+	if(!strpos("$name",'[')) {
+		$id = $name;
+		$class_from_name = $name;
 	}
+
+	if($label) $return .= "<label for='$name'>";
+	$return .= "<input ".($type ?  "type=\"$type\" " : '')." ".($style ?  "style=\"$style\" " : '')." id=\"$id\" class=\"".($type ?  "" : "input_field")." $class_from_name $class ".($hidden ?  " hidden " : '').""  .($group ? "group_$group" : ''). " \"  	name=\"" .($group ? $group."[".$name."]" : $name). "\" 	value=\"".stripslashes($value)."\" 	title=\"$title\" $special ".($type == 'forget' ?  " autocomplete='off'" : '')." ".($readonly ?  " readonly=\"readonly\" " : "")." />";		
+	if($label) $return .= "$label </label>";
+
+	return $return;
+}
 
 /*
 	Function from WPI Premium
 	Shorthand function for drawing select boxes
 */
-	function select($args = '') {
-		$defaults = array('name' => '', 'group' => '','special' => '','values' => '','current_value' => '');
-		extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
+function select($args = '') {
+	$defaults = array('name' => '', 'group' => '','special' => '','values' => '','current_value' => '');
+	extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
 
-		global $wpi_settings;
+	global $wpi_settings;
 
-		// Get rid of all brackets
-		if(strpos("$name",'[') || strpos("$name",']')) {
-			$replace_variables = array('][',']','[');
-			$class_from_name = $name;
-			$class_from_name = "wpi_" . str_replace($replace_variables, '_', $class_from_name);
-		} else {
-			$class_from_name = "wpi_" . $name;	
-		}
-
-		// Overwrite class_from_name if class is set
-		if($class)
-			$class_from_name = $class;
-
- 		$values_array = unserialize($values);
-
-		if($values == 'yon') {
-			$values_array = array("yes" => __("Yes", 'prospress'),"no" => __("No", 'prospress'));
-		}
-
-		if($values == 'us_states') {
-			$values_array = $wpi_settings['states'];
-		}
-
-		if($values == 'countries') {
-			$values_array = $wpi_settings['countries'];
-		}
-
-		if($values == 'years') {
-			// Create year array
-
-			$current_year = intval(date('y'));
-			$values_array = array();
-			$counter = 0;
-			while ( $counter < 7) {
-				$values_array[$current_year] = "20". $current_year;
-				$current_year++;
-				$counter++;
-			}
- 		}
-
-		if($values == 'months') {
- 			$values_array = array("" => "", "01" => "Jan", "02" => "Feb", "03" => "Mar", "04" => "Apr", "05" => "May", "06" => "Jun", "07" => "Jul","08" => "Aug","09" => "Sep","10" => "Oct","11" => "Nov","12" => "Dec");
-		}
-
-		$output = "<select id='".($id ? $id : $class_from_name)."' name='"  .($group ? $group."[".$name."]" : $name). "' class='$class_from_name "  .($group ? "group_$group" : ''). "'>";
-
- 		foreach($values_array as $key => $value) {
-		$output .=  "<option value='$key'";
-		if($key == $current_value) $output .= " selected";	
-		$output .= ">$value</option>";
-		}
-		$output .= "</select>";
-
-		return $output;
+	// Get rid of all brackets
+	if(strpos("$name",'[') || strpos("$name",']')) {
+		$replace_variables = array('][',']','[');
+		$class_from_name = $name;
+		$class_from_name = "wpi_" . str_replace($replace_variables, '_', $class_from_name);
+	} else {
+		$class_from_name = "wpi_" . $name;	
 	}
+
+	// Overwrite class_from_name if class is set
+	if($class)
+		$class_from_name = $class;
+
+		$values_array = unserialize($values);
+
+	if($values == 'yon') {
+		$values_array = array("yes" => __("Yes", 'prospress'),"no" => __("No", 'prospress'));
+	}
+
+	if($values == 'us_states') {
+		$values_array = $wpi_settings['states'];
+	}
+
+	if($values == 'countries') {
+		$values_array = $wpi_settings['countries'];
+	}
+
+	if($values == 'years') {
+		// Create year array
+
+		$current_year = intval(date('y'));
+		$values_array = array();
+		$counter = 0;
+		while ( $counter < 7) {
+			$values_array[$current_year] = "20". $current_year;
+			$current_year++;
+			$counter++;
+		}
+		}
+
+	if($values == 'months') {
+			$values_array = array("" => "", "01" => "Jan", "02" => "Feb", "03" => "Mar", "04" => "Apr", "05" => "May", "06" => "Jun", "07" => "Jul","08" => "Aug","09" => "Sep","10" => "Oct","11" => "Nov","12" => "Dec");
+	}
+
+	$output = "<select id='".($id ? $id : $class_from_name)."' name='"  .($group ? $group."[".$name."]" : $name). "' class='$class_from_name "  .($group ? "group_$group" : ''). "'>";
+
+		foreach($values_array as $key => $value) {
+	$output .=  "<option value='$key'";
+	if($key == $current_value) $output .= " selected";	
+	$output .= ">$value</option>";
+	}
+	$output .= "</select>";
+
+	return $output;
+}
 
 /*
 	Function from WPI Premium
 	Shorthand function for drawing checkbox fields
 */	
-	function wpi_checkbox($args = '', $checked = false) {
-		$defaults = array('name' => '', 'id' => false,'class' => false, 'group' => '','special' => '','value' => '', 'label' => false, 'maxlength' => false);
-		extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
+function wpi_checkbox($args = '', $checked = false) {
+	$defaults = array('name' => '', 'id' => false,'class' => false, 'group' => '','special' => '','value' => '', 'label' => false, 'maxlength' => false);
+	extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
 
-		// Get rid of all brackets
-		if(strpos("$name",'[') || strpos("$name",']')) {
-			$replace_variables = array('][',']','[');
-			$class_from_name = $name;
-			$class_from_name = "pp_invoice_" . str_replace($replace_variables, '_', $class_from_name);
-		} else {
-			$class_from_name = "pp_invoice_" . $name;	
-		}
+	// Get rid of all brackets
+	if(strpos("$name",'[') || strpos("$name",']')) {
+		$replace_variables = array('][',']','[');
+		$class_from_name = $name;
+		$class_from_name = "pp_invoice_" . str_replace($replace_variables, '_', $class_from_name);
+	} else {
+		$class_from_name = "pp_invoice_" . $name;	
+	}
 
-		// Setup Group
-		if($group) {
-			if(strpos($group,'|')) {
-				$group_array = explode("|", $group);
-				$count = 0;
-				foreach($group_array as $group_member) {
-					$count++;
-					if($count == 1) {
-						$group_string .= "$group_member";
-					} else {
-						$group_string .= "[$group_member]";
-					}
+	// Setup Group
+	if($group) {
+		if(strpos($group,'|')) {
+			$group_array = explode("|", $group);
+			$count = 0;
+			foreach($group_array as $group_member) {
+				$count++;
+				if($count == 1) {
+					$group_string .= "$group_member";
+				} else {
+					$group_string .= "[$group_member]";
 				}
-			} else {
-				$group_string = "$group";
 			}
+		} else {
+			$group_string = "$group";
 		}
+	}
 
-		// Use $checked to determine if we should check the box
-		$checked = strtolower($checked);
-		if($checked == 'yes') 	$checked = 'true'; 
-		if($checked == 'true') 	$checked = 'true'; 
-		if($checked == 'no') 	$checked = false;
-		if($checked == 'false') $checked = false; 
+	// Use $checked to determine if we should check the box
+	$checked = strtolower($checked);
+	if($checked == 'yes') 	$checked = 'true'; 
+	if($checked == 'true') 	$checked = 'true'; 
+	if($checked == 'no') 	$checked = false;
+	if($checked == 'false') $checked = false; 
 
-//		WPI_Functions::qc($checked);
+//	WPI_Functions::qc($checked);
 
-		$id					= 	($id ? $id : $class_from_name);
+	$id					= 	($id ? $id : $class_from_name);
 
-		$insert_id 			= 	($id ? " id='$id' " : " id='$class_from_name' ");
-		$insert_name		= 	($group_string ? " name='".$group_string."[$name]' " : " name='$name' ");
-		$insert_checked		= 	($checked ? " checked='checked' " : " ");
-		$insert_value		= 	" value=\"$value\" ";
-		$insert_class 		= 	" class='$class_from_name $class wpi_checkbox' ";
-		$insert_maxlength	= 	($maxlength ? " maxlength='$maxlength' " : " ");
+	$insert_id 			= 	($id ? " id='$id' " : " id='$class_from_name' ");
+	$insert_name		= 	($group_string ? " name='".$group_string."[$name]' " : " name='$name' ");
+	$insert_checked		= 	($checked ? " checked='checked' " : " ");
+	$insert_value		= 	" value=\"$value\" ";
+	$insert_class 		= 	" class='$class_from_name $class wpi_checkbox' ";
+	$insert_maxlength	= 	($maxlength ? " maxlength='$maxlength' " : " ");
 
-		// Determine oppositve value
-		switch ($value) {
-			case 'yes':
+	// Determine oppositve value
+	switch ($value) {
+		case 'yes':
 			$opposite_value = 'no';
 			break;
-
-			case 'true':
+		case 'true':
 			$opposite_value = 'false';
 			break;
-
-		}
-
-		// Print label if one is set
-		if($label) $return .= "<label for='$id'>";
-
-		// Print hidden checkbox
-		$return .= "<input type='hidden' value='$opposite_value' $insert_name />";
-
-		// Print checkbox
-		$return .= "<input type='checkbox' $insert_name $insert_id $insert_class $insert_checked $insert_maxlength  $insert_value $special />";
-		if($label) $return .= " $label</label>";	
-
-		return $return;
 	}
 
-	function wpi_qc($what, $title = false) {
+	// Print label if one is set
+	if($label) $return .= "<label for='$id'>";
 
-		// Do nothing is user is not logged in to prevent headers errors
-		if(!is_user_logged_in())
-			return;
+	// Print hidden checkbox
+	$return .= "<input type='hidden' value='$opposite_value' $insert_name />";
 
-		?>
-		<div class="error" onclick="jQuery(this).hide();" style="padding: 10px;">
-		<b><?php echo $title; ?></b>
-		<pre style="text-align: left; font-family: calibri; margin-top:10px;"><?php print_r($what); ?></pre>		
-		</div>
+	// Print checkbox
+	$return .= "<input type='checkbox' $insert_name $insert_id $insert_class $insert_checked $insert_maxlength  $insert_value $special />";
+	if($label) $return .= " $label</label>";	
 
-		<?php
-	}
+	return $return;
+}
 
 ?>

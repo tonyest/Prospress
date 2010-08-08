@@ -20,6 +20,7 @@
 abstract class PP_Market_System {
 
 	private $name;					// Internal name of the market system, probably plural e.g. "auctions".
+	public $label;					// Array of labels used to represent market system elements publicly, includes name & singular_name
 	public $labels;					// Array of labels used to represent market system elements publicly, includes name & singular_name
 	public $post;					// Hold the custom PP_Post object for this market system.
 	public $bid_button_value;		// Text used on the submit button of the bid form.
@@ -42,8 +43,8 @@ abstract class PP_Market_System {
 		$defaults = array(
 						'description' => '',
 						'labels' => array(
-							'name' => ucfirst( $name ),
-							'singular_name' => ucfirst( substr( $name, 0, -1) ), // Remove 's' - certainly not a catch all default!
+							'name' => ucfirst( $this->name ),
+							'singular_name' => ucfirst( substr( $this->name, 0, -1) ), // Remove 's' - certainly not a catch all default!
 							),
 						'bid_button_value' => __( 'Bid Now!', 'prospress' ),
 						'adds_post_fields' => null,
@@ -61,7 +62,9 @@ abstract class PP_Market_System {
 						);
 
 		$args = wp_parse_args( $args, $defaults );
+		//$args = (object) $args; //WP uses an object not an arrays
 
+		$this->label 				= $args[ 'labels' ][ 'name' ];
 		$this->labels 				= $args[ 'labels' ];
 		$this->bid_button_value		= $args[ 'bid_button_value' ];
 		$this->post_table_columns 	= $args[ 'post_table_columns' ];
@@ -137,16 +140,12 @@ abstract class PP_Market_System {
 	 * upper case first letter; however, other market systems require additional words or operations performed on the name 
 	 * member variable.
 	 **/
-	public function name() { //function __toString() {
+	public function name() {
 		return $this->name;
 	}
 
 	public function singular_name() {
 		return $this->labels[ 'singular_name' ];
-	}
-
-	public function display_name() {
-		return $this->labels[ 'name' ];
 	}
 
 	// The function that brings all the bid form elements together.
@@ -491,7 +490,7 @@ abstract class PP_Market_System {
 					$message = __( 'Bid submitted.', 'prospress' );
 					break;
 				case 11:
-					$message = __( 'You cannot bid on your own ', 'prospress' ) . $this->singular_name() . '.';
+					$message = __( 'You cannot bid on your own ', 'prospress' ) . $this->labels[ 'singular_name' ] . '.';
 					break;
 				case 12:
 					$message = __( 'This post has completed, bids cannot be accepted.', 'prospress' );
@@ -573,7 +572,7 @@ abstract class PP_Market_System {
 
 		$base_page = $this->name . "-bids";
 
-		$bids_title = apply_filters( 'bids_admin_title', __( $this->singular_name() . ' Bids', 'prospress' ) );
+		$bids_title = apply_filters( 'bids_admin_title', __( $this->labels[ 'singular_name' ] . ' Bids', 'prospress' ) );
 
 		if ( function_exists( 'add_object_page' ) ) {
 			add_object_page( $bids_title, $bids_title, $this->capability, $base_page, '', PP_PLUGIN_URL . '/images/auctions16.png' );
@@ -604,7 +603,7 @@ abstract class PP_Market_System {
 
 		$bids = apply_filters( 'active_history_bids', $bids );
 
-		$this->print_admin_bids_table( $bids, sprintf( __( 'Bids on Active %s', 'prospress' ), $this->display_name() ), 'active-bids' );
+		$this->print_admin_bids_table( $bids, sprintf( __( 'Bids on Active %s', 'prospress' ), $this->label ), 'active-bids' );
 	}
 
 	public function completed_history() {
@@ -621,7 +620,7 @@ abstract class PP_Market_System {
 
 		$bids = apply_filters( 'completed_history_bids', $bids );
 
-		$this->print_admin_bids_table( $bids, sprintf( __( 'Bids on Completed %s', 'prospress' ), $this->display_name() ), 'bids' );
+		$this->print_admin_bids_table( $bids, sprintf( __( 'Bids on Completed %s', 'prospress' ), $this->label ), 'bids' );
 	}
 
 	private function create_bid_page_query( $post_status = 'publish', $bid_status = '' ){

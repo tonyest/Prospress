@@ -10,13 +10,13 @@
 class PP_Feedback_Score_Widget extends WP_Widget {
 	function PP_Feedback_Score_Widget() {
 		/* Widget settings. */
-		$widget_ops = array( 'classname' => 'pp-feedback-score', 'description' => __( 'Displays a user\'s feedback score', 'prospress' ) );
+		$widget_ops = array( 'classname' => 'pp-feedback-score', 'description' => __( 'Displays an author\'s feedback', 'prospress' ) );
 
 		/* Widget control settings. */
 		$control_ops = array( 'id_base' => 'pp-feedback-score' );
 
 		/* Create the widget. */
-		$this->WP_Widget( 'pp-feedback-score', __('Prospress Feedback Score', 'prospress' ), $widget_ops, $control_ops );
+		$this->WP_Widget( 'pp-feedback-score', __('Prospress Feedback', 'prospress' ), $widget_ops, $control_ops );
 	}
 
 	function widget( $args, $instance ) {
@@ -61,7 +61,7 @@ add_action( 'widgets_init', create_function( '', 'return register_widget("PP_Fee
 class PP_Feedback_Latest_Widget extends WP_Widget {
 	function PP_Feedback_Latest_Widget() {
 		/* Widget settings. */
-		$widget_ops = array( 'classname' => 'pp-feedback-latest', 'description' => __( 'Displays the most recent feedback comment a user has received', 'prospress' ) );
+		$widget_ops = array( 'classname' => 'pp-feedback-latest', 'description' => __( 'The most recent feedback for a post author', 'prospress' ) );
 
 		/* Widget control settings. */
 		$control_ops = array( 'id_base' => 'pp-feedback-latest' );

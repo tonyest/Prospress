@@ -448,7 +448,7 @@ function pp_taxonomies_option_page() {
 	$market = $market_systems['auctions'];
 ?>
 	<h3><?php _e( 'Custom Taxonomies', 'prospress' )?></h3>
-	<p><?php echo sprintf( __( 'Custom taxonomies provide a way to classify %s. If your site lists more than 20 %s at a time, you should use custom taxonomies.', 'prospress' ), $market->display_name(), $market->display_name() ); ?></p>
+	<p><?php echo sprintf( __( 'Custom taxonomies provide a way to classify %s. If your site lists more than 20 %s at a time, you should use custom taxonomies.', 'prospress' ), $market->label, $market->label ); ?></p>
 
 	<label for="pp_use_custom_taxonomies">
 		<input type="checkbox" value='true' id="pp_use_custom_taxonomies" name="pp_use_custom_taxonomies"<?php checked( (boolean)get_option( 'pp_use_custom_taxonomies' ) ); ?> />

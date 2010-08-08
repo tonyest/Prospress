@@ -1,7 +1,6 @@
 <div class="wrap">
 <form method='POST'>
 <h2><?php _e("Payment Settings", 'prospress') ?></h2>
-<?php // wpi_qc($user_settings); ?>
 	<style>
 		<?php if($user_settings[paypal_allow] != 'true') : ?>
 			.paypal_settings { display:none; }
