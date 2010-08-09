@@ -1,13 +1,12 @@
 <?php
 
-
 class Bid_Filter_Widget extends WP_Widget {
 
 	function Bid_Filter_Widget() {
 		global $market_systems;
-		$market = $market_systems['auctions'];
-		$widget_ops = array('description' => sprintf( __('Filter %s by price.', 'prospress' ), $market->name() ) );
-		$this->WP_Widget('bid-filter', __('Prospress Price Filter', 'prospress' ), $widget_ops);
+		$market = $market_systems[ 'auctions' ];
+		$widget_ops = array( 'description' => sprintf( __('Filter %s by price.', 'prospress' ), $market->name() ) );
+		$this->WP_Widget( 'bid-filter', __('Prospress Price Filter', 'prospress' ), $widget_ops );
 	}
 
 	function widget( $args, $instance ) {
@@ -54,14 +53,17 @@ class Bid_Filter_Widget extends WP_Widget {
 
 	function update( $new_instance, $old_instance ) {
 		$instance = $old_instance;
+		
 		$new_instance = wp_parse_args((array) $new_instance, array( 'title' => ''));
+
 		$instance['title'] = strip_tags($new_instance['title']);
+		
 		return $instance;
 	}
 }
 
 function bid_filter_widget_init() {
-	register_widget('Bid_Filter_Widget');
+	register_widget( 'Bid_Filter_Widget' );
 }
 add_action('widgets_init', 'bid_filter_widget_init');
 

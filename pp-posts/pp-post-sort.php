@@ -16,7 +16,7 @@ class PP_Sort_Widget extends WP_Widget {
 		$widget_ops = array( 'classname' => 'pp-sort', 'description' => sprintf( __('Sort %s in your marketplace.', 'prospress' ), $market_systems['auctions']->name() ) );
 
 		/* Widget control settings. */
-		$control_ops = array( 'id_base' => 'pp-sort' );
+		//$control_ops = array( 'id_base' => 'pp-sort' );
 
 		/* Create the widget. */
 		$this->WP_Widget( 'pp-sort', __('Prospress Sort', 'prospress' ), $widget_ops, $control_ops );
@@ -71,7 +71,6 @@ class PP_Sort_Widget extends WP_Widget {
 
 		$instance = $old_instance;
 
-		/* Strip tags (if needed) and update the widget settings. */
 		$instance['title'] = strip_tags( $new_instance['title'] );
 
 		foreach( $pp_sort_options as $key => $label )

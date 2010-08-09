@@ -9,9 +9,7 @@ Template Name: Auctions Taxonomy Index
  * @subpackage Theme
  * @since 0.1
  */
-global $market_systems, $wp_query;
-
-$market = $market_systems[ 'auctions' ];
+global $wp_query;
 
 $taxonomy = esc_attr( get_query_var( 'taxonomy' ) );
 $tax = get_taxonomy( $taxonomy );
@@ -20,9 +18,6 @@ $term = get_term_by( 'slug', $term, $taxonomy );
 $term_description = term_description( $term->term_id, $taxonomy );
 $term = $term->name;
 $tax_title = sprintf( __( '%s %s' ), $term, $tax->labels->name );
-
-wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
-
 ?>
 <?php get_header(); ?>
 	<div id="container" class="prospress-container">
