@@ -11,12 +11,6 @@ Template Name: Single Prospress Post
  * @subpackage Theme
  * @since 0.1
  */
-global $market_systems;
-
-$market = $market_systems[ 'auctions' ];
-
-wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
-
 ?>
 <?php get_header(); ?>
 	<div id="container">

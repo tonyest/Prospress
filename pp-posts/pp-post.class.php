@@ -99,9 +99,13 @@ class PP_Post {
 	 * @since 0.1
 	 */
 	public function template_redirects() {
-		global $post;
+		global $post, $market_systems;
+
+		$market = $market_systems[ $this->name ];
 
 		if ( is_using_custom_taxonomies() && is_pp_multitax() ) {
+
+			wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 
 			do_action( 'pp_taxonomy_template_redirect' );
 
@@ -115,6 +119,8 @@ class PP_Post {
 
 		} elseif( $post->post_name == $this->name && TEMPLATEPATH . '/page.php' == get_page_template() ){ // No template set for default Prospress index
 
+			wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
+
 			do_action( 'pp_index_template_redirect' );
 
 			if( file_exists( TEMPLATEPATH . '/index-' . $this->name . '.php' ) )	// Copied the default template to the them directory?
@@ -126,6 +132,8 @@ class PP_Post {
 			exit;
 
 		} elseif ( $post->post_type == $this->name && is_single() && !isset( $_GET[ 's' ] ) ) {
+
+			wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 
 			do_action( 'pp_single_template_redirect' );
 
