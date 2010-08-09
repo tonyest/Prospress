@@ -519,13 +519,23 @@ abstract class PP_Market_System {
 	 * Convenience wrapper for the post object's get index permalink function.
 	 */
 	public function get_index_permalink() {
+		return $this->post->get_index_permalink();
+	}
 
-		$index_id = $this->get_index_id();
+	
+	/**
+	 * Convenience wrapper for the post object's is index function.
+	 */
+	public function is_index() {
+		return $this->post->is_index();
+	}
 
-		if( $index_id == false )
-			return false;
-		else 
-			return get_permalink( $index_id );
+
+	/**
+	 * Convenience wrapper for the post object's is index function.
+	 */
+	public function is_single() {
+		return $this->post->is_single();
 	}
 
 

@@ -25,7 +25,9 @@ class PP_Post {
 
 		add_action( 'init', array( &$this, 'register_post_type' ) );
 
-		add_action( 'init', array( &$this, 'register_sidebars' ) );
+		// Only use built-in sidebars if current theme doesn't support Prospress
+		if ( !file_exists( TEMPLATEPATH . '/index-' . $this->name . '.php' ) && !file_exists( TEMPLATEPATH . '/single-' . $this->name . '.php' ) )
+			add_action( 'init', array( &$this, 'register_sidebars' ) );
 
 		add_action( 'template_redirect', array( &$this, 'template_redirects' ) );
 
@@ -117,7 +119,7 @@ class PP_Post {
 				include( PP_POSTS_DIR . '/pp-taxonomy-' . $this->name . '.php' );
 			exit;
 
-		} elseif( $post->post_name == $this->name && TEMPLATEPATH . '/page.php' == get_page_template() ){ // No template set for default Prospress index
+		} elseif( $this->is_index() && TEMPLATEPATH . '/page.php' == get_page_template() ){ // No template set for default Prospress index
 
 			wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 
@@ -131,7 +133,7 @@ class PP_Post {
 				include( PP_POSTS_DIR . '/pp-index-' . $this->name . '.php' );
 			exit;
 
-		} elseif ( $post->post_type == $this->name && is_single() && !isset( $_GET[ 's' ] ) ) {
+		} elseif ( $this->is_single() && is_single() && !isset( $_GET[ 's' ] ) ) {
 
 			wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 
@@ -203,29 +205,25 @@ class PP_Post {
 	 */
 	public function register_sidebars(){
 
-		if ( !file_exists( TEMPLATEPATH . '/index-' . $this->name . '.php' ) && !file_exists( TEMPLATEPATH . '/pp-index-' . $this->name . '.php' ) ) {
-			register_sidebar( array (
-				'name' => $this->labels[ 'name' ] . ' ' . __( 'Index Sidebar', 'prospress' ),
-				'id' => $this->name . '-index-sidebar',
-				'description' => sprintf( __( "The sidebar for the %s index.", 'prospress' ), $this->labels[ 'name' ] ),
-				'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
-				'after_widget' => "</li>",
-				'before_title' => '<h3 class="widget-title">',
-				'after_title' => '</h3>'
-			) );
-		}
+		register_sidebar( array (
+			'name' => $this->labels[ 'name' ] . ' ' . __( 'Index Sidebar', 'prospress' ),
+			'id' => $this->name . '-index-sidebar',
+			'description' => sprintf( __( "The sidebar for the %s index.", 'prospress' ), $this->labels[ 'name' ] ),
+			'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
+			'after_widget' => "</li>",
+			'before_title' => '<h3 class="widget-title">',
+			'after_title' => '</h3>'
+		) );
 
-		if ( !file_exists( TEMPLATEPATH . '/single-' . $this->name . '.php' ) && !file_exists( TEMPLATEPATH . '/pp-single-' . $this->name . '.php' ) ) {
-			register_sidebar( array (
-				'name' => sprintf( __( 'Single %s Sidebar', 'prospress' ), $this->labels[ 'singular_name' ] ),
-				'id' => $this->name . '-single-sidebar',
-				'description' => sprintf( __( "The sidebar for a single %s.", 'prospress' ), $this->labels[ 'singular_name' ] ),
-				'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
-				'after_widget' => "</li>",
-				'before_title' => '<h3 class="widget-title">',
-				'after_title' => '</h3>'
-			) );
-		}
+		register_sidebar( array (
+			'name' => sprintf( __( 'Single %s Sidebar', 'prospress' ), $this->labels[ 'singular_name' ] ),
+			'id' => $this->name . '-single-sidebar',
+			'description' => sprintf( __( "The sidebar for a single %s.", 'prospress' ), $this->labels[ 'singular_name' ] ),
+			'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
+			'after_widget' => "</li>",
+			'before_title' => '<h3 class="widget-title">',
+			'after_title' => '</h3>'
+		) );
 	}
 
 
@@ -313,6 +311,32 @@ class PP_Post {
 	}
 
 
+	/**
+	 * Template tag - is the current page/post the index for this market system's posts.
+	 */
+	public function is_index() {
+		global $post;
+
+		if( $post->post_name == $this->name )
+			return true;
+		else
+			return false;
+	}
+
+
+	/**
+	 * Template tag - is the current post a single post of this market system's type.
+	 */
+	public function is_single() {
+		global $post;
+
+		if( $post->post_type == $this->name )
+			return true;
+		else
+			return false;
+	}
+
+
 	public function get_index_id() {
 		global $wpdb;
 
@@ -355,47 +379,6 @@ class PP_Post {
 	 */
 	function get_add_new_url() {
 		 return admin_url( '/post-new.php?post_type=' . $this->name );
-	}
-
-
-	/** 
-	 * Clean up anything added on activation, including the index page. 
-	 * 
-	 * @package Prospress
-	 * @subpackage Posts
-	 * @since 0.1
-	 */
-	public function deactivate(){
-
-		if ( !current_user_can( 'edit_plugins' ) || !function_exists( 'delete_site_option' ) )
-			return false;
-
-		wp_delete_post( $this->get_index_id() );
-
-		flush_rewrite_rules();
-	}
-
-
-	/** 
-	 * When Prospress is uninstalled completely, remove the index page created on activation. 
-	 * 
-	 * @package Prospress
-	 * @subpackage Posts
-	 * @since 0.1
-	 */
-	public function uninstall(){
-		global $wpdb;
-
-		if ( !current_user_can( 'edit_plugins' ) || !function_exists( 'delete_site_option' ) )
-			return false;
-
-		wp_delete_post( $this->get_index_id() );
-
-		$pp_post_ids = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type = '" . $this->name . "'" ) );
-
-		if ( $pp_post_ids )
-			foreach ( $pp_post_ids as $pp_post_id )
-				wp_delete_post( $pp_post_id );
 	}
 
 
@@ -475,5 +458,46 @@ class PP_Post {
 		}
 	}
 
+
+
+	/** 
+	 * Clean up anything added on activation, including the index page. 
+	 * 
+	 * @package Prospress
+	 * @subpackage Posts
+	 * @since 0.1
+	 */
+	public function deactivate(){
+
+		if ( !current_user_can( 'edit_plugins' ) || !function_exists( 'delete_site_option' ) )
+			return false;
+
+		wp_delete_post( $this->get_index_id() );
+
+		flush_rewrite_rules();
+	}
+
+
+	/** 
+	 * When Prospress is uninstalled completely, remove the index page created on activation. 
+	 * 
+	 * @package Prospress
+	 * @subpackage Posts
+	 * @since 0.1
+	 */
+	public function uninstall(){
+		global $wpdb;
+
+		if ( !current_user_can( 'edit_plugins' ) || !function_exists( 'delete_site_option' ) )
+			return false;
+
+		wp_delete_post( $this->get_index_id() );
+
+		$pp_post_ids = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type = '" . $this->name . "'" ) );
+
+		if ( $pp_post_ids )
+			foreach ( $pp_post_ids as $pp_post_id )
+				wp_delete_post( $pp_post_id );
+	}
 
 }
