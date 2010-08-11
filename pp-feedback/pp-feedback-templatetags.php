@@ -35,13 +35,14 @@ function the_most_recent_feedback( $user_id = '' ){
 
 	$latest = pp_get_latest_feedback( $user_id );
 
-	echo '<div "feedback-title">';
-	echo __( 'Recent Feedback: ', 'prospress' );
-	echo '</div>';
-	echo '<blockquote class="feedback-comment">' . $latest['feedback_comment'] . '</blockquote>';
-	echo '<div "feedback-provider">';
-	echo __( 'From: ', 'prospress' );
-	echo get_userdata( $latest['from_user_id'] )->user_nicename;
+	if( $latest != false ) {
+		echo '<blockquote class="feedback-comment">' . $latest['feedback_comment'] . '</blockquote>';
+		echo '<div "feedback-provider">';
+		echo __( 'From: ', 'prospress' );
+		echo get_userdata( $latest['from_user_id'] )->user_nicename;
+	} else {
+		echo '<p>' . sprintf( __( '%s has not yet received any feedback.', 'prospress' ), get_userdata( $user_id )->user_nicename ) . '</p>';
+	}
 	echo '</div>';
 }
 
