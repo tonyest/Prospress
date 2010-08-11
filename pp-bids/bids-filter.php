@@ -45,7 +45,7 @@ class Bid_Filter_Widget extends WP_Widget {
 
 	function form( $instance ) {
 		$instance = wp_parse_args( (array) $instance, array( 'title' => '') );
-		$title = $instance['title'];
+		$title =  ( $instance['title'] ) ? $instance['title'] : __( 'Price:', 'prospress' );;
 		?>
 		<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:', 'prospress' ); ?> <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" /></label></p>
 	<?php
@@ -61,11 +61,7 @@ class Bid_Filter_Widget extends WP_Widget {
 		return $instance;
 	}
 }
-
-function bid_filter_widget_init() {
-	register_widget( 'Bid_Filter_Widget' );
-}
-add_action('widgets_init', 'bid_filter_widget_init');
+add_action( 'widgets_init', create_function( '', 'return register_widget("Bid_Filter_Widget");' ) );
 
 
 class Bid_Filter_Query {

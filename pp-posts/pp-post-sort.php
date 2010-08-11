@@ -56,7 +56,7 @@ class PP_Sort_Widget extends WP_Widget {
 	function form( $instance ) {
 		global $pp_sort_options;
 
-		$title = $instance['title'];
+		$title = ( $instance['title'] ) ? $instance['title'] : __( 'Sort By:', 'prospress' );
 		?>
 		<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:', 'prospress' ); ?> <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" /></label></p>
 		<p><?php _e( 'Sort By:', 'prospress' ) ?></p>

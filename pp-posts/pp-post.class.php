@@ -241,13 +241,35 @@ class PP_Post {
 	 */
 	public function add_sidebars_widgets(){
 
-		$sidebars_widgets = get_option( 'sidebars_widgets' );
+		$sidebars_widgets = wp_get_sidebars_widgets();
+/*
+		error_log('$sidebars_widgets = ' . print_r( $sidebars_widgets, true ) );
 
+		$filter_widget = get_option( 'widget_bid-filter' );
+		error_log('* filter_widget = ' . print_r( $filter_widget, true ) );
+		$filter_id = key( $filter_widget );
+		error_log('* bid-filter-' . $filter_id );
+
+		$filter_widget[] = array( 'title' => __( 'Price:', 'prospress' ) );
+		error_log('** filter_widget = ' . print_r( $filter_widget, true ) );
+		$filter_id = key( $filter_widget );
+		error_log('** bid-filter-' . $filter_id );
+
+		array_push( $filter_widget, array( 'title' => __( 'Price:', 'prospress' ) ) );
+		error_log('*** filter_widget = ' . print_r( $filter_widget, true ) );
+		$filter_id = end(array_keys($filter_widget));
+		error_log('*** bid-filter-' . $filter_id );
+
+		return;
+*/
 		if( !isset( $sidebars_widgets[ $this->name . '-index-sidebar' ] ) )
 			$sidebars_widgets[ $this->name . '-index-sidebar' ] = array();
 
 		$sort_widget = get_option( 'widget_pp-sort' );
-		if( empty( $sort_widget ) ){
+		if( empty( $sort_widget ) ){ //sort widget not added to any sidebars yet
+			error_log('sort_widget empty' );
+
+			$sort_widget['_multiwidget'] = 1;
 
 			$sort_widget[] = array(
 								'title' => __( 'Sort by:', 'prospress' ),
@@ -259,22 +281,28 @@ class PP_Post {
 								'price-desc' => 'on'
 								);
 
-			$sort_widget['_multiwidget'] = 1;
-			update_option( 'widget_pp-sort',$sort_widget );
-			array_push( $sidebars_widgets[ $this->name . '-index-sidebar' ], 'pp-sort-0' );
+			$widget_id = end( array_keys( $sort_widget ) );
+
+			update_option( 'widget_pp-sort', $sort_widget );
+
+			array_push( $sidebars_widgets[ $this->name . '-index-sidebar' ], 'pp-sort-' . $widget_id );
 		}
 
 		$filter_widget = get_option( 'widget_bid-filter' );
-		if( empty( $filter_widget ) ){
+		if( empty( $filter_widget ) ){ //filter_widget widget not added to any sidebars yet
+			error_log('filter_widget empty' );
+
+			$filter_widget['_multiwidget'] = 1;
 
 			$filter_widget[] = array( 'title' => __( 'Price:', 'prospress' ) );
 
-			$filter_widget['_multiwidget'] = 1;
+			$filter_id = end( array_keys( $filter_widget ) );
+
 			update_option( 'widget_bid-filter', $filter_widget );
-			array_push( $sidebars_widgets[ $this->name . '-index-sidebar' ], 'bid-filter-0' );
+			array_push( $sidebars_widgets[ $this->name . '-index-sidebar' ], 'bid-filter-' . $filter_id );
 		}
 
-		update_option( 'sidebars_widgets', $sidebars_widgets );
+		wp_set_sidebars_widgets( $sidebars_widgets );
 	}
 
 
