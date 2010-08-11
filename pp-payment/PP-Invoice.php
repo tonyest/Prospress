@@ -37,6 +37,8 @@ class PP_Invoice {
 
 		$version = get_option( 'pp_invoice_version' );
 
+		add_action( 'pp_activation', array( &$this, 'install' ) );
+
 		$this->pp_invoice_user_level = $pp_core_capability;
 		$this->path = dirname(__FILE__);
 		$this->file = basename(__FILE__);
@@ -535,6 +537,7 @@ class PP_Invoice {
 		function install() {
 			global $wpdb;
 
+			error_log('pp invoice install being called');
 			$current_db_version = get_option( 'PP_PAYMENTS_DB_VERSION' );
 
 			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
