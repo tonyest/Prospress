@@ -190,6 +190,7 @@ class PP_Post {
 					);
 
 		register_post_type( $this->name, $args );
+
 	}
 
 
@@ -531,5 +532,4 @@ class PP_Post {
 			foreach ( $pp_post_ids as $pp_post_id )
 				wp_delete_post( $pp_post_id );
 	}
-
 }
