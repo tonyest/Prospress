@@ -581,7 +581,7 @@ abstract class PP_Market_System {
 
 		$base_page = $this->name . "-bids";
 
-		$bids_title = apply_filters( 'bids_admin_title', __( $this->labels[ 'singular_name' ] . ' Bids', 'prospress' ) );
+		$bids_title = apply_filters( 'bids_admin_title', __( 'Bids', 'prospress' ) );
 
 		if ( function_exists( 'add_object_page' ) ) {
 			add_object_page( $bids_title, $bids_title, $this->capability, $base_page, '', PP_PLUGIN_URL . '/images/auctions16.png' );
@@ -589,8 +589,8 @@ abstract class PP_Market_System {
 			add_menu_page( $bids_title, $bids_title, $this->capability, $base_page, '', PP_PLUGIN_URL . '/images/auctions16.png' );
 		}
 
-		$completed_posts_menu_title = apply_filters( 'pp_completed_posts_menu_title', __( 'Completed', 'prospress' ) );
-		$active_posts_menu_title = apply_filters( 'pp_active_posts_menu_title', __( 'Active', 'prospress' ) );
+		$completed_posts_menu_title = apply_filters( 'pp_completed_posts_menu_title', sprintf( __( 'Completed %s', 'prospress' ), $this->label ) );
+		$active_posts_menu_title = apply_filters( 'pp_active_posts_menu_title', sprintf( __( 'Active %s', 'prospress' ), $this->label ) );
 
 	    // Add submenu items to the bids top-level menu
 		if (function_exists( 'add_submenu_page' )){
