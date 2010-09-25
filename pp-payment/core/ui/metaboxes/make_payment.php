@@ -94,7 +94,7 @@ function pp_invoice_metabox_billing_details( $invoice ) {
 		 	<div class="<?php echo $name; ?>_ui payment_info"><?php include PP_INVOICE_UI_PATH . "payment_{$name}.php"; ?></div>
 	 	<?php }
 	} else { ?>
-		The payee has not set up any billing options yet.  You cannot make a payment until this is done.  Contact the payee to resolve this.
+		<p>The payee has not set up any billing options yet.  You cannot make a payment until this is done.  Contact the payee to resolve this.</p>
 	<?php }
 }
 

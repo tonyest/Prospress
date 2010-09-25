@@ -63,20 +63,47 @@ function pp_add_payment_action( $actions, $post_id ) {
 
 	$invoice_id = $wpdb->get_var( "SELECT id FROM $wpdb->payments WHERE post_id = $post_id" );
 	$make_payment_url = add_query_arg( array( 'invoice_id' => $invoice_id ), 'admin.php?page=make_payment' );
-	$nvoice_url = add_query_arg( array( 'invoice_id' => $invoice_id ), 'admin.php?page=send_invoice' );
+	$invoice_url = add_query_arg( array( 'invoice_id' => $invoice_id ), 'admin.php?page=send_invoice' );
 
 	if ( $is_winning_bidder && !$invoice->is_paid ) {
 		$actions[ 'make-payment' ] = array( 'label' => __( 'Make Payment', 'prospress' ), 
 											'url' => $make_payment_url );
 	} else if ( $user_ID == $post->post_author && !$invoice->is_paid ) {
 		$actions[ 'send-invoice' ] = array( 'label' => __( 'Send Invoice', 'prospress' ),
-											'url' => $nvoice_url );
+											'url' => $invoice_url );
 	} else {
 		$actions[ 'view-invoice' ] = array( 'label' => __( 'View Payment Details', 'prospress' ),
-											'url' => $nvoice_url );
+											'url' => $invoice_url );
 	}
 
 	return $actions;
 }
 add_filter( 'completed_post_actions', 'pp_add_payment_action', 10, 2 );
 add_filter( 'winning_bid_actions', 'pp_add_payment_action', 10, 2 );
+
+
+function pp_generate_invoice( $post_id ) { //receive post ID from hook
+	global $market_systems, $wpdb;
+
+ 	// Check if invoice exists for post
+	$invoice_id = $wpdb->get_var( "SELECT id FROM " . $wpdb->payments . " WHERE post_id = '$post_id'" );
+
+	if( $invoice_id != NULL )
+		return $invoice_id;
+
+	$winning_bid = get_winning_bid( $post_id );
+	$payer_id = $winning_bid->bidder_id;
+	$payer_name = get_userdata( $payer_id )->display_name;
+	$payee_id = get_post( $post_id )->post_author;
+	$payee_name = get_userdata( $payee_id )->display_name;
+	$amount = $winning_bid->bid_value;
+	$status = 'pending';
+	$type = get_post_type( $post_id );
+
+	$args = compact( 'post_id', 'payer_id', 'payee_id', 'amount', 'status', 'type' );
+
+	error_log( 'generating invoice with args = ' . print_r( $args, true ) );
+
+	return pp_invoice_create( $args );
+}
+add_action( 'post_completed', 'pp_generate_invoice' );

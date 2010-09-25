@@ -292,11 +292,9 @@ width:100%;
 .itemized_list .id {display:none; visibility:hidden;}
 
 .pp_invoice_tamp_stamp {
-	width: 170px;
 	float: left;
-	
 	color: #B4BFA7;
-	
+	padding-right: 1em;
 }
 
 

@@ -198,7 +198,7 @@ class PP_Invoice {
 				$messages[] = sprintf( __( '%s has not paid this invoice.', 'prospress' ), $invoice->payer_class->user_nicename );
 
 			if( $invoice->is_paid)
-				$messages[] = sprintf( __( '%s on $paid_date.', 'prospress' ), $paid_data->value );
+				$messages[] = $paid_data->value . ' ' . $paid_date;
 
 			// UI Modifications
 			// Remove payment metabox if current user is not the payer, or if the invoice has already been paid
@@ -215,7 +215,6 @@ class PP_Invoice {
 		} else {
 			pp_invoice_backend_wrap( "Error", __( 'You are not allowed to view this invoice.', 'prospress' ) );
 		}
-
 	}
 
 	function make_payment() {

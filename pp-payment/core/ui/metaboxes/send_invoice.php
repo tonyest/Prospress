@@ -6,7 +6,7 @@
 		if( $ic->log):
 			foreach ( $ic->log as $single_status) {
 				$time =  date(get_option('date_format') . ' ' . get_option('time_format'),  strtotime( $single_status->time_stamp));
-				echo "<span class='pp_invoice_tamp_stamp'>" . $time . "</span>{$single_status->value} <br />";
+				echo "<li><span class='pp_invoice_tamp_stamp'>" . $time . "</span>{$single_status->value} </li>";
 			}
 		else: ?>
 		No history events for this invoice.
