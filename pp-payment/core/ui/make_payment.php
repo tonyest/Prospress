@@ -3,20 +3,20 @@
  
 	<div class="pp_invoice_error_wrapper">
 	<?php if( count( $errors ) > 0): ?>
-	<div class="error"><p>
+	<div class="error">
 		<?php foreach( $errors as $error ): ?>
 			<p><?php echo $error; ?></p>
 		<?php endforeach; ?>
-	</p></div>
+	</div>
 	<?php endif; ?>
 	</div>
 
 	<?php if(count($messages) > 0): ?>
-	<div class="updated fade"><p>
+	<div class="updated fade">
 		<?php foreach($messages as $message): ?>
 			<p><?php echo $message; ?></p>
 		<?php endforeach; ?>
-	</p></div>
+	</div>
 	<?php endif; ?>
  
 	<script type="text/javascript">
