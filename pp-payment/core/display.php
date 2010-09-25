@@ -116,7 +116,7 @@ function pp_invoice_invoice_row($invoice, $page) {
 
 	$attributes = "$class$style";
 
-	switch ($column_name) {
+	switch ( $column_name ) {
 		case 'cb':
 			$r .= "<th scope='row' class='check-column'><input type='checkbox' name='multiple_invoices[]' value='$invoice_id'></th>";
 			break;
@@ -135,7 +135,6 @@ function pp_invoice_invoice_row($invoice, $page) {
 		break;		
 
 		case 'date_sent':
-
 			$date_sent_string = strtotime(pp_invoice_meta($invoice_id,'sent_date')); 
 			if(!empty($date_sent_string))
 				$r .= "<td $attributes sortvalue='".date("Y-m-d", $date_sent_string)."'>". date("M d, Y", $date_sent_string). "</td>";

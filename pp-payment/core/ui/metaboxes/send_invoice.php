@@ -1,5 +1,5 @@
 <?php
-	function pp_invoice_metabox_history( $ic) {
+	function pp_invoice_metabox_history( $ic ) {
 	?>
 		<ul id="invoice_history_log">
 		<?php 
@@ -10,14 +10,13 @@
 			}
 		else: ?>
 		No history events for this invoice.
-		
 		<?php endif; ?>
 		</ul>
 	</div>
 
 	<?php  }
 
-function pp_invoice_metabox_publish( $ic) { ?>
+function pp_invoice_metabox_publish( $ic ) { ?>
 	<div id="minor-publishing">
 
 		<div id="misc-publishing-actions">
@@ -81,7 +80,7 @@ function pp_invoice_metabox_publish( $ic) { ?>
 
 <?php }
 
-function pp_invoice_metabox_invoice_details( $ic) { ?>
+function pp_invoice_metabox_invoice_details( $ic ) { ?>
 	<table class="form-table" id="pp_invoice_main_info">
 
 	<tr class="invoice_main">

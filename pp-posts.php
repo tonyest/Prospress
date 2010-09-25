@@ -278,7 +278,7 @@ add_action( 'deleted_post', 'pp_unschedule_post_end' );
 function pp_register_completed_status() {
 	register_post_status(
 	       'completed',
-	       array('label' => _x('Completed', 'post' ),
+	       array('label' => _x( 'Completed', 'post' ),
 				'label_count' => _n_noop('Completed <span class="count">(%s)</span>', 'Completed <span class="count">(%s)</span>' ),
 				'show_in_admin_all' => false,
 				'show_in_admin_all_list' => false,

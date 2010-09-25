@@ -50,7 +50,7 @@
 			}
 		} else { ?>
 			<tr>
-				<td colspan="9" align="center">
+				<td colspan="5">
 					<div>
 						<?php _e('You have no invoices to pay.', 'prospress'); ?>
 					</div>

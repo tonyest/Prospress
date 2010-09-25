@@ -120,7 +120,6 @@ class PP_Invoice {
 			'balance' => __( 'Amount', 'prospress' ),
 			'display_name' => __( 'Recipient', 'prospress' ),
 			'user_email' => __( 'User Email', 'prospress' ),
-			'company_name' => __( 'Company Name', 'prospress' ),
 			'status' => __( 'Status', 'prospress' ),
 			'date_sent' => __( 'Invoice Received', 'prospress' ),
 			'due_date' => __( 'Payment Due', 'prospress' ),
@@ -132,7 +131,6 @@ class PP_Invoice {
 			'balance' => __( 'Amount', 'prospress' ),
 			'display_name' => __( 'From', 'prospress' ),
 			'user_email' => __( 'User Email', 'prospress' ),
-			'company_name' => __( 'Company Name', 'prospress' ),
 			'status' => __( 'Status', 'prospress' ),
 			'date_sent' => __( 'Invoice Sent', 'prospress' ),
 			'due_date' => __( 'Payment Due', 'prospress' ),
@@ -145,7 +143,7 @@ class PP_Invoice {
 	function on_screen_layout_columns( $columns, $screen) {
 		global $pp_invoice_page_names;
 
-			$columns[$pp_invoice_page_names[ 'make_payment' ]] = '2';
+			$columns[ $pp_invoice_page_names[ 'make_payment' ] ] = '2';
 
 		return $columns;
 	}	

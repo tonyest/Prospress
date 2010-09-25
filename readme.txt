@@ -122,6 +122,10 @@ Nope. There are a few surprises but you'll have to download & explore Prospress 
 
 == Changelog ==
 
+= 0.3 =
+* Fixed bug preventing invoices being generated on manual post completion
+* Markup fixes to Invoice pages
+
 = 0.2 =
 * Beta 2 
 * Now prevents activation on WP < 3.0 and PHP < 5.0
@@ -135,5 +139,9 @@ Nope. There are a few surprises but you'll have to download & explore Prospress 
 
 == Upgrade Notice ==
 
+= 0.3 =
+Upgrade to have invoices properly generated on manual post completion.
+
 = 0.2 =
 Upgrade to fix bug when activating on WP < 3.0 or PHP < 5.0, ensure Prospress plays nice with other plugins and get new widgets.
+
