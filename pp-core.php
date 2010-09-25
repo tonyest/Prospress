@@ -159,8 +159,13 @@ add_action( 'init', 'pp_set_currency' );
  * @param string optional $currency ISO 4217 code representing the currency. eg. for Japanese Yen, $currency == 'JPY'.
  * @return string The formatted value with currency symbol.
  **/
-function pp_money_format( $number, $decimals = 2, $currency = '' ){
+function pp_money_format( $number, $decimals = '', $currency = '' ){
 	global $currencies, $currency_symbol;
+
+	if( empty( $decimals ) && $number > 1000 )
+		$decimals = 0;
+	else
+		$decimals = 2;
 
 	$currency = strtoupper( $currency );
 

@@ -62,7 +62,6 @@ abstract class PP_Market_System {
 						);
 
 		$args = wp_parse_args( $args, $defaults );
-		//$args = (object) $args; //WP uses an object not an arrays
 
 		$this->label 				= $args[ 'labels' ][ 'name' ];
 		$this->labels 				= $args[ 'labels' ];

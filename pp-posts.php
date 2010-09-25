@@ -10,6 +10,50 @@
  * @version 0.1
  */
 
+// If a post author doesn't have permissions to edit their own posts, they are redirected
+// to the dashboard once publishing a post. This is a bit cludgy, so this function redirects
+// them to that post type's admin index page and adds a message to show post was published
+function pp_post_save_access_denied_redirect() {
+/*
+	error_log( '***************' );
+	global $post;
+	error_log( '*** post = ' . print_r( $post, true ) );
+	global $pagenow;
+	error_log( '*** pagenow = ' . print_r( $pagenow, true ) );
+	global $menu;
+	error_log( '*** menu = ' . print_r( $menu, true ) );
+	global $submenu;
+	error_log( '*** submenu = ' . print_r( $submenu, true ) );
+	global $_wp_menu_nopriv;
+	error_log( '*** _wp_menu_nopriv = ' . print_r( $_wp_menu_nopriv, true ) );
+	global $_wp_submenu_nopriv;
+	error_log( '*** _wp_submenu_nopriv = ' . print_r( $_wp_submenu_nopriv, true ) );
+	global $plugin_page;
+	error_log( '*** plugin_page = ' . print_r( $plugin_page, true ) );
+	global $_registered_pages;
+	error_log( '*** _registered_pages = ' . print_r( $_registered_pages, true ) );
+*/
+	global $pagenow;
+	global $post;
+
+	error_log( 'REQUEST URI = ' . $_SERVER[ 'REQUEST_URI' ] );
+
+/*
+	error_log( '*********** pp_post_save_redirect_admin_access_denied ************' );
+	foreach( debug_backtrace() as $key => $value ) {
+		error_log( "** $key . " . $value['function'] . "(" . $value['args'][0] . ")" );
+		error_log( "  ** FILE: " . $value['file'] . ":" . $value['line'] );
+	}
+	error_log( '************************************************' );
+*/
+//	if( $pagenow == 'edit.php' ) {
+//		wp_redirect( admin_url( 'edit.php?post_type=auctions' ) );
+//		exit;
+//	}
+}
+add_action( 'admin_page_access_denied', 'pp_post_save_access_denied_redirect' );
+
+
 if ( !defined( 'PP_POSTS_DIR' ) )
 	define( 'PP_POSTS_DIR', PP_PLUGIN_DIR . '/pp-posts' );
 if ( !defined( 'PP_POSTS_URL' ) )
