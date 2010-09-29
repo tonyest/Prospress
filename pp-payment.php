@@ -44,7 +44,7 @@ include_once( PP_PAYMENT_DIR . '/pp-payment-templatetags.php' );
  * The function receives the existing array of actions from the hook and adds to it an array with the url for 
  * performing a feedback action and label for outputting as the link text. 
  * 
- * @see completed_post_actions hook
+ * @see bid_table_actions hook
  * @see winning_bid_actions hook
  * 
  * @param actions array existing actions for the hook
@@ -53,7 +53,7 @@ include_once( PP_PAYMENT_DIR . '/pp-payment-templatetags.php' );
  */
 function pp_add_payment_action( $actions, $post_id ) {
 	global $user_ID, $blog_id, $wpdb;
- 
+	
 	$post = get_post( $post_id );
 
 	$is_winning_bidder = is_winning_bidder( $user_ID, $post_id );
@@ -64,11 +64,12 @@ function pp_add_payment_action( $actions, $post_id ) {
 	$invoice_id = $wpdb->get_var( "SELECT id FROM $wpdb->payments WHERE post_id = $post_id" );
 	$make_payment_url = add_query_arg( array( 'invoice_id' => $invoice_id ), 'admin.php?page=make_payment' );
 	$invoice_url = add_query_arg( array( 'invoice_id' => $invoice_id ), 'admin.php?page=send_invoice' );
+	$invoice_is_paid = pp_invoice_is_paid( $invoice_id );
 
-	if ( $is_winning_bidder && !$invoice->is_paid ) {
+	if ( $is_winning_bidder && !$invoice_is_paid ) {
 		$actions[ 'make-payment' ] = array( 'label' => __( 'Make Payment', 'prospress' ), 
 											'url' => $make_payment_url );
-	} else if ( $user_ID == $post->post_author && !$invoice->is_paid ) {
+	} else if ( $user_ID == $post->post_author && !$invoice_is_paid ) {
 		$actions[ 'send-invoice' ] = array( 'label' => __( 'Send Invoice', 'prospress' ),
 											'url' => $invoice_url );
 	} else {
@@ -79,10 +80,10 @@ function pp_add_payment_action( $actions, $post_id ) {
 	return $actions;
 }
 add_filter( 'completed_post_actions', 'pp_add_payment_action', 10, 2 );
-add_filter( 'winning_bid_actions', 'pp_add_payment_action', 10, 2 );
+add_filter( 'bid_table_actions', 'pp_add_payment_action', 10, 2 );
 
 
-function pp_generate_invoice( $post_id ) { //receive post ID from hook
+function old_pp_generate_invoice( $post_id ) { //receive post ID from hook
 	global $market_systems, $wpdb;
 
  	// Check if invoice exists for post
@@ -96,14 +97,38 @@ function pp_generate_invoice( $post_id ) { //receive post ID from hook
 	$payer_name = get_userdata( $payer_id )->display_name;
 	$payee_id = get_post( $post_id )->post_author;
 	$payee_name = get_userdata( $payee_id )->display_name;
-	$amount = $winning_bid->bid_value;
+	$amount = //$winning_bid->bid_value;
 	$status = 'pending';
 	$type = get_post_type( $post_id );
 
 	$args = compact( 'post_id', 'payer_id', 'payee_id', 'amount', 'status', 'type' );
 
-	error_log( 'generating invoice with args = ' . print_r( $args, true ) );
+	return pp_invoice_create( $args );
+}
+//add_action( 'post_completed', 'pp_generate_invoice' );
+
+// Generate invoice for a post of this market system type. 
+// Automatically hooked on post completion.
+function pp_generate_invoice( $post_id ) { //receive post ID from hook
+	global $wpdb, $market_systems;
+
+	$invoice_id = $wpdb->get_var( "SELECT id FROM " . $wpdb->payments . " WHERE post_id = '$post_id'" );
+
+	if( $invoice_id != NULL )
+		return $invoice_id;
+
+	$type = get_post_type( $post_id );
+
+	$winning_bid = $market_systems[ $type ]->get_winning_bid( $post_id );
+
+	$payer_id 	= $winning_bid->bidder_id;
+	$payee_id	= get_post( $post_id )->post_author;
+	$amount		= $winning_bid->winning_bid_value;
+	$status		= 'pending';
+
+	$args = compact( 'post_id', 'payer_id', 'payee_id', 'amount', 'status', 'type' );
 
 	return pp_invoice_create( $args );
 }
 add_action( 'post_completed', 'pp_generate_invoice' );
+

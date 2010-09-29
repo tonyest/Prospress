@@ -119,7 +119,7 @@ function pp_invoice_create( $args ) {
 		'payer_id' => false, 
 		'payee_id' => false,
 		'amount' => false,
-		'status' => false,
+		'status' => 'pending',
 		'type' => false,
 		'blog_id' => $blog_id );
 
@@ -129,7 +129,7 @@ function pp_invoice_create( $args ) {
 	if( !$post_id || !$payer_id || !$payee_id || !$amount )
 		return;
 
-	if( $wpdb->query( "INSERT INTO " . $wpdb->payments . " ( post_id, payer_id,payee_id,amount,status,type,blog_id )	VALUES ('$post_id','$payer_id','$payee_id','$amount','$status','$type','$blog_id' )" ) ) {
+	if( $wpdb->query( "INSERT INTO " . $wpdb->payments . " ( post_id,payer_id,payee_id,amount,status,type,blog_id )	VALUES ('$post_id','$payer_id','$payee_id','$amount','$status','$type','$blog_id' )" ) ) {
 		$message = __("New Invoice saved for $post_id.", 'prospress' );
 		$invoice_id = $wpdb->insert_id;
 		pp_invoice_update_log( $invoice_id, 'created', "Invoice created from post ( $post_id )." );;
@@ -139,8 +139,6 @@ function pp_invoice_create( $args ) {
 	}
 
 	return compact( 'error', 'message' );
-//	echo $message;
-//	echo $error;
 }
 
 function pp_invoice_user_has_permissions( $invoice_id, $user_id = false ) {
@@ -247,9 +245,15 @@ function pp_invoice_query_log( $invoice_id,$action_type ) {
 
 }
 
-function pp_invoice_meta( $invoice_id,$meta_key) {
+function pp_invoice_meta( $invoice_id, $meta_key) {
 	global $wpdb;
 	return $wpdb->get_var("SELECT meta_value FROM `".$wpdb->paymentsmeta."` WHERE meta_key = '$meta_key' AND invoice_id = '$invoice_id'" );
+}
+
+function pp_invoice_update_status( $invoice_id, $status ) {
+	global $wpdb;
+
+	$wpdb->query( "UPDATE ".$wpdb->payments." SET status = '$status' WHERE  id = '$invoice_id'" );
 }
 
 function pp_invoice_update_invoice_meta( $invoice_id,$meta_key,$meta_value ) {
@@ -343,13 +347,13 @@ function pp_invoice_mark_as_unpaid( $invoice_id ) {
 		$counter=0;
 		foreach ( $invoice_id as $single_invoice_id ) {
 			$counter++;
-			pp_invoice_delete_invoice_meta( $single_invoice_id,'paid_status' );
+			pp_invoice_update_status( $single_invoice_id, 'pending' );
 			pp_invoice_update_log( $single_invoice_id,'paid',"Invoice marked as un-paid" );
 		}
 		return sprintf( _n( "Invoice marked as unpaid.", "%d invoices marked as unpaid.", $counter ), $counter );
 	}
 	else {
-		pp_invoice_delete_invoice_meta( $invoice_id,'paid_status' );
+		pp_invoice_update_status( $invoice_id, 'pending' );
 		pp_invoice_update_log( $invoice_id,'paid',"Invoice marked as un-paid" );
 		return __( 'Invoice marked as unpaid.', 'prospress' );
 	}
@@ -363,8 +367,10 @@ function pp_invoice_mark_as_paid( $invoice_id ) {
 		$counter=0;
 		foreach ( $invoice_id as $single_invoice_id ) {
 			$counter++;
-			pp_invoice_update_invoice_meta( $single_invoice_id,'paid_status','paid' );
+
+			pp_invoice_update_status( $single_invoice_id, 'paid' );
 			pp_invoice_update_log( $single_invoice_id,'paid',"Invoice marked as paid" );
+
 			if(get_option('pp_invoice_send_thank_you_email' ) == 'yes' ) 
 				pp_invoice_send_email_receipt( $single_invoice_id );
 		}
@@ -376,7 +382,7 @@ function pp_invoice_mark_as_paid( $invoice_id ) {
 		}
 	}
 	else {
-		pp_invoice_update_invoice_meta( $invoice_id,'paid_status','paid' );
+		pp_invoice_update_status( $invoice_id, 'paid' );
 		pp_invoice_update_log( $invoice_id,'paid',"Invoice marked as paid" );
 
 		if(get_option('pp_invoice_send_thank_you_email' ) == 'yes' ) 
@@ -473,10 +479,9 @@ function pp_invoice_get_single_invoice_status( $invoice_id )  {
 
 function pp_invoice_paid( $invoice_id ) {
 	global $wpdb;
-	//$wpdb->query("UPDATE  ".$wpdb->payments." SET status = 1 WHERE  id = '$invoice_id'" );
-	pp_invoice_update_invoice_meta( $invoice_id,'paid_status','paid' );
- 	pp_invoice_update_log( $invoice_id,'paid',"Invoice successfully processed by ". $_SERVER['REMOTE_ADDR']);	
 
+	pp_invoice_update_status( $invoice_id, 'paid' );	
+ 	pp_invoice_update_log( $invoice_id,'paid',"Invoice successfully processed by ". $_SERVER['REMOTE_ADDR']);
 }
 
 function pp_invoice_recurring( $invoice_id ) {
@@ -489,17 +494,17 @@ function pp_invoice_recurring_started( $invoice_id ) {
 	if(pp_invoice_meta( $invoice_id,'subscription_id' )) return true;
 }
 
-function pp_invoice_paid_status( $invoice_id ) {
-	//Merged with paid_status in class
+function pp_invoice_is_paid( $invoice_id ) { //Merged with paid_status in class
 	global $wpdb;
-	if(!empty( $invoice_id ) && pp_invoice_meta( $invoice_id,'paid_status' ) || $wpdb->get_var("SELECT status FROM  ".$wpdb->payments." WHERE id = '$invoice_id'" )) return true;
+
+	if( 'paid' == $wpdb->get_var( "SELECT status FROM  " . $wpdb->payments . " WHERE id = '$invoice_id'" ) ) 
+		return true;
 }
 
 function pp_invoice_paid_date( $invoice_id ) {
 	// in invoice class
 	global $wpdb;
 	return $wpdb->get_var("SELECT time_stamp FROM  ".$wpdb->payments_log." WHERE action_type = 'paid' AND invoice_id = '".$invoice_id."' ORDER BY time_stamp DESC LIMIT 0, 1" );
-
 }
 
 function pp_invoice_build_invoice_link( $invoice_id ) {
@@ -1066,35 +1071,6 @@ if ( $stop_transaction && is_array( $_POST)) {
 echo $errors_msg;
 }
 
-function pp_invoice_currency_array() {
-	$currency_list = array(
-	"AUD"=> "Australian Dollars",
-	"CAD"=> "Canadian Dollars",
-	"EUR"=> "Euros",
-	"GBP"=> "Pounds Sterling",
-	"JPY"=> "Yen",
-	"USD"=> "U.S. Dollars",
-	"NZD"=> "New Zealand Dollar",
-	"CHF"=> "Swiss Franc",
-	"HKD"=> "Hong Kong Dollar",
-	"SGD"=> "Singapore Dollar",
-	"SEK"=> "Swedish Krona",
-	"DKK"=> "Danish Krone",
-	"PLN"=> "Polish Zloty",
-	"NOK"=> "Norwegian Krone",
-	"HUF"=> "Hungarian Forint",
-	"CZK"=> "Czech Koruna",
-	"ILS"=> "Israeli Shekel",
-	"MXN"=> "Mexican Peso" );
-
-	return $currency_list;
-}
-
-function pp_invoice_contextual_help_list( $content) {
-// Will add help and FAQ here eventually
-	return $content;
-}
-
 function pp_invoice_process_invoice_update( $invoice_id ) {
 
 	global $wpdb;
@@ -1514,12 +1490,6 @@ function pp_invoice_create_alertpay_itemized_list( $itemized_array,$invoice_id )
 	return $output;
 }
 
-/*
-	User specific accepted payments
-	Developed from M2M version.
-	Acceptable payment is not determined by invoice_id, but by user_id of recipient
-*/
-
 function pp_invoice_user_accepted_payments( $payee_id ) {
 
 	if(pp_invoice_user_settings('paypal_allow', $payee_id ) == 'true' )
@@ -1537,7 +1507,7 @@ function pp_invoice_user_accepted_payments( $payee_id ) {
 
 function pp_invoice_accepted_payment( $invoice_id = 'global' ) {
 
-	// fix the occasional issue with empty varlue being passed
+	// fix the occasional issue with empty value being passed
 	if(empty( $invoice_id ))
 		$invoice_id = "global";
 
@@ -1951,59 +1921,6 @@ class load_pp_invoice {
 		$this->alertpay_address = $billing_information->display('pp_invoice_alertpay_address' );
 		$this->alertpay_secret = $billing_information->display('pp_invoice_alertpay_secret' ); 	
 	}
-
-}
-
-function pp_invoice_get_user_invoices( $args = false ) {
-	global $wpdb;
-
-	$defaults = array('user_id' => false, 'status' => 'paid' );
-	$args = wp_parse_args( $args, $defaults);
-	extract( $args, EXTR_SKIP);
-
-	if(!$user_id )
-		return false;
-
-	if( $status == 'paid' ):
-		$paid_array = $wpdb->get_results("
-		SELECT DISTINCT amount, description, id, subject FROM  ".$wpdb->payments." 
-		LEFT JOIN ".$wpdb->paymentsmeta."  
-		ON ".$wpdb->payments.".id = ".$wpdb->paymentsmeta.".invoice_id 
-		WHERE meta_key = 'paid_status' 
-		AND meta_value = 'paid'
-		AND user_id = '$user_id'" );
-
-		if(count( $paid_array) > 0)
-			return $paid_array;
-
-		return false;
-	endif;
-
-	if( $status == 'unpaid' ):
-
-		// can't do a neat query as above because unpaid invoices don't have any special designators
-		$unpaid_raw_array = $wpdb->get_results("
-		SELECT DISTINCT amount, description, id, subject FROM ".$wpdb->payments." 
-		LEFT JOIN ".$wpdb->paymentsmeta."  
-		ON ".$wpdb->payments.".id = ".$wpdb->paymentsmeta.".invoice_id 
-		WHERE user_id = '$user_id'" );
-
-		if(count( $unpaid_raw_array) > 0) {
-			$unpaid_array = array();
-
-			foreach( $unpaid_raw_array as $unpaid_invoice ) {
-
-				if(!pp_invoice_meta( $unpaid_invoice->id, 'paid_status' ))
-					array_push( $unpaid_array, $unpaid_invoice );
-
-			}	
-
-			return $unpaid_array;
-		}
-
-		return false;
-
-	endif;
 
 }
 

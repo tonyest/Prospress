@@ -498,9 +498,9 @@ function pp_invoice_show_paypal_reciept($invoice_id) {
 	</div>';
 }
 
-function pp_invoice_show_already_paid($invoice_id) {
-	$invoice = new PP_Invoice_GetInfo($invoice_id);
-	return '<p>Thank you, this invoice was paid on '. $invoice->display('paid_date').'.</p>';
+function pp_invoice_show_already_paid( $invoice_id ) {
+	$invoice = new PP_Invoice_GetInfo( $invoice_id );
+	return '<p>Thank you, this invoice was paid on ' . $invoice->display( 'paid_date' ) . '.</p>';
 }
 
 function pp_invoice_show_invoice_overview($invoice_id) {

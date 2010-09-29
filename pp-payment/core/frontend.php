@@ -4,8 +4,9 @@
 	(website: twincitiestech.com       email : support@twincitiestech.com)
 */
 
-function pp_invoice_the_content($content) {
-	$ip=$_SERVER['REMOTE_ADDR']; 
+function pp_invoice_the_content( $content ) {
+	$ip = $_SERVER[ 'REMOTE_ADDR' ]; 
+
 	// check if pp_invoice_web_invoice_page is set, and that this it matches the current page, and the invoice_id is valid
 	if(get_option('pp_invoice_web_invoice_page') != '' && is_page(get_option('pp_invoice_web_invoice_page'))) {
 
@@ -15,13 +16,18 @@ function pp_invoice_the_content($content) {
 	$result .= "<div id=\"invoice_page\" class=\"clearfix\">";
 
 		//If already paid, show thank you message
-		if(pp_invoice_paid_status($invoice_id)) { $result .= pp_invoice_show_already_paid($invoice_id); $stop = true; }
+		if( pp_invoice_is_paid( $invoice_id ) ) { 
+			$result .= pp_invoice_show_already_paid( $invoice_id ); 
+			$stop = true; 
+		}
 
 		// Show reciept if coming back from PayPal
-		if(isset($_REQUEST['receipt_id'])) { $result .= pp_invoice_show_paypal_reciept($invoice_id) ;  $stop = true; }
+		if( isset( $_REQUEST[ 'receipt_id' ] ) ) { 
+			$result .= pp_invoice_show_paypal_reciept($invoice_id);
+			$stop = true; 
+		}
 
-		if(!$stop) { // The following is only displayed if the invoice has not been paid
-
+		if( !$stop ) { // The following is only displayed if the invoice has not been paid
 			ob_start();	
 
 			// Invoice viewed, update log

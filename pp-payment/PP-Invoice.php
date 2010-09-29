@@ -33,13 +33,13 @@ class PP_Invoice {
 	}
 
 	function PP_Invoice() {
-		global $user_ID, $pp_core_capability;
+		global $user_ID, $pp_base_capability;
 
 		$version = get_option( 'pp_invoice_version' );
 
 		add_action( 'pp_activation', array( &$this, 'install' ) );
 
-		$this->pp_invoice_user_level = $pp_core_capability;
+		$this->pp_invoice_user_level = $pp_base_capability;
 		$this->path = dirname(__FILE__);
 		$this->file = basename(__FILE__);
 		$this->directory = basename( $this->path);
@@ -62,8 +62,6 @@ class PP_Invoice {
  		add_action( 'admin_init', array( $this, 'admin_init' ) );
 
 		add_action( 'deleted_post', 'pp_invoice_delete_post' );
-
-		add_action( 'contextual_help', 'pp_invoice_contextual_help_list' );
 
 		add_shortcode( 'pp-invoice-lookup', 'pp_invoice_lookup' );
 
@@ -229,17 +227,15 @@ class PP_Invoice {
 			// Draft Message
 			if (wp_verify_nonce( $_REQUEST[ 'pp_invoice_process_cc' ], 'pp_invoice_process_cc_' . $invoice_id) ) {
 				$draft_message = nl2br( $_REQUEST[ 'draft_message' ]);
-				pp_invoice_update_invoice_meta( $invoice_id,'paid_status','paid' );
+				pp_invoice_update_status( $invoice_id, 'paid' );
 				pp_invoice_update_log( $invoice_id,'paid', sprintf( __( "Invoice paid via bank transfer. Message from payer: %s", 'prospress' ), $draft_message ) );
 			}
 
 			// PayPal return
 			if( $_REQUEST[ 'return_info' ] == 'cancel' ) {
 				$errors[] = __( "Your PayPal payment has not been processed.", 'prospress' );
-			}
-
-			if( $_REQUEST[ 'return_info' ] == 'success' ) {
-				pp_invoice_update_invoice_meta( $invoice_id, 'paid_status', 'paid' );
+			} elseif( $_REQUEST[ 'return_info' ] == 'success' ) {
+				pp_invoice_update_status( $invoice_id, 'paid' );
 				pp_invoice_update_log( $invoice_id, 'paid', __( 'Invoice paid via PayPal.', 'prospress' ) );
  			}
 

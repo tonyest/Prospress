@@ -38,7 +38,7 @@ class pp_invoice_get {
 		
 		// Get Post information
 		$post_class = get_post( $this->data->post_id);
-		
+
 		if(count( $post_class ) > 0) {
 			foreach( $post_class as $key => $value ) {
 				$this->data->$key = $value;		
@@ -52,13 +52,13 @@ class pp_invoice_get {
 		$this->data->current_user_is = pp_invoice_user_has_permissions( $invoice_id);
 
 		// Determine if invoice has been paid
-		if( $this->data->paid_status == 'paid')
+		if( $this->data->status == 'paid')
 			$this->data->is_paid = true;
-		
+
 		// Determine if invoice has been sent
 		if(!empty( $this->data->sent_date ))
 			$this->data->is_sent = true;
-		
+
 		// Determine if invoice is archived
 		if( $this->data->archive_status == 'archived')
 			$this->data->is_archived = true;
