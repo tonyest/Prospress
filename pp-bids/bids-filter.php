@@ -73,8 +73,8 @@ class Bid_Filter_Query {
 	static function add_filters( $obj ) {
 		global $market_systems;
 
-		// Overcome YARPP incompatability
-		if( is_array( $obj->query_vars['post_type'] ) )
+		// Fix YARPP incompatibility
+		if( is_array( $obj->query_vars[ 'post_type' ] ) )
 			return;
 
 		// Don't touch the main query or queries for non-Prospress posts
