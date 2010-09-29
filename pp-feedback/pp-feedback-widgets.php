@@ -83,7 +83,9 @@ class PP_Feedback_Latest_Widget extends WP_Widget {
 		echo ( $instance['title'] ) ? $instance['title'] : __( 'Latest Feedback:', 'prospress' );
 		echo $after_title;
 
+		echo '<div class="feedback">';
 		the_most_recent_feedback();
+		echo '</div>';
 
 		echo $after_widget;
 	}

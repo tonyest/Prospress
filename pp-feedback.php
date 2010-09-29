@@ -416,7 +416,7 @@ function pp_update_feedback( $feedback ) {
  * performing a feedback action and label for outputting as the link text. 
  * 
  * @see completed_post_actions hook
- * @see winning_bid_actions hook
+ * @see bid_table_actions hook
  * 
  * @param actions array existing actions for the hook
  * @param post_id int for identifying the post
@@ -451,7 +451,7 @@ function pp_add_feedback_action( $actions, $post_id ) {
 	return $actions;
 }
 add_filter( 'completed_post_actions', 'pp_add_feedback_action', 10, 2 );
-add_filter( 'winning_bid_actions', 'pp_add_feedback_action', 10, 2 );
+add_filter( 'bid_table_actions', 'pp_add_feedback_action', 10, 2 );
 
 
 /** 
