@@ -36,7 +36,7 @@ abstract class PP_Market_System {
 	private $capability;			// the capability for making bids and viewing bid menus etc.
 
 	public function __construct( $name, $args = array() ) {
-		global $pp_core_capability;
+		global $pp_base_capability;
 
 		$this->name = sanitize_user( $name, true );
 
@@ -58,7 +58,7 @@ abstract class PP_Market_System {
 											'bid_date' => 'Bid Date',
 											'post_end' => 'Post End Date'
 											),
-						'capability' => $pp_core_capability
+						'capability' => $pp_base_capability
 						);
 
 		$args = wp_parse_args( $args, $defaults );
@@ -285,7 +285,9 @@ abstract class PP_Market_System {
 			$post_id = $post->ID;
 
 		$winning_bid = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $wpdb->bids WHERE post_id = %d AND bid_status = %s", $post_id, 'winning' ) );
-		
+
+		$winning_bid->winning_bid_value = $this->get_winning_bid_value( $post_id );
+
 		return $winning_bid;
 	}
 
@@ -308,11 +310,10 @@ abstract class PP_Market_System {
 		if ( $this->get_bid_count( $post_id ) == 0 ){
 			$winning_bid_value = get_post_meta( $post_id, 'start_price', true );
 		} else {
-			$winning_bid = $this->get_winning_bid( $post_id );
+			$winning_bid = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $wpdb->bids WHERE post_id = %d AND bid_status = %s", $post_id, 'winning' ) );
 
 			$winning_bid_value = $wpdb->get_var( $wpdb->prepare( "SELECT meta_value FROM $wpdb->bidsmeta WHERE bid_id = %d AND meta_key = %s", $winning_bid->bid_id, 'winning_bid_value' ) );
 
-			// If no winning bid value in meta table, default to max value of winning bid.
 			if( empty( $winning_bid_value ) )
 				$winning_bid_value = $winning_bid->bid_value;
 		}
@@ -799,7 +800,7 @@ abstract class PP_Market_System {
 							$style = ( 'alternate' == $style ) ? '' : 'alternate';
 						}
 					} else {
-						echo '<tr><td colspan="5">' . __( 'No bids.', 'prospress' ) . '</td></tr>';
+						echo '<tr><td colspan="6">' . __( 'No bids.', 'prospress' ) . '</td></tr>';
 					}
 				?>
 				</tbody>
@@ -836,7 +837,7 @@ abstract class PP_Market_System {
 	}
 
 	/**
-	 * Don't worry about this confusing function, you shouldn't need to create the bid table columns,
+	 * Don't worry about this indecipherable function, you shouldn't need to create the bid table columns,
 	 * instead you can rely on this to call the function assigned to the column through the constructor
 	 **/
 	public function add_post_column_contents( $column_name, $post_id ) {
@@ -878,7 +879,7 @@ abstract class PP_Market_System {
 	}
 
 	/**
-	 * The logic for the market system class.
+	 * The logic for the market system.
 	 * 
 	 * Handles AJAX bid submission and makes sure a user is logged in before making a bid.
 	 *

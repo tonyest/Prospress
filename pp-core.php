@@ -10,8 +10,8 @@ if( !defined( 'PP_CORE_DIR' ) )
 if( !defined( 'PP_CORE_URL' ) )
 	define( 'PP_CORE_URL', PP_PLUGIN_URL . '/pp-core' );
 
-global $pp_core_capability; 
-$pp_core_capability = apply_filters( 'pp_core_capability', 'read' );
+global $pp_base_capability; 
+$pp_base_capability = apply_filters( 'pp_base_capability', 'read' );
 
 include_once( PP_CORE_DIR . '/core-widgets.php' );
 
@@ -137,10 +137,7 @@ function pp_set_currency(){
 	$currencies = array(
 		'AUD' => array( 'currency_name' => __('Australian Dollar', 'prospress' ), 'symbol' => '&#36;' ),
 		'GBP' => array( 'currency_name' => __('British Pound', 'prospress' ), 'symbol' => '&#163;' ),
-		'CNY' => array( 'currency_name' => __('Chinese Yuan', 'prospress' ), 'symbol' => '&#165;' ),
 		'EUR' => array( 'currency_name' => __('Euro', 'prospress' ), 'symbol' => '&#8364;' ),
-		'INR' => array( 'currency_name' => __('Indian Rupee', 'prospress' ), 'symbol' => 'Rs' ),
-		'JPY' => array( 'currency_name' => __('Japanese Yen', 'prospress' ), 'symbol' => '&#165;' ),
 		'USD' => array( 'currency_name' => __('United States Dollar', 'prospress' ), 'symbol' => '&#36;' )
 		);
 
