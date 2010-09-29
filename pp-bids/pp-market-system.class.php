@@ -54,7 +54,8 @@ abstract class PP_Market_System {
 						'bid_table_headings' => array( 
 											'post_id' => 'Post', 
 											'bid_value' => 'Amount',
-											'bid_status' => 'Bid Status', 
+											'bid_status' => 'Status', 
+											'winning_bid_value' => 'Current Price', 
 											'bid_date' => 'Bid Date',
 											'post_end' => 'Post End Date'
 											),
@@ -774,7 +775,8 @@ abstract class PP_Market_System {
 							<tr class='<?php echo $style; ?>'>
 								<td><a href='<?php echo get_permalink( $bid[ 'post_id' ] ); ?>'><?php echo $post->post_title; ?></a></td>
 								<td><?php echo pp_money_format( $bid[ 'bid_value' ] ); ?></td>
-								<td><?php echo ucfirst( $bid[ 'bid_status' ] ); ?></td>
+								<td><?php echo ucfirst( $bid[ 'bid_status' ] );  ?></td>
+								<td><?php $this->the_winning_bid_value( $bid[ 'post_id' ] ); ?></td>
 								<td><?php echo mysql2date( __( 'g:ia d M Y' , 'prospress' ), $bid[ 'bid_date' ] ); ?></td>
 								<td><?php echo mysql2date( __( 'g:ia d M Y' , 'prospress' ), $post_end_date ); ?></td>
 								<?php if( strpos( $_SERVER['REQUEST_URI' ], 'bids' ) !== false ){
