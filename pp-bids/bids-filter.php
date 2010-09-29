@@ -70,8 +70,12 @@ class Bid_Filter_Query {
 		add_action( 'pre_get_posts', array( __CLASS__, 'add_filters' )) ;
 	}
 
-	static function add_filters($obj) {
+	static function add_filters( $obj ) {
 		global $market_systems;
+
+		// Overcome YARPP incompatability
+		if( is_array( $obj->query_vars['post_type'] ) )
+			return;
 
 		// Don't touch the main query or queries for non-Prospress posts
 		if ( $GLOBALS[ 'wp_query' ] == $obj || !array_key_exists( $obj->query_vars['post_type'], $market_systems ) )
