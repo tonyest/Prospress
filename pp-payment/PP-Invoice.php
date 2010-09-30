@@ -27,7 +27,7 @@ class PP_Invoice {
 	}
 
 	function frontend_path() {
-		$path =	PP_PAYMENT_URL."/".basename(dirname(__FILE__) );
+		$path =	PP_PAYMENT_URL;
 		if(get_option( 'pp_invoice_force_https' ) == 'true' ) $path = str_replace( 'http://','https://',$path);
 		return $path;
 	}
