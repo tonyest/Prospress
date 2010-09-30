@@ -251,8 +251,11 @@ function pp_invoice_show_welcome_message() {
 		</li>
 
 		<li class="gateway_info payment_info">
-		Gateway URL	
+		Gateway URL
 		<input name="pp_invoice_gateway_url" class="input_field search-input" type="text" value="<?php echo stripslashes(get_option('pp_invoice_gateway_url')); ?>">
+		<span class="pp_invoice_click_me" onclick="jQuery('#pp_invoice_gateway_url').val('https://gateway.merchantplus.com/cgi-bin/PAWebClient.cgi');">MerchantPlus</span> |
+		<span class="pp_invoice_click_me" onclick="jQuery('#pp_invoice_gateway_url').val('https://secure.authorize.net/gateway/transact.dll');">Authorize.Net</span> |
+		<span class="pp_invoice_click_me" onclick="jQuery('#pp_invoice_gateway_url').val('https://test.authorize.net/gateway/transact.dll');">Authorize.Net Developer</span> 
 		</li>
 
 <?php } ?>

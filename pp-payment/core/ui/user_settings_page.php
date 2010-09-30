@@ -130,6 +130,9 @@
 				<tr class="gateway_info payment_info">
 					<th width="300"><a class="pp_invoice_tooltip"  title="<?php _e('This is the URL provided to you by your credit card processing company.', 'prospress'); ?>"><?php _e('Gateway URL', 'prospress'); ?></a></th>
 					<td><?php echo pp_invoice_draw_inputfield('pp_invoice_user_settings[gateway_url]',$user_settings[gateway_url]); ?><br />
+						<span class="pp_invoice_click_me" onclick="jQuery('#pp_invoice_user_settings\\[gateway_url\\]').val('https://gateway.merchantplus.com/cgi-bin/PAWebClient.cgi');">MerchantPlus</span> |
+						<span class="pp_invoice_click_me" onclick="jQuery('#pp_invoice_user_settings\\[gateway_url\\]').val('https://secure.authorize.net/gateway/transact.dll');">Authorize.Net</span> |
+						<span class="pp_invoice_click_me" onclick="jQuery('#pp_invoice_user_settings\\[gateway_url\\]').val('https://test.authorize.net/gateway/transact.dll');">Authorize.Net Developer</span> 
 					</td>
 				</tr>
 				<tr class="gateway_info">
