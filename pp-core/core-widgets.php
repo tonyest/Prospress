@@ -20,7 +20,7 @@ class PP_Admin_Widget extends WP_Widget {
 	}
 
 	function widget( $args, $instance ) {
-		global $market_systems;
+		global $market_systems, $pp_base_capability;
 
 		extract( $args );
 
@@ -37,14 +37,16 @@ class PP_Admin_Widget extends WP_Widget {
 		echo '<div class="prospress-meta">';
 		echo '<ul>';
 		if( !is_user_logged_in() || is_super_admin() ) {
-			wp_register('<li>&raquo; ', ' | ');
+			wp_register('<li>', ' | ');
 			wp_loginout();
 			echo '</li>';
 		}
-		echo '<li>&raquo; ' . $market_systems[ 'auctions' ]->post->the_add_new_url() . '</li>';
-		echo '<li>&raquo; ' . $market_systems[ 'auctions' ]->the_bids_url() . '</li>';
-		echo '<li>&raquo; ' . pp_the_payments_url( 'Your Payments' ) . '</li>';
-		echo '<li>&raquo; ' . pp_the_feedback_url( 'Your Feedback' ) . '</li>';
+		if( is_user_logged_in() && has_cap( 'edit_prospress_posts' ) ) {
+			echo '<li>' . $market_systems[ 'auctions' ]->post->the_add_new_url() . '</li>';
+		}
+		echo '<li>' . $market_systems[ 'auctions' ]->the_bids_url() . '</li>';
+		echo '<li>' . pp_the_payments_url( 'Your Payments' ) . '</li>';
+		echo '<li>' . pp_the_feedback_url( 'Your Feedback' ) . '</li>';
 		echo '</ul>';
 		echo "</div>\n";
 		echo $after_widget;
