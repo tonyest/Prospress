@@ -964,111 +964,168 @@ function pp_invoice_process_cc_ajax() {
 
 function pp_invoice_process_cc_transaction( $cc_data = false ) {
 
-	$errors = array ();
+	$errors = array();
 	$errors_msg = null;
 	$_POST['processing_problem'] = '';
-	unset( $stop_transaction);
-	$invoice_id = preg_replace("/[^0-9]/","", $_POST['invoice_id']); /* this is the real invoice id */
+	unset( $stop_transaction );
+	$invoice_id = preg_replace("/[^0-9]/","", $_POST['invoice_id']);
 
 	$invoice_class = new pp_invoice_get( $invoice_id );
 	$invoice_class = $invoice_class->data;
 
-	$wp_users_id = $_POST['user_id'];
+	$wp_users_id = $_POST[ 'user_id' ];
 
-	if(empty( $_POST['first_name'])){$errors [ 'first_name' ] [] = "Please enter your first name.";$stop_transaction = true;}
-	if(empty( $_POST['last_name'])){$errors [ 'last_name' ] [] = "Please enter your last name. ";$stop_transaction = true;}
-	if(empty( $_POST['email_address'])){$errors [ 'email_address' ] [] = "Please provide an email address.";$stop_transaction = true;}
-	if(empty( $_POST['phonenumber'])){$errors [ 'phonenumber' ] [] = "Please enter your phone number.";$stop_transaction = true;}
-	if(empty( $_POST['address'])){$errors [ 'address' ] [] = "Please enter your address.";$stop_transaction = true;}
-	if(empty( $_POST['city'])){$errors [ 'city' ] [] = "Please enter your city.";$stop_transaction = true;}
-	if(empty( $_POST['state'])){$errors [ 'state' ] [] = "Please select your state.";$stop_transaction = true;}
-	if(empty( $_POST['zip'])){$errors [ 'zip' ] [] = "Please enter your ZIP code.";$stop_transaction = true;}
-	if(empty( $_POST['country'])){$errors [ 'country' ] [] = "Please enter your country.";$stop_transaction = true;}
-	if(empty( $_POST['card_num'])) {	$errors [ 'card_num' ] []  = "Please enter your credit card number.";	$stop_transaction = true;} else { if (!pp_invoice_validate_cc_number( $_POST['card_num'])){$errors [ 'card_num' ] [] = "Please enter a valid credit card number."; $stop_transaction = true; } }
-	if(empty( $_POST['exp_month'])){$errors [ 'exp_month' ] [] = "Please enter your credit card's expiration month.";$stop_transaction = true;}
-	if(empty( $_POST['exp_year'])){$errors [ 'exp_year' ] [] = "Please enter your credit card's expiration year.";$stop_transaction = true;}
-	if(empty( $_POST['card_code'])){$errors [ 'card_code' ] [] = "The <b>Security Code</b> is the code on the back of your card.";$stop_transaction = true;}
+	if( empty( $_POST['first_name'] ) ) {
+		$errors[ 'first_name' ][] = "Please enter your first name.";
+		$stop_transaction = true;
+	}
+
+	if( empty( $_POST['last_name' ] ) ) { 
+		$errors[ 'last_name' ][] = "Please enter your last name. ";
+		$stop_transaction = true;
+	}
+
+	if( empty( $_POST['email_address' ] ) ) { 
+		$errors[ 'email_address' ][] = "Please provide an email address.";
+		$stop_transaction = true;
+	}
+
+	if( empty( $_POST['phonenumber' ] ) ) { 
+		$errors[ 'phonenumber' ][] = "Please enter your phone number.";
+		$stop_transaction = true;
+	}
+
+	if( empty( $_POST['address' ] ) ) { 
+		$errors[ 'address' ][] = "Please enter your address.";
+		$stop_transaction = true;
+	}
+
+	if( empty( $_POST['city' ] ) ) { 
+		$errors[ 'city' ][] = "Please enter your city.";
+		$stop_transaction = true;
+	}
+
+	if( empty( $_POST['state' ] ) ) { 
+		$errors[ 'state' ][] = "Please select your state.";
+		$stop_transaction = true;
+	}
+
+	if( empty( $_POST['zip' ] ) ) { 
+		$errors[ 'zip' ][] = "Please enter your ZIP code.";
+		$stop_transaction = true;
+	}
+
+	if( empty( $_POST['country' ] ) ) { 
+		$errors[ 'country' ][] = "Please enter your country.";
+		$stop_transaction = true;
+	}
+
+	if( empty( $_POST['card_num'])) {
+		$errors[ 'card_num' ][]  = "Please enter your credit card number.";	
+		$stop_transaction = true;
+	} elseif( !pp_invoice_validate_cc_number( $_POST['card_num' ] ) ) { 
+		$errors[ 'card_num' ][] = "Please enter a valid credit card number."; 
+		$stop_transaction = true; 
+	}
+
+	if( empty( $_POST['exp_month' ] ) ) { 
+		$errors[ 'exp_month' ][] = "Please enter your credit card's expiration month.";
+		$stop_transaction = true;
+	}
+
+	if( empty( $_POST['exp_year' ] ) ) { 
+		$errors[ 'exp_year' ][] = "Please enter your credit card's expiration year.";
+		$stop_transaction = true;
+	}
+
+	if( empty( $_POST['card_code' ] ) ) { 
+		$errors[ 'card_code' ][] = "The <b>Security Code</b> is the code on the back of your card.";
+		$stop_transaction = true;
+	}
 
 	// Charge Card
-	if(!$stop_transaction) {
+	if( !$stop_transaction ) {
 
-	require_once('gateways/authnet.class.php' );
-	require_once('gateways/authnetARB.class.php' );
+		require_once('gateways/authnet.class.php' );
+		require_once('gateways/authnetARB.class.php' );
 
-	$payment = new PP_Invoice_Authnet(true ); 
-	$payment->transaction( $_POST['card_num']); 
+		$payment = new PP_Invoice_Authnet( $invoice_class->payee_id ); 
+		$payment->transaction( $_POST['card_num']); 
 
-	// Billing Info
-	$payment->setParameter("x_card_code", $_POST['card_code']);
-	$payment->setParameter("x_exp_date ", $_POST['exp_month'] . $_POST['exp_year']);
-	$payment->setParameter("x_amount", $invoice_class->amount);
+		// Billing Info
+		$payment->setParameter("x_card_code", $_POST['card_code']);
+		$payment->setParameter("x_exp_date ", $_POST['exp_month'] . $_POST['exp_year']);
+		$payment->setParameter("x_amount", $invoice_class->amount);
 
-	// Order Info
-	$payment->setParameter("x_description", $invoice_class->post_title );
-	$payment->setParameter("x_invoice_num",  $invoice_id );
-	$payment->setParameter("x_test_request", false );
-	$payment->setParameter("x_duplicate_window", 30);
+		// Order Info
+		$payment->setParameter("x_description", $invoice_class->post_title );
+		$payment->setParameter("x_invoice_num",  $invoice_id );
+		$payment->setParameter("x_test_request", false );
+		$payment->setParameter("x_duplicate_window", 30);
 
-	//Customer Info
-	$payment->setParameter("x_first_name", $_POST['first_name']);
-	$payment->setParameter("x_last_name", $_POST['last_name']);
-	$payment->setParameter("x_address", $_POST['address']);
-	$payment->setParameter("x_city", $_POST['city']);
-	$payment->setParameter("x_state", $_POST['state']);
-	$payment->setParameter("x_country", $_POST['country']);
-	$payment->setParameter("x_zip", $_POST['zip']);
-	$payment->setParameter("x_phone", $_POST['phonenumber']);
-	$payment->setParameter("x_email", $_POST['email_address']);
-	$payment->setParameter("x_cust_id", "WP User - " . $invoice_class->payer_class->user_nicename );
-	$payment->setParameter("x_customer_ip ", $_SERVER['REMOTE_ADDR']);
+		//Customer Info
+		$payment->setParameter("x_first_name", $_POST['first_name']);
+		$payment->setParameter("x_last_name", $_POST['last_name']);
+		$payment->setParameter("x_address", $_POST['address']);
+		$payment->setParameter("x_city", $_POST['city']);
+		$payment->setParameter("x_state", $_POST['state']);
+		$payment->setParameter("x_country", $_POST['country']);
+		$payment->setParameter("x_zip", $_POST['zip']);
+		$payment->setParameter("x_phone", $_POST['phonenumber']);
+		$payment->setParameter("x_email", $_POST['email_address']);
+		$payment->setParameter("x_cust_id", "WP User - " . $invoice_class->payer_class->user_nicename );
+		$payment->setParameter("x_customer_ip ", $_SERVER['REMOTE_ADDR']);
 
-	$payment->process(); 
+		$payment->process(); 
 
-	if( $payment->isApproved()) {
+		if( $payment->isApproved() ) {
 
-		// Returning valid nonce marks transaction as good on front-end
-		echo wp_create_nonce('pp_invoice_process_cc_' . $invoice_id );
+			// Returning valid nonce marks transaction as good on front-end
+			echo wp_create_nonce('pp_invoice_process_cc_' . $invoice_id );
 
-		update_usermeta( $wp_users_id,'last_name',$_POST['last_name']);
-		update_usermeta( $wp_users_id,'last_name',$_POST['last_name']);
-		update_usermeta( $wp_users_id,'first_name',$_POST['first_name']);
-		update_usermeta( $wp_users_id,'city',$_POST['city']);
-		update_usermeta( $wp_users_id,'state',$_POST['state']);
-		update_usermeta( $wp_users_id,'zip',$_POST['zip']);
-		update_usermeta( $wp_users_id,'streetaddress',$_POST['address']);
-		update_usermeta( $wp_users_id,'phonenumber',$_POST['phonenumber']);
-		update_usermeta( $wp_users_id,'country',$_POST['country']);
+			update_usermeta( $wp_users_id,'last_name',$_POST['last_name']);
+			update_usermeta( $wp_users_id,'last_name',$_POST['last_name']);
+			update_usermeta( $wp_users_id,'first_name',$_POST['first_name']);
+			update_usermeta( $wp_users_id,'city',$_POST['city']);
+			update_usermeta( $wp_users_id,'state',$_POST['state']);
+			update_usermeta( $wp_users_id,'zip',$_POST['zip']);
+			update_usermeta( $wp_users_id,'streetaddress',$_POST['address']);
+			update_usermeta( $wp_users_id,'phonenumber',$_POST['phonenumber']);
+			update_usermeta( $wp_users_id,'country',$_POST['country']);
 
-		//Mark invoice as paid
-		pp_invoice_paid( $invoice_id );
-		if(get_option('pp_invoice_send_thank_you_email' ) == 'yes' ) pp_invoice_send_email_receipt( $invoice_id );
+			//Mark invoice as paid
+			pp_invoice_paid( $invoice_id );
+			
+			if( get_option('pp_invoice_send_thank_you_email' ) == 'yes' ) 
+				pp_invoice_send_email_receipt( $invoice_id );
+		 } else {
+			$errors['processing_problem'][] .= $payment->getResponseText();
+			error_log('$errors = ' . print_r( $errors, true ) );
+			$stop_transaction = true;
+		}
+		// Uncomment these to troubleshoot.  You will need FireBug to view the response of the AJAX post. 
+		error_log('$payment->getResponseText = ' . print_r( $payment->getResponseText(), true ) );
+		error_log('$payment->getTransactionID = ' . print_r( $payment->getTransactionID(), true ) );
+		error_log('$payment->getAVSResponse = ' . print_r( $payment->getAVSResponse(), true ) );
+		error_log('$payment->getAuthCode = ' . print_r( $payment->getAuthCode(), true ) );
+		echo $payment->getResponseText();
+		echo $payment->getTransactionID();
+		echo $payment->getAVSResponse();
+		echo $payment->getAuthCode();
+	}
 
- } else {
- 	$errors [ 'processing_problem' ] [] .= $payment->getResponseText();$stop_transaction = true;
-
- }
-// Uncomment these to troubleshoot.  You will need FireBug to view the response of the AJAX post. 
-
-echo $payment->getResponseText();
-echo $payment->getTransactionID();
-echo $payment->getAVSResponse();
-echo $payment->getAuthCode();
-}
-
-if ( $stop_transaction && is_array( $_POST)) {
-	foreach ( $_POST as $key => $value ) {
-		if ( array_key_exists ( $key, $errors ) ) {
-			foreach ( $errors [ $key ] as $k => $v ) {
-				$errors_msg .= "error|$key|$v\n";
+	if( $stop_transaction && is_array( $_POST)) {
+		foreach ( $_POST as $key => $value ) {
+			if ( array_key_exists ( $key, $errors ) ) {
+				foreach ( $errors [ $key ] as $k => $v ) {
+					$errors_msg .= "error|$key|$v\n";
+				}
+			} else {
+				$errors_msg .= "ok|$key\n";
 			}
 		}
-		else {
-			$errors_msg .= "ok|$key\n";
-		}
 	}
-}
-
-echo $errors_msg;
+	echo $errors_msg;
 }
 
 function pp_invoice_process_invoice_update( $invoice_id ) {
@@ -1225,13 +1282,17 @@ if( $content) echo "<div id=\"message\" class='$type' ><p>".$content."</p></div>
 function pp_invoice_detect_config_erors() {
 	global $wpdb;
 
-	if(get_option("pp_invoice_web_invoice_page" ) == '' ) { $warning_message .= __('Invoice page not selected. ', 'prospress' ); }
-	if(get_option("pp_invoice_payment_method" ) == '' ) { $warning_message .= __('Payment method not set. ', 'prospress' ); }
-	if(get_option("pp_invoice_payment_method" ) == '' || get_option("pp_invoice_web_invoice_page" ) == '' ) {
+	if( get_option("pp_invoice_web_invoice_page" ) == '' ) { 
+		$warning_message .= __('Invoice page not selected. ', 'prospress' ); 
+	}
+	if( get_option("pp_invoice_payment_method" ) == '' ) { 
+		$warning_message .= __('Payment method not set. ', 'prospress' ); 
+	}
+	if( get_option("pp_invoice_payment_method" ) == '' || get_option("pp_invoice_web_invoice_page" ) == '' ) {
 		$warning_message .= __("Visit ", 'prospress' )."<a href='admin.php?page=invoice_settings'>settings page</a>".__(" to configure.", 'prospress' );
 	}
 
-	if(!$wpdb->query("SHOW TABLES LIKE '".$wpdb->paymentsmeta."';" ) || !$wpdb->query("SHOW TABLES LIKE '".$wpdb->payments."';" ) || !$wpdb->query("SHOW TABLES LIKE '".$wpdb->payments_log."';" )) { 
+	if( !$wpdb->query("SHOW TABLES LIKE '".$wpdb->paymentsmeta."';" ) || !$wpdb->query("SHOW TABLES LIKE '".$wpdb->payments."';" ) || !$wpdb->query("SHOW TABLES LIKE '".$wpdb->payments_log."';" )) { 
 		$warning_message .= __("The plugin database tables are gone, deactivate and reactivate plugin to re-create them.", 'prospress' );
 	}
 
@@ -1251,11 +1312,9 @@ function pp_invoice_process_settings() {
 	"pp_invoice_force_https",
 	"pp_invoice_where_to_display",
 	"pp_invoice_custom_label_tax",
-
 	"pp_invoice_googlecheckout_address",
 	"pp_invoice_payment_link",
 	"pp_invoice_payment_method",
-
 	"pp_invoice_send_thank_you_email",
 	"pp_invoice_show_business_address",
 	"pp_invoice_show_quantities",
@@ -1265,10 +1324,8 @@ function pp_invoice_process_settings() {
 	"pp_invoice_web_invoice_page",
 	"pp_invoice_reminder_message",
 	"pp_invoice_cc_thank_you_email",
-
 	"pp_invoice_lookup_text",
 	"pp_invoice_lookup_submit",
-
 	"pp_invoice_email_send_invoice_subject",
 	"pp_invoice_email_send_invoice_content",
 	"pp_invoice_email_send_reminder_subject",
@@ -1278,10 +1335,8 @@ function pp_invoice_process_settings() {
 
 	$payment_and_billing_settings_array = array(
 	"pp_invoice_client_change_payment_method",
-
 	"pp_invoice_paypal_allow",
 	"pp_invoice_paypal_address",
-
 	"pp_invoice_cc_allow",
 	"pp_invoice_gateway_url",
 	"pp_invoice_gateway_username",
@@ -1295,13 +1350,11 @@ function pp_invoice_process_settings() {
 	"pp_invoice_gateway_relay_response",
 	"pp_invoice_gateway_email_customer",
 	"pp_invoice_recurring_gateway_url",
-
 	"pp_invoice_moneybookers_allow",
 	"pp_invoice_moneybookers_address",
 	"pp_invoice_moneybookers_merchant",
 	"pp_invoice_moneybookers_secret",
 	"pp_invoice_moneybookers_ip",
-
 	"pp_invoice_alertpay_allow",
 	"pp_invoice_alertpay_address",
 	"pp_invoice_alertpay_merchant",
@@ -1312,8 +1365,9 @@ function pp_invoice_process_settings() {
 	pp_invoice_process_updates( $payment_and_billing_settings_array);
 	pp_invoice_process_updates( $settings_array);
 
-	if( $_REQUEST['pp_invoice_load_original_email_templates']) { pp_invoice_load_email_template_content(); }
-
+	if( $_REQUEST[ 'pp_invoice_load_original_email_templates' ] ) { 
+		pp_invoice_load_email_template_content(); 
+	}
 }
 
 function pp_invoice_is_not_merchant() {

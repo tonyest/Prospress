@@ -118,8 +118,8 @@ function process_cc_checkout(){
 jQuery('#pp_invoice_process_wait span').html('<img src="<?php echo PP_Invoice::frontend_path(); ?>/core/images/processing-ajax.gif">');
 
  link_id = 'wp_cc_response';
-	var req = jQuery.post ( ajaxurl , jQuery('#checkout_form').serialize(), function(html){
-
+	var req = jQuery.post( ajaxurl , jQuery('#checkout_form').serialize(), function(html){
+		alert('In process_cc_checkout jQuery.post.');
 			var explode = html.toString().split('\n');
 			var shown = false;
 			var msg = '<b><?php _e('There are problems with your transaction:', 'prospress'); ?></b><ol>';
