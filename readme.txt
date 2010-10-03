@@ -13,13 +13,7 @@ Prospress is a new plugin that goes where no plugin has gone before.
 
 After its 30 second install, your WordPress site will have its very own auction marketplace. Your registered users will be able to post auctions, place bids, provide feedback and make payments. Everything needed for a fully functioning marketplace.
 
-Well, hopefully. Prospress is so new, it's still in beta. So please only use Prospress on test sites for now. There will be bugs. They will be fixed, but it's better they occur in a sandbox.
-
-= Why is Prospress here when it's beta? =
-
-For those who can't wait to try a game changer, this beta is for you. Download, install & explore what you'll soon be able to do with WordPress, but please do so on a test site.
-
-If you'd prefer to wait for a stable release, we've made a special [Demo Marketplace](http://demo.prospress.org/auctions/) for you. You can register, post auctions & make bids on some priceless paintings in the safety of a Prospress.org sandbox.
+If the 30 second install is too much, check out the [Demo Marketplace](http://demo.prospress.org/auctions/). You can register, post auctions & make bids on some priceless paintings.
 
 = Features =
 
@@ -37,7 +31,7 @@ Read the plugin's [FAQ](http://wordpress.org/extend/plugins/prospress/faq/) or v
 
 = Get Involved =
 
-To hasten the official release of Prospress, or just help give the world a free and open marketplace platform, you can [contribute](http://prospress.org/contribute/) to the Prospress project.
+If you want to help give the world a free and open marketplace platform, you can [contribute](http://prospress.org/contribute/) to the Prospress project.
 
 
 == Installation ==
@@ -62,31 +56,21 @@ With Prospress, registered users can post their own auctions, place bids on the 
 
 Prospress attempts to work with your existing theme. It's a primary goal of the Prospress project to support existing WordPress themes rather than require a new one.
 
-Due to the gamut of themes, it's not possible to support them all just yet, so the built-in templates may display with quirks. If this happens on your site, not to worry, you can add two custom template files to your theme's directory - `index-auctions.php` and `single-auction.php`.
+Due to the gamut of themes, it's likely the built-in templates will display with quirks. If this happens on your site, not to worry, it's really quite easy to make your own templates. 
 
-If you're comfortable with HTML/CSS, check out the `pp-index-auctions.php` and `pp-single-auction.php` for a guide. It's really quite easy to make your own templates. 
+If you're comfortable with HTML/CSS, check out the `pp-index-auctions.php` and `pp-single-auction.php` in the *Prospress/pp-posts* folder. These provide a guide for making your own templates. Just add two custom template files, named `index-auctions.php` and `single-auction.php`, to your theme's directory and Prospress will use them automatically.
 
 If you need help, ask in the Prospress [Theme Compatibility](http://prospress.org/forums/forum/theme-compatibility/) forum.
 
 = Where do I view Auctions? =
 
-Prospress creates it's own special index page, called, appropriately enough, Auctions. Once you've published a few auctions, visit this page to see them live.
+Prospress creates it's own special index page, called *auctions*. Once you publish your first auction, simply visit this page to view it live.
 
 = Can any registered user post an auction? =
 
-That's entirely up to you. All registered users will be able to place bids and make payments, but you control who can post auctions. 
+That's entirely up to you. All registered users with subscriber role or better will be able to place bids and make payments, but you control who can post auctions. 
 
 You can host auctions from a privileged few or allow your entire community to trade items. Set permissions under the `Prospress | General Settings` admin menu.
-
-= Is this stable enough for use on my live site? =
-
-Not yet. Prospress is a major plugin that has been in development for some time. It's been tested on a variety of setups, but never in production. 
-
-There will be bugs. Those bugs will be fixed, but it's better they occur in a sandbox.
-
-Please download & explore Prospress in a test environment, but wait until a non-beta release before using on your live site. If you'd prefer to wait for a stable release before even downloading, you can still explore Prospress on the [Demo Marketplace](http://demo.prospress.org/auctions/).
-
-To hasten the release of a stable version, you can [contribute](http://prospress.org/contribute/) to the Prospress project.
 
 = Where can I get support? =
 
