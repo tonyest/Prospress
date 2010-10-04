@@ -23,7 +23,7 @@ Template Name: Prospress Index
 
 		<?php endwhile; ?>
 
-		<?php $pp_loop = new WP_Query( array( 'post_type' => $market->name() ) ); ?>
+		<?php $pp_loop = new WP_Query( array( 'post_type' => $market->name(), 'post_status' => 'publish' ) ); ?>
 
 		<?php if ( $pp_loop->have_posts() ) : while ( $pp_loop->have_posts() ) : $pp_loop->the_post(); ?>
 

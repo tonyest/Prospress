@@ -92,12 +92,15 @@ function the_post_end_time( $post_id = '', $units = 3, $separator = ' ' ) {
  * Takes a period of time as a unix time stamp and returns a string 
  * describing how long the period of time is, eg. 2 weeks 1 day.
  * 
- * Based on WP Crontrol's Interval function
+ * Inspired by WP Crontrol's Interval function
+ * @param $time_period timestamp
+ * @param $units int optional the depth of units ( seconds, minutes etc.) 
+ * @param $separator string optional the separator displayed between units
  **/
 function pp_human_interval( $time_period, $units = 3, $separator = ' ' ) {
 
 	if( $time_period <= 0 ) {
-	    return __('Now', 'prospress' );
+	    return human_time_diff( time() - $time_period ) . ' ago';
 	}
 
     // array of time period chunks
