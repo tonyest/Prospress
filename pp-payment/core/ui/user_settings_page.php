@@ -156,7 +156,7 @@
 			</tr>
 			<tr class="draft_info">
 				<th><?php _e( 'Draft Instructions:', 'prospress' ); ?></th>
-				<td><textarea name='pp_invoice_user_settings[draft_text]'><?php echo $user_settings[draft_text]; ?></textarea></td>
+				<td><textarea name='pp_invoice_user_settings[draft_text]' cols='50%' rows='5'><?php echo $user_settings[draft_text]; ?></textarea></td>
 			</tr>
 		</table>
 		<div class="clear"></div>

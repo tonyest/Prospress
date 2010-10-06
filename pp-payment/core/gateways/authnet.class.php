@@ -67,23 +67,21 @@ class PP_Invoice_Authnet
             curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
             curl_setopt( $ch, CURLOPT_POSTFIELDS, rtrim( $this->fields, "& " ) );
 
-			error_log( '$ch = ' . print_r( $ch, true ) );
             $this->response = curl_exec( $ch );
-			error_log( '$this-response = ' . print_r( $this->response, true ) );
             $this->parseResults();
 
-            if ( $this->getResultResponseFull() == "Approved" ) {
-                $this->approved = true;
-                $this->declined = false;
-                $this->error    = false;
-                break;
-            } elseif ($this->getResultResponseFull() == "Declined") {
-                $this->approved = false;
-                $this->declined = true;
-                $this->error    = false;
-                break;
-            }
-            $count++;
+			if ( $this->getResultResponseFull() == "Approved" ) {
+				$this->approved = true;
+				$this->declined = false;
+				$this->error    = false;
+				break;
+			} elseif ($this->getResultResponseFull() == "Declined") {
+				$this->approved = false;
+				$this->declined = true;
+				$this->error    = false;
+				break;
+			}
+			$count++;
 		}
 
         curl_close($ch);
@@ -104,19 +102,18 @@ class PP_Invoice_Authnet
     }
 
     private function _prepareParameters() {
-        foreach($this->params as $key => $value)
-        {
-            $this->fields .= "$key=" . urlencode($value) . "&";
+        foreach( $this->params as $key => $value ) {
+            $this->fields .= "$key=" . urlencode( $value ) . "&";
         }
     }
 
     public function getGatewayResponse() {
-        return str_replace($this->params['x_encap_char'],'',$this->results[0]);
+        return str_replace( $this->params['x_encap_char'], '', $this->results[0] );
     }
    
     public function getResultResponseFull() {
-        $response = array("", "Approved", "Declined", "Error");
-        return $response[str_replace($this->params['x_encap_char'],'',$this->results[0])];
+        $response = array( "", "Approved", "Declined", "Error" );
+        return $response[ str_replace( $this->params['x_encap_char'], '', $this->results[0] ) ];
     }
 
     public function isApproved() {
@@ -132,7 +129,6 @@ class PP_Invoice_Authnet
     }
 
     public function getResponseText() {
-        return $this->results[3];
 		$strip = array($this->params['x_delim_char'],$this->params['x_encap_char'],'|',',');
         return str_replace($strip,'',$this->results[3]);
     }

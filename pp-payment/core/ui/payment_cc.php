@@ -1,22 +1,17 @@
 	<script type="text/javascript">
 		//<![CDATA[
 		jQuery(document).ready(function(){
-
 			jQuery("#pp_invoice_payment_form").submit(function() {
-
 				// Prevent doubleclick
 				jQuery(':submit', this).click(function() {  
 					// return false;  
 				});  
-
 				process_cc_checkout();
-	 
 				return false;
 			});
 		});
 
 	function cc_card_pick(){
-	
 		numLength = jQuery('#card_num').val().length;
 		number = jQuery('#card_num').val();
 		if(numLength > 10)
@@ -31,16 +26,14 @@
 	}
 
 	function process_cc_checkout(){
-
-		jQuery("#ajax-loading").show();
+		jQuery("#ajax-loading-cc").show();
 		jQuery("#credit_card_information input").removeClass('cc_error');
 		jQuery("#credit_card_information select").removeClass('cc_error');
 		jQuery("#wp_cc_response ol li").remove();
 
-		jQuery.post ( ajaxurl, jQuery('#pp_invoice_payment_form').serialize(), function(html){
+		jQuery.post( ajaxurl, jQuery('#pp_invoice_payment_form').serialize(), function(html){
 
 			if(html == '<?php echo wp_create_nonce('pp_invoice_process_cc_' . $invoice->id); ?>') {
-				
 				alert("transaction succesfful");
 				//window.location = "<?php echo admin_url("admin.php?page=incoming_invoices&message=Invoice $invoice_id Paid"); ?>";
 				return;
@@ -48,27 +41,24 @@
 
 			// Error occured
 			var explode = html.toString().split('\n');
- 			
 			// Remove all errors
 			jQuery(".pp_invoice_error_wrapper div").remove();
 
-			for ( var i in explode ) {
+			for( var i in explode ) {
 				var explode_again = explode[i].toString().split('|');
 				if (explode_again[0]=='error'){ 
- 					
 					var id = explode_again[1];
 					var description = explode_again[2];
 					var parent = jQuery("#" + id).parent();
 					//jQuery(parent).css('border', '1px solid red');
 					jQuery("#" + id).addClass('cc_error');
-					
 					jQuery("#wp_cc_response").show();
 					jQuery("#wp_cc_response ol").append('<li>' + description + '</li>');
 				}
 				else if (explode_again[0]=='ok') {
 				}
 			}
-	 
+			jQuery("#ajax-loading-cc").hide();
  		});
 	}
 
@@ -157,9 +147,9 @@
 
 		</ol>
 	</fieldset>
-&nbsp;<div id="wp_cc_response"><ol></ol></div>
+	<div id="wp_cc_response"><ol></ol></div>
 	<div id="major-publishing-actions">
 		<input type="submit" value="Process Credit Card Payment" accesskey="p" id="process_payment" class="button-primary" name="process_payment">
-		<img alt="" class="hidden" id="ajax-loading" src="<?php echo admin_url('images/wpspin_light.gif');?>">
+		<img alt="" id="ajax-loading-cc" style="display:none" src="<?php echo admin_url('images/wpspin_light.gif');?>">
 	</div>
 </form>

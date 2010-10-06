@@ -1099,19 +1099,17 @@ function pp_invoice_process_cc_transaction( $cc_data = false ) {
 			if( get_option('pp_invoice_send_thank_you_email' ) == 'yes' ) 
 				pp_invoice_send_email_receipt( $invoice_id );
 		 } else {
-			$errors['processing_problem'][] .= $payment->getResponseText();
-			error_log('$errors = ' . print_r( $errors, true ) );
+			if( $payment->getResponseText() )
+				$errors['processing_problem'][] .= $payment->getResponseText();
+			else 
+				$errors['processing_problem'][] .= 'Processing Error. Please check your gateway settings.';
 			$stop_transaction = true;
 		}
 		// Uncomment these to troubleshoot.  You will need FireBug to view the response of the AJAX post. 
-		error_log('$payment->getResponseText = ' . print_r( $payment->getResponseText(), true ) );
-		error_log('$payment->getTransactionID = ' . print_r( $payment->getTransactionID(), true ) );
-		error_log('$payment->getAVSResponse = ' . print_r( $payment->getAVSResponse(), true ) );
-		error_log('$payment->getAuthCode = ' . print_r( $payment->getAuthCode(), true ) );
-		echo $payment->getResponseText();
-		echo $payment->getTransactionID();
-		echo $payment->getAVSResponse();
-		echo $payment->getAuthCode();
+		//echo $payment->getResponseText();
+		//echo $payment->getTransactionID();
+		//echo $payment->getAVSResponse();
+		//echo $payment->getAuthCode();
 	}
 
 	if( $stop_transaction && is_array( $_POST)) {
