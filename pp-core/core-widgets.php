@@ -41,7 +41,7 @@ class PP_Admin_Widget extends WP_Widget {
 			wp_loginout();
 			echo '</li>';
 		}
-		if( is_user_logged_in() && has_cap( 'edit_prospress_posts' ) ) {
+		if( !is_user_logged_in() || current_user_can( 'edit_prospress_posts' ) ) {
 			echo '<li>' . $market_systems[ 'auctions' ]->post->the_add_new_url() . '</li>';
 		}
 		echo '<li>' . $market_systems[ 'auctions' ]->the_bids_url() . '</li>';
