@@ -10,7 +10,7 @@ if( !isset( $disabled ) )
 
 ?>
 
-<div class="wrap" id="give-feedback">
+<div class="wrap" id="feedback">
 	<?php if( isset ( $feedback_msg ) ): //if( isset ( $_POST [ 'feedback_submit' ] ) ):?>
 		<div id="message" class="updated fade">
 			<p><strong>
@@ -29,44 +29,49 @@ if( !isset( $disabled ) )
 	<?php endif; ?>
 	<?php screen_icon(); ?>
 	<h2><?php echo esc_html( $title ); ?></h2>
-	<form name="GiveFeedback_Form" id="GiveFeedback_Form" action="<?php echo esc_url( $_SERVER ['REQUEST_URI'] ); ?>" method="post">
-		<input type="hidden" name="redirect_to" value="http://<?php echo $_SERVER['SERVER_NAME'] . esc_url( $_SERVER['REQUEST_URI'] ); ?>" />
-		<input type="hidden" name="for_user_id" value="<?php echo $for_user_id ?>" />
-		<input type="hidden" name="from_user_id" value="<?php echo $from_user_id ?>" />
-		<input type="hidden" name="post_id" value="<?php echo $post_id ?>" />
-		<input type="hidden" name="blog_id" value="<?php echo $blog_id ?>" />
-		<input type="hidden" name="role" value="<?php echo $role ?>" />
-		<input type="hidden" name="feedback_date" value="<?php echo current_time('mysql', true); ?>" />
+	<form name="feedback-form" id="feedback-form" action="" method="post">
+		<input type="hidden" name="feedback_recipient" value="<?php echo $feedback_recipient ?>" />
+		<input type="hidden" name="post_id" value="<?php echo $post->ID ?>" />
 		<table class="form-table">
-			<tr id="GiveFeedback_Comment" class="">
+			<tr>
 				<th scope="row" >
 					<label for="feedback_comment"><?php _e( 'Comment', 'prospress' ) ?></label>
 				</th>
 				<td>
-					<input type="text" name="feedback_comment" id="feedback_comment" class="regular-text" value="<?php echo $feedback_comment; ?>" 
+					<input type="textarea" name="feedback_comment" id="feedback_comment" class="regular-text" cols="22" rows="5" value="<?php echo $feedback_comment; ?>" 
 					<?php echo $disabled; ?> 
 					/>
 				</td>
 			</tr>
-			<tr id="GiveFeedback_Rating" class="">
+			<tr>
 				<th scope="row" >
 					<label for="feedback_score"><?php _e( 'Rating', 'prospress' ) ?></label>
 				</th>
 				<td><fieldset>
-					<label title="positive">
-						<input name="feedback_score" type="radio" id="rating_positive" value='2' <?php echo $disabled;
+					<label for="rating_4">
+						<input name="feedback_score" type="radio" id="rating_4" value='4' <?php echo $disabled;
+						echo ( isset( $feedback_score ) && $feedback_score == 4 ) ? 'checked="checked"' : ''; ?> /> 
+						<?php _e( 'Excellent', 'prospress' ); ?>
+					</label>
+					<label for="rating_3">
+						<input name="feedback_score" type="radio" id="rating_3" value='3' <?php echo $disabled;
+						echo ( isset( $feedback_score ) && $feedback_score == 3 ) ? 'checked="checked"' : ''; ?> /> 
+						<?php _e( 'Good', 'prospress' ); ?>
+					</label>
+					<label for="rating_2">
+						<input name="feedback_score" type="radio" id="rating_2" value='2' <?php echo $disabled;
 						echo ( isset( $feedback_score ) && $feedback_score == 2 ) ? 'checked="checked"' : ''; ?> /> 
-						<?php _e('Positive', 'prospress' ); ?>
+						<?php _e( 'Satisfactory', 'prospress' ); ?>
 					</label>
-					<label title="neutral">
-						<input name="feedback_score" type="radio" id="rating_neutral" value='1' <?php echo $disabled;
+					<label for="rating_1">
+						<input name="feedback_score" type="radio" id="rating_1" value='1' <?php echo $disabled;
 						echo ( isset( $feedback_score ) && $feedback_score == 1 ) ? 'checked="checked"' : ''; ?> /> 
-						<?php _e('Neutral', 'prospress' ); ?>
+						<?php _e( 'Unsatisfactory', 'prospress' ); ?>
 					</label>
-					<label title="negative">
-						<input name="feedback_score" type="radio" id="rating_negative" value='0' <?php echo $disabled;
+					<label for="rating_0">
+						<input name="feedback_score" type="radio" id="rating_0" value='0' <?php echo $disabled;
 						echo ( isset( $feedback_score ) && $feedback_score == 0 ) ? 'checked="checked"' : ''; ?> /> 
-						<?php _e('Negative', 'prospress' ); ?>
+						<?php _e( 'Poor', 'prospress' ); ?>
 					</label>
 				</fieldset></td>
 			</tr>

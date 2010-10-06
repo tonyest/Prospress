@@ -11,6 +11,22 @@ $link_url = esc_url_raw( remove_query_arg( array( 'post', 'filter' ), $_SERVER['
 ?>
 
 <div class="wrap feedback-history">
+	<?php if( isset ( $feedback_msg ) ): ?>
+		<div id="message" class="updated fade">
+			<p><strong>
+				<?php echo $feedback_msg; ?>
+			</strong></p>
+		</div>
+	<?php endif; ?>
+	<?php if ( isset( $errors ) && is_wp_error( $errors ) ) : ?>
+		<div class="error">
+			<ul>
+			<?php foreach( $errors->get_error_messages() as $message )
+				echo "<li>$message</li>";
+			?>
+			</ul>
+		</div>
+	<?php endif; ?>
 	<?php screen_icon(); ?>
 	<h2><?php echo esc_html( $title ); ?></h2>
 	<ul class="subsubsub">
@@ -22,8 +38,8 @@ $link_url = esc_url_raw( remove_query_arg( array( 'post', 'filter' ), $_SERVER['
 			//$feedback_links[] = "<li><a href='" . $link_url . "'$class>" . sprintf( __( 'All (%s)', 'prospress' ), number_format_i18n( $all_feedback ) ) . '</a>';
 		}
 
-		$received_feedback = count( pp_get_feedback_user( $user_id, array( 'received' => 'true' ) ) );
-		$given_feedback = count( pp_get_feedback_user( $user_id, array( 'given' => 'true' ) ) );
+		$received_feedback = count( pp_get_feedback( array( 'author' => $user_id ) ) );
+		$given_feedback = count( pp_get_feedback( array( 'feedback_recipient' => $user_id ) ) );
 		$feedback_links[] = "<li><a href='" . add_query_arg( array( 'filter' => 'received' ), $link_url ) . "'$class>" . sprintf( __( 'Received (%s)', 'prospress' ), number_format_i18n( $received_feedback ) ) . '</a>';
 		$feedback_links[] = "<li><a href='" . add_query_arg( array( 'filter' => 'given' ), $link_url ) . "'$class>" . sprintf( __( 'Given (%s)', 'prospress' ), number_format_i18n( $given_feedback ) ) . '</a>';
 

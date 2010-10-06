@@ -12,13 +12,15 @@
  * @param $post_id the post to check feedback records for 
  * @param $user_id optionally specify if a feedback item has been place from a specified user. 
  */
-function pp_post_has_feedback( $post_id, $user_id = '' ){
+function pp_post_has_feedback( $post_id, $user_id = NULL ){
 	global $wpdb; 
 
-	if( empty( $user_id ) ) // shouldn't ever be a user with ID = 0 
-		$feedback = $wpdb->get_var( $wpdb->prepare( "SELECT feedback_id FROM $wpdb->feedback WHERE feedback_status = 'publish' AND post_id = %d", $post_id ) );
+	if( $user_id === NULL )
+		$feedback = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_status = 'publish' AND post_parent = %d", $post_id ) );
+		//$feedback = $wpdb->get_var( $wpdb->prepare( "SELECT feedback_id FROM $wpdb->feedback WHERE feedback_status = 'publish' AND post_id = %d", $post_id ) );
 	else
-		$feedback = $wpdb->get_var( $wpdb->prepare( "SELECT feedback_id FROM $wpdb->feedback WHERE feedback_status = 'publish' AND post_id = %d AND from_user_id = %d", $post_id, $user_id ) );
+		$feedback = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_status = 'publish' AND post_parent = %d AND post_author = %d", $post_id, $user_id ) );
+		//$feedback = $wpdb->get_var( $wpdb->prepare( "SELECT feedback_id FROM $wpdb->feedback WHERE feedback_status = 'publish' AND post_id = %d AND from_user_id = %d", $post_id, $user_id ) );
 
 	if( NULL != $feedback ){
 		return true;		
@@ -50,47 +52,41 @@ function pp_user_has_feedback( $post_id, $user_id = '' ){
 
 
 /**
- * Gets feedback item for a given post and user. User ID can be of either the user who provided or received the feedback. 
- * 
- * @return array feedback items, or NULL if feedback doesn't exist
- */
-function pp_get_feedback_item( $post_id, $user_id ){
-	global $wpdb;
-
-	$feedback = $wpdb->get_row($wpdb->prepare("SELECT * FROM $wpdb->feedback WHERE post_id = %d AND feedback_status = 'publish' AND ( for_user_id = %d OR from_user_id = %d )", $post_id, $user_id, $user_id ), ARRAY_A);
-
-	return $feedback;
-}
-
-/**
  * Gets latest feedback item received by a given user.
  * 
  * @return array feedback items, or NULL if feedback doesn't exist
  */
 function pp_get_latest_feedback( $user_id ){
 	global $wpdb;
-	
+
 	return $wpdb->get_row($wpdb->prepare("SELECT * FROM $wpdb->feedback WHERE for_user_id = %d AND feedback_status = 'publish' ORDER BY feedback_date_gmt DESC LIMIT 1", $user_id ), ARRAY_A);
 }
 
 /**
- * Gets feedback for a user, optionally filtered.
+ * Gets feedback optionally filtered with parameters matching the get_posts function.
  * 
  * @param array filters an array of name value pairs that can be used to modify which feedback items are returned
  * @return array feedback items, or NULL if feedback doesn't exist
  */
-function pp_get_feedback_user( $user_id = '', $filters = '' ){
-	global $wpdb, $user_ID;
-	
-	if( empty( $user_id ) )
-		$user_id = $user_ID;
-	else
-		$user_id = (int)$user_id;
-		
+function pp_get_feedback( $args = array() ){
+
+	$args[ 'post_type' ] = 'feedback'; //brute force
+
+	error_log( 'in pp_get_feedback, args = ' . print_r( $args, true ) );
+
+	$feedback = get_posts( $args );
+
+	foreach( $feedback as $feedback_id => $feedback_item ){
+		$feedback[ $feedback_id ]->feedback_recipient = get_post_meta( $feedback_id, 'feedback_recipient' );
+		$feedback[ $feedback_id ]->feedback_score = get_post_meta( $feedback_id, 'feedback_score' );
+	}
+
+	return $feedback;
+/*
 	if( isset( $filters[ 'post' ] ) ){
-		$filters[ 'post' ] = (int)$filters[ 'post' ];
-		$feedback = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->feedback WHERE post_id = %d AND feedback_status = 'publish' ORDER BY feedback_date_gmt DESC", $filters[ 'post' ]), ARRAY_A);
+		$query .= $wpdb->prepare( " AND post_parent = %d ", $filters[ 'post' ] );
 	} else if( isset( $filters[ 'given' ] ) ){
+		$query .= $wpdb->prepare( " AND post_author = %d ", $user_id );
 		$feedback = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->feedback WHERE from_user_id = %d AND feedback_status = 'publish' ORDER BY feedback_date_gmt DESC", $user_id), ARRAY_A);
 	} else if( isset( $filters[ 'received' ] ) ){
 		$feedback = $wpdb->get_results($wpdb->prepare("SELECT * FROM $wpdb->feedback WHERE for_user_id = %d AND feedback_status = 'publish' ORDER BY feedback_date_gmt DESC", $user_id), ARRAY_A);
@@ -102,6 +98,7 @@ function pp_get_feedback_user( $user_id = '', $filters = '' ){
 	}
 
 	return $feedback;
+*/
 }
 
 //Returns a count of all the feedback for a user, optionally returns only given or as specified by filters array received by a user
@@ -109,11 +106,13 @@ function pp_users_feedback_count( $user_id, $filter = 'received' ){
 	global $wpdb;
 
 	if( $filter == 'given'  )
-		return $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(feedback_id) FROM $wpdb->feedback WHERE feedback_status = 'publish' AND from_user_id = %d", $user_id ) );
+		$args[ 'author' ] = $user_id;
 	else if( $filter == 'received' )
-		return $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(feedback_id) FROM $wpdb->feedback WHERE feedback_status = 'publish' AND for_user_id = %d ", $user_id ) );
+		$args[ 'feedback_recipient' ] = $user_id;
 	else
-		return $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(feedback_id) FROM $wpdb->feedback WHERE feedback_status = 'publish' AND ( for_user_id = %d OR from_user_id = %d )", $user_id, $user_id ) );
+		$args[ 'author' ] = $args[ 'feedback_recipient' ] = $user_id;
+
+	return count( pp_get_feedback( $args ) );
 }
 
 
