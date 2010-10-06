@@ -1,9 +1,9 @@
 === Plugin Name ===
 Contributors: Prospress, thenbrent
-Tags: marketplace, prospress, auction, ecommerce
+Tags: marketplace, prospress, auction, ecommerce, e-commerce
 Requires at least: 3.0
 Tested up to: 3.0.1
-Stable tag: 0.2
+Stable tag: 1.0
 
 Add an auction marketplace to your WordPress site.
 
@@ -19,9 +19,9 @@ If the 30 second install is too much, check out the [Demo Marketplace](http://de
 
 **Auction Posts** - Prospress uses the WordPress publishing system, so publishing an auction is as enjoyable as publishing a blog post.
 
-**Invoicing & Payments** - To finalize transactions, Prospress provides an invoicing system that supports payment with PayPal, credit cards & bank transfers.
-
 **Feedback** - Traders in your marketplace can rate each other after a transaction and view each other's feedback to gain confidence when entering a transaction.
+
+**Invoicing & Payments** - To finalize transactions, Prospress provides an invoicing system that supports payment with PayPal, credit cards & bank transfers.
 
 See all the great features on the Prospress [Marketplace Features](http://prospress.org/features/) page.
 
@@ -86,29 +86,33 @@ If have a knack for learning new software, and could improve this sentence, you 
 
 Please report bugs in the Prospress [Bug Report](http://prospress.org/forums/forum/bug-reports "Prospress Bug Report Forum") forum.
 
-= Where can I try the latest? =
+= Where can I get access to the development version? =
 
-During beta, regular updates will be checked-in to the WordPress plugin directory. But if you can't wait, Prospress is hosted in a git repository at [GitHub](http://github.com/Prospress/Prospress "Prospress GitHub Project"). GitHub is also the primary development site for the project.
+Prospress is hosted in a Git repository at [GitHub](http://github.com/Prospress/Prospress "Prospress GitHub Project"). GitHub is also the primary development site for the project.
 
-If your dreams occasionally contain curly braces, you can contribute to the Prospress code base on [GitHub](http://github.com/Prospress/Prospress "Prospress GitHub Project"). GitHub makes it easy to contribute. They also have great [documentation](http://help.github.com/ "GitHub Documentation") and [getting started guides](http://help.github.com/ "GitHub Getting Started Docs") to get you up and running.
+If your dreams occasionally contain curly braces, you can contribute to the Prospress code base on [GitHub](http://github.com/Prospress/Prospress "Prospress GitHub Project"). GitHub makes it easy to contribute and they provide great [documentation](http://help.github.com/) and [getting started guides](http://help.github.com/) to get you up and running.
 
 = Is that it? =
 
-Nope. There are a few surprises but you'll have to download & explore Prospress to find them, or at least try the [Demo Marketplace](http://demo.prospress.org/auctions/).
+Nope. There are a few surprises but you'll have to download & explore Prospress to find them, or try the [Demo Marketplace](http://demo.prospress.org/auctions/).
 
 
 == Screenshots ==
 
-1. **Add an Auction** - Publishing an auction is just like publishing a post, except you also need to add a start price and end date.
+1. **Add an Auction** - Publishing an auction is just like publishing a post, except you also add a start price and end date.
 2. **Give Feedback** - When an auction completes, the two parties can provide feedback for each other.
-3. **Set Capabilities** - All registered users can make bids & payments, but administrators can choose who can publish & edit auctions.
+3. **Set Capabilities** - All registered users can make bids & payments, but administrators choose who can publish & edit auctions.
 
 
 == Changelog ==
 
-= 0.3 =
+= 1.0 =
 * Fixed bug preventing invoices being generated on manual post completion
+* Fixed bugs in invoice payment via credit card
+* Prospress Admin Links widget now displays links dependant on user's capabilities
+* Reduced the number of currencies due to lack of support in PayPal
 * Markup fixes to Invoice pages
+* Feedback now a custom post type
 
 = 0.2 =
 * Beta 2 
@@ -123,8 +127,8 @@ Nope. There are a few surprises but you'll have to download & explore Prospress 
 
 == Upgrade Notice ==
 
-= 0.3 =
-Upgrade to have invoices properly generated on manual post completion.
+= 1.0 =
+The official, fully tested, first stable release. Enjoy!
 
 = 0.2 =
 Upgrade to fix bug when activating on WP < 3.0 or PHP < 5.0, ensure Prospress plays nice with other plugins and get new widgets.

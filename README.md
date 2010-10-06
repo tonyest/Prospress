@@ -1,6 +1,6 @@
 # _Make a Marketplace, with WordPress_
 
-Prospress is a new WordPress plugin that gives any WordPress site its very own auction marketplace.
+Prospress is a new WordPress plugin that can give your WordPress site its very own auction marketplace.
 
 With Prospress installed, your site's registered users can post auctions, place bids, provide feedback and make payments. Everything needed for a fully functioning marketplace.
 
@@ -8,9 +8,9 @@ With Prospress installed, your site's registered users can post auctions, place 
 
 **Auction Posts** - Prospress uses the WordPress publishing system, so publishing an auction is just as enjoyable as publishing your blog.
 
-**Invoicing & Payments** - To finalize transactions, Prospress provides an invoicing system that supports payment with PayPal, credit cards & bank transfers.
-
 **Feedback** - Traders in your marketplace can rate each other after a transaction and view each other's feedback to gain confidence when entering a transaction.
+
+**Invoicing & Payments** - To finalize transactions, Prospress provides an invoicing system that supports payment with PayPal, credit cards & bank transfers.
 
 See all the great features on the Prospress.org [Marketplace Features](http://prospress.org/features/) page.
 

@@ -565,6 +565,27 @@ abstract class PP_Market_System {
 	}
 
 
+	/**
+	 * Returns a user's role on a given post. If user has no role, false is returned.
+	 * 
+	 * @param $post int|array either the id of a post or a post object
+	 */
+	function get_users_role( $post, $user_id = NULL ) {
+		global $user_ID;
+
+		if( $user_id === NULL )
+			$user_id = $user_ID;
+
+		if ( is_numeric( $post ) )
+			$post = get_post( $post );
+
+		if ( $post->post_author == $user_ID && !$is_winning_bidder )
+			return __( 'Post Author', 'prospress' );
+		else
+			return __( 'Bidder', 'prospress' );
+	}
+
+
 	/************************************************************************************************
 	 * Private Functions: don't worry about these, unless you want to get really tricky.
 	 * Even if they're declared public, it's only because they are attached to a hook
@@ -787,7 +808,7 @@ abstract class PP_Market_System {
 										<ul class="actions-list">
 											<li class="base"><?php _e( 'Take action:', 'prospress' ) ?></li>
 										<?php foreach( $actions as $action => $attributes )
-											echo "<li class='action'><a href='" . add_query_arg ( array( 'action' => $action, 'post' => $post_id ) , $attributes['url' ] ) . "'>" . $attributes['label' ] . "</a></li>";
+											echo "<li class='action'><a href='" . add_query_arg ( array( 'action' => $action, 'post' => $post->ID ) , $attributes['url' ] ) . "'>" . $attributes['label' ] . "</a></li>";
 										 ?>
 										</ul>
 									</div>
