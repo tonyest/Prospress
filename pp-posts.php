@@ -14,10 +14,13 @@
 // to the dashboard once publishing a post. This is a bit cludgy, so this function redirects
 // them to that post type's admin index page and adds a message to show post was published
 function pp_post_save_access_denied_redirect() {
-/*
-	error_log( '***************' );
+
+	error_log( '************************************************************' );
+	error_log( '************************************************************' );
 	global $post;
 	error_log( '*** post = ' . print_r( $post, true ) );
+	global $id;
+	error_log( '*** id = ' . print_r( $id, true ) );
 	global $pagenow;
 	error_log( '*** pagenow = ' . print_r( $pagenow, true ) );
 	global $menu;
@@ -32,9 +35,9 @@ function pp_post_save_access_denied_redirect() {
 	error_log( '*** plugin_page = ' . print_r( $plugin_page, true ) );
 	global $_registered_pages;
 	error_log( '*** _registered_pages = ' . print_r( $_registered_pages, true ) );
-*/
-	global $pagenow;
-	global $post;
+
+	$parent = get_admin_page_parent();
+	error_log( '*** parent = ' . print_r( $parent, true ) );
 
 	error_log( 'REQUEST URI = ' . $_SERVER[ 'REQUEST_URI' ] );
 
@@ -46,12 +49,12 @@ function pp_post_save_access_denied_redirect() {
 	}
 	error_log( '************************************************' );
 */
-//	if( $pagenow == 'edit.php' ) {
-//		wp_redirect( admin_url( 'edit.php?post_type=auctions' ) );
-//		exit;
-//	}
+	if( $pagenow == 'edit.php' ) {
+		wp_redirect( admin_url( 'edit.php?post_type=auctions' ) );
+		exit;
+	}
 }
-add_action( 'admin_page_access_denied', 'pp_post_save_access_denied_redirect' );
+add_action( 'admin_page_access_denied', 'pp_post_save_access_denied_redirect', 20 ); //run after other functions
 
 
 if ( !defined( 'PP_POSTS_DIR' ) )
@@ -280,10 +283,10 @@ function pp_register_completed_status() {
 	       'completed',
 	       array('label' => _x( 'Completed', 'post' ),
 				'label_count' => _n_noop('Completed <span class="count">(%s)</span>', 'Completed <span class="count">(%s)</span>' ),
+				'public' => true,
 				'show_in_admin_all' => false,
-				'show_in_admin_all_list' => false,
+				'show_in_admin_all_list' => true,
 				'show_in_admin_status_list' => true,
-				'public' => false,
 				'publicly_queryable' => false,
 				'exclude_from_search' => true,
 	       )

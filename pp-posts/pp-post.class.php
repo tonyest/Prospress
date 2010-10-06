@@ -206,7 +206,6 @@ class PP_Post {
 	public function register_sidebars(){
 
 		if ( !file_exists( TEMPLATEPATH . '/index-' . $this->name . '.php' ) ){
-			error_log('adding default index  for some reason. I guess no index in template path ' . TEMPLATEPATH );
 			register_sidebar( array (
 				'name' => $this->labels[ 'name' ] . ' ' . __( 'Index Sidebar', 'prospress' ),
 				'id' => $this->name . '-index-sidebar',
@@ -243,32 +242,12 @@ class PP_Post {
 	public function add_sidebars_widgets(){
 
 		$sidebars_widgets = wp_get_sidebars_widgets();
-/*
-		error_log('$sidebars_widgets = ' . print_r( $sidebars_widgets, true ) );
 
-		$filter_widget = get_option( 'widget_bid-filter' );
-		error_log('* filter_widget = ' . print_r( $filter_widget, true ) );
-		$filter_id = key( $filter_widget );
-		error_log('* bid-filter-' . $filter_id );
-
-		$filter_widget[] = array( 'title' => __( 'Price:', 'prospress' ) );
-		error_log('** filter_widget = ' . print_r( $filter_widget, true ) );
-		$filter_id = key( $filter_widget );
-		error_log('** bid-filter-' . $filter_id );
-
-		array_push( $filter_widget, array( 'title' => __( 'Price:', 'prospress' ) ) );
-		error_log('*** filter_widget = ' . print_r( $filter_widget, true ) );
-		$filter_id = end(array_keys($filter_widget));
-		error_log('*** bid-filter-' . $filter_id );
-
-		return;
-*/
 		if( !isset( $sidebars_widgets[ $this->name . '-index-sidebar' ] ) )
 			$sidebars_widgets[ $this->name . '-index-sidebar' ] = array();
 
 		$sort_widget = get_option( 'widget_pp-sort' );
 		if( empty( $sort_widget ) ){ //sort widget not added to any sidebars yet
-			error_log('sort_widget empty' );
 
 			$sort_widget['_multiwidget'] = 1;
 
@@ -291,7 +270,6 @@ class PP_Post {
 
 		$filter_widget = get_option( 'widget_bid-filter' );
 		if( empty( $filter_widget ) ){ //filter_widget widget not added to any sidebars yet
-			error_log('filter_widget empty' );
 
 			$filter_widget['_multiwidget'] = 1;
 
@@ -433,12 +411,12 @@ class PP_Post {
 			return $column_headings;
 
 		if( strpos( $_SERVER['REQUEST_URI'], 'completed' ) !== false ) {
-			$column_headings[ 'end_date' ] = __( 'Ended', 'prospress' );
+			$column_headings[ 'end_date' ] = __( 'End Time', 'prospress' );
 			$column_headings[ 'post_actions' ] = __( 'Action', 'prospress' );
 			unset( $column_headings[ 'date' ] );
 		} else {
 			$column_headings[ 'date' ] = __( 'Date Published', 'prospress' );
-			$column_headings[ 'end_date' ] = __( 'Ending', 'prospress' );
+			$column_headings[ 'end_date' ] = __( 'End Time', 'prospress' );
 		}
 
 		return $column_headings;
@@ -456,21 +434,17 @@ class PP_Post {
 	public function post_custom_columns( $column_name, $post_id ) {
 		global $wpdb;
 
-		// Need to manually populate $post var. Global $post contains post_status of "publish"...
-		$post = $wpdb->get_row( "SELECT post_status FROM $wpdb->posts WHERE ID = $post_id" );
-
 		if( $column_name == 'end_date' ) {
 			$end_time_gmt = get_post_end_time( $post_id );
 
 			if ( $end_time_gmt == false || empty( $end_time_gmt ) ) {
-				$m_time = $human_time = __('Not set.', 'prospress' );
+				$m_time = $human_time = __( 'Not set.', 'prospress' );
 				$time_diff = 0;
 			} else {
 				$human_time = pp_human_interval( $end_time_gmt - time(), 3 );
 				$human_time .= '<br/>' . get_post_end_time( $post_id, 'mysql', 'user' );
 			}
-			echo '<abbr title="' . $m_time . '">';
-			echo apply_filters('post_end_date_column', $human_time, $post_id, $column_name) . '</abbr>';
+			echo '<abbr>' . apply_filters( 'post_end_date_column', $human_time, $post_id, $column_name) . '</abbr>';
 		}
 
 		if( $column_name == 'post_actions' ) {
