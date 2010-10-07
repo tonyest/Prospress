@@ -38,9 +38,8 @@ function the_most_recent_feedback( $user_id = '' ){
 		$user_id = $authordata->ID;
 
 	$latest = pp_get_feedback( array( 'feedback_recipient' => $user_id ) );
-	//var_dump( $latest );
+
 	$latest = array_pop( $latest );
-	//var_dump( $latest );
 
 	if( $latest !== NULL ) {
 		echo '<blockquote class="feedback-comment">' . $latest->post_content . '</blockquote>';
@@ -59,25 +58,15 @@ function the_most_recent_feedback( $user_id = '' ){
  * 
  */
 function pp_the_feedback_url( $desc = "View Feedback", $echo = '' ) {
-
-	$feedback_tag = "<a href='" . pp_get_feedback_url() . "' title='$desc'>$desc</a>";
-
-	if( $echo == 'echo' )
-		echo $feedback_tag;
-	else
-		return $feedback_tag;
-}
-
-
-/**
- * Gets the url to the user's feedback table.
- * 
- */
-function pp_get_feedback_url() {
 	if( current_user_can( 'edit_users' ) )
 		$feedback_url = admin_url( 'users.php?page=feedback' );
 	else
 		$feedback_url = admin_url( 'profile.php?page=feedback' );
 
-	 return $feedback_url;
+	$feedback_tag = "<a href='" . $feedback_url . "' title='$desc'>$desc</a>";
+
+	if( $echo == 'echo' )
+		echo $feedback_tag;
+	else
+		return $feedback_tag;
 }
