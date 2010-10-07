@@ -50,10 +50,10 @@ abstract class PP_Market_System {
 						'adds_post_fields' => null,
 						'post_table_columns' => array (
 											'current_bid' => array( 'title' => 'Price', 'function' => 'the_winning_bid_value' ),
-											'bid_count' => array( 'title' => 'Number of Bids', 'function' => 'the_bid_count' ) ),
+											'winning_bidder' => array( 'title' => 'Winning Bidder', 'function' => 'the_winning_bidder' ) ),
 						'bid_table_headings' => array( 
 											'post_id' => 'Post', 
-											'bid_value' => 'Amount',
+											'bid_value' => 'Bid Amount',
 											'bid_status' => 'Status', 
 											'winning_bid_value' => 'Current Price', 
 											'bid_date' => 'Bid Date',
@@ -348,15 +348,15 @@ abstract class PP_Market_System {
 
 		$winning_bidder = $this->get_winning_bid( $post_id )->bidder_id;
 
-		if ( !empty( $winning_bidder ) ){
-			
+		if ( !empty( $winning_bidder ) )
 			$winning_bidder = ( $winning_bidder == $user_ID) ? __( 'You', 'prospress' ) : get_userdata( $winning_bidder )->display_name;
+		else 
+			$winning_bidder = 'No bids.';
 
-			if ( $echo ) 
-				echo $winning_bidder;
-			else 
-				return $winning_bidder;
-		}
+		if ( $echo ) 
+			echo $winning_bidder;
+		else 
+			return $winning_bidder;
 	}
 
 	/**
@@ -579,7 +579,7 @@ abstract class PP_Market_System {
 		if ( is_numeric( $post ) )
 			$post = get_post( $post );
 
-		if ( $post->post_author == $user_ID && !$is_winning_bidder )
+		if ( $post->post_author == $user_id && !$is_winning_bidder )
 			return __( 'Post Author', 'prospress' );
 		else
 			return __( 'Bidder', 'prospress' );

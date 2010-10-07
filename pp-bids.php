@@ -196,17 +196,17 @@ function get_bid_count( $post_id = '' ) {
 }
 
 /**
- * Get's the role of a given details of the winning bid on a post, optionally specified with $post_id.
+ * Get's the role of a given user for a post.
  *
- * A wrapper function for the PP_Market_System get_users_role funcion
+ * A wrapper function for the PP_Market_System get_users_role function
  *
  * @param $post int|array either the id of a post or a post object
  */
 function pp_get_users_role( $post, $user_id = NULL ) {
 	global $market_systems;
-	
+
 	if ( is_numeric( $post ) )
 		$post = get_post( $post );
 
-	return $market_systems[ get_post_type( $post ) ]->get_users_role( $post_id, $user_id );
+	return $market_systems[ get_post_type( $post ) ]->get_users_role( $post->ID, $user_id );
 }

@@ -128,7 +128,7 @@ Nope. There are a few surprises but you'll have to download & explore Prospress 
 == Upgrade Notice ==
 
 = 1.0 =
-The official, fully tested, first stable release. Enjoy!
+The first, fully tested, stable release ready for prime-time - enjoy! NB: This is a breaking upgrade. If you need to preserve bid or feedback data between the upgrade, post in the prospress.org/forums/ to request an upgrade plugin.
 
 = 0.2 =
 Upgrade to fix bug when activating on WP < 3.0 or PHP < 5.0, ensure Prospress plays nice with other plugins and get new widgets.

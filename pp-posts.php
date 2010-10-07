@@ -23,23 +23,8 @@ function pp_post_save_access_denied_redirect() {
 	error_log( '*** id = ' . print_r( $id, true ) );
 	global $pagenow;
 	error_log( '*** pagenow = ' . print_r( $pagenow, true ) );
-	global $menu;
-	error_log( '*** menu = ' . print_r( $menu, true ) );
-	global $submenu;
-	error_log( '*** submenu = ' . print_r( $submenu, true ) );
-	global $_wp_menu_nopriv;
-	error_log( '*** _wp_menu_nopriv = ' . print_r( $_wp_menu_nopriv, true ) );
-	global $_wp_submenu_nopriv;
-	error_log( '*** _wp_submenu_nopriv = ' . print_r( $_wp_submenu_nopriv, true ) );
-	global $plugin_page;
-	error_log( '*** plugin_page = ' . print_r( $plugin_page, true ) );
-	global $_registered_pages;
-	error_log( '*** _registered_pages = ' . print_r( $_registered_pages, true ) );
-
-	$parent = get_admin_page_parent();
-	error_log( '*** parent = ' . print_r( $parent, true ) );
-
-	error_log( 'REQUEST URI = ' . $_SERVER[ 'REQUEST_URI' ] );
+	global $current_screen;
+	error_log( '*** current_screen = ' . print_r( $current_screen, true ) );
 
 /*
 	error_log( '*********** pp_post_save_redirect_admin_access_denied ************' );
@@ -289,6 +274,7 @@ function pp_register_completed_status() {
 				'show_in_admin_status_list' => true,
 				'publicly_queryable' => false,
 				'exclude_from_search' => true,
+				'capability_type' => 'prospress_post'
 	       )
 	);
 }
@@ -445,16 +431,6 @@ function pp_posts_admin_head() {
 
 	if ( strpos( $_SERVER['REQUEST_URI'], 'completed' ) !== false ){
 		wp_enqueue_script( 'inline-edit-post' );
-	}
-
-	// @TODO replace this quick and dirty hack with a server side way to remove styles on these tables.
-	if ( strpos( $_SERVER['REQUEST_URI'], 'edit.php' ) !== false ||  strpos( $_SERVER['REQUEST_URI'], 'completed' ) !== false ) {
-		echo '<script type="text/javascript">';
-		echo 'jQuery(document).ready( function( $) {';
-		echo '$("#author").removeClass("column-author");';
-		echo '$("#categories").removeClass("column-categories");';
-		echo '$("#tags").removeClass("column-tags");';
-		echo '});</script>';
 	}
 }
 add_action( 'admin_enqueue_scripts', 'pp_posts_admin_head' );
