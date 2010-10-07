@@ -15,10 +15,14 @@ function the_users_feedback_items( $user_id = '' ){
 	if( $user_id == '' )
 		$user_id = $authordata->ID;
 
+	$args = array( 'feedback_recipient' => $user_id, 'feedback_score' => 2 );
+
 	echo '<ul>';
-	echo '<li>' . pp_users_positive_feedback( $user_id, 'received' ) . ' ' . __( 'positive' ) . '</li>';
-	echo '<li>' . pp_users_neutral_feedback( $user_id, 'received' ) . ' ' . __( 'neutral' ) .  '</li>';
-	echo '<li>' . pp_users_negative_feedback( $user_id, 'received' ) . ' ' . __( 'negative' ) .  '</li>';
+	echo '<li>' . pp_users_feedback_count( $args ) . ' ' . __( 'positive' ) . '</li>';
+	$args[ 'feedback_score' ] = 1;
+	echo '<li>' . pp_users_feedback_count( $args ) . ' ' . __( 'neutral' ) . '</li>';
+	$args[ 'feedback_score' ] = 0;
+	echo '<li>' . pp_users_feedback_count( $args ) . ' ' . __( 'negative' ) . '</li>';
 	echo '</ul>';
 }
 
@@ -33,17 +37,20 @@ function the_most_recent_feedback( $user_id = '' ){
 	if( $user_id == '' )
 		$user_id = $authordata->ID;
 
-	$latest = pp_get_latest_feedback( $user_id );
+	$latest = pp_get_feedback( array( 'feedback_recipient' => $user_id ) );
+	//var_dump( $latest );
+	$latest = array_pop( $latest );
+	//var_dump( $latest );
 
-	if( $latest != false ) {
-		echo '<blockquote class="feedback-comment">' . $latest['feedback_comment'] . '</blockquote>';
-		echo '<div "feedback-provider">';
+	if( $latest !== NULL ) {
+		echo '<blockquote class="feedback-comment">' . $latest->post_content . '</blockquote>';
+		echo '<div "feedback-author">';
 		echo __( 'From: ', 'prospress' );
-		echo get_userdata( $latest['from_user_id'] )->user_nicename;
+		echo get_userdata( $latest->post_author )->user_nicename;
+		echo '</div>';
 	} else {
 		echo '<p>' . sprintf( __( '%s has not yet received any feedback.', 'prospress' ), get_userdata( $user_id )->user_nicename ) . '</p>';
 	}
-	echo '</div>';
 }
 
 

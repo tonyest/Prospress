@@ -48,30 +48,20 @@ if( !isset( $disabled ) )
 					<label for="feedback_score"><?php _e( 'Rating', 'prospress' ) ?></label>
 				</th>
 				<td><fieldset>
-					<label for="rating_4">
-						<input name="feedback_score" type="radio" id="rating_4" value='4' <?php echo $disabled;
-						echo ( isset( $feedback_score ) && $feedback_score == 4 ) ? 'checked="checked"' : ''; ?> /> 
-						<?php _e( 'Excellent', 'prospress' ); ?>
-					</label>
-					<label for="rating_3">
-						<input name="feedback_score" type="radio" id="rating_3" value='3' <?php echo $disabled;
-						echo ( isset( $feedback_score ) && $feedback_score == 3 ) ? 'checked="checked"' : ''; ?> /> 
-						<?php _e( 'Good', 'prospress' ); ?>
-					</label>
 					<label for="rating_2">
 						<input name="feedback_score" type="radio" id="rating_2" value='2' <?php echo $disabled;
 						echo ( isset( $feedback_score ) && $feedback_score == 2 ) ? 'checked="checked"' : ''; ?> /> 
-						<?php _e( 'Satisfactory', 'prospress' ); ?>
+						<?php _e( 'Positive', 'prospress' ); ?>
 					</label>
 					<label for="rating_1">
 						<input name="feedback_score" type="radio" id="rating_1" value='1' <?php echo $disabled;
 						echo ( isset( $feedback_score ) && $feedback_score == 1 ) ? 'checked="checked"' : ''; ?> /> 
-						<?php _e( 'Unsatisfactory', 'prospress' ); ?>
+						<?php _e( 'Neutral', 'prospress' ); ?>
 					</label>
 					<label for="rating_0">
 						<input name="feedback_score" type="radio" id="rating_0" value='0' <?php echo $disabled;
 						echo ( isset( $feedback_score ) && $feedback_score == 0 ) ? 'checked="checked"' : ''; ?> /> 
-						<?php _e( 'Poor', 'prospress' ); ?>
+						<?php _e( 'Negative', 'prospress' ); ?>
 					</label>
 				</fieldset></td>
 			</tr>

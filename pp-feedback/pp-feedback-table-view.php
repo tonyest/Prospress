@@ -33,13 +33,8 @@ $link_url = esc_url_raw( remove_query_arg( array( 'post', 'filter' ), $_SERVER['
 	<?php
 		$feedback_links = array();
 
-		if( strpos( $_SERVER['REQUEST_URI'], 'uid' ) !== false ) {
-			//$all_feedback = count( pp_get_feedback_user( $user_id ) );
-			//$feedback_links[] = "<li><a href='" . $link_url . "'$class>" . sprintf( __( 'All (%s)', 'prospress' ), number_format_i18n( $all_feedback ) ) . '</a>';
-		}
-
-		$received_feedback = count( pp_get_feedback( array( 'author' => $user_id ) ) );
-		$given_feedback = count( pp_get_feedback( array( 'feedback_recipient' => $user_id ) ) );
+		$received_feedback = pp_users_feedback_count( array( 'feedback_recipient' => $user_id ) );
+		$given_feedback = pp_users_feedback_count( array( 'author' => $user_id ) );
 		$feedback_links[] = "<li><a href='" . add_query_arg( array( 'filter' => 'received' ), $link_url ) . "'$class>" . sprintf( __( 'Received (%s)', 'prospress' ), number_format_i18n( $received_feedback ) ) . '</a>';
 		$feedback_links[] = "<li><a href='" . add_query_arg( array( 'filter' => 'given' ), $link_url ) . "'$class>" . sprintf( __( 'Given (%s)', 'prospress' ), number_format_i18n( $given_feedback ) ) . '</a>';
 

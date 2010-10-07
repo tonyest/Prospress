@@ -22,8 +22,6 @@ require_once( PP_FEEDBACK_DIR . '/pp-feedback-templatetags.php' );
 
 include_once( PP_FEEDBACK_DIR . '/pp-feedback-widgets.php' );
 
-include_once( PP_FEEDBACK_DIR . '/pp-feedback-dashboard-widget.php' );
-
 /**
  * To save updating/installing the feedback tables when they already exist and are up-to-date, check 
  * the current feedback database version exists and is not of a prior version.
@@ -62,15 +60,27 @@ function pp_register_feedback_post_type(){
 	$args = array(
 			'label' 	=> __( 'Feedback', 'prospress' ),
 			'public' 	=> true,
-			'show_ui' 	=> false,
+			'show_ui' 	=> false, // introduce later
 			'rewrite' 	=> array( 'slug' => 'feedback', 'with_front' => false ),
 			'show_in_nav_menus' => false,
 			'exclude_from_search' => true,
+			'capability_type' => 'prospress_post',
 			'hierarchical' => true, // post parent is the post for which the feedback relates
 			'supports' 	=> array(
 							'title',
+//							'excerpt',
 							'editor',
-							'revisions' )
+							'revisions' ),
+			'labels'	=> array( 'name'	=> __( 'Feedback', 'prospress' ),
+							'singular_name'	=> __( 'Feedback', 'prospress' ),
+							'add_new_item'	=> __( 'Provide Feedback', 'prospress' ),
+							'edit_item'		=> __( 'Edit Feedback', 'prospress' ),
+							'new_item'		=> __( 'New Feedback Item', 'prospress' ),
+							'view_item'		=> __( 'View Feedback', 'prospress' ),
+							'search_items'	=> __( 'Seach Feedback', 'prospress' ),
+							'not_found'		=> __( 'No Feedback found', 'prospress' ),
+							'not_found_in_trash' => __( 'No Feedback found in Trash', 'prospress' ),
+							'parent_item_colon' => __('Feedback for post:') )
 				);
 
 		register_post_type( 'feedback', $args );
@@ -106,15 +116,17 @@ add_action( 'admin_menu', 'pp_feedback_admin_head' );
  * @see get_column_headers()
  */
 function pp_feedback_columns_admin(){
+	global $wp_post_statuses;
 
  	if( strpos( $_SERVER[ 'REQUEST_URI' ], 'given' ) !== false ) {
 		$feedback_columns[ 'feedback_recipient' ] = __( 'For', 'prospress' );
+		$feedback_columns[ 'role' ] = __( 'Receipient\'s Role', 'prospress' );
 	} else {
 		$feedback_columns[ 'feedback_author' ] = __( 'From', 'prospress' );
+		$feedback_columns[ 'role' ] = __( 'Your Role', 'prospress' );
 	}
 
 	$feedback_columns = array_merge( $feedback_columns, array(
-		'role' => __( 'Role', 'prospress' ),
 		'feedback_score' => __( 'Score', 'prospress' ),
 		'feedback_comment' => __( 'Comment', 'prospress' ),
 		'feedback_date' => __( 'Date', 'prospress' ),
@@ -137,16 +149,11 @@ function pp_feedback_rows( $feedback ){
 	if( !empty( $feedback ) ){
 		$style = '';
 		foreach ( $feedback as $feedback_item ) {
-			error_log( 'in pp_feedback_rows, feedback_item = ' . print_r( $feedback_item, true ) );
+		 	$user_of_interest = ( strpos( $_SERVER[ 'REQUEST_URI' ], 'given' ) == false ) ? $feedback_item->post_author : $feedback_item->feedback_recipient;
 			echo "<tr class='feedback $style' >";
-			echo "<td scope='row'>";
-		 	if( strpos( $_SERVER[ 'REQUEST_URI' ], 'given' ) == false )
-				echo ( ( $user_ID == $feedback_item->post_author ) ? 'You' : get_userdata( $feedback_item->post_author )->user_nicename ) . pp_users_feedback_link( $feedback_item->post_author );
-			else
-				echo ( ( $user_ID == $feedback_item->feedback_recipient ) ? 'You' : get_userdata( $feedback_item->feedback_recipient )->user_nicename ) . pp_users_feedback_link( $feedback_item->feedback_recipient );
-			echo "</td>";
-			echo "<td>" . pp_get_users_role( $feedback_item->post_parent, $feedback_item->feedback_recipient ) . "</td>";
-			echo "<td>" . (( $feedback_item->feedback_score == 2) ? __("Positive", 'prospress' ) : (( $feedback_score == 1) ? __("Neutral", 'prospress' ) : __("Negative", 'prospress' ))) . "</td>";
+			echo "<td scope='row'>" . ( ( $user_ID == $user_of_interest ) ? 'You' : get_userdata( $user_of_interest )->user_nicename ) . pp_users_feedback_link( $user_of_interest ) . "</td>";
+			echo "<td>" . pp_get_users_role( $feedback_item->post_parent, $user_of_interest ) . "</td>";
+			echo "<td>" . (( $feedback_item->feedback_score == 2) ? __("Positive", 'prospress' ) : (( $feedback_item->feedback_score == 1) ? __("Neutral", 'prospress' ) : __("Negative", 'prospress' ))) . "</td>";
 			echo "<td>" . $feedback_item->post_content . "</td>";
 			echo "<td>" . mysql2date( __( 'd M Y', 'prospress' ), $feedback_item->post_date ) . "</td>";
 			echo "<td><a href='" . get_permalink( $feedback_item->post_parent ) . "' target='blank'>" . get_post( $feedback_item->post_parent )->post_title . "</a></td>";
@@ -257,22 +264,22 @@ function pp_feedback_form_submit( $feedback ) {
 
 	get_currentuserinfo();
 
-	$post = get_post( $feedback[ 'post_id' ] );
+	//error_log('in pp_feedback_form_submit, feedback = ' . print_r( $feedback, true ) );
 
-	pp_can_edit_feedback( $post );
+	pp_can_edit_feedback( $feedback[ 'post_id' ] );
 
 	if( pp_post_has_feedback( $feedback[ 'post_id' ], $user_ID ) ){
 
 		if( get_option( 'edit_feedback' ) != 'true' ){ // user trying to edit feedback when not allowed
 			$feedback = pp_get_feedback( array( 'post_parent' => $feedback[ 'post_id' ], 'author' => $user_ID ) );
-			$feedback[ 'feedback_msg' ] = __( 'You are not allowed to edit this feedback', 'prospress' );
+			$feedback[ 'feedback_msg' ] = __( 'You are not allowed to edit this feedback.', 'prospress' );
 		} else {
 			pp_update_feedback( $feedback );
-			$feedback[ 'feedback_msg' ] = __( 'Feedback Submitted', 'prospress' );
+			$feedback[ 'feedback_msg' ] = __( 'Feedback Submitted.', 'prospress' );
 		}
 	} else {
 		pp_insert_feedback( $feedback );
-		$feedback[ 'feedback_msg' ] = __( 'Feedback Submitted', 'prospress' );
+		$feedback[ 'feedback_msg' ] = __( 'Feedback Submitted.', 'prospress' );
 	}
 
 	return $feedback;
@@ -337,7 +344,7 @@ function pp_insert_feedback( $feedback ) {
 		'ping_status' 		=> 'closed',
 		'post_type' 		=> 'feedback',
 		'post_name' 		=> $feedback[ 'feedback_author' ] . '-feedback-' . $feedback[ 'feedback_recipient' ],
-		'post_title' 		=> apply_filters( 'feedback_item_title', sprintf( __( "Feedback for %d from %d ", 'prospress' ), get_userdata( $feedback[ 'feedback_recipient' ] )->user_nicename, get_userdata( $feedback[ 'feedback_author' ] )->user_nicename ) )
+		'post_title' 		=> apply_filters( 'feedback_item_title', sprintf( __( "Feedback for %s from %s ", 'prospress' ), get_userdata( $feedback[ 'feedback_recipient' ] )->user_nicename, get_userdata( $feedback[ 'feedback_author' ] )->user_nicename ) )
 		);
 
 	$feedback_post = array(
@@ -357,7 +364,7 @@ function pp_insert_feedback( $feedback ) {
 	update_post_meta( $feedback_id, 'feedback_recipient', $feedback[ 'feedback_recipient' ] );
 	update_post_meta( $feedback_id, 'feedback_score', $feedback[ 'feedback_score' ] );
 
-	return ;
+	return $feedback_id;
 }
 
 
@@ -447,8 +454,6 @@ function pp_feedback_history_admin( $user_id = '' ) {
 		$title = __( 'Your Feedback', 'prospress' );
 	}
 
-	error_log( 'feedback = ' . print_r( $feedback, true ) );
-
 	include_once( PP_FEEDBACK_DIR . '/pp-feedback-table-view.php' );
 }
 
@@ -465,11 +470,12 @@ function pp_feedback_settings_section() {
 	<p><?php _e( 'Allowing feedback to be amended helps to make it more accurate. Mistakes happen and circumstances change.' , 'prospress' ); ?></p>
 	<label for='edit_feedback'>
 		<input type='checkbox' value='true' name='edit_feedback' id='edit_feedback' <?php checked( (boolean)$edit_feedback ); ?> />
-		  <?php _e( 'Allow feedback amendment' , 'prospress' ); ?>
+		  <?php _e( 'Allow feedback to be revised.' , 'prospress' ); ?>
 	</label>
 <?php
 }
-add_action( 'pp_core_settings_page', 'pp_feedback_settings_section' );
+//vNext
+//add_action( 'pp_core_settings_page', 'pp_feedback_settings_section' );
 
 
 /**
@@ -498,6 +504,7 @@ function pp_feedback_uninstall() {
 
 	delete_site_option( 'pp_feedback_db_version' );
 
+	// beta backward compatibility
 	$wpdb->query( "DROP TABLE IF EXISTS $wpdb->feedback" );
 	$wpdb->query( "DROP TABLE IF EXISTS $wpdb->feedbackmeta" );
 }
