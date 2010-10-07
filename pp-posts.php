@@ -521,7 +521,6 @@ function is_pp_multitax(){
 }
 
 
-
 /** 
  * If a post author doesn't have permission to edit their own posts, they are redirected
  * to the dashboard once publishing a post. This is a bit cludgy, so this function redirects
@@ -535,7 +534,7 @@ function pp_post_save_access_denied_redirect() {
 	global $pagenow;
 
 	if( $pagenow == 'edit.php' ) { // @TODO find a way to determine this with better specificity
-		wp_redirect( admin_url( 'edit.php?post_type=auctions' ) );
+		wp_redirect( add_query_arg( array( 'updated' => 1 ), admin_url( 'edit.php?post_type=auctions' ) ) );
 		exit;
 	}
 }
