@@ -40,7 +40,6 @@ function pp_get_feedback( $args = array() ){
 
 	$args[ 'post_type' ] = 'feedback'; //brute force
 	$args[ 'numberposts' ] = 0; //not all sorting/selection being done in sql
-	error_log('in pp_get_feedback, args = ' . print_r( $args, true ));
 
 	$feedback = get_posts( $args );
 
