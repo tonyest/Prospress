@@ -10,38 +10,6 @@
  * @version 0.1
  */
 
-// If a post author doesn't have permissions to edit their own posts, they are redirected
-// to the dashboard once publishing a post. This is a bit cludgy, so this function redirects
-// them to that post type's admin index page and adds a message to show post was published
-function pp_post_save_access_denied_redirect() {
-
-	error_log( '************************************************************' );
-	error_log( '************************************************************' );
-	global $post;
-	error_log( '*** post = ' . print_r( $post, true ) );
-	global $id;
-	error_log( '*** id = ' . print_r( $id, true ) );
-	global $pagenow;
-	error_log( '*** pagenow = ' . print_r( $pagenow, true ) );
-	global $current_screen;
-	error_log( '*** current_screen = ' . print_r( $current_screen, true ) );
-
-/*
-	error_log( '*********** pp_post_save_redirect_admin_access_denied ************' );
-	foreach( debug_backtrace() as $key => $value ) {
-		error_log( "** $key . " . $value['function'] . "(" . $value['args'][0] . ")" );
-		error_log( "  ** FILE: " . $value['file'] . ":" . $value['line'] );
-	}
-	error_log( '************************************************' );
-*/
-	if( $pagenow == 'edit.php' ) {
-		wp_redirect( admin_url( 'edit.php?post_type=auctions' ) );
-		exit;
-	}
-}
-add_action( 'admin_page_access_denied', 'pp_post_save_access_denied_redirect', 20 ); //run after other functions
-
-
 if ( !defined( 'PP_POSTS_DIR' ) )
 	define( 'PP_POSTS_DIR', PP_PLUGIN_DIR . '/pp-posts' );
 if ( !defined( 'PP_POSTS_URL' ) )
@@ -551,6 +519,27 @@ function is_pp_multitax(){
 	else
 		return false;
 }
+
+
+
+/** 
+ * If a post author doesn't have permission to edit their own posts, they are redirected
+ * to the dashboard once publishing a post. This is a bit cludgy, so this function redirects
+ * them to that post type's admin index page and adds a message to show post was published.
+ * 
+ * @package Prospress
+ * @subpackage Posts
+ * @since 1.0
+ */
+function pp_post_save_access_denied_redirect() {
+	global $pagenow;
+
+	if( $pagenow == 'edit.php' ) { // @TODO find a way to determine this with better specificity
+		wp_redirect( admin_url( 'edit.php?post_type=auctions' ) );
+		exit;
+	}
+}
+add_action( 'admin_page_access_denied', 'pp_post_save_access_denied_redirect', 20 ); //run after other functions
 
 
 /** 
