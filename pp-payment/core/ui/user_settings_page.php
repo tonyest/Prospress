@@ -69,7 +69,6 @@
 			<tr>
 				<th><?php _e("Payment Settings:");?></th>
 				<td>
-					<?php echo wpi_checkbox("group=pp_invoice_user_settings&name=can_change_payment_method&label=Payer can choose payment method.&value=true", $user_settings[can_change_payment_method]); ?><br />
 					<?php echo wpi_checkbox("group=pp_invoice_user_settings&name=payment_received_notification&label=Notify me when payment is made.&value=true", $user_settings[payment_received_notification]); ?><br />
 				</td>
 			</tr>

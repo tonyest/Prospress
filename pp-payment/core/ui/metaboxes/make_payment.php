@@ -70,7 +70,7 @@ function pp_invoice_metabox_billing_details( $invoice ) {
 
 	<?php
 	//show dropdown if it is allowed, and there is more than one payment option
-	if( pp_invoice_user_settings( 'can_change_payment_method', $invoice->payee_class->ID ) && count( $payment_array ) > 1 ) { ?>
+	if( count( $payment_array ) > 1 ) { ?>
 
 	<fieldset id="pp_invoice_select_payment_method">
 		<ol>
