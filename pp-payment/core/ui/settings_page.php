@@ -19,10 +19,10 @@
 		</td>
 	</tr>
 	<tr>
-		<th><label for="enforce_ssl"><?php _e('Enforce HTTPS:', 'prospress' ); ?></label></th>
+		<th><label for="enforce_ssl"><?php _e('Use SSL:', 'prospress' ); ?></label></th>
 		<td>
 		<input type="checkbox" name="pp_invoice_force_https" id="pp_invoice_force_https" value="true" <?php checked( get_option('pp_invoice_force_https'), 'true' );?> />
-		<?php _e('You should use SSL if offering payments via credit card.', 'prospress' ); ?>
+		<?php _e('You should use SSL to secure the payment page if offering credit card as a payment option.', 'prospress' ); ?>
 		<a href="http://affiliate.godaddy.com/redirect/12F28CD920606B123C313973412F6A1FFD2D46585278C9437B5EE5EBD9E46EB8" title="SSL Certificates from GoDaddy" class="wp_invoice_click_me"><?php _e('Do you need an SSL Certificate?', 'prospress'); ?></a>
 		</td>
 	</tr>
