@@ -36,20 +36,9 @@ function pp_feedback_install() {
 
 	if ( !get_site_option( 'pp_feedback_db_version' ) || get_site_option( 'pp_feedback_db_version' ) < PP_FEEDBACK_DB_VERSION ){
 		update_site_option( 'pp_feedback_db_version', PP_FEEDBACK_DB_VERSION );
-		pp_feedback_update();
 	}
 }
 add_action( 'pp_activation', 'pp_feedback_install' );
-
-
-/**
- * Updates the feedback system from previous versions of plugin.
- * 
- **/
-function pp_update_feedback_system() {
-	/* @TODO drop feedback & feedback_meta tables, move all entries into posts table
-	 **/
-}
 
 
 /**
