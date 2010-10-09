@@ -72,6 +72,14 @@ That's entirely up to you. All registered users with subscriber role or better w
 
 You can host auctions from a privileged few or allow your entire community to trade items. Set permissions under the `Prospress | General Settings` admin menu.
 
+= Why are Credit Payments not working? =
+
+If you receive no error message, it is likely your server does not have the requirements installed. Prospress requires libcurl to be install to use Credit Card payments. Learn more about installing libcurl in the [PHP Curl Documentation](http://www.php.net/manual/en/book.curl.php).
+
+If you do receive an error message, such as *Processing Error. Please check your gateway settings* please ensure you have all Credit Card Settings set as per your gateway's instructions.
+
+For more detailed help, please make a post in the Prospress [support forums](http://prospress.org/forums/ "Prospress Forums").
+
 = Where can I get support? =
 
 In the Prospress [support forums](http://prospress.org/forums/ "Prospress Forums").

@@ -10,6 +10,7 @@ class PP_Invoice_Authnet
     private $approved = false;
     private $declined = false;
     private $error    = true;
+	private $error_message;
 
     private $fields;
     private $response;
@@ -56,7 +57,7 @@ class PP_Invoice_Authnet
         while( $count < $retries ) {
 		
 			//required for GoDaddy
-			if( get_option( 'pp_invoice_using_godaddy' ) == 'yes' ) {
+			if( get_option( 'pp_invoice_using_godaddy' ) == 'true' ) {
 				curl_setopt( $ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP );
 				curl_setopt( $ch, CURLOPT_PROXY,"http://proxy.shr.secureserver.net:3128" );
 				curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, FALSE );
@@ -65,9 +66,13 @@ class PP_Invoice_Authnet
 			
             curl_setopt( $ch, CURLOPT_HEADER, 0 );
             curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-            curl_setopt( $ch, CURLOPT_POSTFIELDS, rtrim( $this->fields, "& " ) );
+            curl_setopt( $ch, CURLOPT_POSTFIELDS, rtrim( $this->fields, "&" ) );
+            curl_setopt( $ch, CURLOPT_POST, 1);
+			if( get_option( 'pp_invoice_force_https' ) != 'true' )
+    			curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, FALSE );
 
             $this->response = curl_exec( $ch );
+			//error_log('$this->response = ' . print_r( $this->response, true ));
             $this->parseResults();
 
 			if ( $this->getResultResponseFull() == "Approved" ) {
@@ -80,11 +85,17 @@ class PP_Invoice_Authnet
 				$this->declined = true;
 				$this->error    = false;
 				break;
+			} else {
+				$this->approved = false;
+				$this->declined = false;
+				$this->error    = true;
+				$this->error_message = curl_error($ch);
+				//error_log('$error = ' . print_r( $error, true ));				
 			}
 			$count++;
 		}
 
-        curl_close($ch);
+        curl_close( $ch );
     }
 
     function parseResults() {

@@ -17,7 +17,7 @@
 				<th width="300"><?php _e("PayPal Username"); ?></th>
 				<td><?php echo pp_invoice_draw_inputfield('pp_invoice_paypal_address',$pp_invoice_paypal_address); ?></td>
 			</tr>
-			
+
 <?php if($hide_advanced_paypal_features) { ?>
 			<tr>
 				<th width="300"><?php _e("PayPal Pay Button URL"); ?></th>

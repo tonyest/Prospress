@@ -3,9 +3,7 @@
 		jQuery(document).ready(function(){
 			jQuery("#pp_invoice_payment_form").submit(function() {
 				// Prevent doubleclick
-				jQuery(':submit', this).click(function() {  
-					// return false;  
-				});  
+ 				jQuery('#process_payment_cc').attr('disabled', true);
 				process_cc_checkout();
 				return false;
 			});
@@ -29,13 +27,19 @@
 		jQuery("#ajax-loading-cc").show();
 		jQuery("#credit_card_information input").removeClass('cc_error');
 		jQuery("#credit_card_information select").removeClass('cc_error');
-		jQuery("#wp_cc_response ol li").remove();
+		jQuery("#pp_cc_response ol li").remove();
 
 		jQuery.post( ajaxurl, jQuery('#pp_invoice_payment_form').serialize(), function(html){
 
 			if(html == '<?php echo wp_create_nonce('pp_invoice_process_cc_' . $invoice->id); ?>') {
-				alert("transaction succesfful");
-				//window.location = "<?php echo admin_url("admin.php?page=incoming_invoices&message=Invoice $invoice_id Paid"); ?>";
+				jQuery('#credit_card_information').fadeOut("slow");
+				jQuery('#major-publishing-actions').fadeOut("slow");
+				jQuery('#process_payment_cc').fadeOut("slow");
+				jQuery('#pp_invoice_select_payment_method').fadeOut("slow");
+				jQuery(".updated").hide();
+				jQuery('#pp_cc_response').fadeIn("slow").addClass('success');
+				jQuery('#pp_cc_response ol').html("<li><?php _e('Payment processed successfully, thank you!', 'prospress'); ?></li>");
+				jQuery("#ajax-loading-cc").hide();
 				return;
 			}
 
@@ -52,12 +56,13 @@
 					var parent = jQuery("#" + id).parent();
 					//jQuery(parent).css('border', '1px solid red');
 					jQuery("#" + id).addClass('cc_error');
-					jQuery("#wp_cc_response").show();
-					jQuery("#wp_cc_response ol").append('<li>' + description + '</li>');
+					jQuery("#pp_cc_response").show();
+					jQuery("#pp_cc_response ol").append('<li>' + description + '</li>');
 				}
 				else if (explode_again[0]=='ok') {
 				}
 			}
+			jQuery('#process_payment_cc').attr('disabled', false);
 			jQuery("#ajax-loading-cc").hide();
  		});
 	}
@@ -80,7 +85,7 @@
 	<input type="hidden" name="id" value="<?php echo  $invoice->id; ?>">
 	<input type="hidden" name="currency_code" id="currency_code"  value="<?php echo $invoice->currency_code; ?>">
  	<fieldset id="credit_card_information" class="clearfix">
-		<ol>
+	<ol>
 	<li>
 		<label for="first_name"><?php _e('First Name', 'prospress'); ?></label>
 		<?php echo pp_invoice_draw_inputfield("first_name",$invoice->payer_class->first_name); ?>
@@ -117,7 +122,7 @@
 		</li>
 
 		<li>
-		<label for="zip"><?php _e('Zip Code', 'prospress'); ?></label>
+		<label for="zip"><?php _e('Zip/Postal Code', 'prospress'); ?></label>
 		<?php echo pp_invoice_draw_inputfield("zip",$invoice->payer_class->zip); ?>
 		</li>
 
@@ -126,30 +131,29 @@
 		<?php echo pp_invoice_draw_select('country',pp_invoice_country_array(),$invoice->payer_class->country); ?>
 		</li>
 
-		<li class="hide_after_success">
+		<li>
 		<label class="inputLabel" for="card_num"><?php _e('Credit Card Number', 'prospress'); ?></label>
 		<input name="card_num" autocomplete="off" onkeyup="cc_card_pick();"  id="card_num" class="credit_card_number input_field"  type="text"  size="22"  maxlength="22" />
 		</li>
 
-		<li class="hide_after_success nocard"  id="cardimage" style=" background: url(<?php echo PP_Invoice::frontend_path(); ?>/core/images/card_array.png) no-repeat;">
+		<li class="nocard"  id="cardimage" style=" background: url(<?php echo PP_Invoice::frontend_path(); ?>/core/images/card_array.png) no-repeat;">
 		</li>
 
-		<li class="hide_after_success">
+		<li>
 		<label class="inputLabel" for="exp_month"><?php _e('Expiration Date', 'prospress'); ?></label>
-		<?php _e('Month', 'prospress'); ?> <?php echo pp_invoice_draw_select('exp_month',pp_invoice_month_array()); ?>
-		<?php _e('Year', 'prospress'); ?> <select name="exp_year" id="exp_year"><?php print pp_invoice_printYearDropdown(); ?></select>
+		<?php _e('Month', 'prospress'); ?> <select name="exp_month" id="exp_month"><?php echo pp_invoice_month_dropdown(); ?></select>
+		<?php _e('Year', 'prospress'); ?> <select name="exp_year" id="exp_year"><?php echo pp_invoice_year_dropdown(); ?></select>
 		</li>
 
-		<li class="hide_after_success">
+		<li>
 		<label class="inputLabel" for="card_code"><?php _e('Security Code', 'prospress'); ?></label>
 		<input id="card_code" autocomplete="off"  name="card_code" class="input_field"  style="width: 70px;" type="text" size="4" maxlength="4" />
-		</li>
-
-		</ol>
+	</li>
+	</ol>
 	</fieldset>
-	<div id="wp_cc_response"><ol></ol></div>
+	<div id="pp_cc_response"><ol></ol></div>
 	<div id="major-publishing-actions">
-		<input type="submit" value="Process Credit Card Payment" accesskey="p" id="process_payment" class="button-primary" name="process_payment">
+		<input type="submit" value="Process Credit Card Payment" accesskey="p" id="process_payment_cc" class="button-primary" name="process_payment_cc">
 		<img alt="" id="ajax-loading-cc" style="display:none" src="<?php echo admin_url('images/wpspin_light.gif');?>">
 	</div>
 </form>

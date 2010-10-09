@@ -143,8 +143,7 @@ jQuery('#pp_invoice_process_wait span').html('<img src="<?php echo PP_Invoice::f
 				}
 			}
 
-			if ( ! shown )
-			{
+			if ( ! shown ) {
 			if(html == 'Transaction okay.') {
 
 				jQuery('.online_payment_form').fadeOut("slow");

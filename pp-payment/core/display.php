@@ -297,8 +297,7 @@ if($show_title) { ?> 	<div id="pp_invoice_need_mm" style="border-top: 1px solid 
 </p>
 </div>
 </div>
-
-	<?php
+<?php
 }
 
 function pp_invoice_show_email($invoice_id, $force_original = false) {

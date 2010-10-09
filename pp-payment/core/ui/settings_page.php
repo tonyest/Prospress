@@ -14,18 +14,16 @@
 	<tr>
 		<th>Using Godaddy Hosting</th>
 		<td>
-			<?php echo pp_invoice_draw_select('pp_invoice_using_godaddy',array("yes" => __('Yes', 'prospress'), "no" => __('No', 'prospress')), get_option('pp_invoice_using_godaddy')); ?>
+			<input type="checkbox" name="pp_invoice_using_godaddy" id="pp_invoice_using_godaddy" value="true" <?php checked( get_option('pp_invoice_using_godaddy'), 'true' );?> />
 			<?php _e( 'A special proxy must be used for credit card transactions on GoDaddy servers.', 'prospress'); ?>
 		</td>
 	</tr>
 	<tr>
-		<th><?php _e('Enforce HTTPS:', 'prospress' ); ?></a></th>
+		<th><label for="enforce_ssl"><?php _e('Enforce HTTPS:', 'prospress' ); ?></label></th>
 		<td>
-		<select  name="pp_invoice_force_https">
-		<option value="true" style="padding-right: 10px;"<?php if(get_option('pp_invoice_force_https') == 'true') echo 'selected="yes"';?>><?php _e('Yes', 'prospress' ); ?></option>
-		<option value="false" style="padding-right: 10px;"<?php if(get_option('pp_invoice_force_https') == 'false') echo 'selected="yes"';?>><?php _e('No', 'prospress' ); ?></option>
-		</select> 
-		<?php _e('If enforced, Prospress will reload the invoice page into a secure mode.', 'prospress' ); ?>
+		<input type="checkbox" name="pp_invoice_force_https" id="pp_invoice_force_https" value="true" <?php checked( get_option('pp_invoice_force_https'), 'true' );?> />
+		<?php _e('You should use SSL if offering payments via credit card.', 'prospress' ); ?>
+		<a href="http://affiliate.godaddy.com/redirect/12F28CD920606B123C313973412F6A1FFD2D46585278C9437B5EE5EBD9E46EB8" title="SSL Certificates from GoDaddy" class="wp_invoice_click_me"><?php _e('Do you need an SSL Certificate?', 'prospress'); ?></a>
 		</td>
 	</tr>
 </table>

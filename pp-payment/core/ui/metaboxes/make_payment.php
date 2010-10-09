@@ -69,9 +69,8 @@ function pp_invoice_metabox_billing_details( $invoice ) {
 </style>
 
 	<?php
-	//show dropdown if it is allowed, and there is more than one payment option
+	//show dropdown there is more than one payment option
 	if( count( $payment_array ) > 1 ) { ?>
-
 	<fieldset id="pp_invoice_select_payment_method">
 		<ol>
 			<li>
@@ -94,7 +93,7 @@ function pp_invoice_metabox_billing_details( $invoice ) {
 		 	<div class="<?php echo $name; ?>_ui payment_info"><?php include PP_INVOICE_UI_PATH . "payment_{$name}.php"; ?></div>
 	 	<?php }
 	} else { ?>
-		<p>The payee has not set up any billing options yet.  You cannot make a payment until this is done.  Contact the payee to resolve this.</p>
+		<p>The payee has not set up any billing options yet. You cannot pay until this is done. Please contact the payee to resolve this.</p>
 	<?php }
 }
 

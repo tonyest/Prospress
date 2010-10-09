@@ -279,45 +279,45 @@ function pp_invoice_delete_invoice_meta( $invoice_id,$meta_key='' ) {
 }
 
 function pp_invoice_delete( $invoice_id ) {
-global $wpdb;
+	global $wpdb;
 
-// Check to see if array is passed or single.
-if(is_array( $invoice_id )) {
-	$counter=0;
-	foreach ( $invoice_id as $single_invoice_id ) {
-		$counter++;
-		$wpdb->query("DELETE FROM ".$wpdb->payments." WHERE id = '$single_invoice_id'" );
+	// Check to see if array is passed or single.
+	if(is_array( $invoice_id )) {
+		$counter=0;
+		foreach ( $invoice_id as $single_invoice_id ) {
+			$counter++;
+			$wpdb->query("DELETE FROM ".$wpdb->payments." WHERE id = '$single_invoice_id'" );
 
-		pp_invoice_update_log( $single_invoice_id, "deleted", "Deleted on " );
+			pp_invoice_update_log( $single_invoice_id, "deleted", "Deleted on " );
 
-		// Get all meta keys for this invoice, then delete them
+			// Get all meta keys for this invoice, then delete them
 
-		$all_invoice_meta_values = $wpdb->get_col("SELECT invoice_id FROM ".$wpdb->paymentsmeta." WHERE invoice_id = '$single_invoice_id'" );
+			$all_invoice_meta_values = $wpdb->get_col("SELECT invoice_id FROM ".$wpdb->paymentsmeta." WHERE invoice_id = '$single_invoice_id'" );
+
+			//print_r( $all_invoice_meta_values);
+			foreach ( $all_invoice_meta_values as $meta_key) {
+				pp_invoice_delete_invoice_meta( $single_invoice_id );
+			}
+		}
+		return $counter . __(' invoice(s) successfully deleted.', 'prospress' );
+
+	}
+	else {
+		// Delete Single
+		$wpdb->query("DELETE FROM ".$wpdb->payments." WHERE id = '$invoice_id'" );
+
+		$all_invoice_meta_values = $wpdb->get_col("SELECT invoice_id FROM ".$wpdb->paymentsmeta." WHERE invoice_id = '$invoice_id'" );
 
 		//print_r( $all_invoice_meta_values);
 		foreach ( $all_invoice_meta_values as $meta_key) {
 			pp_invoice_delete_invoice_meta( $single_invoice_id );
 		}
+
+			// Make log entry
+		pp_invoice_update_log( $invoice_id, "deleted", "Deleted on " );
+
+		return __('Invoice successfully deleted.', 'prospress' );
 	}
-	return $counter . __(' invoice(s) successfully deleted.', 'prospress' );
-
-}
-else {
-	// Delete Single
-	$wpdb->query("DELETE FROM ".$wpdb->payments." WHERE id = '$invoice_id'" );
-
-	$all_invoice_meta_values = $wpdb->get_col("SELECT invoice_id FROM ".$wpdb->paymentsmeta." WHERE invoice_id = '$invoice_id'" );
-
-	//print_r( $all_invoice_meta_values);
-	foreach ( $all_invoice_meta_values as $meta_key) {
-		pp_invoice_delete_invoice_meta( $single_invoice_id );
-	}
-
-		// Make log entry
-	pp_invoice_update_log( $invoice_id, "deleted", "Deleted on " );
-
-	return __('Invoice successfully deleted.', 'prospress' );
-}
 }
 
 function pp_invoice_archive( $invoice_id ) {
@@ -474,7 +474,7 @@ function pp_invoice_get_single_invoice_status( $invoice_id )  {
 	// in class
 	global $wpdb;
 	if( $status_update = $wpdb->get_row("SELECT * FROM ".$wpdb->payments_log." WHERE invoice_id = $invoice_id ORDER BY `".$wpdb->payments_log."`.`time_stamp` DESC LIMIT 0 , 1" ))
-	return $status_update->value . " - " . pp_invoice_Date::convert( $status_update->time_stamp, 'Y-m-d H', 'M d Y' );
+	return $status_update->value . " - " . PP_Invoice_Date::convert( $status_update->time_stamp, 'Y-m-d H', 'M d Y' );
 }
 
 function pp_invoice_paid( $invoice_id ) {
@@ -627,12 +627,6 @@ function pp_invoice_complete_removal()  {
 	return __("All settings and databases removed.", 'prospress' );
 }
 
-function pp_get_invoice_user_id( $invoice_id ) {
-	// in class
-	global $wpdb;
-	$invoice_info = $wpdb->get_row("SELECT * FROM ".$wpdb->payments." WHERE id = '".$invoice_id."'" );
-	return $invoice_info->user_id;
-}
 
 function pp_invoice_send_email( $invoice_array, $reminder = false ) {
 	global $wpdb, $pp_invoice_email_variables;
@@ -726,7 +720,7 @@ function pp_invoice_profile_update() {
 
 }
 
-class pp_invoice_Date  {
+class PP_Invoice_Date  {
 
 	function convert( $string, $from_mask, $to_mask='', $return_unix=false ) {
 		// define the valid values that we will use to check
@@ -815,35 +809,41 @@ function pp_invoice_fix_billing_meta_array( $arr){
     return $narr;
 }
 
-function pp_invoice_printYearDropdown( $sel='' ) {
+function pp_invoice_year_dropdown( $sel='' ) {
 	$localDate=getdate();
 	$minYear = $localDate["year"];
 	$maxYear = $minYear + 15;
 
-	  $output =  "<option value=''>--</option>";
-	  for( $i=$minYear; $i<$maxYear; $i++) {
-	    $output .= "<option value='". substr( $i, 2, 2) ."'".( $sel==(substr( $i, 2, 2))?' selected':'' ).
+	$output =  "<option value=''>--</option>";
+	for( $i=$minYear; $i<$maxYear; $i++) {
+		$output .= "<option value='". substr( $i, 2, 2) ."'".( $sel==(substr( $i, 2, 2))?' selected':'' ).
 		">". $i ."</option>";
-	  }
-	  return( $output);
+	}
+	return $output;
 }
 
-function pp_invoice_printMonthDropdown( $sel='' ) {
-	$output =  "<option value=''>--</option>";
-	$output .=  "<option " . ( $sel==1?' selected':'' ) . " value='01'>01 - Jan</option>";
-	$output .=  "<option " . ( $sel==2?' selected':'' ) . "  value='02'>02 - Feb</option>";
-	$output .=  "<option " . ( $sel==3?' selected':'' ) . "  value='03'>03 - Mar</option>";
-	$output .=  "<option " . ( $sel==4?' selected':'' ) . "  value='04'>04 - Apr</option>";
-	$output .=  "<option " . ( $sel==5?' selected':'' ) . "  value='05'>05 - May</option>";
-	$output .=  "<option " . ( $sel==6?' selected':'' ) . "  value='06'>06 - Jun</option>";
-	$output .=  "<option " . ( $sel==7?' selected':'' ) . "  value='07'>07 - Jul</option>";
-	$output .=  "<option " . ( $sel==8?' selected':'' ) . "  value='08'>08 - Aug</option>";
-	$output .=  "<option " . ( $sel==9?' selected':'' ) . "  value='09'>09 - Sep</option>";
-	$output .=  "<option " . ( $sel==10?' selected':'' ) . "  value='10'>10 - Oct</option>";
-	$output .=  "<option " . ( $sel==11?' selected':'' ) . "  value='11'>11 - Nov</option>";
-	$output .=  "<option " . ( $sel==12?' selected':'' ) . "  value='12'>12 - Doc</option>";
+function pp_invoice_month_dropdown() {
 
-	return( $output);
+	$months = array(
+		"01" => __("Jan", 'prospress' ),
+		"02" => __("Feb", 'prospress' ),
+		"03" => __("Mar", 'prospress' ),
+		"04" => __("Apr", 'prospress' ),
+		"05" => __("May", 'prospress' ),
+		"06" => __("Jun", 'prospress' ),
+		"07" => __("Jul", 'prospress' ),
+		"08" => __("Aug", 'prospress' ),
+		"09" => __("Sep", 'prospress' ),
+		"10" => __("Oct", 'prospress' ),
+		"11" => __("Nov", 'prospress' ),
+		"12" => __("Dec", 'prospress' )
+	);
+
+	$output =  "<option value=''>--</option>";
+	foreach( $months as $key => $month )
+		$output .=  "<option value='$key'>$month</option>";
+
+	return $output;
 }
 
 function pp_invoice_state_array( $sel='' ) {
@@ -949,9 +949,6 @@ function pp_invoice_go_secure( $destination) {
     header( $reload );
 } 
 
-/*
-	Prepares ajax data for cc transaction
-*/
 function pp_invoice_process_cc_ajax() {
 
 	$nonce = $_REQUEST['pp_invoice_process_cc'];
@@ -1049,8 +1046,8 @@ function pp_invoice_process_cc_transaction( $cc_data = false ) {
 		require_once('gateways/authnet.class.php' );
 		require_once('gateways/authnetARB.class.php' );
 
-		$payment = new PP_Invoice_Authnet( $invoice_class->payee_id ); 
-		$payment->transaction( $_POST['card_num']); 
+		$payment = new PP_Invoice_Authnet( $invoice_class->payee_id );
+		$payment->transaction( $_POST['card_num']);
 
 		// Billing Info
 		$payment->setParameter("x_card_code", $_POST['card_code']);
@@ -1095,9 +1092,11 @@ function pp_invoice_process_cc_transaction( $cc_data = false ) {
 
 			//Mark invoice as paid
 			pp_invoice_paid( $invoice_id );
-			
-			if( get_option('pp_invoice_send_thank_you_email' ) == 'yes' ) 
+
+			if( get_option('pp_invoice_send_thank_you_email' ) == 'yes' ) {
 				pp_invoice_send_email_receipt( $invoice_id );
+			}
+
 		 } else {
 			if( $payment->getResponseText() )
 				$errors['processing_problem'][] .= $payment->getResponseText();
@@ -1105,14 +1104,9 @@ function pp_invoice_process_cc_transaction( $cc_data = false ) {
 				$errors['processing_problem'][] .= 'Processing Error. Please check your gateway settings.';
 			$stop_transaction = true;
 		}
-		// Uncomment these to troubleshoot.  You will need FireBug to view the response of the AJAX post. 
-		//echo $payment->getResponseText();
-		//echo $payment->getTransactionID();
-		//echo $payment->getAVSResponse();
-		//echo $payment->getAuthCode();
 	}
 
-	if( $stop_transaction && is_array( $_POST)) {
+	if( $stop_transaction && is_array( $_POST ) ) {
 		foreach ( $_POST as $key => $value ) {
 			if ( array_key_exists ( $key, $errors ) ) {
 				foreach ( $errors [ $key ] as $k => $v ) {
@@ -1122,8 +1116,10 @@ function pp_invoice_process_cc_transaction( $cc_data = false ) {
 				$errors_msg .= "ok|$key\n";
 			}
 		}
+		echo $errors_msg;
 	}
-	echo $errors_msg;
+
+	die();
 }
 
 function pp_invoice_process_invoice_update( $invoice_id ) {
@@ -1297,88 +1293,16 @@ function pp_invoice_detect_config_erors() {
 	return $warning_message;
 }
 
-function pp_invoice_process_settings() {
-	global $wpdb;
-
-	$settings_array = array(
-	"pp_invoice_business_name",
-	"pp_invoice_business_phone",
-	"pp_invoice_business_address",
-	"pp_invoice_default_currency_code",
-	"pp_invoice_using_godaddy",
-	"pp_invoice_email_address",
-	"pp_invoice_force_https",
-	"pp_invoice_where_to_display",
-	"pp_invoice_custom_label_tax",
-	"pp_invoice_googlecheckout_address",
-	"pp_invoice_payment_link",
-	"pp_invoice_payment_method",
-	"pp_invoice_send_thank_you_email",
-	"pp_invoice_show_business_address",
-	"pp_invoice_show_quantities",
-	"pp_invoice_use_css",
-	"pp_invoice_use_recurring",
-	"pp_invoice_user_level",
-	"pp_invoice_web_invoice_page",
-	"pp_invoice_reminder_message",
-	"pp_invoice_cc_thank_you_email",
-	"pp_invoice_lookup_text",
-	"pp_invoice_lookup_submit",
-	"pp_invoice_email_send_invoice_subject",
-	"pp_invoice_email_send_invoice_content",
-	"pp_invoice_email_send_reminder_subject",
-	"pp_invoice_email_send_reminder_content",
-	"pp_invoice_email_send_receipt_subject",
-	"pp_invoice_email_send_receipt_content" );
-
-	$payment_and_billing_settings_array = array(
-	"pp_invoice_client_change_payment_method",
-	"pp_invoice_paypal_allow",
-	"pp_invoice_paypal_address",
-	"pp_invoice_cc_allow",
-	"pp_invoice_gateway_url",
-	"pp_invoice_gateway_username",
-	"pp_invoice_gateway_tran_key",
-	"pp_invoice_gateway_merchant_email",
-	"pp_invoice_gateway_delim_data",
-	"pp_invoice_gateway_delim_char",
-	"pp_invoice_gateway_encap_char",
-	"pp_invoice_gateway_MD5Hash",
-	"pp_invoice_gateway_test_mode",
-	"pp_invoice_gateway_relay_response",
-	"pp_invoice_gateway_email_customer",
-	"pp_invoice_recurring_gateway_url",
-	"pp_invoice_moneybookers_allow",
-	"pp_invoice_moneybookers_address",
-	"pp_invoice_moneybookers_merchant",
-	"pp_invoice_moneybookers_secret",
-	"pp_invoice_moneybookers_ip",
-	"pp_invoice_alertpay_allow",
-	"pp_invoice_alertpay_address",
-	"pp_invoice_alertpay_merchant",
-	"pp_invoice_alertpay_secret",
-	"pp_invoice_gateway_email_customer",
-	"pp_invoice_alertpay_test_mode" );
-
-	pp_invoice_process_updates( $payment_and_billing_settings_array);
-	pp_invoice_process_updates( $settings_array);
-
-	if( $_REQUEST[ 'pp_invoice_load_original_email_templates' ] ) { 
-		pp_invoice_load_email_template_content(); 
-	}
-}
-
 function pp_invoice_is_not_merchant() {
 	if(get_option('pp_invoice_gateway_username' ) == '' || get_option('pp_invoice_gateway_tran_key' ) == '' ) return true;
 }
 
 function pp_invoice_process_updates( $array, $type = "update_option", $invoice_id = '' ) {
-	global $pp_invoice_debug;
 
-	if( $type == "update_option" ) foreach( $array as $item_name ) { 
-		if( $pp_invoice_debug) echo $item_name . " - " . $_POST[$item_name] . "  <br />";
-		if(isset( $_POST[$item_name])) update_option( $item_name, $_POST[$item_name]); 
-	}
+	if( $type == "update_option" )
+		foreach( $array as $item_name )
+			if( isset( $_POST[ $item_name ] ) )
+				update_option( $item_name, $_POST[ $item_name ] );
 
 	if( $type == "pp_invoice_update_invoice_meta" ) foreach( $array as $item_name ) { 
 		if( $pp_invoice_debug) echo $item_name . " - " . $_POST[$item_name] . "  <br />";
@@ -1696,11 +1620,11 @@ function pp_invoice_email_apply_variables( $matches) {
 	return $matches[2];
 }
 
-function pp_invoice_load_email_template_content() {
+function pp_invoice_add_email_template_content() {
 
 // Send invoice
-		update_option('pp_invoice_email_send_invoice_subject','%subject%' );
-		update_option('pp_invoice_email_send_invoice_content',
+		add_option('pp_invoice_email_send_invoice_subject','%subject%' );
+		add_option('pp_invoice_email_send_invoice_content',
 "Dear %recipient%, 
 
 %business_name% has sent you an invoice in the amount of %amount% for:
@@ -1716,8 +1640,8 @@ Best regards,
 %business_name% ( %business_email% )" );
 
 		// Send reminder
-		update_option('pp_invoice_email_send_reminder_subject','[Reminder] %subject%' );
-		update_option('pp_invoice_email_send_reminder_content',
+		add_option('pp_invoice_email_send_reminder_subject','[Reminder] %subject%' );
+		add_option('pp_invoice_email_send_reminder_content',
 "Dear %recipient%, 
 
 %business_name% has sent you a reminder for the invoice in the amount of %amount% for:
@@ -1733,8 +1657,8 @@ Best regards,
 %business_name% ( %business_email% )" );
 
 		// Send receipt
-		update_option('pp_invoice_email_send_receipt_subject','Receipt for %subject%' );
-		update_option('pp_invoice_email_send_receipt_content',
+		add_option('pp_invoice_email_send_receipt_subject','Receipt for %subject%' );
+		add_option('pp_invoice_email_send_receipt_content',
 "Dear %recipient%, 
 
 %business_name% has received your payment for the invoice in the amount of %amount% for:

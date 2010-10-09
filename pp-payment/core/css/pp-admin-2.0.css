@@ -8,11 +8,11 @@
 #pp_invoice_metabox_billing_details .amex {background-position: 0px -92px !important;}
 
 
-#wp_cc_response{background:#FFFAE4 none repeat scroll 0 0;border-bottom:3px solid #FFE787;padding:10px;display:none; }
-#wp_cc_response .wait{text-align: center; padding: 10px 0;}
-#wp_cc_response ol{list-style: none;}
-#wp_cc_response ol li {margin: 0 !important; height: auto !important;}
-#wp_cc_response.success {background:#EEFFE6 none repeat scroll 0 0!important;border-bottom:3px solid #73FF2F!important;font-weight:bold}
+#pp_cc_response{background:#FFFAE4 none repeat scroll 0 0;border-bottom:3px solid #FFE787;padding:10px;display:none; }
+#pp_cc_response .wait{text-align: center; padding: 10px 0;}
+#pp_cc_response ol{list-style: none;}
+#pp_cc_response ol li {margin: 0 !important; height: auto !important;}
+#pp_cc_response.success {background:#EEFFE6 none repeat scroll 0 0!important;border-bottom:3px solid #73FF2F!important;font-weight:bold}
 
 
 .cc_error {

@@ -28,7 +28,8 @@ class PP_Invoice {
 
 	function frontend_path() {
 		$path =	PP_PAYMENT_URL;
-		if(get_option( 'pp_invoice_force_https' ) == 'true' ) $path = str_replace( 'http://','https://',$path);
+		if(get_option( 'pp_invoice_force_https' ) == 'true' ) 
+			$path = str_replace( 'http://','https://',$path);
 		return $path;
 	}
 
@@ -50,9 +51,6 @@ class PP_Invoice {
 
 		add_action( 'wp_ajax_pp_invoice_process_cc_ajax', 'pp_invoice_process_cc_ajax' );
 
-		// Global admin that can configure plugin-wide settings
-		$this->admin_user_level = 10;
-
 		add_action( 'init',  array( $this, 'init' ),0);
 
  		add_action( 'profile_update','pp_invoice_profile_update' );
@@ -61,18 +59,16 @@ class PP_Invoice {
 		add_action( 'admin_menu', array( $this, 'pp_invoice_add_pages' ) );
  		add_action( 'admin_init', array( $this, 'admin_init' ) );
 
-		add_action( 'deleted_post', 'pp_invoice_delete_post' );
-
 		add_shortcode( 'pp-invoice-lookup', 'pp_invoice_lookup' );
 
 		// Only run the content script if we are not using the replace_tag method.  We want to avoid running the function twice
 		if(get_option( 'pp_invoice_where_to_display' ) != 'replace_tag' ) { add_filter( 'the_content', 'pp_invoice_the_content' );  } else { add_shortcode( 'pp-invoice', 'pp_invoice_the_content' ); 	}
 
-		$this->SetUserAccess( get_option( 'pp_invoice_user_level' ) );
+		$this->SetUserAccess( $pp_base_capability );
 	}
 
-	function SetUserAccess( $level = 8) {
-		$this->pp_invoice_user_level = $level;
+	function SetUserAccess( $capability = 'read') {
+		$this->pp_invoice_user_level = $capability;
 	}
 
 	function pp_invoice_add_pages() {
@@ -85,8 +81,10 @@ class PP_Invoice {
 		$unsent_invoices = ( count( $this->unsent_invoices) > 0 ? "(" . count( $this->unsent_invoices) . ")" : "");
 		$unpaid_invoices = ( count( $this->unpaid_invoices) > 0 ? "(" . count( $this->unpaid_invoices) . ")" : "");
 
-		$pp_invoice_page_names[ 'global_settings' ] 	= add_submenu_page( 'Prospress',  __( 'Payment Settings', 'prospress' ),  __( 'Payment Settings', 'prospress' ), $this->admin_user_level, 'invoice_settings', array( &$this,'settings_page' ) );
+		// Global Settings
+		$pp_invoice_page_names[ 'global_settings' ] 	= add_submenu_page( 'Prospress',  __( 'Payment Settings', 'prospress' ),  __( 'Payment Settings', 'prospress' ), 'manage_options', 'invoice_settings', array( &$this,'settings_page' ) );
 
+		// Invoice Pages
 		$pp_invoice_page_names[ 'web_invoice' ] 		= add_menu_page( __( 'Payments', 'prospress' ), __( 'Payments', 'prospress' ), $this->pp_invoice_user_level,'outgoing_invoices', array( &$this,'outgoing_invoices' ), $this->uri."/core/images/payments16.png", $_wp_last_object_menu );
 		$pp_invoice_page_names[ 'outgoing_invoices' ] 	= add_submenu_page( 'outgoing_invoices', __( "Incoming Payments $unsent_invoices", 'prospress' ), __( "Incoming $unsent_invoices", 'prospress' ), $this->pp_invoice_user_level, 'outgoing_invoices', array( &$this,'outgoing_invoices' ) );
 		$pp_invoice_page_names[ 'incoming_invoices' ] 	= add_submenu_page( 'outgoing_invoices', __( "Outgoing Payments $unpaid_invoices", 'prospress' ), __( "Outgoing $unpaid_invoices", 'prospress' ), $this->pp_invoice_user_level, 'incoming_invoices', array( &$this,'incoming_invoices' ) );
@@ -406,33 +404,35 @@ class PP_Invoice {
 	function settings_page() {
 		global $wpdb;
 
-		if(!empty( $_REQUEST[pp_invoice_user_level] ) )
-			update_option( 'pp_invoice_user_level', $_REQUEST[pp_invoice_user_level]);
-		if(!empty( $_REQUEST[pp_invoice_custom_label_tax] ) )
-			update_option( 'pp_invoice_custom_label_tax', $_REQUEST[pp_invoice_custom_label_tax]);
-		if(!empty( $_REQUEST[pp_invoice_default_currency_code] ) )
-			update_option( 'pp_invoice_default_currency_code', $_REQUEST[pp_invoice_default_currency_code]);
-		if(!empty( $_REQUEST[pp_invoice_using_godaddy] ) )
-			update_option( 'pp_invoice_using_godaddy', $_REQUEST[pp_invoice_using_godaddy]);
-		if(!empty( $_REQUEST[ pp_invoice_force_https ] ) )
-			update_option( 'pp_invoice_force_https', $_REQUEST[ pp_invoice_force_https ] );
-		if(!empty( $_REQUEST[pp_invoice_email_send_invoice_subject] ) )
-			update_option( 'pp_invoice_email_send_invoice_subject', $_REQUEST[pp_invoice_email_send_invoice_subject]);
-		if(!empty( $_REQUEST[pp_invoice_email_send_invoice_content] ) )
-			update_option( 'pp_invoice_email_send_invoice_content', $_REQUEST[pp_invoice_email_send_invoice_content]);
-		if(!empty( $_REQUEST[pp_invoice_email_send_reminder_subject] ) )
-			update_option( 'pp_invoice_email_send_reminder_subject', $_REQUEST[pp_invoice_email_send_reminder_subject]);
-		if(!empty( $_REQUEST[pp_invoice_email_send_reminder_content] ) )
-			update_option( 'pp_invoice_email_send_reminder_content', $_REQUEST[pp_invoice_email_send_reminder_content]);
-		if(!empty( $_REQUEST[pp_invoice_email_send_receipt_subject] ) )
-			update_option( 'pp_invoice_email_send_receipt_subject', $_REQUEST[pp_invoice_email_send_receipt_subject]);
-		if(!empty( $_REQUEST[pp_invoice_email_send_receipt_content] ) )
-			update_option( 'pp_invoice_email_send_receipt_content', $_REQUEST[pp_invoice_email_send_receipt_content]);
+		if(!empty( $_REQUEST[ 'pp_invoice_custom_label_tax' ] ) )
+			update_option( 'pp_invoice_custom_label_tax', $_REQUEST[ 'pp_invoice_custom_label_tax' ]);
+
+		if( empty( $_REQUEST[ 'pp_invoice_using_godaddy' ] ) )
+			$_REQUEST[ 'pp_invoice_using_godaddy' ] = 'false';
+		update_option( 'pp_invoice_using_godaddy', $_REQUEST[ 'pp_invoice_using_godaddy' ] );
+
+		if( empty( $_REQUEST[ 'pp_invoice_force_https' ] ) )
+			$_REQUEST[ 'pp_invoice_force_https' ] = 'false';
+		update_option( 'pp_invoice_force_https', $_REQUEST[ 'pp_invoice_force_https' ] );
+
+		if(!empty( $_REQUEST[ 'pp_invoice_email_send_invoice_subject' ] ) )
+			update_option( 'pp_invoice_email_send_invoice_subject', $_REQUEST[ 'pp_invoice_email_send_invoice_subject' ]);
+		if(!empty( $_REQUEST[ 'pp_invoice_email_send_invoice_content' ] ) )
+			update_option( 'pp_invoice_email_send_invoice_content', $_REQUEST[ 'pp_invoice_email_send_invoice_content' ]);
+
+		if(!empty( $_REQUEST[ 'pp_invoice_email_send_reminder_subject' ] ) )
+			update_option( 'pp_invoice_email_send_reminder_subject', $_REQUEST[ 'pp_invoice_email_send_reminder_subject' ]);
+		if(!empty( $_REQUEST[ 'pp_invoice_email_send_reminder_content' ] ) )
+			update_option( 'pp_invoice_email_send_reminder_content', $_REQUEST[ 'pp_invoice_email_send_reminder_content' ]);
+
+		if(!empty( $_REQUEST[ 'pp_invoice_email_send_receipt_subject' ] ) )
+			update_option( 'pp_invoice_email_send_receipt_subject', $_REQUEST[ 'pp_invoice_email_send_receipt_subject' ]);
+		if(!empty( $_REQUEST[ 'pp_invoice_email_send_receipt_content' ] ) )
+			update_option( 'pp_invoice_email_send_receipt_content', $_REQUEST[ 'pp_invoice_email_send_receipt_content' ]);
 
 		if(!$wpdb->query("SHOW TABLES LIKE '".$wpdb->paymentsmeta."';") || !$wpdb->query("SHOW TABLES LIKE '".$wpdb->payments."';") || !$wpdb->query("SHOW TABLES LIKE '".$wpdb->payments_log."';") ) { $warning_message = "The plugin database tables are gone, deactivate and reactivate plugin to re-create them."; }if( $warning_message) echo "<div id=\"message\" class='error' ><p>$warning_message</p></div>";
 
 		include PP_INVOICE_UI_PATH . 'settings_page.php';
-
 	}
 
 	function admin_init() {
@@ -579,58 +579,11 @@ class PP_Invoice {
 
 			update_option( 'PP_PAYMENTS_DB_VERSION', PP_PAYMENTS_DB_VERSION );
 
-			// Help with updating
-			if(get_option( 'pp_invoice_paypal_address','' ) != '' ) update_option( 'pp_invoice_paypal_allow', 'yes' );
-			if(get_option( 'pp_invoice_gateway_username','' ) != '' ) update_option( 'pp_invoice_cc_allow', 'yes' );
-
 			// Localization Labels
 			add_option( 'pp_invoice_custom_label_tax', "Tax");
+			add_option( 'pp_invoice_force_https','true' );
 
-			// Invoice Lookup
-			add_option( 'pp_invoice_lookup_text', "Pay Your Invoice");
-			add_option( 'pp_invoice_lookup_submit', "Lookup");
-
-			// Frontend Customization
-			add_option( 'pp_invoice_fe_paypal_link_url', "https://www.paypal.com/en_US/i/btn/btn_paynow_LG.gif");
-
-			add_option( 'pp_invoice_email_address',get_bloginfo( 'admin_email' ) );
-			add_option( 'pp_invoice_business_name', get_bloginfo( 'blogname' ) );
-			add_option( 'pp_invoice_business_address', '' );
-			add_option( 'pp_invoice_show_business_address', 'no' );
-			add_option( 'pp_invoice_payment_method','' );
-			add_option( 'pp_invoice_user_level','read' );
-			add_option( 'pp_invoice_web_invoice_page','' );
-			add_option( 'pp_invoice_where_to_display','overwrite' );
-			add_option( 'pp_invoice_paypal_address','' );
-			add_option( 'pp_invoice_moneybookers_address','' );
-			add_option( 'pp_invoice_googlecheckout_address','' );
-			add_option( 'pp_invoice_default_currency_code','USD' );
-			add_option( 'pp_invoice_reminder_message','This is a reminder.' );
-
-			add_option( 'pp_invoice_show_quantities','Hide' );
-			add_option( 'pp_invoice_use_css','yes' );
-			add_option( 'pp_invoice_force_https','false' );
-			add_option( 'pp_invoice_send_thank_you_email','no' );
-
-			add_option( 'pp_invoice_use_recurring','yes' );
-
-			//Authorize.net Gateway  Settings
-			add_option( 'pp_invoice_client_change_payment_method','yes' );
-			add_option( 'pp_invoice_gateway_username','' );
-			add_option( 'pp_invoice_gateway_tran_key','' );
-			add_option( 'pp_invoice_gateway_delim_char',',' );
-			add_option( 'pp_invoice_gateway_encap_char','' );
-			add_option( 'pp_invoice_gateway_merchant_email',get_bloginfo( 'admin_email' ) );
-			add_option( 'pp_invoice_recurring_gateway_url','https://api.authorize.net/xml/v1/request.api' );
-			add_option( 'pp_invoice_gateway_url','https://gateway.merchantplus.com/cgi-bin/PAWebClient.cgi' );
-			add_option( 'pp_invoice_gateway_MD5Hash','' );
-
-			add_option( 'pp_invoice_gateway_test_mode','FALSE' );
-			add_option( 'pp_invoice_gateway_delim_data','TRUE' );
-			add_option( 'pp_invoice_gateway_relay_response','FALSE' );
-			add_option( 'pp_invoice_gateway_email_customer','FALSE' );
-
-			pp_invoice_load_email_template_content();
+			pp_invoice_add_email_template_content();
 	}
 }
 
@@ -868,12 +821,12 @@ class PP_Invoice_GetInfo {
 
 			case 'log_status':
 				if( $status_update = $wpdb->get_row("SELECT * FROM ".PP_Invoice::tablename( 'log' )." WHERE invoice_id = ".$this->id ." ORDER BY ".PP_Invoice::tablename( 'log' ).".time_stamp DESC LIMIT 0 , 1") )
-				return $status_update->value . " - " . pp_invoice_Date::convert( $status_update->time_stamp, 'Y-m-d H', 'M d Y' );
+				return $status_update->value . " - " . PP_Invoice_Date::convert( $status_update->time_stamp, 'Y-m-d H', 'M d Y' );
 			break;
 			
 			case 'paid_date':
 				$paid_date = $wpdb->get_var("SELECT time_stamp FROM  ".PP_Invoice::tablename( 'log' )." WHERE action_type = 'paid' AND invoice_id = '".$this->id."' ORDER BY time_stamp DESC LIMIT 0, 1");
-				if( $paid_date) return pp_invoice_Date::convert( $paid_date, 'Y-m-d H', 'M d Y' );
+				if( $paid_date) return PP_Invoice_Date::convert( $paid_date, 'Y-m-d H', 'M d Y' );
 				//echo "SELECT time_stamp FROM  ".PP_Invoice::tablename( 'log' )." WHERE action_type = 'paid' AND invoice_id = '".$this->id."' ORDER BY time_stamp DESC LIMIT 0, 1";
 			break;
 
