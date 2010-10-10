@@ -40,10 +40,10 @@
 <div id="selling" >
 <table class="form-table">
 	<tr>
-		<th width="200">Basic Settings</th>
+		<th><?php _e("Basic Settings:");?></th>
 		<td>
 		<?php echo wpi_checkbox("group=pp_invoice_user_settings&name=show_address_on_invoice&label=Display my address on invoice page (set your address under <a href='profile.php#billing_info'>Profile</a>).&value=true", $user_settings[show_address_on_invoice]); ?><br />
-		Tax Label: <?php echo wpi_input("group=pp_invoice_user_settings&name=tax_label&value={$user_settings[tax_label]}&style=width: 80px;"); ?><br />
+		<?php _e("Tax Label:"); echo wpi_input("group=pp_invoice_user_settings&name=tax_label&value={$user_settings[tax_label]}&style=width: 80px;"); ?><br />
 		</td>
 	</tr>
 	<tr>
@@ -63,7 +63,7 @@
 		</td>
 	</tr>
 	<tr>
-		<th>Default Payment Method:</th>
+		<th><?php _e( 'Default Payment Method:', 'prospress' ); ?></th>
 		<td>
 			<select id="default_payment_venue" name="pp_invoice_user_settings[default_payment_venue]" style="width: 100px;">
 			<?php if($user_settings['paypal_allow']): ?>
