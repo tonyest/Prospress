@@ -2,9 +2,12 @@
 		//<![CDATA[
 		jQuery(document).ready(function(){
 			jQuery("#pp_invoice_payment_form").submit(function() {
-				// Prevent doubleclick
  				jQuery('#process_payment_cc').attr('disabled', true);
 				process_cc_checkout();
+				return false;
+			});
+			jQuery("#card_num").keyup(function(){
+				cc_card_pick();
 				return false;
 			});
 		});

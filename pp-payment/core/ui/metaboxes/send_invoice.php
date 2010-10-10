@@ -25,30 +25,32 @@ function pp_invoice_metabox_publish( $ic ) { ?>
 				<th>Invoice ID </th>
 				<td ><?php echo $ic->id; ?></td>
 			</tr>
+<?php/*
 			<tr class="invoice_main">
 				<th>Tax </th>
 				<td>
 					<input name="pp_invoice[tax]" id="pp_invoice_tax" autocomplete="off" size="5" value="<?php echo $ic->tax ?>">%</input>
 				</td>
 			</tr>	
+*/?>
 			<tr class="">
 				<th>Due Date</th>
 				<td>
 					<div id="timestampdiv" style="display:block;">
 						<select id="mm" name="pp_invoice[due_date_month]">
 							<option></option>
-							<option value="1" <?php if( $ic->due_date_month == '1') echo " selected='selected'";?>>Jan</option>
-							<option value="2" <?php if( $ic->due_date_month == '2') echo " selected='selected'";?>>Feb</option>
-							<option value="3" <?php if( $ic->due_date_month == '3') echo " selected='selected'";?>>Mar</option>
-							<option value="4" <?php if( $ic->due_date_month == '4') echo " selected='selected'";?>>Apr</option>
-							<option value="5" <?php if( $ic->due_date_month == '5') echo " selected='selected'";?>>May</option>
-							<option value="6" <?php if( $ic->due_date_month == '6') echo " selected='selected'";?>>Jun</option>
-							<option value="7" <?php if( $ic->due_date_month == '7') echo " selected='selected'";?>>Jul</option>
-							<option value="8" <?php if( $ic->due_date_month == '8') echo " selected='selected'";?>>Aug</option>
-							<option value="9" <?php if( $ic->due_date_month == '9') echo " selected='selected'";?>>Sep</option>
-							<option value="10" <?php if( $ic->due_date_month == '10') echo " selected='selected'";?>>Oct</option>
-							<option value="11" <?php if( $ic->due_date_month == '11') echo " selected='selected'";?>>Nov</option>
-							<option value="12" <?php if( $ic->due_date_month == '12') echo " selected='selected'";?>>Dec</option>
+							<option value="1" <?php selected( $ic->due_date_month, '1' );?>>Jan</option>
+							<option value="2" <?php selected( $ic->due_date_month, '2' );?>>Feb</option>
+							<option value="3" <?php selected( $ic->due_date_month, '3' );?>>Mar</option>
+							<option value="4" <?php selected( $ic->due_date_month, '4' );?>>Apr</option>
+							<option value="5" <?php selected( $ic->due_date_month, '5' );?>>May</option>
+							<option value="6" <?php selected( $ic->due_date_month, '6' );?>>Jun</option>
+							<option value="7" <?php selected( $ic->due_date_month, '7' );?>>Jul</option>
+							<option value="8" <?php selected( $ic->due_date_month, '8' );?>>Aug</option>
+							<option value="9" <?php selected( $ic->due_date_month, '9');?>>Sep</option>
+							<option value="10" <?php selected( $ic->due_date_month, '10');?>>Oct</option>
+							<option value="11" <?php selected( $ic->due_date_month, '11');?>>Nov</option>
+							<option value="12" <?php selected( $ic->due_date_month, '12');?>>Dec</option>
 						</select>
 						<input type="text" id="jj" name="pp_invoice[due_date_day]" value="<?php echo $ic->due_date_day; ?>" size="2" maxlength="2" autocomplete="off" />, 
 						<input type="text" id="aa" name="pp_invoice[due_date_year]" value="<?php echo $ic->due_date_year; ?>" size="4" maxlength="5" autocomplete="off" />

@@ -5,7 +5,7 @@
 */
 
 // Hide errors if using PHP4, otherwise we get many html_entity_decode() errors
-if (phpversion() <= 5 && $pp_invoice_debug == false ) { ini_set('error_reporting', 0); }
+if (phpversion() <= 5 ) { ini_set('error_reporting', 0); }
 
 //Delete any invoices associated with a post that is being deleted.	
 function pp_invoice_delete_post( $post_id ) {
@@ -1098,10 +1098,14 @@ function pp_invoice_process_cc_transaction( $cc_data = false ) {
 			}
 
 		 } else {
-			if( $payment->getResponseText() )
+			if( $payment->getResponseText() ) {
 				$errors['processing_problem'][] .= $payment->getResponseText();
-			else 
+			} elseif ( $payment->getErrorMessage() ){
+				foreach( preg_split( "/\n|(?<=\.)\s/", $payment->getErrorMessage() ) as $msg )
+					$errors['processing_problem'][] .= $msg;
+			} else {
 				$errors['processing_problem'][] .= 'Processing Error. Please check your gateway settings.';
+			}
 			$stop_transaction = true;
 		}
 	}
@@ -1305,7 +1309,6 @@ function pp_invoice_process_updates( $array, $type = "update_option", $invoice_i
 				update_option( $item_name, $_POST[ $item_name ] );
 
 	if( $type == "pp_invoice_update_invoice_meta" ) foreach( $array as $item_name ) { 
-		if( $pp_invoice_debug) echo $item_name . " - " . $_POST[$item_name] . "  <br />";
 		if(isset( $_POST[$item_name])) pp_invoice_update_invoice_meta( $invoice_id, $item_name, $_POST[$item_name]); }
 }
 

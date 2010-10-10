@@ -72,7 +72,6 @@ class PP_Invoice_Authnet
     			curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, FALSE );
 
             $this->response = curl_exec( $ch );
-			//error_log('$this->response = ' . print_r( $this->response, true ));
             $this->parseResults();
 
 			if ( $this->getResultResponseFull() == "Approved" ) {
@@ -90,7 +89,6 @@ class PP_Invoice_Authnet
 				$this->declined = false;
 				$this->error    = true;
 				$this->error_message = curl_error($ch);
-				//error_log('$error = ' . print_r( $error, true ));				
 			}
 			$count++;
 		}
@@ -154,6 +152,11 @@ class PP_Invoice_Authnet
 
     public function getTransactionID() {
 	   return str_replace($this->params['x_encap_char'],'',$this->results[6]);
+    }
+
+	// Added for Prospress
+    public function getErrorMessage() {
+		return $this->error_message;
     }
 }
 

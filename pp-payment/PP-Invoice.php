@@ -16,7 +16,7 @@ $PP_Invoice = new PP_Invoice();
 class PP_Invoice {
 
 	var $Invoice;
-	var $pp_invoice_user_level;
+	var $process_payment_cc;
 	var $uri;
 	var $the_path;
 	var $frontend_path;
@@ -40,7 +40,7 @@ class PP_Invoice {
 
 		add_action( 'pp_activation', array( &$this, 'install' ) );
 
-		$this->pp_invoice_user_level = $pp_base_capability;
+		$this->process_payment_cc = $pp_base_capability;
 		$this->path = dirname(__FILE__);
 		$this->file = basename(__FILE__);
 		$this->directory = basename( $this->path);
@@ -68,7 +68,7 @@ class PP_Invoice {
 	}
 
 	function SetUserAccess( $capability = 'read') {
-		$this->pp_invoice_user_level = $capability;
+		$this->process_payment_cc = $capability;
 	}
 
 	function pp_invoice_add_pages() {
@@ -85,14 +85,14 @@ class PP_Invoice {
 		$pp_invoice_page_names[ 'global_settings' ] 	= add_submenu_page( 'Prospress',  __( 'Payment Settings', 'prospress' ),  __( 'Payment Settings', 'prospress' ), 'manage_options', 'invoice_settings', array( &$this,'settings_page' ) );
 
 		// Invoice Pages
-		$pp_invoice_page_names[ 'web_invoice' ] 		= add_menu_page( __( 'Payments', 'prospress' ), __( 'Payments', 'prospress' ), $this->pp_invoice_user_level,'outgoing_invoices', array( &$this,'outgoing_invoices' ), $this->uri."/core/images/payments16.png", $_wp_last_object_menu );
-		$pp_invoice_page_names[ 'outgoing_invoices' ] 	= add_submenu_page( 'outgoing_invoices', __( "Incoming Payments $unsent_invoices", 'prospress' ), __( "Incoming $unsent_invoices", 'prospress' ), $this->pp_invoice_user_level, 'outgoing_invoices', array( &$this,'outgoing_invoices' ) );
-		$pp_invoice_page_names[ 'incoming_invoices' ] 	= add_submenu_page( 'outgoing_invoices', __( "Outgoing Payments $unpaid_invoices", 'prospress' ), __( "Outgoing $unpaid_invoices", 'prospress' ), $this->pp_invoice_user_level, 'incoming_invoices', array( &$this,'incoming_invoices' ) );
-		$pp_invoice_page_names[ 'user_settings' ] 		= add_submenu_page( 'outgoing_invoices', __( 'Settings', 'prospress' ),  __( 'Settings', 'prospress' ), $this->pp_invoice_user_level, 'user_settings_page', array( &$this,'user_settings_page' ) );
+		$pp_invoice_page_names[ 'web_invoice' ] 		= add_menu_page( __( 'Payments', 'prospress' ), __( 'Payments', 'prospress' ), $this->process_payment_cc,'outgoing_invoices', array( &$this,'outgoing_invoices' ), $this->uri."/core/images/payments16.png", $_wp_last_object_menu );
+		$pp_invoice_page_names[ 'outgoing_invoices' ] 	= add_submenu_page( 'outgoing_invoices', __( "Incoming Payments $unsent_invoices", 'prospress' ), __( "Incoming $unsent_invoices", 'prospress' ), $this->process_payment_cc, 'outgoing_invoices', array( &$this,'outgoing_invoices' ) );
+		$pp_invoice_page_names[ 'incoming_invoices' ] 	= add_submenu_page( 'outgoing_invoices', __( "Outgoing Payments $unpaid_invoices", 'prospress' ), __( "Outgoing $unpaid_invoices", 'prospress' ), $this->process_payment_cc, 'incoming_invoices', array( &$this,'incoming_invoices' ) );
+		$pp_invoice_page_names[ 'user_settings' ] 		= add_submenu_page( 'outgoing_invoices', __( 'Settings', 'prospress' ),  __( 'Settings', 'prospress' ), $this->process_payment_cc, 'user_settings_page', array( &$this,'user_settings_page' ) );
 
-		$pp_invoice_page_names[ 'make_payment' ]		= add_submenu_page( 'hidden', __( 'View Invoice', 'prospress' ), __( 'View Invoice', 'prospress' ), $this->pp_invoice_user_level, 'make_payment', array( &$this,'make_payment' ) );
-		$pp_invoice_page_names[ 'send_invoice' ] 		= add_submenu_page( 'hidden', __( 'Send Invoice', 'prospress' ), __( 'Send Invoice', 'prospress' ), $this->pp_invoice_user_level, 'send_invoice', array( &$this,'send_invoice' ) );
-		$pp_invoice_page_names[ 'save_and_preview' ] 	= add_submenu_page( 'hidden', __( 'Save and Preview', 'prospress' ), __( 'Save and Preview', 'prospress' ), $this->pp_invoice_user_level, 'save_and_preview', array( &$this,'save_and_preview' ) );
+		$pp_invoice_page_names[ 'make_payment' ]		= add_submenu_page( 'hidden', __( 'View Invoice', 'prospress' ), __( 'View Invoice', 'prospress' ), $this->process_payment_cc, 'make_payment', array( &$this,'make_payment' ) );
+		$pp_invoice_page_names[ 'send_invoice' ] 		= add_submenu_page( 'hidden', __( 'Send Invoice', 'prospress' ), __( 'Send Invoice', 'prospress' ), $this->process_payment_cc, 'send_invoice', array( &$this,'send_invoice' ) );
+		$pp_invoice_page_names[ 'save_and_preview' ] 	= add_submenu_page( 'hidden', __( 'Save and Preview', 'prospress' ), __( 'Save and Preview', 'prospress' ), $this->process_payment_cc, 'save_and_preview', array( &$this,'save_and_preview' ) );
 
 		foreach( $pp_invoice_page_names as $name => $menu) {
  			add_action("admin_print_scripts-$menu", array( $this, 'admin_print_scripts' ) );
@@ -213,8 +213,7 @@ class PP_Invoice {
 
 	function make_payment() {
 		global $user_ID, $wpdb, $page_now, $pp_invoice_page_names, $screen_layout_columns;
-
-		echo $page_now;
+		
 		$invoice_id = $_REQUEST[ 'invoice_id' ];
 		$has_invoice_permissions = pp_invoice_user_has_permissions( $invoice_id, $user_id);
 
@@ -392,7 +391,6 @@ class PP_Invoice {
 
 			if(!$user_settings) {
 				$user_settings = pp_invoice_load_default_user_settings( $user_ID);
-
 				}
 		}
 
@@ -445,8 +443,16 @@ class PP_Invoice {
 
 	}
 
+
 	function init() {
 		global $wpdb, $wp_version, $user_ID;
+
+		if( isset( $_GET[ 'page' ] ) && $_GET[ 'page' ] == 'make_payment' && get_option( 'pp_invoice_force_https' ) == 'true' && !is_ssl() ){
+			$redirect = admin_url( 'admin.php', 'https' );
+			$redirect = add_query_arg( $_GET, $redirect );
+			wp_safe_redirect( $redirect );
+			exit();
+		}
 
 		// Load default user settings if none exist
 		if(!get_usermeta( $user_ID, 'pp_invoice_settings' ) ) {
@@ -926,13 +932,13 @@ class PP_Invoice_GetInfo {
 			
 			case 'tax_percent':
 				if(pp_invoice_meta( $this->id,'pp_invoice_tax' ) != "") return pp_invoice_meta( $this->id,'pp_invoice_tax' );	
-				return pp_invoice_meta( $this->id,'tax_value' );	
-			break;	
+				return pp_invoice_meta( $this->id,'tax_value' );
+			break;
 			
 			case 'tax_total':
 				if(pp_invoice_meta( $this->id,'pp_invoice_tax' ) != "") return  pp_invoice_meta( $this->id,'pp_invoice_tax' ) * $invoice_info->amount;	
-				return  pp_invoice_meta( $this->id,'tax_value' ) * $invoice_info->amount;	
-			break;	
+				return  pp_invoice_meta( $this->id,'tax_value' ) * $invoice_info->amount;
+			break;
 			
 			case 'subject':
 				return $invoice_info->subject;	
