@@ -81,7 +81,7 @@ function the_post_end_time( $post_id = '', $units = 3, $separator = ' ' ) {
 
 	if( $post_end == false )
 	 	echo __('Now', 'prospress' );
-	elseif( $post_end - time() > 60 * 60 * 24 * 7 ) // Show date if ending more than a week in the future
+	elseif( $post_end - time() > 60 * 60 * 24 ) // Show date if ending more than a day in the future
 		echo get_post_end_time( $post_id, 'g:ia', 'user' ) . $separator . get_post_end_time( $post_id, 'j-M-Y', 'user' );
 	else
 		echo pp_human_interval( $post_end - time(), $units, $separator );

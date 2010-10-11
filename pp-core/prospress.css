@@ -12,6 +12,9 @@ LAYOUT: Two columns
 /*
 Index & Single Page Layouts
 -------------------------------------------------------------- */
+.pp-title{
+	clear:none;
+}
 .pp-post{
 	float:left;
 	width:100%;
@@ -23,20 +26,22 @@ Index & Single Page Layouts
 }
 .pp-post-content{
 	float:left;
-	width:70%;
+	width:100%;
 }
 .prospress-content{
 	clear:both;
 }
 .pp-price,.pp-end{
 	float:right;
-	margin:2px 5px;
+	margin:2px;
 	text-align:center;
 	font-size:0.85em;
+	width:15%;
+	height:7em;
 }
 .price-header,.end-header{
 	float:right;
-	width:12%;
+	width:14%;
 	margin:2px 5px 0;
 	text-align:center;
 	font-weight:bold;
@@ -45,7 +50,7 @@ Index & Single Page Layouts
 .pp-publish-details{
 	font-size:0.8em;
 }
-.pp-excerpt,.pp-content{
+.pp-content{
 	clear:both;
 }
 .pp-publish-date,.pp-end-date,.pp-author,.pp-author-feedback{
