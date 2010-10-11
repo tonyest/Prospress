@@ -136,30 +136,6 @@ dl.payee_details
 	padding: 0;
 }
 
-#invoice_sorter_table .column-balance {
-	width: 70px;
-}
-
-#invoice_sorter_table .column-user {
-	width: 140px;
-}
-
-#invoice_sorter_table .column-invoice_id {
-	width: 70px;
-}
-
- 
-#invoice_sorter_table .column-due_date {
-	width: 100px;
-}
-
-#invoice_sorter_table .column-date_sent {
-	width: 115px;
-}
-
-#invoice_sorter_table .column-status {
-	width: 110px;
-}
 
 
 #pp_invoice_user_metabox .input_field {
