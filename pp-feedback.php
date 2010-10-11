@@ -253,8 +253,6 @@ function pp_feedback_form_submit( $feedback ) {
 
 	get_currentuserinfo();
 
-	//error_log('in pp_feedback_form_submit, feedback = ' . print_r( $feedback, true ) );
-
 	pp_can_edit_feedback( $feedback[ 'post_id' ] );
 
 	if( pp_post_has_feedback( $feedback[ 'post_id' ], $user_ID ) ){
@@ -332,7 +330,7 @@ function pp_insert_feedback( $feedback ) {
 		'comment_status'	=> 'closed',
 		'ping_status' 		=> 'closed',
 		'post_type' 		=> 'feedback',
-		'post_name' 		=> $feedback[ 'feedback_author' ] . '-feedback-' . $feedback[ 'feedback_recipient' ],
+		'post_name' 		=> $feedback[ 'feedback_author' ] . '-feedback-' . $feedback[ 'feedback_recipient' ] . '-on-' . $feedback[ 'post_id' ],
 		'post_title' 		=> apply_filters( 'feedback_item_title', sprintf( __( "Feedback for %s from %s ", 'prospress' ), get_userdata( $feedback[ 'feedback_recipient' ] )->user_nicename, get_userdata( $feedback[ 'feedback_author' ] )->user_nicename ) )
 		);
 
@@ -346,7 +344,7 @@ function pp_insert_feedback( $feedback ) {
 
 	// user trying to edit feedback when not allowed
 	if( pp_post_has_feedback( $feedback[ 'post_id' ], $feedback[ 'feedback_author' ] ) && get_option( 'edit_feedback' ) != 'true' ) 
-			wp_die( __( 'You are not allowed to edit this feedback.', 'prospress' ) );
+		wp_die( __( 'You are not allowed to edit this feedback.', 'prospress' ) );
 
 	$feedback_id = wp_insert_post( $feedback_post );
 
