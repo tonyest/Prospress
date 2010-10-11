@@ -12,9 +12,9 @@ if ( !defined( 'PP_VERSION' ) )
 	define( 'PP_VERSION', '0.2' );
 
 if( !defined( 'PP_PLUGIN_DIR' ) )
-	define( 'PP_PLUGIN_DIR', WP_PLUGIN_DIR . '/prospress' );
+	define( 'PP_PLUGIN_DIR', WP_PLUGIN_DIR . '/' . basename(dirname(__FILE__)) );
 if( !defined( 'PP_PLUGIN_URL' ) )
-	define( 'PP_PLUGIN_URL', WP_PLUGIN_URL . '/prospress' );
+	define( 'PP_PLUGIN_URL', WP_PLUGIN_URL . '/' . basename(dirname(__FILE__)) );
 
 load_plugin_textdomain( 'prospress', PP_PLUGIN_DIR . '/languages', dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 

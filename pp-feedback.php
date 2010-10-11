@@ -53,7 +53,12 @@ function pp_register_feedback_post_type(){
 			'rewrite' 	=> array( 'slug' => 'feedback', 'with_front' => false ),
 			'show_in_nav_menus' => false,
 			'exclude_from_search' => true,
-			'capability_type' => 'prospress_post',
+			'capability_type' => 'post',
+			'capabilities' => array( 'edit_post' => 'read', // Allow any registered user to edit feedback
+									 'edit_posts' => 'read',
+									 'publish_posts' => 'read',
+									 'delete_post' => 'read'
+			 						),
 			'hierarchical' => true, // post parent is the post for which the feedback relates
 			'supports' 	=> array(
 							'title',

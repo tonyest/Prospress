@@ -14,7 +14,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 	// Constructors
 
 	public function __construct() {
-		do_action( 'auction_init' );
+		do_action( 'auction_pre_construct' );
 
 		if ( !defined( 'BID_INCREMENT' ) )
 			define( 'BID_INCREMENT', '0.05' );
@@ -24,6 +24,8 @@ class PP_Auction_Bid_System extends PP_Market_System {
 				'bid_button_value' => __( 'Bid!', 'prospress' ),
 				'adds_post_fields' => true
 				);
+
+		do_action( 'auction_init', $args );
 
 		parent::__construct( __( 'auctions', 'prospress' ), $args );
 	}

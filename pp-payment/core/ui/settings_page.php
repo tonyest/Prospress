@@ -19,7 +19,7 @@
 		</td>
 	</tr>
 	<tr>
-		<th><label for="enforce_ssl"><?php _e('Use SSL:', 'prospress' ); ?></label></th>
+		<th><label for="pp_invoice_force_https"><?php _e('Use SSL:', 'prospress' ); ?></label></th>
 		<td>
 		<input type="checkbox" name="pp_invoice_force_https" id="pp_invoice_force_https" value="true" <?php checked( get_option('pp_invoice_force_https'), 'true' );?> />
 		<?php _e('You should use SSL to secure the payment page if offering credit card as a payment option.', 'prospress' ); ?>
