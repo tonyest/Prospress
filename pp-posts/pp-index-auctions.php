@@ -29,6 +29,8 @@ Template Name: Prospress Index
 
 			<div class="pp-post">
 				<div class="pp-post-content">
+					<div class="pp-end"><?php the_post_end_time( $the_ID, 2, '<br/>' ); ?></div>
+					<div class="pp-price"><?php $market->the_winning_bid_value(); ?></div>
 					<h2 class="pp-title entry-title">
 						<a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>">
 							<?php the_title(); ?>
@@ -45,8 +47,6 @@ Template Name: Prospress Index
 						<?php _e( 'by ', 'prospress'); the_author(); ?>
 					</div>
 				</div>
-				<div class="pp-end"><?php the_post_end_time( $the_ID, 3, '<br/>' ); ?></div>
-				<div class="pp-price"><?php $market->the_winning_bid_value(); ?></div>
 			</div>
 
 			<?php endwhile; else: ?>
