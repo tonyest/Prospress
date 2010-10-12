@@ -178,17 +178,21 @@ class PP_Auction_Bid_System extends PP_Market_System {
 
 	public function post_fields(){
 		global $post_ID, $currency_symbol;
+
 		$start_price = get_post_meta( $post_ID, 'start_price', true );
+
+		$disabled = ( $this->get_bid_count( $post_id ) ) ? 'disabled="disabled" ' : '';
 
 		wp_nonce_field( __FILE__, 'selling_options_nonce', false ) ?>
 		<table>
 		  <tbody>
 				<tr>
 				  <td class="left">
-					<label for="start_price"><?php echo __("Starting Price: ", 'prospress' ) . $currency_symbol; ?></label>
+					<label for="start_price"><?php echo __( "Starting Price: ", 'prospress' ) . $currency_symbol; ?></label>
 					</td>
 					<td>
-				 		<input type="text" name="start_price" value="<?php echo number_format_i18n( $start_price, 2 ); ?>" size="20" />
+				 		<input type="text" name="start_price" value="<?php echo number_format_i18n( $start_price, 2 ); ?>" size="20" <?php echo $disabled; ?>/>
+						<?php if( $disabled != '' ) echo '<span>' . __( 'Bids have been made on your auction, you cannot change the start price.', 'prospress' ) . '</span>'; ?>
 					</td>
 				</tr>
 			</tbody>
@@ -197,18 +201,21 @@ class PP_Auction_Bid_System extends PP_Market_System {
 	}
 
 	public function post_fields_save( $post_id, $post ){
-		global $wpdb;
+		global $wpdb, $wp_locale;
 
-		if(wp_is_post_revision($post_id))
-			$post_id = wp_is_post_revision($post_id);
+		if( wp_is_post_revision( $post_id ) )
+			$post_id = wp_is_post_revision( $post_id );
 
 		if ( 'page' == $_POST['post_type'] )
 			return $post_id;
-		elseif ( !current_user_can( 'edit_post', $post_id ))
+		elseif( !current_user_can( 'edit_post', $post_id ) )
+			return $post_id;
+		elseif( $this->get_bid_count( $post_id ) )
 			return $post_id;
 
 		/** @TODO casting start_price as a float and removing ',' and ' ' will cause a bug for international currency formats. */
-		$_POST[ 'start_price' ] = (float)str_replace( array(",", " "), "", $_POST[ 'start_price' ] );
+		$ts = preg_quote( $wp_locale->number_format['thousands_sep'] );
+		$_POST[ 'start_price' ] = floatval( preg_replace( "/$ts|\s/", "", $_POST[ 'start_price' ] ) );
 
 		// Verify options nonce because save_post can be triggered at other times
 		if ( !isset( $_POST[ 'selling_options_nonce' ] ) || !wp_verify_nonce( $_POST['selling_options_nonce'], __FILE__) ) {
