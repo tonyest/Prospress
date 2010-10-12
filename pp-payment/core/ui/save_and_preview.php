@@ -16,7 +16,7 @@
 	<table class="form-table">
 
 		<tr class="invoice_main">
-			<th><?php _e('Subject:', 'prospress'); ?></th>
+			<th><?php _e('Item:', 'prospress'); ?></th>
 			<td style="font-size: 1.1em; padding-top:7px;">
 			<?php echo preg_replace_callback('/(%([a-z_]+)%)/', 'pp_invoice_email_apply_variables', get_option('pp_invoice_email_send_invoice_subject')); ?>
 			</td>

@@ -30,7 +30,7 @@
 <h3>Email Templates</h3>
 <table class="form-table pp_invoice_email_templates">
 	<tr>
-		<th><?php _e("<b>Invoice Notification</b> Subject", 'prospress') ?></th>
+		<th><?php _e("<b>Invoice Notification</b> Item", 'prospress') ?></th>
 		<td><?php echo pp_invoice_draw_inputfield('pp_invoice_email_send_invoice_subject', get_option('pp_invoice_email_send_invoice_subject')); ?></td>
 	</tr>
 	<tr>
@@ -39,7 +39,7 @@
 	</tr>
 	<tr><td colspan="2">&nbsp;</td></tr>
 	<tr>
-		<th><?php _e("<b>Reminder</b> Subject", 'prospress') ?></th>
+		<th><?php _e("<b>Reminder</b> Item", 'prospress') ?></th>
 		<td><?php echo pp_invoice_draw_inputfield('pp_invoice_email_send_reminder_subject', get_option('pp_invoice_email_send_reminder_subject')); ?></td>
 	</tr>
 		<tr>
@@ -48,7 +48,7 @@
 	</tr>
 	<tr><td colspan="2">&nbsp;</td></tr>
 	<tr>
-		<th><?php _e("<b>Receipt</b> Subject", 'prospress') ?></th>
+		<th><?php _e("<b>Receipt</b> Item", 'prospress') ?></th>
 		<td><?php echo pp_invoice_draw_inputfield('pp_invoice_email_send_receipt_subject', get_option('pp_invoice_email_send_receipt_subject')); ?></td>
 	</tr>
 		<tr>
