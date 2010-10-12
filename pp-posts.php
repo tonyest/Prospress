@@ -145,6 +145,7 @@ function pp_post_save_postdata( $post_id, $post ) {
 		update_post_meta( $post_id, 'post_end_date_gmt', $post_end_date_gmt);		
 	}
 
+	// Ending published post
 	if( $post_end_date_gmt <= $now_gmt && $_POST['save'] != 'Save Draft' ){
 		wp_unschedule_event( strtotime( $original_post_end_date_gmt ), 'schedule_end_post', array( 'ID' => $post_id ) );
 		pp_end_post( $post_id );
@@ -196,9 +197,10 @@ function pp_end_post( $post_id ) {
 	$post_status = apply_filters( 'post_end_status', 'completed' );
 
 	$wpdb->update( $wpdb->posts, array( 'post_status' => $post_status ), array( 'ID' => $post_id ) );
+
 	do_action( 'post_completed', $post_id );
 }
-add_action('schedule_end_post', 'pp_end_post' );
+add_action( 'schedule_end_post', 'pp_end_post', 10, 1 );
 
 
 /**
