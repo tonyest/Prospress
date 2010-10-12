@@ -168,7 +168,7 @@ abstract class PP_Market_System {
 			$form .= '<input name="bid_submit" type="submit" id="bid_submit" value="' . $this->bid_button_value .'" />';
 			$form .= '</div></form>';
 		} else {
-			$form .= '<div class="bid-form">';
+			$form .= '<div id="bid_form-' . $post_id . '" class="bid-form">';
 			$form .= '<div class="bid-updated bid_msg" >' . $this->get_message() . '</div>';
 			$form .= '</div>';
 		}
@@ -497,7 +497,7 @@ abstract class PP_Market_System {
 					$message = __( 'This post has completed, bids cannot be accepted.', 'prospress' );
 					break;
 				case 13:
-					$message = __( 'Fail: this post can not be found.', 'prospress' );
+					$message = __( 'This post can not be found.', 'prospress' );
 					break;
 				case 14:
 					$message = __( 'You cannot bid on a draft or pending post', 'prospress' );
