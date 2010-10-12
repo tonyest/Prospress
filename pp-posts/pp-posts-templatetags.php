@@ -48,7 +48,7 @@ function get_post_end_time( $post_id, $format = 'timestamp', $timezone = 'gmt' )
 	if( $time == false )
 	 	return false;
 
-	if( $timezone = 'gmt' ){
+	if( $timezone != 'gmt' ){
 		$time = date( 'Y-m-d H:i:s', $time );
 		$time = get_date_from_gmt( $time );
 		$time = strtotime( $time );
