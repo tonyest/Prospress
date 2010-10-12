@@ -140,6 +140,12 @@ function pp_post_save_postdata( $post_id, $post ) {
 	$post_end_date_gmt = get_gmt_from_date( $post_end_date );
 	$original_post_end_date_gmt = get_post_end_time( $post_id, 'mysql' );
 
+	// Don't allow posts to be set to end before they are scheduled to start
+	if( strtotime( $post->post_date_gmt ) > strtotime( $post_end_date_gmt ) ) {
+		$post_end_date		= $post->post_date;
+		$post_end_date_gmt 	= $post->post_date_gmt;
+	}
+
 	if( !$original_post_end_date_gmt || $post_end_date_gmt != $original_post_end_date_gmt ){
 		update_post_meta( $post_id, 'post_end_date', $post_end_date );
 		update_post_meta( $post_id, 'post_end_date_gmt', $post_end_date_gmt);		
