@@ -213,7 +213,6 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		elseif( $this->get_bid_count( $post_id ) )
 			return $post_id;
 
-		/** @TODO casting start_price as a float and removing ',' and ' ' will cause a bug for international currency formats. */
 		$ts = preg_quote( $wp_locale->number_format['thousands_sep'] );
 		$_POST[ 'start_price' ] = floatval( preg_replace( "/$ts|\s/", "", $_POST[ 'start_price' ] ) );
 
