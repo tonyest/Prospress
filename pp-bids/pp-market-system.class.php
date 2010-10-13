@@ -874,9 +874,7 @@ abstract class PP_Market_System {
 			return;
 
   		wp_enqueue_script( 'bid-form-ajax', PP_BIDS_URL . '/bid-form-ajax.js', array( 'jquery' ) );
-		wp_localize_script( 'bid-form-ajax', 'bidi18n', array(
-			'siteUrl' => get_bloginfo('url')
-			));
+		wp_localize_script( 'bid-form-ajax', 'bidi18n', array( 'siteUrl' => get_bloginfo('wpurl') ) );
 	}
 
 	public function enqueue_bid_admin_scripts(){
