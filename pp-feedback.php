@@ -258,8 +258,6 @@ function pp_feedback_form_submit( $feedback ) {
 
 	get_currentuserinfo();
 
-	//error_log('in pp_feedback_form_submit, feedback = ' . print_r( $feedback, true ) );
-
 	pp_can_edit_feedback( $feedback[ 'post_id' ] );
 
 	if( pp_post_has_feedback( $feedback[ 'post_id' ], $user_ID ) ){
