@@ -402,31 +402,39 @@ class PP_Invoice {
 	function settings_page() {
 		global $wpdb;
 
-		if(!empty( $_REQUEST[ 'pp_invoice_custom_label_tax' ] ) )
-			update_option( 'pp_invoice_custom_label_tax', $_REQUEST[ 'pp_invoice_custom_label_tax' ]);
+		if( isset( $_POST[ 'pp-invoice-settings-submit' ] ) ) {
+			error_log( 'POST = ' . print_r( $_POST, true ) );
 
-		if( empty( $_REQUEST[ 'pp_invoice_using_godaddy' ] ) )
-			$_REQUEST[ 'pp_invoice_using_godaddy' ] = 'false';
-		update_option( 'pp_invoice_using_godaddy', $_REQUEST[ 'pp_invoice_using_godaddy' ] );
+			if(!empty( $_POST[ 'pp_invoice_custom_label_tax' ] ) )
+				update_option( 'pp_invoice_custom_label_tax', $_POST[ 'pp_invoice_custom_label_tax' ]);
 
-		if( empty( $_REQUEST[ 'pp_invoice_force_https' ] ) )
-			$_REQUEST[ 'pp_invoice_force_https' ] = 'false';
-		update_option( 'pp_invoice_force_https', $_REQUEST[ 'pp_invoice_force_https' ] );
+			if( empty( $_POST[ 'pp_invoice_using_godaddy' ] ) )
+				$_POST[ 'pp_invoice_using_godaddy' ] = 'false';
+			update_option( 'pp_invoice_using_godaddy', $_POST[ 'pp_invoice_using_godaddy' ] );
 
-		if(!empty( $_REQUEST[ 'pp_invoice_email_send_invoice_subject' ] ) )
-			update_option( 'pp_invoice_email_send_invoice_subject', $_REQUEST[ 'pp_invoice_email_send_invoice_subject' ]);
-		if(!empty( $_REQUEST[ 'pp_invoice_email_send_invoice_content' ] ) )
-			update_option( 'pp_invoice_email_send_invoice_content', $_REQUEST[ 'pp_invoice_email_send_invoice_content' ]);
+			if( empty( $_POST[ 'pp_invoice_force_https' ] ) ){
+				error_log( 'setting https manually' );
+				$_POST[ 'pp_invoice_force_https' ] = 'false';
+			}
+			update_option( 'pp_invoice_force_https', $_POST[ 'pp_invoice_force_https' ] );
 
-		if(!empty( $_REQUEST[ 'pp_invoice_email_send_reminder_subject' ] ) )
-			update_option( 'pp_invoice_email_send_reminder_subject', $_REQUEST[ 'pp_invoice_email_send_reminder_subject' ]);
-		if(!empty( $_REQUEST[ 'pp_invoice_email_send_reminder_content' ] ) )
-			update_option( 'pp_invoice_email_send_reminder_content', $_REQUEST[ 'pp_invoice_email_send_reminder_content' ]);
+			if(!empty( $_POST[ 'pp_invoice_email_send_invoice_subject' ] ) )
+				update_option( 'pp_invoice_email_send_invoice_subject', $_POST[ 'pp_invoice_email_send_invoice_subject' ]);
+			if(!empty( $_POST[ 'pp_invoice_email_send_invoice_content' ] ) )
+				update_option( 'pp_invoice_email_send_invoice_content', $_POST[ 'pp_invoice_email_send_invoice_content' ]);
 
-		if(!empty( $_REQUEST[ 'pp_invoice_email_send_receipt_subject' ] ) )
-			update_option( 'pp_invoice_email_send_receipt_subject', $_REQUEST[ 'pp_invoice_email_send_receipt_subject' ]);
-		if(!empty( $_REQUEST[ 'pp_invoice_email_send_receipt_content' ] ) )
-			update_option( 'pp_invoice_email_send_receipt_content', $_REQUEST[ 'pp_invoice_email_send_receipt_content' ]);
+			if(!empty( $_POST[ 'pp_invoice_email_send_reminder_subject' ] ) )
+				update_option( 'pp_invoice_email_send_reminder_subject', $_POST[ 'pp_invoice_email_send_reminder_subject' ]);
+			if(!empty( $_POST[ 'pp_invoice_email_send_reminder_content' ] ) )
+				update_option( 'pp_invoice_email_send_reminder_content', $_POST[ 'pp_invoice_email_send_reminder_content' ]);
+
+			if(!empty( $_POST[ 'pp_invoice_email_send_receipt_subject' ] ) )
+				update_option( 'pp_invoice_email_send_receipt_subject', $_POST[ 'pp_invoice_email_send_receipt_subject' ]);
+			if(!empty( $_POST[ 'pp_invoice_email_send_receipt_content' ] ) )
+				update_option( 'pp_invoice_email_send_receipt_content', $_POST[ 'pp_invoice_email_send_receipt_content' ]);
+
+			$updated_message = __( 'Settings Updated.' );
+		}
 
 		if(!$wpdb->query("SHOW TABLES LIKE '".$wpdb->paymentsmeta."';") || !$wpdb->query("SHOW TABLES LIKE '".$wpdb->payments."';") || !$wpdb->query("SHOW TABLES LIKE '".$wpdb->payments_log."';") ) { $warning_message = "The plugin database tables are gone, deactivate and reactivate plugin to re-create them."; }if( $warning_message) echo "<div id=\"message\" class='error' ><p>$warning_message</p></div>";
 
@@ -434,15 +442,12 @@ class PP_Invoice {
 	}
 
 	function admin_init() {
-
 		// Admin Redirections. Has to go here to load before headers
 		if( $_REQUEST[ 'pp_invoice_action' ] == __( 'Continue Editing', 'prospress' ) ) {
 			wp_redirect( admin_url( "admin.php?page=new_invoice&pp_invoice_action=doInvoice&invoice_id={$_REQUEST[ 'invoice_id' ]}" ) );
 			die();
 		}
-
 	}
-
 
 	function init() {
 		global $wpdb, $wp_version, $user_ID;
@@ -587,7 +592,8 @@ class PP_Invoice {
 
 			// Localization Labels
 			add_option( 'pp_invoice_custom_label_tax', "Tax");
-			add_option( 'pp_invoice_force_https','true' );
+
+			add_option( 'pp_invoice_force_https','false' );
 
 			pp_invoice_add_email_template_content();
 	}
