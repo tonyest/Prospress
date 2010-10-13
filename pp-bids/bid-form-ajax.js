@@ -5,7 +5,7 @@ jQuery(document).ready(function($) {
 		var formData = $(this).serialize() + '&bid_submit=ajax';
 
 		$("#bid_submit",this).attr("disabled", "true");
-		$(this).css('background', 'url("http://localhost.localdomain/trunk/wp-content/plugins/prospress/images/loadroller.gif") no-repeat center');
+		$(this).css('background', 'url("' + bidi18n.siteUrl + '/wp-content/plugins/prospress/images/loadroller.gif") no-repeat center');
 		$(this).fadeTo(500,0.5,function(){
 			$.post(link,formData,function(data) {
 				try{ var jso = $.parseJSON(data);

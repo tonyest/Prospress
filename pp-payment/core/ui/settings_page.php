@@ -2,6 +2,11 @@
 <div class="wrap">
 <?php screen_icon( 'prospress' ); ?>
 <h2><?php _e( 'Payment Settings', 'prospress') ?></h2>
+<?php if( isset( $updated_message ) ) { ?>
+	<div id='message' class='updated fade'>
+		<p><?php echo $updated_message; ?></p>
+	</div>
+<?php } ?>
 <form id='pp_invoice_settings_page' method='POST'>
 <table class="form-table">
 	<tr>
@@ -58,7 +63,7 @@
 </table>
 <div class="clear"></div>
 <p class="submit">
-	<input type="submit" value="Save Settings" class="button-primary">
+	<input type="submit" value="Save Settings" name="pp-invoice-settings-submit" class="button-primary">
 </p>
 </form>
 </div>

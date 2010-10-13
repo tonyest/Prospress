@@ -54,7 +54,7 @@ function pp_register_feedback_post_type(){
 			'show_in_nav_menus' => false,
 			'exclude_from_search' => true,
 			'capability_type' => 'post',
-			'capabilities' => array( 'edit_post' => 'read', // Allow any registered user to edit feedback
+			'capabilities' => array( 'edit_post' => 'read', // Allow any registered user to add & edit feedback, for now
 									 'edit_posts' => 'read',
 									 'publish_posts' => 'read',
 									 'delete_post' => 'read'

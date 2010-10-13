@@ -870,17 +870,11 @@ abstract class PP_Market_System {
 	}
 
 	public function enqueue_bid_form_scripts(){
-		if( is_admin() ) //only needed on public facing pages
+		if( is_admin() ) //only needed on front end
 			return;
 
   		wp_enqueue_script( 'bid-form-ajax', PP_BIDS_URL . '/bid-form-ajax.js', array( 'jquery' ) );
-		wp_localize_script( 'bid-form-ajax', 'pppostL10n', array(
-			'endedOn' => __( 'Ended on:', 'prospress' ),
-			'endOn' => __( 'End on:', 'prospress' ),
-			'end' => __( 'End', 'prospress' ),
-			'update' => __( 'Update', 'prospress' ),
-			'repost' => __( 'Repost', 'prospress' ),
-			));
+		wp_localize_script( 'bid-form-ajax', 'bidi18n', array( 'siteUrl' => get_bloginfo('wpurl') ) );
 	}
 
 	public function enqueue_bid_admin_scripts(){

@@ -35,8 +35,6 @@ jQuery(document).ready( function($) {
 			endOn = ppPostL10n.endOn;
 			$('#publish').val( ppPostL10n.publish );
 		} else if ( $('#original_post_status').val() == 'ended' ) {
-			//alert(originalDate.toUTCString());
-			//alert(attemptedDate.toUTCString());
 			if ( originalDate.toUTCString() == attemptedDate.toUTCString() ) {
 				endOn = ppPostL10n.endOn;
 				$('#endtimestamp').html(stamp);

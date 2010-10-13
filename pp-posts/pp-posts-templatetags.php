@@ -29,19 +29,21 @@ function pp_get_the_term_list( $post_id = '' ){
  * Get's the end time for a post. Can return it in GMT or user's timezone (specified by UTC offset). 
  * Can also return as either mysql date format or a unix timestamp.
  *
- * @param int $post_id Optional, default 0. The post id for which you want the max bid. 
+ * @param int $post_id optional, default to current post. The id of the post for which you want the end time 
+ * @param string $format optional, default to timestamp. The format string for the time, one of timestamp, mysql or a PHP date format string
+ * @param string $timezone optional, default to timestamp. The format string for the time, one of timestamp, mysql or a PHP date format string
  * @return returns false if post has no end time, or a string representing the time stamp or sql
  */
-function get_post_end_time( $post_id, $format = 'timestamp', $timezone = 'gmt' ) {
+function get_post_end_time( $post_id = '', $format = 'timestamp', $timezone = 'gmt' ) {
 	global $post;
 
 	if( empty( $post_id ) )
 		$post_id = $post->ID;
 
+	// Try to use a posts actual end time in wp-cron
 	$time = wp_next_scheduled( 'schedule_end_post', array( "ID" => $post_id ) );
 
-	// If a post has not yet ended, use it's actual scheduled end time, if that doesn't exist, 
-	// probably becasue the post has ended, get the post end time from the post_meta table.
+	// If the actual end time doesn't exist, probably because the post has ended, get the persisent end time from the post_meta table.
 	if( empty( $time ) )
 		$time = strtotime( get_post_meta( $post_id, 'post_end_date_gmt', true ) );
 

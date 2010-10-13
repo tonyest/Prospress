@@ -13,8 +13,6 @@ Prospress is a new plugin that goes where no plugin has gone before.
 
 After its 30 second install, your WordPress site will have its very own auction marketplace. Your registered users will be able to post auctions, place bids, provide feedback and make payments. Everything needed for a fully functioning marketplace.
 
-If the 30 second install is too much, check out the [Demo Marketplace](http://demo.prospress.org/auctions/). You can register, post auctions & make bids on some priceless paintings.
-
 = Features =
 
 **Auction Posts** - Prospress uses the WordPress publishing system, so publishing an auction is as enjoyable as publishing a blog post.
@@ -25,14 +23,19 @@ If the 30 second install is too much, check out the [Demo Marketplace](http://de
 
 See all the great features on the Prospress [Marketplace Features](http://prospress.org/features/) page.
 
+
+= Demo Marketplace =
+
+If you want to kick the tires of Prospress before installing it, check out the [Demo Marketplace](http://demo.prospress.org/auctions/). You can register, post auctions & make bids on some priceless, stolen artworks.
+
 = Props =
 
-As a major eCommerce advancement for WordPress, Prospress has code and contributions by a number of developers.
+As a major WordPress plugin, Prospress has code and contributions by a number of developers.
 
-Special mentions for:
+Special thanks to:
 
-* [Scribu](http://profiles.wordpress.org/users/scribu/) for his work on the bid filter and post sort widgets, and his [Query Multiple Taxonomies](http://wordpress.org/extend/plugins/query-multiple-taxonomies/) plugin.
-* [Andy Potatin](http://profiles.wordpress.org/users/andypotanin/) for his work on customizing his excellent [WP-Invoice](http://wordpress.org/extend/plugins/wp-invoice/) plugin to work for marketplace transactions.
+* [Scribu](http://profiles.wordpress.org/users/scribu/) for his work on the price filter and post sort widgets, and his [Query Multiple Taxonomies](http://wordpress.org/extend/plugins/query-multiple-taxonomies/) plugin; and
+* [Andy Potatin](http://profiles.wordpress.org/users/andypotanin/) for customizing his excellent [WP-Invoice](http://wordpress.org/extend/plugins/wp-invoice/) plugin to work for marketplace transactions.
 
 = Want to know more? =
 
@@ -40,7 +43,7 @@ Read the plugin's [FAQ](http://wordpress.org/extend/plugins/prospress/faq/) or v
 
 = Get Involved =
 
-If you want to help give the world a free and open marketplace platform, you can [contribute](http://prospress.org/contribute/) to the Prospress project.
+If you want to help give the world a free and open marketplace platform, you can also [contribute](http://prospress.org/contribute/) to the Prospress project.
 
 
 == Installation ==
@@ -105,7 +108,6 @@ If your dreams occasionally contain curly braces, you can contribute to the Pros
 
 Nope. There are a few surprises but you'll have to download & explore Prospress to find them, or try the [Demo Marketplace](http://demo.prospress.org/auctions/).
 
-
 == Screenshots ==
 
 1. **Add an Auction** - Publishing an auction is just like publishing a post, except you also add a start price and end date.
@@ -116,12 +118,12 @@ Nope. There are a few surprises but you'll have to download & explore Prospress 
 == Changelog ==
 
 = 1.0 =
-* Fixed bug preventing invoices being generated on manual post completion
-* Fixed bugs in invoice payment via credit card
+* SSL & credit card payments (for USD only) now supported
 * Prospress Admin Links widget now displays links dependant on user's capabilities
-* Reduced the number of currencies due to lack of support in PayPal
-* Markup fixes to Invoice pages
+* Reduced the number of available currencies due to lack of support in PayPal
+* Fixed bug preventing invoices being generated on manual post completion
 * Feedback now a custom post type
+* Markup fixes to Invoice pages
 
 = 0.2 =
 * Beta 2 
@@ -137,8 +139,7 @@ Nope. There are a few surprises but you'll have to download & explore Prospress 
 == Upgrade Notice ==
 
 = 1.0 =
-The first non-beta release ready for prime-time - enjoy! NB: This is a breaking upgrade. If you need to preserve bid or feedback data between the upgrade, post in the prospress.org/forums/ to request an upgrade plugin.
+The first non-beta release ready for prime-time - enjoy! Please note, this is a breaking upgrade. If you need to preserve feedback from a beta installation, post in the prospress.org/forums/ to request an upgrade script.
 
 = 0.2 =
 Upgrade to fix bug when activating on WP < 3.0 or PHP < 5.0, ensure Prospress plays nice with other plugins and get new widgets.
-
