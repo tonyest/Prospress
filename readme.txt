@@ -27,12 +27,12 @@ See all the great features on the Prospress [Marketplace Features](http://prospr
 
 = Props =
 
-As a major eCommerce advancement for WordPress, Prospress has code and contributions by a number of developers.
+As a major WordPress plugin, Prospress has code and contributions by a number of developers.
 
 Special mentions for:
 
 * [Scribu](http://profiles.wordpress.org/users/scribu/) for his work on the bid filter and post sort widgets, and his [Query Multiple Taxonomies](http://wordpress.org/extend/plugins/query-multiple-taxonomies/) plugin.
-* [Andy Potatin](http://profiles.wordpress.org/users/andypotanin/) for his work on customizing his excellent [WP-Invoice](http://wordpress.org/extend/plugins/wp-invoice/) plugin to work for marketplace transactions.
+* [Andy Potatin](http://profiles.wordpress.org/users/andypotanin/) for customizing his excellent [WP-Invoice](http://wordpress.org/extend/plugins/wp-invoice/) plugin to work for marketplace transactions.
 
 = Want to know more? =
 
@@ -137,8 +137,7 @@ Nope. There are a few surprises but you'll have to download & explore Prospress 
 == Upgrade Notice ==
 
 = 1.0 =
-The first non-beta release ready for prime-time - enjoy! NB: This is a breaking upgrade. If you need to preserve bid or feedback data between the upgrade, post in the prospress.org/forums/ to request an upgrade plugin.
+The first non-beta release ready for prime-time - enjoy! NB: This is a breaking upgrade. If you need to preserve feedback data from a beta installation, post in the prospress.org/forums/ to request an upgrade script.
 
 = 0.2 =
 Upgrade to fix bug when activating on WP < 3.0 or PHP < 5.0, ensure Prospress plays nice with other plugins and get new widgets.
-
