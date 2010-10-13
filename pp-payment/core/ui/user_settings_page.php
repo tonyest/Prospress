@@ -56,32 +56,16 @@
 		<th><?php _e("Payment Types:");?></th>
 		<td>
 			<div class="pp_invoice_payment_option">
-			<?php echo wpi_checkbox("group=pp_invoice_user_settings&name=paypal_allow&label=PayPal.&value=true&id=paypal", $user_settings[paypal_allow]); ?><br />
-			<?php if( get_option( 'currency_type' ) == 'USD' ) echo wpi_checkbox("group=pp_invoice_user_settings&name=cc_allow&label=Credit Cards.&value=true&id=cc", $user_settings[cc_allow]) . '<br />'; ?>
-			<?php echo wpi_checkbox("group=pp_invoice_user_settings&name=draft_allow&label=Bank Transfer.&value=true&id=draft", $user_settings[draft_allow]); ?><br />
+			<?php echo wpi_checkbox("group=pp_invoice_user_settings&name=paypal_allow&label=PayPal.&value=true&id=paypal", $user_settings['paypal_allow']); ?><br />
+			<?php if( get_option( 'currency_type' ) == 'USD' ) echo wpi_checkbox("group=pp_invoice_user_settings&name=cc_allow&label=Credit Cards.&value=true&id=cc", $user_settings['cc_allow']) . '<br />'; ?>
+			<?php echo wpi_checkbox("group=pp_invoice_user_settings&name=draft_allow&label=Bank Transfer.&value=true&id=draft", $user_settings['draft_allow']); ?><br />
 			</div>
 		</td>
-	</tr>
-	<tr>
-		<th>Default Payment Method:</th>
-		<td>
-			<select id="default_payment_venue" name="pp_invoice_user_settings[default_payment_venue]" style="width: 100px;">
-			<?php if($user_settings['paypal_allow']): ?>
-				<option class="paypal" value="paypal" <?php selected( $user_settings[default_payment_venue], 'paypal' ); ?>>PayPal</option>
-			<?php endif; ?>
-			<?php if($user_settings['cc_allow']): ?>
-			<option class="cc" value="cc"  <?php selected( $user_settings[default_payment_venue], 'cc' ); ?>>Credit Card</option>
-			<?php endif; ?>
-			<?php if($user_settings['draft_allow']): ?>
-			<option class="draft" value="draft"  <?php selected( $user_settings[default_payment_venue], 'draft' ); ?>>Bank Transfer</option>
-			<?php endif; ?>
-		</select>
-	</td>
 	</tr>
 	<tr class="paypal_settings">
 		<th><?php _e( 'PayPal Username:', 'prospress' ); ?></th>
 		<td>
-			<?php echo pp_invoice_draw_inputfield('pp_invoice_user_settings[paypal_address]',$user_settings[paypal_address]); ?>
+			<?php echo pp_invoice_draw_inputfield('pp_invoice_user_settings[paypal_address]',$user_settings['paypal_address']); ?>
 			<?php if( current_user_can( 'manage_options' ) ) {?>
 				<?php echo wpi_checkbox('group=pp_invoice_user_settings&name=paypal_sandbox&value=true&label=Use <a href="https://developer.paypal.com/">PayPal Sandbox</a> Mode',$user_settings[paypal_sandbox]); ?>
 			<?php } ?>

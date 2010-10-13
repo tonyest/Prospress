@@ -383,19 +383,29 @@ class PP_Invoice {
 		$user_settings = pp_invoice_user_settings( 'all', $user_ID);
 
 		// Save settings
-		if(count( $_REQUEST[pp_invoice_user_settings]) > 1) {
-			$user_settings = $_REQUEST[pp_invoice_user_settings];
-			update_usermeta( $user_ID, 'pp_invoice_settings', $user_settings);		
+		if( count( $_REQUEST[ 'pp_invoice_user_settings' ] ) > 1 ) {
+			$user_settings = $_REQUEST[ 'pp_invoice_user_settings' ];
 
-		} else {			
+			if( $user_settings[ 'paypal_allow'] == 'true' ){
+				$user_settings[ 'default_payment_venue' ] = 'paypal';
+			} elseif( $user_settings[ 'cc_allow'] == 'true' ){
+				$user_settings[ 'default_payment_venue' ] = 'cc';
+			} elseif( $user_settings[ 'draft_allow'] == 'true' ){
+				$user_settings[ 'default_payment_venue' ] = 'draft';
+			} else {
+				$user_settings[ 'default_payment_venue' ] = '';
+			}
 
-			if(!$user_settings) {
+			update_usermeta( $user_ID, 'pp_invoice_settings', $user_settings);
+		} else {
+			if( !$user_settings ) {
 				$user_settings = pp_invoice_load_default_user_settings( $user_ID);
-				}
+			}
 		}
 
 		// The pp_invoice_user_settings() needs to be ran, it converts certain text values into bool values
 		$user_settings = pp_invoice_user_settings( 'all', $user_ID);
+
 		include PP_INVOICE_UI_PATH . 'user_settings_page.php';	
 	}
 
@@ -403,7 +413,6 @@ class PP_Invoice {
 		global $wpdb;
 
 		if( isset( $_POST[ 'pp-invoice-settings-submit' ] ) ) {
-			error_log( 'POST = ' . print_r( $_POST, true ) );
 
 			if(!empty( $_POST[ 'pp_invoice_custom_label_tax' ] ) )
 				update_option( 'pp_invoice_custom_label_tax', $_POST[ 'pp_invoice_custom_label_tax' ]);
@@ -412,10 +421,8 @@ class PP_Invoice {
 				$_POST[ 'pp_invoice_using_godaddy' ] = 'false';
 			update_option( 'pp_invoice_using_godaddy', $_POST[ 'pp_invoice_using_godaddy' ] );
 
-			if( empty( $_POST[ 'pp_invoice_force_https' ] ) ){
-				error_log( 'setting https manually' );
+			if( empty( $_POST[ 'pp_invoice_force_https' ] ) )
 				$_POST[ 'pp_invoice_force_https' ] = 'false';
-			}
 			update_option( 'pp_invoice_force_https', $_POST[ 'pp_invoice_force_https' ] );
 
 			if(!empty( $_POST[ 'pp_invoice_email_send_invoice_subject' ] ) )
