@@ -48,15 +48,14 @@ function get_post_end_time( $post_id, $format = 'timestamp', $timezone = 'gmt' )
 	if( $time == false )
 	 	return false;
 
-	if( $timezone = 'gmt' ){
+	if( $timezone != 'gmt' ){
 		$time = date( 'Y-m-d H:i:s', $time );
 		$time = get_date_from_gmt( $time );
 		$time = strtotime( $time );
-
 	}
 	if( $format != 'timestamp' ){
 		if( $format == 'mysql' )
-			$time = date( 'H:i Y/m/d', $time );
+			$time = date( 'Y-m-d H:i:s', $time );
 		else
 			$time = date( $format, $time );
 	}

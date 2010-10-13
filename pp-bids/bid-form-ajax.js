@@ -1,5 +1,4 @@
 jQuery(document).ready(function($) {
-
 	$(".bid-form").live( 'submit', function() {
 		var link = window.location;
 		var bidFormId = $(this).attr('id');

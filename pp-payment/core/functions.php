@@ -1179,7 +1179,7 @@ function pp_invoice_process_invoice_update( $invoice_id ) {
 	if(pp_invoice_does_invoice_exist( $invoice_id )) {
 		// Updating Old Invoice
 
-		if(pp_invoice_get_invoice_attrib( $invoice_id,'subject' ) != $subject) { $wpdb->query("UPDATE ".$wpdb->payments." SET subject = '$subject' WHERE id = $invoice_id" ); 			pp_invoice_update_log( $invoice_id, 'updated', ' Subject Updated ' ); $message .= "Subject updated. ";}
+		if(pp_invoice_get_invoice_attrib( $invoice_id,'subject' ) != $subject) { $wpdb->query("UPDATE ".$wpdb->payments." SET subject = '$subject' WHERE id = $invoice_id" ); 			pp_invoice_update_log( $invoice_id, 'updated', ' Item Updated ' ); $message .= "Item updated. ";}
 		if(pp_invoice_get_invoice_attrib( $invoice_id,'description' ) != $description) { $wpdb->query("UPDATE ".$wpdb->payments." SET description = '$description' WHERE id = $invoice_id" ); 			pp_invoice_update_log( $invoice_id, 'updated', ' Description Updated ' ); $message .= "Description updated. ";}
 		if(pp_invoice_get_invoice_attrib( $invoice_id,'amount' ) != $amount) { $wpdb->query("UPDATE ".$wpdb->payments." SET amount = '$amount' WHERE id = $invoice_id" ); 			pp_invoice_update_log( $invoice_id, 'updated', ' Amount Updated ' ); $message .= "Amount updated. ";}
 		if(pp_invoice_get_invoice_attrib( $invoice_id,'itemized' ) != $itemized ) { $wpdb->query("UPDATE ".$wpdb->payments." SET itemized = '$itemized' WHERE id = $invoice_id" ); 			pp_invoice_update_log( $invoice_id, 'updated', ' Itemized List Updated ' ); $message .= "Itemized List updated. ";}

@@ -19,7 +19,7 @@
 		</td>
 	</tr>
 	<tr>
-		<th><label for="enforce_ssl"><?php _e('Use SSL:', 'prospress' ); ?></label></th>
+		<th><label for="pp_invoice_force_https"><?php _e('Use SSL:', 'prospress' ); ?></label></th>
 		<td>
 		<input type="checkbox" name="pp_invoice_force_https" id="pp_invoice_force_https" value="true" <?php checked( get_option('pp_invoice_force_https'), 'true' );?> />
 		<?php _e('You should use SSL to secure the payment page if offering credit card as a payment option.', 'prospress' ); ?>
@@ -30,7 +30,7 @@
 <h3>Email Templates</h3>
 <table class="form-table pp_invoice_email_templates">
 	<tr>
-		<th><?php _e("<b>Invoice Notification</b> Subject", 'prospress') ?></th>
+		<th><?php _e("<b>Invoice Notification</b> Item", 'prospress') ?></th>
 		<td><?php echo pp_invoice_draw_inputfield('pp_invoice_email_send_invoice_subject', get_option('pp_invoice_email_send_invoice_subject')); ?></td>
 	</tr>
 	<tr>
@@ -39,7 +39,7 @@
 	</tr>
 	<tr><td colspan="2">&nbsp;</td></tr>
 	<tr>
-		<th><?php _e("<b>Reminder</b> Subject", 'prospress') ?></th>
+		<th><?php _e("<b>Reminder</b> Item", 'prospress') ?></th>
 		<td><?php echo pp_invoice_draw_inputfield('pp_invoice_email_send_reminder_subject', get_option('pp_invoice_email_send_reminder_subject')); ?></td>
 	</tr>
 		<tr>
@@ -48,7 +48,7 @@
 	</tr>
 	<tr><td colspan="2">&nbsp;</td></tr>
 	<tr>
-		<th><?php _e("<b>Receipt</b> Subject", 'prospress') ?></th>
+		<th><?php _e("<b>Receipt</b> Item", 'prospress') ?></th>
 		<td><?php echo pp_invoice_draw_inputfield('pp_invoice_email_send_receipt_subject', get_option('pp_invoice_email_send_receipt_subject')); ?></td>
 	</tr>
 		<tr>

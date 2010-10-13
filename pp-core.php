@@ -168,7 +168,7 @@ function pp_money_format( $number, $decimals = '', $currency = '' ){
 	else
 		$currency_sym = $currencies[ $currency ][ 'symbol' ];
 
-	return $currency_sym . ' ' . number_format_i18n( $number, $decimals );
+	return $currency_sym . number_format_i18n( $number, $decimals );
 }
 
 

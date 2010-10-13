@@ -168,7 +168,7 @@ abstract class PP_Market_System {
 			$form .= '<input name="bid_submit" type="submit" id="bid_submit" value="' . $this->bid_button_value .'" />';
 			$form .= '</div></form>';
 		} else {
-			$form .= '<div class="bid-form">';
+			$form .= '<div id="bid_form-' . $post_id . '" class="bid-form">';
 			$form .= '<div class="bid-updated bid_msg" >' . $this->get_message() . '</div>';
 			$form .= '</div>';
 		}
@@ -205,7 +205,6 @@ abstract class PP_Market_System {
 		if( empty( $post_id ))
 			$post_id = $post->ID;
 
-		//$post_status = $wpdb->get_var( $wpdb->prepare( "SELECT post_status FROM $wpdb->posts WHERE ID = %d", $post_id ) );
 		$post_status = get_post( $post_id )->post_status;
 
 		if ( $post_status == 'completed' ){
@@ -215,7 +214,7 @@ abstract class PP_Market_System {
 			do_action( 'bid_post_not_found', $post_id);
 			$this->message_id = 13;
 			$post_status = 'invalid';
-		} elseif ( in_array( $post_status, array( 'draft', 'pending' ) ) ) {
+		} elseif ( in_array( $post_status, array( 'draft', 'pending', 'future' ) ) ) {
 			do_action( 'bid_on_draft', $post_id);
 			$this->message_id = 14;
 			$post_status = 'invalid';
@@ -491,16 +490,16 @@ abstract class PP_Market_System {
 					$message = __( 'Bid submitted.', 'prospress' );
 					break;
 				case 11:
-					$message = __( 'You cannot bid on your own ', 'prospress' ) . $this->labels[ 'singular_name' ] . '.';
+					$message = sprintf( __( 'You cannot bid on your own %s.', 'prospress' ), $this->labels[ 'singular_name' ] );
 					break;
 				case 12:
-					$message = __( 'This post has completed, bids cannot be accepted.', 'prospress' );
+					$message = sprintf( __( 'This %s has completed, bids cannot be accepted.', 'prospress' ), $this->labels[ 'singular_name' ] );
 					break;
 				case 13:
-					$message = __( 'Fail: this post can not be found.', 'prospress' );
+					$message = sprintf( __( 'This %s can not be found.', 'prospress' ), $this->labels[ 'singular_name' ] );
 					break;
 				case 14:
-					$message = __( 'You cannot bid on a draft or pending post', 'prospress' );
+					$message = sprintf( __( 'You cannot bid on a draft, scheduled or pending %s.', 'prospress' ), $this->labels[ 'singular_name' ] );
 					break;
 			}
 			$message = apply_filters( 'bid_message', $message );

@@ -140,11 +140,18 @@ function pp_post_save_postdata( $post_id, $post ) {
 	$post_end_date_gmt = get_gmt_from_date( $post_end_date );
 	$original_post_end_date_gmt = get_post_end_time( $post_id, 'mysql' );
 
+	// Don't allow posts to be set to end before they are scheduled to start
+	if( strtotime( $post->post_date_gmt ) > strtotime( $post_end_date_gmt ) ) {
+		$post_end_date		= $post->post_date;
+		$post_end_date_gmt 	= $post->post_date_gmt;
+	}
+
 	if( !$original_post_end_date_gmt || $post_end_date_gmt != $original_post_end_date_gmt ){
 		update_post_meta( $post_id, 'post_end_date', $post_end_date );
 		update_post_meta( $post_id, 'post_end_date_gmt', $post_end_date_gmt);		
 	}
 
+	// Ending published post
 	if( $post_end_date_gmt <= $now_gmt && $_POST['save'] != 'Save Draft' ){
 		wp_unschedule_event( strtotime( $original_post_end_date_gmt ), 'schedule_end_post', array( 'ID' => $post_id ) );
 		pp_end_post( $post_id );
@@ -196,9 +203,10 @@ function pp_end_post( $post_id ) {
 	$post_status = apply_filters( 'post_end_status', 'completed' );
 
 	$wpdb->update( $wpdb->posts, array( 'post_status' => $post_status ), array( 'ID' => $post_id ) );
+
 	do_action( 'post_completed', $post_id );
 }
-add_action('schedule_end_post', 'pp_end_post' );
+add_action( 'schedule_end_post', 'pp_end_post', 10, 1 );
 
 
 /**

@@ -112,7 +112,7 @@ class PP_Invoice {
 
 		register_column_headers("web-invoice_page_incoming_invoices", array(
 			'cb' => '<input type="checkbox" />',
-			'subject' => __( 'Subject', 'prospress' ),
+			'subject' => __( 'Item', 'prospress' ),
 			'balance' => __( 'Amount', 'prospress' ),
 			'display_name' => __( 'Recipient', 'prospress' ),
 			'user_email' => __( 'User Email', 'prospress' ),
@@ -123,7 +123,7 @@ class PP_Invoice {
 
 		register_column_headers("toplevel_page_outgoing_invoices", array(
 			'cb' => '<input type="checkbox" />',
-			'subject' => __( 'Subject', 'prospress' ),
+			'subject' => __( 'Item', 'prospress' ),
 			'balance' => __( 'Amount', 'prospress' ),
 			'display_name' => __( 'From', 'prospress' ),
 			'user_email' => __( 'User Email', 'prospress' ),

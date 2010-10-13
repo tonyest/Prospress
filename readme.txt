@@ -1,5 +1,5 @@
 === Plugin Name ===
-Contributors: Prospress, thenbrent
+Contributors: Prospress, thenbrent, tonyest
 Tags: marketplace, prospress, auction, ecommerce, e-commerce
 Requires at least: 3.0
 Tested up to: 3.0.1
@@ -19,11 +19,20 @@ If the 30 second install is too much, check out the [Demo Marketplace](http://de
 
 **Auction Posts** - Prospress uses the WordPress publishing system, so publishing an auction is as enjoyable as publishing a blog post.
 
-**Feedback** - Traders in your marketplace can rate each other after a transaction and view each other's feedback to gain confidence when entering a transaction.
+**Feedback** - Traders in your marketplace can rate each other after a transaction and view each other's feedback to have confidence about potential transactions.
 
 **Invoicing & Payments** - To finalize transactions, Prospress provides an invoicing system that supports payment with PayPal, credit cards & bank transfers.
 
 See all the great features on the Prospress [Marketplace Features](http://prospress.org/features/) page.
+
+= Props =
+
+As a major eCommerce advancement for WordPress, Prospress has code and contributions by a number of developers.
+
+Special mentions for:
+
+* [Scribu](http://profiles.wordpress.org/users/scribu/) for his work on the bid filter and post sort widgets, and his [Query Multiple Taxonomies](http://wordpress.org/extend/plugins/query-multiple-taxonomies/) plugin.
+* [Andy Potatin](http://profiles.wordpress.org/users/andypotanin/) for his work on customizing his excellent [WP-Invoice](http://wordpress.org/extend/plugins/wp-invoice/) plugin to work for marketplace transactions.
 
 = Want to know more? =
 
@@ -71,14 +80,6 @@ Prospress creates it's own special index page, called *auctions*. Once you publi
 That's entirely up to you. All registered users with subscriber role or better will be able to place bids and make payments, but you control who can post auctions. 
 
 You can host auctions from a privileged few or allow your entire community to trade items. Set permissions under the `Prospress | General Settings` admin menu.
-
-= Why are Credit Payments not working? =
-
-If you receive no error message, it is likely your server does not have the requirements installed. Prospress requires libcurl to be install to use Credit Card payments. Learn more about installing libcurl in the [PHP Curl Documentation](http://www.php.net/manual/en/book.curl.php).
-
-If you do receive an error message, such as *Processing Error. Please check your gateway settings* please ensure you have all Credit Card Settings set as per your gateway's instructions.
-
-For more detailed help, please make a post in the Prospress [support forums](http://prospress.org/forums/ "Prospress Forums").
 
 = Where can I get support? =
 
@@ -136,7 +137,7 @@ Nope. There are a few surprises but you'll have to download & explore Prospress 
 == Upgrade Notice ==
 
 = 1.0 =
-The first, fully tested, stable release ready for prime-time - enjoy! NB: This is a breaking upgrade. If you need to preserve bid or feedback data between the upgrade, post in the prospress.org/forums/ to request an upgrade plugin.
+The first non-beta release ready for prime-time - enjoy! NB: This is a breaking upgrade. If you need to preserve bid or feedback data between the upgrade, post in the prospress.org/forums/ to request an upgrade plugin.
 
 = 0.2 =
 Upgrade to fix bug when activating on WP < 3.0 or PHP < 5.0, ensure Prospress plays nice with other plugins and get new widgets.
