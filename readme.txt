@@ -32,7 +32,7 @@ If you want to kick the tires of Prospress before installing it, check out the [
 
 As a major WordPress plugin, Prospress has code and contributions by a number of developers. Special thanks must go to:
 
-* [Scribu](http://profiles.wordpress.org/users/scribu/) for the filter and sort widgets and his [Query Multiple Taxonomies](http://wordpress.org/extend/plugins/query-multiple-taxonomies/) plugin;
+* [Scribu](http://profiles.wordpress.org/users/scribu/) for the filter and sort widgets and [Query Multiple Taxonomies](http://wordpress.org/extend/plugins/query-multiple-taxonomies/) plugin;
 * [Andy Potatin](http://profiles.wordpress.org/users/andypotanin/) for customizing his excellent [WP-Invoice](http://wordpress.org/extend/plugins/wp-invoice/) plugin.
 
 = Want to know more? =
