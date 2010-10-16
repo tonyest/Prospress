@@ -1,4 +1,4 @@
-=== Prospress Marketplace Plugin ===
+=== Plugin Name ===
 Contributors: Prospress, thenbrent, tonyest
 Tags: marketplace, prospress, auction, ecommerce, e-commerce
 Requires at least: 3.0
@@ -11,7 +11,7 @@ Add an auction marketplace to your WordPress site.
 
 Prospress is a new plugin that goes where no plugin has gone before.
 
-After its 30 second install, your WordPress site will have its very own auction marketplace. Registered users will be able to post auctions, place bids, provide feedback and make payments. Everything needed for a fully functioning marketplace.
+After its 30 second install, your WordPress site will have its very own auction marketplace. Your registered users will be able to post auctions, place bids, provide feedback and make payments. Everything needed for a fully functioning marketplace.
 
 = Features =
 

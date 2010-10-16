@@ -11,8 +11,7 @@
 
 class PP_Sort_Widget extends WP_Widget {
 	function PP_Sort_Widget() {
-		global $market_systems;
-		error_log('market systems = ' . print_r( $market_systems, true ) ); 
+		global $market_systems; 
 		/* Widget settings. */
 		$widget_ops = array( 'classname' => 'pp-sort', 'description' => sprintf( __('Sort %s in your marketplace.', 'prospress' ), $market_systems['auctions']->name() ) );
 
