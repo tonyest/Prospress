@@ -23,8 +23,8 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 			if ( !empty( $term_description ) )
 				echo '<div class="prospress-archive-meta">' . $term_description . '</div>';
 			?>
-			<div class="end-header pp-end"><?php _e( 'Ending', 'prospress' ); ?></div>
-			<div class="price-header pp-price"><?php _e( 'Price', 'prospress' ); ?></div>
+			<div class="end-header"><?php _e( 'Ending', 'prospress' ); ?></div>
+			<div class="price-header"><?php _e( 'Price', 'prospress' ); ?></div>
 
 		<?php if ( have_posts() ): while ( have_posts() ) : the_post(); ?>
 
