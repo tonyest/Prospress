@@ -25,7 +25,6 @@ class PP_Post {
 
 		add_action( 'init', array( &$this, 'register_post_type' ) );
 
-		// Only use built-in sidebars if current theme doesn't support Prospress
 		add_action( 'init', array( &$this, 'register_sidebars' ) );
 
 		add_action( 'template_redirect', array( &$this, 'template_redirects' ) );
@@ -39,7 +38,6 @@ class PP_Post {
 		add_filter( 'manage_' . $this->name . '_posts_columns', array( &$this, 'post_columns' ) );
 
 		add_action( 'manage_posts_custom_column', array( &$this, 'post_custom_columns' ), 10, 2 );
-
 	}
 
 
@@ -169,10 +167,10 @@ class PP_Post {
 	public function register_post_type() {
 
 		$args = array(
-				'label' 	=> $this->name,
+				'label' 	=> $this->labels[ 'name' ],
 				'public' 	=> true,
 				'show_ui' 	=> true,
-				'rewrite' 	=> array( 'slug' => $this->name, 'with_front' => false ),
+				'rewrite' 	=> array( 'slug' => $this->labels[ 'name' ], 'with_front' => false ),
 				'capability_type' => 'prospress_post', //generic to cover multiple Prospress marketplace types
 				'show_in_nav_menus' => false,
 				'exclude_from_search' => true,
@@ -211,9 +209,9 @@ class PP_Post {
 
 		if ( !file_exists( TEMPLATEPATH . '/index-' . $this->name . '.php' ) ){
 			register_sidebar( array (
-				'name' => $this->labels[ 'name' ] . ' ' . __( 'Index Sidebar', 'prospress' ),
+				'name' => sprintf( __( '%s Index Sidebar', 'prospress' ), $this->labels[ 'name' ] ),
 				'id' => $this->name . '-index-sidebar',
-				'description' => sprintf( __( "The sidebar for the %s index.", 'prospress' ), $this->labels[ 'name' ] ),
+				'description' => sprintf( __( "The sidebar for the index of your %s.", 'prospress' ), $this->labels[ 'name' ] ),
 				'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
 				'after_widget' => "</li>",
 				'before_title' => '<h3 class="widget-title">',

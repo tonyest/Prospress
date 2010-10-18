@@ -20,7 +20,7 @@
 abstract class PP_Market_System {
 
 	private $name;					// Internal name of the market system, probably plural e.g. "auctions".
-	public $label;					// Array of labels used to represent market system elements publicly, includes name & singular_name
+	public $label;					// Label to display the market system publicly, e.g. "Auction".
 	public $labels;					// Array of labels used to represent market system elements publicly, includes name & singular_name
 	public $post;					// Hold the custom PP_Post object for this market system.
 	public $bid_button_value;		// Text used on the submit button of the bid form.
@@ -42,10 +42,10 @@ abstract class PP_Market_System {
 
 		$defaults = array(
 						'description' => '',
+						'label' => ucfirst( $this->name ),
 						'labels' => array(
 							'name' => ucfirst( $this->name ),
-							'singular_name' => ucfirst( substr( $this->name, 0, -1) ), // Remove 's' - certainly not a catch all default!
-							),
+							'singular_name' => ucfirst( substr( $this->name, 0, -1 ) ) ), // Remove 's' - certainly not a catch all default!
 						'bid_button_value' => __( 'Bid Now!', 'prospress' ),
 						'adds_post_fields' => null,
 						'post_table_columns' => array (
@@ -64,13 +64,13 @@ abstract class PP_Market_System {
 
 		$args = wp_parse_args( $args, $defaults );
 
-		$this->label 				= $args[ 'labels' ][ 'name' ];
+		$this->label 				= $args[ 'label' ];
 		$this->labels 				= $args[ 'labels' ];
 		$this->bid_button_value		= $args[ 'bid_button_value' ];
 		$this->post_table_columns 	= $args[ 'post_table_columns' ];
 		$this->bid_table_headings 	= $args[ 'bid_table_headings' ];
 		$this->adds_post_fields 	= $args[ 'adds_post_fields' ];
-		$this->capability 	= $args[ 'capability' ];
+		$this->capability 			= $args[ 'capability' ];
 
 		$this->post	= new PP_Post( $this->name, array( 'labels' => $this->labels ) );
 
@@ -132,14 +132,7 @@ abstract class PP_Market_System {
 	/************************************************************************************************
 	 * Functions that you may wish to override, but don't need to in order to create a new market system
 	 ************************************************************************************************/
-	/**
-	 * A getter for the market system's name. This is called from various places to refer to the both the market system and
-	 * posts within that market system. 
-	 * 
-	 * By default this function returns the name of the marketplace system, as stored in the $name member variables, with an 
-	 * upper case first letter; however, other market systems require additional words or operations performed on the name 
-	 * member variable.
-	 **/
+
 	public function name() {
 		return $this->name;
 	}
@@ -603,7 +596,7 @@ abstract class PP_Market_System {
 
 		$base_page = $this->name . "-bids";
 
-		$bids_title = apply_filters( 'bids_admin_title', __( 'Bids', 'prospress' ) );
+		$bids_title = apply_filters( 'bids_admin_title', sprintf( __( '%s Bids', 'prospress' ), $this->labels[ 'singular_name' ] ) );
 
 		if ( function_exists( 'add_object_page' ) ) {
 			add_object_page( $bids_title, $bids_title, $this->capability, $base_page, '', PP_PLUGIN_URL . '/images/auctions16.png' );
@@ -890,7 +883,7 @@ abstract class PP_Market_System {
 	// This function is hooked in the constructor and is only called if post fields is defined. 
 	public function post_fields_meta_box(){
 		if( function_exists( 'add_meta_box' ) ) {
-			add_meta_box( 'pp-bidding-options', sprintf( __( '%s Options', 'prospress' ), $this->labels->singular_name ), array(&$this, 'post_fields' ), $this->name, 'normal', 'core' );
+			add_meta_box( 'pp-bidding-options', sprintf( __( '%s Options', 'prospress' ), $this->labels[ 'singular_name' ] ), array(&$this, 'post_fields' ), $this->name, 'normal', 'core' );
 		}
 	}
 
