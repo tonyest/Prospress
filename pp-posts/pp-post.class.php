@@ -106,7 +106,13 @@ class PP_Post {
 
 		if ( is_using_custom_taxonomies() && is_pp_multitax() ) {
 
-			wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
+			$taxonomy = esc_attr( get_query_var( 'taxonomy' ) );
+			$tax = get_taxonomy( $taxonomy );
+			$term = esc_attr( get_query_var( 'term' ) );
+			$term = get_term_by( 'slug', $term, $taxonomy );
+			$term_description = term_description( $term->term_id, $taxonomy );
+			$term = $term->name;
+			$tax_title = sprintf( '%s &raquo; %s', $tax->labels->name, $term );
 
 			do_action( 'pp_taxonomy_template_redirect' );
 
@@ -188,9 +194,7 @@ class PP_Post {
 								'not_found'		=> sprintf( __( 'No %s found', 'prospress' ), $this->labels[ 'name' ] ),
 								'not_found_in_trash' => sprintf( __( 'No %s found in Trash', 'prospress' ), $this->labels[ 'name' ] ) )
 					);
-
 		register_post_type( $this->name, $args );
-
 	}
 
 
