@@ -34,13 +34,13 @@ class PP_Invoice {
 	}
 
 	function PP_Invoice() {
-		global $user_ID, $pp_base_capability;
+		global $user_ID;
 
 		$version = get_option( 'pp_invoice_version' );
 
 		add_action( 'pp_activation', array( &$this, 'install' ) );
 
-		$this->process_payment_cc = $pp_base_capability;
+		$this->process_payment_cc = PP_BASE_CAP;
 		$this->path = dirname(__FILE__);
 		$this->file = basename(__FILE__);
 		$this->directory = basename( $this->path);
@@ -64,7 +64,7 @@ class PP_Invoice {
 		// Only run the content script if we are not using the replace_tag method.  We want to avoid running the function twice
 		if(get_option( 'pp_invoice_where_to_display' ) != 'replace_tag' ) { add_filter( 'the_content', 'pp_invoice_the_content' );  } else { add_shortcode( 'pp-invoice', 'pp_invoice_the_content' ); 	}
 
-		$this->SetUserAccess( $pp_base_capability );
+		$this->SetUserAccess( PP_BASE_CAP );
 	}
 
 	function SetUserAccess( $capability = 'read') {

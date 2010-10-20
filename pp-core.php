@@ -10,8 +10,8 @@ if( !defined( 'PP_CORE_DIR' ) )
 if( !defined( 'PP_CORE_URL' ) )
 	define( 'PP_CORE_URL', PP_PLUGIN_URL . '/pp-core' );
 
-global $pp_base_capability; 
-$pp_base_capability = apply_filters( 'pp_base_capability', 'read' );
+if ( !defined( 'PP_BASE_CAP' ) )
+	define( 'PP_BASE_CAP', apply_filters( 'pp_base_capability', 'read' ) );
 
 include_once( PP_CORE_DIR . '/core-widgets.php' );
 
@@ -115,9 +115,9 @@ function pp_settings_page(){
  * Create and set global currency variables for sharing all currencies available in the marketplace and the currently 
  * selected currency type and symbol.
  * 
- * To make a new currency available, simply add an array to this variable. The key for this array must be the currency's 
+ * To make a new currency available, add an array to the global $currencies variable. The key for this array must be the currency's 
  * ISO 4217 code. The array must contain the currency name and symbol. 
- * e.g. $currencies['CAD'] = array( 'currency' => __('Canadian Dollar', 'prospress' ), 'symbol' => '&#36;' ).
+ * e.g. $currencies['CAD'] = array( 'currency' => __('Canadian Dollar'), 'symbol' => '&#36;' ).
  * 
  * Once added, the currency will be available for selection from the admin page.
  * 

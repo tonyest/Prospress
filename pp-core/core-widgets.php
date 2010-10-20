@@ -20,7 +20,7 @@ class PP_Admin_Widget extends WP_Widget {
 	}
 
 	function widget( $args, $instance ) {
-		global $market_systems, $pp_base_capability;
+		global $market_systems;
 
 		extract( $args );
 

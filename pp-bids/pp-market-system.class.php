@@ -36,7 +36,6 @@ abstract class PP_Market_System {
 	private $capability;			// the capability for making bids and viewing bid menus etc.
 
 	public function __construct( $name, $args = array() ) {
-		global $pp_base_capability;
 
 		$this->name = sanitize_user( $name, true );
 
@@ -59,7 +58,7 @@ abstract class PP_Market_System {
 											'bid_date' => 'Bid Date',
 											'post_end' => 'Post End Date'
 											),
-						'capability' => $pp_base_capability
+						'capability' => PP_BASE_CAP
 						);
 
 		$args = wp_parse_args( $args, $defaults );
