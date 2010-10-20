@@ -52,3 +52,21 @@ function pp_uninstall(){
 }
 register_uninstall_hook( __FILE__, 'pp_uninstall' );
 
+
+/**
+ * Quick links on the plugin admin page for Prospress meta.
+ *
+ * @package Prospress
+ * @since 1.1
+ */
+function pp_register_plugin_links( $links, $file ) {
+	$base = plugin_basename( __FILE__ );
+	error_log('base = ' . print_r( $base, true ));
+	error_log('file = ' . print_r( $file, true ));
+	if ( $file == $base ) {
+		$links[] = '<a href="admin.php?page=Prospress">' . __( 'Settings', 'prospress' ) . '</a>';
+		$links[] = '<a href="http://prospress.org/forums/">' . __( 'Support', 'prospress' ) . '</a>';
+	}
+	return $links;
+}
+add_filter( 'plugin_row_meta', 'pp_register_plugin_links', 10, 2 );
