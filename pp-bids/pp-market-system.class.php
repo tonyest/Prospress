@@ -800,9 +800,14 @@ abstract class PP_Market_System {
 			<table class="widefat fixed" cellspacing="0">
 				<thead>
 					<tr class="thead">
-						<?php print_column_headers( $this->name ); // Calls get_column_headings() added by add_filter( manage_$this->name_columns ?>
+						<?php print_column_headers( $this->name ); ?>
 					</tr>
 				</thead>
+				<tfoot>
+					<tr class="thead">
+						<?php print_column_headers( $this->name ); ?>
+					</tr>
+				</tfoot>
 				<tbody id="bids" class="list:user user-list">
 				<?php
 					if( !empty( $bids ) ){
@@ -849,11 +854,6 @@ abstract class PP_Market_System {
 					}
 				?>
 				</tbody>
-				<tfoot>
-					<tr class="thead">
-						<?php print_column_headers( $this->name ); ?>
-					</tr>
-				</tfoot>
 			</table>
 		</div>
 		<?php
