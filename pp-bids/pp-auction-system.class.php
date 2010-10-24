@@ -56,7 +56,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 	}
 
 	protected function bid_form_submit( $post_id = NULL, $bid_value = NULL, $bidder_id = NULL ){
-		global $user_ID, $wpdb, $blog_id;
+		global $user_ID, $wpdb;
 		nocache_headers();
 
 		//Get Bid details
@@ -66,7 +66,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		$bid_date 		= current_time( 'mysql' );
 		$bid_date_gmt 	= current_time( 'mysql', 1 );
 
-		do_action( 'get_auction_bid', $post_id, $bid_value, $bidder_id, $_GET );
+		do_action( 'get_auction_bid', $post_id, $bid_value, $bidder_id );
 
 		$bid = compact("post_id", "bidder_id", "bid_value", "bid_date", "bid_date_gmt" );
 
@@ -165,7 +165,6 @@ class PP_Auction_Bid_System extends PP_Market_System {
 			$new_winning_bid_value = $current_winning_bid_value;
 		}
 
-		//$wpdb->insert( $wpdb->bids, $bid );
 		parent::update_bid( $bid );
 
 		if( $this->message_id != 2 ){ // valid bid, over existing max, change winning bid id and bid value in bids meta table

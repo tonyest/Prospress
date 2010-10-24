@@ -31,8 +31,11 @@ abstract class PP_Market_System {
 	public $bid_table_headings;		// Array of name/value pairs to be used as column headings when printing table of bids. 
 									// e.g. 'bid_id' => 'Bid ID', 'post_id' => 'Post', 'bid_value' => 'Amount', 'bid_date' => 'Date'
 	public $taxonomy;				// A PP_Taxonomy object for this post type
+	public $admin_pages = array();	// An array of the admin bid page slugs for this market system
+
 	protected $bid_status;
 	protected $message;
+
 	private $capability;			// the capability for making bids and viewing bid menus etc.
 
 	public function __construct( $name, $args = array() ) {
@@ -593,23 +596,25 @@ abstract class PP_Market_System {
 	 **/
 	public function add_admin_pages() {
 
-		$base_page = $this->name . "-bids";
+		$this->admin_pages[ 'base_page' ] = $this->name . "-bids";
 
 		$bids_title = apply_filters( 'bids_admin_title', sprintf( __( '%s Bids', 'prospress' ), $this->labels[ 'singular_name' ] ) );
 
 		if ( function_exists( 'add_object_page' ) ) {
-			add_object_page( $bids_title, $bids_title, $this->capability, $base_page, '', PP_PLUGIN_URL . '/images/auctions16.png' );
+			add_object_page( $bids_title, $bids_title, $this->capability, $this->admin_pages[ 'base_page' ], '', PP_PLUGIN_URL . '/images/auctions16.png' );
 		} elseif ( function_exists( 'add_menu_page' ) ) {
-			add_menu_page( $bids_title, $bids_title, $this->capability, $base_page, '', PP_PLUGIN_URL . '/images/auctions16.png' );
+			add_menu_page( $bids_title, $bids_title, $this->capability, $this->admin_pages[ 'base_page' ], '', PP_PLUGIN_URL . '/images/auctions16.png' );
 		}
 
-		$completed_posts_menu_title = apply_filters( 'pp_completed_posts_menu_title', sprintf( __( 'Completed %s', 'prospress' ), $this->label ) );
-		$active_posts_menu_title = apply_filters( 'pp_active_posts_menu_title', sprintf( __( 'Active %s', 'prospress' ), $this->label ) );
+		$completed_posts_title = apply_filters( 'pp_completed_posts_title', sprintf( __( 'Completed %s', 'prospress' ), $this->label ) );
+		$active_posts_title = apply_filters( 'pp_active_posts_title', sprintf( __( 'Active %s', 'prospress' ), $this->label ) );
+		$all_bids_title = apply_filters( 'pp_all_bids_title', __( 'All Bids', 'prospress' ) );
 
 	    // Add submenu items to the bids top-level menu
-		if (function_exists( 'add_submenu_page' )){
-		    add_submenu_page( $base_page, $completed_posts_menu_title, $completed_posts_menu_title, $this->capability, $base_page, array( &$this, 'completed_history' ) );
-		    add_submenu_page( $base_page, $active_posts_menu_title, $active_posts_menu_title, $this->capability, 'active-bids', array( &$this, 'active_history' ) );
+		if ( function_exists( 'add_submenu_page' ) ){
+			$this->admin_pages[ 'completed' ] = add_submenu_page( $this->admin_pages[ 'base_page' ], $completed_posts_title, $completed_posts_title, $this->capability, $this->admin_pages[ 'base_page' ], array( &$this, 'completed_history' ) );
+			$this->admin_pages[ 'active' ] = add_submenu_page( $this->admin_pages[ 'base_page' ], $active_posts_title, $active_posts_title, $this->capability, 'active-bids', array( &$this, 'active_history' ) );
+			$this->admin_pages[ 'all' ] = add_submenu_page( $this->admin_pages[ 'base_page' ], $all_bids_title, $all_bids_title, 'edit_others_posts', 'all-bids', array( &$this, 'all_history' ) );
 		}
 	}
 
@@ -617,10 +622,12 @@ abstract class PP_Market_System {
 	public function active_history() {
 	  	global $wpdb, $user_ID;
 
-		get_currentuserinfo(); //get's user ID of currently logged in user and puts into global $user_id
+		if ( !current_user_can( $this->capability ) )
+			wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 
-		$order_by = 'bid_date_gmt';
-		$query = $this->create_bid_page_query();
+		get_currentuserinfo();
+
+		$query = $this->create_bid_page_query( 'publish', $user_ID );
 
 		$bids = $wpdb->get_results( $query, ARRAY_A );
 
@@ -633,11 +640,11 @@ abstract class PP_Market_System {
 	  	global $wpdb, $user_ID;
 
 		if ( !current_user_can( $this->capability ) )
-			wp_die("You need to be able to read to view this page.");
+			wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 
-		get_currentuserinfo(); //get's user ID of currently logged in user and puts into global $user_id
+		get_currentuserinfo();
 
-		$query = $this->create_bid_page_query( 'completed' );
+		$query = $this->create_bid_page_query( 'completed', $user_ID );
 
 		$bids = $wpdb->get_results( $query, ARRAY_A );
 
@@ -646,18 +653,38 @@ abstract class PP_Market_System {
 		$this->print_admin_bids_table( $bids, sprintf( __( 'Bids on Completed %s', 'prospress' ), $this->label ), 'bids' );
 	}
 
-	private function create_bid_page_query( $post_status = 'publish', $bid_status = '' ){
-		global $wpdb, $user_ID;
+	public function all_history() {
+	  	global $wpdb;
 
-		$query = $wpdb->prepare( "SELECT * FROM $wpdb->bids WHERE bidder_id = %d", $user_ID );
+		if ( !current_user_can( 'edit_others_posts' ) )
+			wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 
-		$query .= $wpdb->prepare( " AND post_id IN ( SELECT ID FROM $wpdb->posts WHERE post_status = %s ) ", $post_status );
+		$query = $this->create_bid_page_query();
+
+		$bids = $wpdb->get_results( $query, ARRAY_A );
+
+		$bids = apply_filters( 'all_bids_history', $bids );
+
+		$this->print_admin_bids_table( $bids, __( 'All Bids', 'prospress' ), 'bids' );
+	}
+
+	private function create_bid_page_query( $post_status = '', $user_id = '', $bid_status = '' ){
+		global $wpdb;
+
+		$query = "SELECT * FROM $wpdb->bids WHERE 1=1";
+
+		if( !empty( $user_id ) )
+			$query .= $wpdb->prepare( " AND bidder_id = %d", $user_id );
+
+		if( !empty( $post_status ) )
+			$query .= $wpdb->prepare( " AND post_id IN ( SELECT ID FROM $wpdb->posts WHERE post_status = %s ) ", $post_status );
 
 		if( !empty( $bid_status ) )
 			$query .= $wpdb->prepare( ' AND bid_status = %s', $bid_status );
 
 		// Only the latest bid
-		$query .= $wpdb->prepare( " AND bid_id IN ( SELECT MAX( bid_id ) FROM $wpdb->bids WHERE bidder_id = %d GROUP BY post_id ) ", $user_ID );
+		if( !empty( $user_id ) )
+			$query .= $wpdb->prepare( " AND bid_id IN ( SELECT MAX( bid_id ) FROM $wpdb->bids WHERE bidder_id = %d GROUP BY post_id ) ", $user_id );
 
 		if( isset( $_GET[ 'm' ] ) && $_GET[ 'm' ] != 0 ){
 			$month	= substr( $_GET[ 'm' ], -2 );
@@ -703,7 +730,7 @@ abstract class PP_Market_System {
 	}
 
 	protected function print_admin_bids_table( $bids = array(), $title = 'Bids', $page ){
-		global $wpdb, $user_ID, $wp_locale;
+		global $wpdb, $user_ID, $wp_locale, $current_screen;
 
 		if( !is_array( $bids ) )
 			$bids = array();
@@ -791,11 +818,11 @@ abstract class PP_Market_System {
 								<td><?php $this->the_winning_bid_value( $bid[ 'post_id' ] ); ?></td>
 								<td><?php echo mysql2date( __( 'g:ia d M Y' , 'prospress' ), $bid[ 'bid_date' ] ); ?></td>
 								<td><?php echo mysql2date( __( 'g:ia d M Y' , 'prospress' ), $post_end_date ); ?></td>
-								<?php if( strpos( $_SERVER['REQUEST_URI' ], 'bids' ) !== false ){
+								<td>
+								<?php if( $current_screen->parent_base == $this->admin_pages[ 'base_page' ] && $current_screen->id != $this->admin_pages[ 'all' ] ) {
 									$actions = apply_filters( 'bid_table_actions', array(), $post->ID );
-									echo '<td>';
-									if( is_array( $actions ) && !empty( $actions ) ){
-									?><div class="prospress-actions">
+									if( is_array( $actions ) && !empty( $actions ) ){ ?>
+									<div class="prospress-actions">
 										<ul class="actions-list">
 											<li class="base"><?php _e( 'Take action:', 'prospress' ) ?></li>
 										<?php foreach( $actions as $action => $attributes )
@@ -807,9 +834,13 @@ abstract class PP_Market_System {
 									} else {
 										_e( 'No action can be taken.', 'prospress' );
 									}
-									echo '</td>';
-								}?>
-							<tr>
+								} else {
+									error_log( '$bid[ bidder_id ] = ' . print_r( $bid[ 'bidder_id' ], true ) );
+									error_log( 'get_userdata( $bid->bidder_id ) = ' . print_r( get_userdata( $bid[ 'bidder_id' ] ), true ) );
+									echo get_userdata( $bid[ 'bidder_id' ] )->user_nicename;
+								} ?>
+								</td>
+							</tr>
 							<?php
 							$style = ( 'alternate' == $style ) ? '' : 'alternate';
 						}
@@ -830,10 +861,14 @@ abstract class PP_Market_System {
 
 	// Returns bid column headings for market system. Used with the built in print_column_headers function.
 	public function get_column_headings(){
+		global $current_screen;
+
 		$column_headings = $this->bid_table_headings;
 
-		if( strpos( $_SERVER['REQUEST_URI' ], 'bids' ) !== false )
+		if( $current_screen->parent_base == $this->admin_pages[ 'base_page' ] && $current_screen->id != $this->admin_pages[ 'all' ] )
 			$column_headings[ 'bid_actions' ] = __( 'Action', 'prospress' );
+		else
+			$column_headings[ 'bidder' ] = __( 'Bidder', 'prospress' );
 
 		return $column_headings;
 	}
@@ -921,10 +956,8 @@ abstract class PP_Market_System {
 		if ( !isset( $_REQUEST[ 'bid_redirect' ] ) && ( !isset( $_REQUEST[ 'bid_nonce' ] ) || !wp_verify_nonce( $_REQUEST['bid_nonce' ], __FILE__) ) ) {
 			$this->bid_status = 8;
 		} elseif ( isset( $_GET[ 'bid_redirect' ] ) ) {
-			//$this->bid_status = $this->bid_form_submit( $_GET[ 'post_ID' ], $_GET[ 'bid_value' ] );
 			$this->bid_form_submit( $_GET[ 'post_ID' ], $_GET[ 'bid_value' ] );
 		} else {
-			//$this->bid_status = $this->bid_form_submit( $_POST[ 'post_ID' ], $_POST[ 'bid_value' ] );
 			$this->bid_form_submit( $_POST[ 'post_ID' ], $_POST[ 'bid_value' ] );
 		}
 
