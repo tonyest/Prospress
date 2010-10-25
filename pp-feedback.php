@@ -145,7 +145,7 @@ function pp_feedback_rows( $feedback ){
 		foreach ( $feedback as $feedback_item ) {
 		 	$user_of_interest = ( strpos( $_SERVER[ 'REQUEST_URI' ], 'given' ) == false ) ? $feedback_item->post_author : $feedback_item->feedback_recipient;
 			echo "<tr class='feedback $style' >";
-			echo "<td scope='row'>" . ( ( $user_ID == $user_of_interest ) ? 'You' : get_userdata( $user_of_interest )->user_nicename ) . pp_users_feedback_link( $user_of_interest ) . "</td>";
+			echo "<td scope='row'>" . ( ( $user_ID == $user_of_interest ) ? 'You' : get_userdata( $user_of_interest )->display_name ) . pp_users_feedback_link( $user_of_interest ) . "</td>";
 			echo "<td>" . pp_get_users_role( $feedback_item->post_parent, $user_of_interest ) . "</td>";
 			echo "<td>" . (( $feedback_item->feedback_score == 2) ? __("Positive", 'prospress' ) : (( $feedback_item->feedback_score == 1) ? __("Neutral", 'prospress' ) : __("Negative", 'prospress' ))) . "</td>";
 			echo "<td>" . $feedback_item->post_content . "</td>";
@@ -336,7 +336,7 @@ function pp_insert_feedback( $feedback ) {
 		'ping_status' 		=> 'closed',
 		'post_type' 		=> 'feedback',
 		'post_name' 		=> $feedback[ 'feedback_author' ] . '-feedback-' . $feedback[ 'feedback_recipient' ] . '-on-' . $feedback[ 'post_id' ],
-		'post_title' 		=> apply_filters( 'feedback_item_title', sprintf( __( "Feedback for %s from %s ", 'prospress' ), get_userdata( $feedback[ 'feedback_recipient' ] )->user_nicename, get_userdata( $feedback[ 'feedback_author' ] )->user_nicename ) )
+		'post_title' 		=> apply_filters( 'feedback_item_title', sprintf( __( "Feedback for %s from %s ", 'prospress' ), get_userdata( $feedback[ 'feedback_recipient' ] )->display_name, get_userdata( $feedback[ 'feedback_author' ] )->display_name ) )
 		);
 
 	$feedback_post = array(
@@ -426,13 +426,13 @@ function pp_feedback_history_admin( $user_id = '' ) {
 	if( isset( $_GET[ 'uid' ] ) && $_GET[ 'uid' ] != $user_id ){
 		if( isset( $_GET[ 'post' ] ) ){
 			$feedback = pp_get_feedback( array( 'author' => $_GET[ 'uid' ], 'feedback_recipient' => $_GET[ 'uid' ], 'post_parent' => $_GET[ 'post' ] ) );
-			$title = sprintf( __( 'Feedback for %1$s on Post %2$d', 'prospress' ), get_userdata( $_GET[ 'uid' ] )->user_nicename, $_GET[ 'post' ] );
+			$title = sprintf( __( 'Feedback for %1$s on Post %2$d', 'prospress' ), get_userdata( $_GET[ 'uid' ] )->display_name, $_GET[ 'post' ] );
 		} else if( $_GET[ 'filter' ] == 'given' ){
 			$feedback = pp_get_feedback( array( 'author' => $_GET[ 'uid' ] ) );
-			$title = sprintf( __( 'Feedback Given by %s', 'prospress' ), get_userdata( $_GET[ 'uid' ] )->user_nicename );
+			$title = sprintf( __( 'Feedback Given by %s', 'prospress' ), get_userdata( $_GET[ 'uid' ] )->display_name );
 		} else {
 			$feedback = pp_get_feedback( array( 'feedback_recipient' => $_GET[ 'uid' ] ) );
-			$title = sprintf( __( 'Feedback Received by %s', 'prospress' ), get_userdata( $_GET[ 'uid' ] )->user_nicename );
+			$title = sprintf( __( 'Feedback Received by %s', 'prospress' ), get_userdata( $_GET[ 'uid' ] )->display_name );
 		}
 		$user_id = $_GET[ 'uid' ];
 	} else if( isset( $_GET[ 'post' ] ) ){
