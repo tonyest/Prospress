@@ -565,7 +565,7 @@ abstract class PP_Market_System {
 	 */
 	function get_bids_url() {
 
-		 return admin_url( 'admin.php?page=' . $this->bid_object_name );
+		 return admin_url( 'edit.php?post_type=' . $this->bid_object_name );
 	}
 
 
@@ -817,8 +817,8 @@ abstract class PP_Market_System {
 		global $current_screen;
 
 		if( $current_screen->post_type == $this->bid_object_name ){
-			echo '<style type="text/css">.add-new-h2,.actions select:first-child,#doaction,';
-			echo ( !current_user_can( 'edit_others_prospress_posts' ) ) ? '.count' : '';
+			echo '<style type="text/css">.add-new-h2,.actions select:first-child,#doaction';
+			echo ( !current_user_can( 'edit_others_prospress_posts' ) ) ? ',.count' : '';
 			echo '{display: none;}</style>';  
 		}
 	}

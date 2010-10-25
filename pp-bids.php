@@ -46,7 +46,7 @@ function pp_bids_maybe_install() {
 	if ( !current_user_can( 'edit_plugins' ) )
 		return false;
 
-	if ( !get_option( 'pp_bids_db_version' ) || get_option( 'pp_bids_db_version' ) < PP_BIDS_DB_VERSION )
+	//if ( !get_option( 'pp_bids_db_version' ) || get_option( 'pp_bids_db_version' ) < PP_BIDS_DB_VERSION )
 		pp_bids_install();
 }
 add_action( 'pp_activation', 'pp_bids_maybe_install' );
@@ -60,8 +60,33 @@ add_action( 'pp_activation', 'pp_bids_maybe_install' );
 function pp_bids_install($blog_id = 0) {
 	global $wpdb;
 
-	if ( !empty($wpdb->charset) )
-		$charset_collate = "DEFAULT CHARACTER SET $wpdb->charset";
+	if ( !isset($wpdb->bids) || empty($wpdb->bids))
+		$wpdb->bids = $wpdb->prefix . 'bids';
+	if ( !isset($wpdb->bidsmeta) || empty($wpdb->bidsmeta))
+		$wpdb->bidsmeta = $wpdb->prefix . 'bidsmeta';
+
+	$id_transition = array();
+	$bids = $wpdb->get_results( "SELECT * FROM $wpdb->bids", ARRAY_A );
+
+	foreach( $bids as $bid ){
+		$bid_post[ 'post_parent' ]	= $bid[ 'post_id' ];
+		$bid_post[ 'post_author' ]	= $bid[ 'bidder_id' ];
+		$bid_post[ 'post_content' ]	= $bid[ 'bid_value' ];
+		$bid_post[ 'post_status' ]	= $bid[ 'bid_status' ];
+		$bid_post[ 'post_date' ]	= $bid[ 'bid_date' ];
+		$bid_post[ 'post_date_gmt' ]= $bid[ 'bid_date_gmt' ];
+		$bid_post[ 'post_type' ]	= 'auctions-bids';
+
+		$id_transition[ $bid[ 'bid_id' ] ] = wp_insert_post( $bid_post );
+	}
+
+	$bidsmeta = $wpdb->get_results( "SELECT * FROM $wpdb->bidsmeta", ARRAY_A );
+
+	foreach( $bidsmeta as $meta_item )
+		add_post_meta( $id_transition[ $meta_item[ 'bid_id' ] ], $meta_item[ 'meta_key' ], $meta_item[ 'meta_value' ], true );
+
+	$wpdb->query( "DROP TABLE IF EXISTS $wpdb->bids" );
+	$wpdb->query( "DROP TABLE IF EXISTS $wpdb->bidsmeta" );
 
 	update_option( 'pp_bids_db_version', PP_BIDS_DB_VERSION );
 }
