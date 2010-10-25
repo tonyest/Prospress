@@ -1,4 +1,4 @@
-=== Prospress Marketplace Plugin ===
+=== Prospress ===
 Contributors: Prospress, thenbrent, tonyest
 Tags: marketplace, prospress, auction, ecommerce, e-commerce
 Requires at least: 3.0
@@ -114,6 +114,10 @@ Nope. There are a few surprises but you'll have to download & explore Prospress 
 
 
 == Changelog ==
+
+= 1.1 =
+* Bids are now a custom post type
+* Bug on bid form ajax fixed
 
 = 1.0 =
 * SSL & credit card payments (for USD only) now supported
