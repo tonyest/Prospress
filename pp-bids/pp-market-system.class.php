@@ -816,10 +816,11 @@ abstract class PP_Market_System {
 	public function admin_css(){
 		global $current_screen;
 
-		if( $current_screen->post_type == $this->bid_object_name )
+		if( $current_screen->post_type == $this->bid_object_name ){
 			echo '<style type="text/css">.add-new-h2,.actions select:first-child,#doaction,';
 			echo ( !current_user_can( 'edit_others_prospress_posts' ) ) ? '.count' : '';
 			echo '{display: none;}</style>';  
+		}
 	}
 
 	// Adds bid system specific sort options to the post system sort widget, can be implemented, but doesn't have to be
