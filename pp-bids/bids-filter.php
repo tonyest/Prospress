@@ -65,6 +65,7 @@ add_action( 'widgets_init', create_function( '', 'return register_widget("Bid_Fi
 
 
 class Bid_Filter_Query {
+	const BID_OBJECT_NAME = 'auctions-bids';
 
 	static function init() {
 		add_action( 'pre_get_posts', array( __CLASS__, 'add_filters' )) ;
@@ -84,8 +85,8 @@ class Bid_Filter_Query {
 		add_filter('posts_where', array(__CLASS__, 'posts_where'));
 	}
 
-	static function posts_where($where) {
-		remove_filter(current_filter(), array(__CLASS__, __FUNCTION__));
+	static function posts_where( $where ) {
+		remove_filter( current_filter(), array( __CLASS__, __FUNCTION__ ) );
 
 		global $wpdb;
 
@@ -95,7 +96,7 @@ class Bid_Filter_Query {
 		if ( !$min && !$max )
 			return $where;
 
-		$bidsmeta_value = "CAST($wpdb->bidsmeta.meta_value AS decimal)";
+		$bidsmeta_value = "CAST($wpdb->postmeta.meta_value AS decimal)";
 
 		if ( $min && $max )
 			$clause = "$bidsmeta_value >= $min AND $bidsmeta_value <= $max";
@@ -104,7 +105,7 @@ class Bid_Filter_Query {
 		elseif ( $max )
 			$clause = "$bidsmeta_value <= $max";
 
-		$where .= " AND ( $wpdb->posts.ID IN ( SELECT post_id FROM $wpdb->bids WHERE bid_id IN ( SELECT bid_id FROM $wpdb->bidsmeta WHERE $wpdb->bidsmeta.meta_key = 'winning_bid_value' AND $clause ) )";
+		$where .= " AND ( $wpdb->posts.ID IN ( SELECT post_parent FROM $wpdb->posts WHERE ID IN ( SELECT post_id FROM $wpdb->postmeta WHERE meta_key = 'winning_bid_value' AND $clause ) )";
 
 		if( $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->postmeta WHERE meta_key = 'start_price' AND meta_value > 0" ) ){
 			$postmeta_value = "CAST($wpdb->postmeta.meta_value AS decimal)";
@@ -116,7 +117,7 @@ class Bid_Filter_Query {
 			elseif ( $max )
 				$clause_sp = "$postmeta_value <= $max";
 
-			$where .= " OR $wpdb->posts.ID IN ( SELECT post_id FROM $wpdb->postmeta WHERE $wpdb->postmeta.meta_key = 'start_price' AND $clause_sp AND post_id NOT IN ( SELECT DISTINCT post_id FROM $wpdb->bids ) )";
+			$where .= " OR $wpdb->posts.ID IN ( SELECT post_id FROM $wpdb->postmeta WHERE $wpdb->postmeta.meta_key = 'start_price' AND $clause_sp AND post_id NOT IN ( SELECT DISTINCT post_parent FROM $wpdb->posts WHERE post_type = '" . self::BID_OBJECT_NAME . "' ) )";
 		}
 		
 		$where .= ")";

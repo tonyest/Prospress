@@ -9,7 +9,6 @@
  * @package Prospress
  * @version 0.1
  */
-//require_once( PP_POSTS_DIR . '/pp-custom-taxonomy.php' );
 
 class PP_Post {
 
@@ -447,9 +446,7 @@ class PP_Post {
 				$human_time .= '<br/>' . get_post_end_time( $post_id, 'mysql', 'user' );
 			}
 			echo '<abbr>' . apply_filters( 'post_end_date_column', $human_time, $post_id, $column_name) . '</abbr>';
-		}
-
-		if( $column_name == 'post_actions' ) {
+		} elseif( $column_name == 'post_actions' ) {
 			$actions = apply_filters( 'completed_post_actions', array(), $post_id );
 			if( is_array( $actions ) && !empty( $actions ) ){?>
 				<div class="prospress-actions">

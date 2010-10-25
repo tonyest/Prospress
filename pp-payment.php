@@ -67,7 +67,7 @@ function pp_add_payment_action( $actions, $post_id ) {
 	$invoice_is_paid = pp_invoice_is_paid( $invoice_id );
 
 	if ( $is_winning_bidder && !$invoice_is_paid ) {
-		$actions[ 'make-payment' ] = array( 'label' => __( 'Make Payment', 'prospress' ), 
+		$actions[ 'make-payment' ] = array( 'label' => __( 'Pay Now', 'prospress' ), 
 											'url' => $make_payment_url );
 	} else if ( $user_ID == $post->post_author && !$invoice_is_paid ) {
 		$actions[ 'send-invoice' ] = array( 'label' => __( 'Send Invoice', 'prospress' ),
@@ -97,7 +97,7 @@ function pp_generate_invoice( $post_id ) { //receive post ID from hook
 
 	$winning_bid = $market_systems[ $type ]->get_winning_bid( $post_id );
 
-	$payer_id 	= $winning_bid->bidder_id;
+	$payer_id 	= $winning_bid->post_author;
 	$payee_id	= get_post( $post_id )->post_author;
 	$amount		= $winning_bid->winning_bid_value;
 	$status		= 'pending';

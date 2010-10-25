@@ -16,16 +16,16 @@ class PP_Auction_Bid_System extends PP_Market_System {
 	public function __construct() {
 		do_action( 'auction_pre_construct' );
 
-		if ( !defined( 'BID_INCREMENT' ) )
-			define( 'BID_INCREMENT', '0.05' );
+		if ( !defined( 'AUCTION_BID_INCREMENT' ) )
+			define( 'AUCTION_BID_INCREMENT', '0.05' );
 
 		$args = array(
 				'label' => __( 'Auctions', 'prospress' ),
 				'labels' => array(
 					'name' => __( 'Auctions', 'prospress' ),
-					'singular_name' => __( 'Auction', 'prospress' ) ),
+					'singular_name' => __( 'Auction', 'prospress' ),
+					'bid_button' => __( 'Bid!', 'prospress' ) ),
 				'description' => 'The Default Prospress Standard Auction System.',
-				'bid_button_value' => __( 'Bid!', 'prospress' ),
 				'adds_post_fields' => true
 				);
 
@@ -93,7 +93,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		} elseif ( empty( $bid_value ) || $bid_value === NULL || !preg_match( '/^[0-9]*\.?[0-9]*$/', $bid_value ) ) {
 			$this->message_id = 7;
 			$this->bid_status = 'invalid';
-		} elseif ( $bidder_id != $this->get_winning_bid( $post_id )->bidder_id ) {
+		} elseif ( $bidder_id != $this->get_winning_bid( $post_id )->post_author ) {
 			$current_winning_bid_value = $this->get_winning_bid_value( $post_id );
 			if ( $this->get_bid_count( $post_id ) == 0 ) {
 				$start_price = get_post_meta( $post_id, 'start_price', true );
@@ -104,20 +104,20 @@ class PP_Auction_Bid_System extends PP_Market_System {
 					$this->message_id = 0;
 					$this->bid_status = 'winning';
 				}
-			} elseif ( $bid_value > $post_max_bid->bid_value ) {
+			} elseif ( $bid_value > $post_max_bid->post_content ) {
 				$this->message_id = 1;
 				$this->bid_status = 'winning';
 			} elseif ( $bid_value <= $current_winning_bid_value ) {
 				$this->message_id = 3;
 				$this->bid_status = 'invalid';
-			} elseif ( $bid_value <= $post_max_bid->bid_value ) {
+			} elseif ( $bid_value <= $post_max_bid->post_content ) {
 				$this->message_id = 2;
 				$this->bid_status = 'outbid';
 			}
-		} elseif ( $bid_value > $bidders_max_bid->bid_value ){ //user increasing max bid
+		} elseif ( $bid_value > $bidders_max_bid->post_content ){ //user increasing max bid
 			$this->message_id = 4;
 			$this->bid_status = 'winning';
-		} elseif ( $bid_value < $bidders_max_bid->bid_value ) { //user trying to decrease max bid
+		} elseif ( $bid_value < $bidders_max_bid->post_content ) { //user trying to decrease max bid
 			$this->message_id = 5;
 			$this->bid_status = 'invalid';
 		} else {
@@ -138,42 +138,42 @@ class PP_Auction_Bid_System extends PP_Market_System {
 			return $current_winning_bid_value;
 
 		$posts_max_bid			= $this->get_max_bid( $bid[ 'post_id' ] );
-		$current_winning_bid_id	= $this->get_winning_bid( $bid[ 'post_id' ] )->bid_id;
+		$current_winning_bid_id	= $this->get_winning_bid( $bid[ 'post_id' ] )->ID;
 
 		if( $this->message_id == 0 ) { // first bid
 			$start_price = get_post_meta( $bid[ 'post_id' ], 'start_price', true );
 			if( (float)$start_price != 0 ){
 				$new_winning_bid_value = $start_price;
 			} else {
-				$new_winning_bid_value = ( $bid[ 'bid_value' ] * BID_INCREMENT );
+				$new_winning_bid_value = ( $bid[ 'bid_value' ] * AUCTION_BID_INCREMENT );
 			}
 		} elseif ( $this->message_id == 1 ) { //Bid value is over max bid & bidder different to current winning bidder
-			if ( $bid[ 'bid_value' ] > ( $posts_max_bid->bid_value * ( BID_INCREMENT + 1 ) ) ) {
-				$new_winning_bid_value = $posts_max_bid->bid_value * ( BID_INCREMENT + 1 );
+			if ( $bid[ 'bid_value' ] > ( $posts_max_bid->post_content * ( AUCTION_BID_INCREMENT + 1 ) ) ) {
+				$new_winning_bid_value = $posts_max_bid->post_content * ( AUCTION_BID_INCREMENT + 1 );
 			} else {
 				$new_winning_bid_value = $bid[ 'bid_value' ];
 			}
 		} elseif ( $this->message_id == 2 ) {
-			$bid_value_incremented = $bid[ 'bid_value' ] * ( 1 + BID_INCREMENT );
-			if ( $posts_max_bid->bid_value > $bid_value_incremented ) {
+			$bid_value_incremented = $bid[ 'bid_value' ] * ( 1 + AUCTION_BID_INCREMENT );
+			if ( $posts_max_bid->post_content > $bid_value_incremented ) {
 				$new_winning_bid_value = $bid_value_incremented;
 			} else {
-				$new_winning_bid_value = $posts_max_bid->bid_value;
+				$new_winning_bid_value = $posts_max_bid->post_content;
 			}
 		} elseif ( $this->message_id == 4 ) { // bidder increasing max bid, set their previous bid as 'outbid'
-			$wpdb->update( $wpdb->bids, array( 'bid_status' => 'outbid' ), array( 'bid_id' => $current_winning_bid_id ) );
+			$wpdb->update( $wpdb->posts, array( 'post_status' => 'outbid' ), array( 'ID' => $current_winning_bid_id ) );
 			$new_winning_bid_value = $current_winning_bid_value;
 		}
 
 		parent::update_bid( $bid );
 
 		if( $this->message_id != 2 ){ // valid bid, over existing max, change winning bid id and bid value in bids meta table
-			$wpdb->update( $wpdb->bids, array( 'bid_status' => 'outbid' ), array( 'bid_id' => $current_winning_bid_id ) );
-			$wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->bidsmeta WHERE bid_id = %d AND meta_key = 'winning_bid_value'", $current_winning_bid_id ) );
-			$new_winning_bid_id = $this->get_winning_bid( $bid[ 'post_id' ] )->bid_id;
-			$wpdb->insert( $wpdb->bidsmeta, array( 'bid_id' => $new_winning_bid_id, 'meta_key' => 'winning_bid_value', 'meta_value' => $new_winning_bid_value ) );
+			$wpdb->update( $wpdb->posts, array( 'post_status' => 'outbid' ), array( 'ID' => $current_winning_bid_id ) );
+			$wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->postmeta WHERE post_id = %d AND meta_key = 'winning_bid_value'", $current_winning_bid_id ) );
+			$new_winning_bid_id = $this->get_winning_bid( $bid[ 'post_id' ] )->ID;
+			$wpdb->insert( $wpdb->postmeta, array( 'post_id' => $new_winning_bid_id, 'meta_key' => 'winning_bid_value', 'meta_value' => $new_winning_bid_value ) );
 		} else { // current winning bid is still winning bid, just need to update winning bid value
-			$wpdb->update( $wpdb->bidsmeta, array( 'meta_value' => $new_winning_bid_value ), array( 'bid_id' => $current_winning_bid_id, 'meta_key' => 'winning_bid_value' ) );
+			$wpdb->update( $wpdb->postmeta, array( 'meta_value' => $new_winning_bid_value ), array( 'post_id' => $current_winning_bid_id, 'meta_key' => 'winning_bid_value' ) );
 		}
 
 		return $new_winning_bid_value;
@@ -228,17 +228,19 @@ class PP_Auction_Bid_System extends PP_Market_System {
 	}
 
 	// Called on bid_table_actions hook
-	public function add_bid_table_actions( $actions, $post_id ) {
+	public function add_bid_table_actions( $actions, $post_id, $bid ) {
+		global $user_ID;
 
 		$post = get_post( $post_id );
 
-		if( $post->post_status == 'completed' )
+		if( $post->post_status == 'completed' || $user_ID != $bid->post_author )
 			return;
 
 		$permalink = get_permalink( $post_id );
 
-		$actions[ 'increase-bid' ] = array( 'label' => __( 'Increase Bid', 'prospress' ),
+		$actions[ 'edit-bid' ] = array( 'label' =>  __( 'Increase Bid', 'prospress' ),
 											'url' => $permalink );
+
 		return $actions;
 	}
 
@@ -248,5 +250,35 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		$sort_options['price-desc' ] = __( 'Price: high to low', 'prospress' );
 
 		return $sort_options;
+	}
+
+	/**
+	 * Gets the value of the current winning bid for a post, optionally specified with $post_id.
+	 *
+	 * The value of the winning bid is not necessarily equal to the bid's value. The winning bid
+	 * value is calculated with the bid increment over the current second highest bid. It is then
+	 * stored in the bidsmeta table. This function pulls the value from this table. 
+	 * 
+	 * If no winning value is stored in the bidsmeta table, then the function uses the winning bids
+	 * value, which is equal to the maximum bid for that user on this post.
+	 */
+	public function get_winning_bid_value( $post_id = '' ) {
+		global $post, $wpdb;
+
+		if ( empty( $post_id ) )
+			$post_id = $post->ID;
+
+		if ( $this->get_bid_count( $post_id ) == 0 ){
+			$winning_bid_value = get_post_meta( $post_id, 'start_price', true );
+		} else {
+			$winning_bid = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $wpdb->posts WHERE post_type = %s AND post_parent = %d AND post_status = %s", $this->bid_object_name, $post_id, 'winning' ) );
+
+			$winning_bid_value = $wpdb->get_var( $wpdb->prepare( "SELECT meta_value FROM $wpdb->postmeta WHERE post_id = %d AND meta_key = %s", $winning_bid->ID, 'winning_bid_value' ) );
+
+			if( empty( $winning_bid_value ) )
+				$winning_bid_value = $winning_bid->post_content;
+		}
+
+		return $winning_bid_value;
 	}
 }
