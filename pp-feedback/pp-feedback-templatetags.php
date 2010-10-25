@@ -44,11 +44,10 @@ function the_most_recent_feedback( $user_id = '' ){
 	if( $latest !== NULL ) {
 		echo '<blockquote class="feedback-comment">' . $latest->post_content . '</blockquote>';
 		echo '<div "feedback-author">';
-		echo __( 'From: ', 'prospress' );
-		echo get_userdata( $latest->post_author )->user_nicename;
+		printf( __( 'From: %s', 'prospress' ), get_userdata( $latest->post_author )->display_name );
 		echo '</div>';
 	} else {
-		echo '<p>' . sprintf( __( '%s has not yet received any feedback.', 'prospress' ), get_userdata( $user_id )->user_nicename ) . '</p>';
+		echo '<p>' . sprintf( __( '%s has not yet received any feedback.', 'prospress' ), get_userdata( $user_id )->display_name ) . '</p>';
 	}
 }
 
