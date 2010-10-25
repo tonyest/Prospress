@@ -317,7 +317,7 @@ class PP_Post {
 		global $wpdb;
 
 		if ( isset( $_GET['s'] ) ) // remove index post from search results
-			$search .= "AND ID != " . $this->get_index_id() . " ";
+			$search .= " AND ID != " . $this->get_index_id() . " ";
 
 		return $search;
 	}
