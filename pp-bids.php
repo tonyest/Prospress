@@ -46,7 +46,7 @@ function pp_bids_maybe_install() {
 	if ( !current_user_can( 'edit_plugins' ) )
 		return false;
 
-	//if ( !get_option( 'pp_bids_db_version' ) || get_option( 'pp_bids_db_version' ) < PP_BIDS_DB_VERSION )
+	if ( !get_option( 'pp_bids_db_version' ) || get_option( 'pp_bids_db_version' ) < PP_BIDS_DB_VERSION )
 		pp_bids_install();
 }
 add_action( 'pp_activation', 'pp_bids_maybe_install' );
