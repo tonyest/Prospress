@@ -180,26 +180,41 @@ class PP_Auction_Bid_System extends PP_Market_System {
 	}
 
 	public function post_fields(){
-		global $post_ID, $currency_symbol;
+		global $post_ID, $currency_symbol, $user_ID;
 
 		$start_price = get_post_meta( $post_ID, 'start_price', true );
+		$buy_now_price = get_post_meta( $post_ID, 'buy_now_price', true );
 
 		$disabled = ( $this->get_bid_count( $post_id ) ) ? 'disabled="disabled" ' : '';
+		$disable_buy = ( $buy_now_price < $this->get_winning_bid_value( $bid->post_parent ) ) ? 'disabled="disabled" ' : '';
+
+		$accepted_payments = pp_invoice_user_accepted_payments( $user_ID );
 
 		wp_nonce_field( __FILE__, 'selling_options_nonce', false ) ?>
-		<table>
-		  <tbody>
-				<tr>
-				  <td class="left">
-					<label for="start_price"><?php echo __( "Starting Price: ", 'prospress' ) . $currency_symbol; ?></label>
-					</td>
-					<td>
-				 		<input type="text" name="start_price" value="<?php echo number_format_i18n( $start_price, 2 ); ?>" size="20" <?php echo $disabled; ?>/>
-						<?php if( $disabled != '' ) echo '<span>' . __( 'Bids have been made on your auction, you cannot change the start price.', 'prospress' ) . '</span>'; ?>
-					</td>
-				</tr>
-			</tbody>
-		</table>
+<table>
+<tbody>
+	<tr>
+		<td class="left">
+			<label for="start_price"><?php echo __( "Starting Price: ", 'prospress' ) . $currency_symbol; ?></label>
+		</td>
+		<td>
+	 		<input type="text" name="start_price" value="<?php echo number_format_i18n( $start_price, 2 ); ?>" size="20" <?php echo $disabled; ?>/>
+			<?php if( $disabled != '' ) echo '<span>' . __( 'Bids have been made on your auction, you cannot change the start price.', 'prospress' ) . '</span>'; ?>
+		</td>
+		<?php if( true == $accepted_payments[ 'paypal_allow' ] ) {?>
+	</tr>
+	<tr>
+		<td class="left">
+			<label for="buy_now_price"><?php echo __( "Buy Now Price: ", 'prospress' ) . $currency_symbol; ?></label>
+		</td>
+		<td>
+	 		<input type="text" name="buy_now_price" value="<?php echo number_format_i18n( $buy_now_price, 2 ); ?>" size="20" <?php echo $disable_buy; ?>/>
+			<?php if( $disable_buy != '' ) echo '<span>' . __( 'The bidding price now exceeds your Buy Now price.', 'prospress' ) . '</span>'; ?>
+		</td>
+		<?php } ?>
+	</tr>
+</tbody>
+</table>
 		<?php
 	}
 
@@ -209,21 +224,25 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		if( wp_is_post_revision( $post_id ) )
 			$post_id = wp_is_post_revision( $post_id );
 
-		if ( 'page' == $_POST['post_type'] )
+		if ( 'page' == $_POST[ 'post_type' ] )
 			return $post_id;
 		elseif( !current_user_can( 'edit_post', $post_id ) )
 			return $post_id;
-		elseif( $this->get_bid_count( $post_id ) )
+		elseif( !isset( $_POST[ 'selling_options_nonce' ] ) || !wp_verify_nonce( $_POST[ 'selling_options_nonce' ], __FILE__ ) )
 			return $post_id;
 
 		$ts = preg_quote( $wp_locale->number_format['thousands_sep'] );
-		$_POST[ 'start_price' ] = floatval( preg_replace( "/$ts|\s/", "", $_POST[ 'start_price' ] ) );
 
-		// Verify options nonce because save_post can be triggered at other times
-		if ( !isset( $_POST[ 'selling_options_nonce' ] ) || !wp_verify_nonce( $_POST['selling_options_nonce'], __FILE__) ) {
-			return $post_id;
-		} else { //update post options
+		if( !$this->get_bid_count( $post_id ) ) {
+			$_POST[ 'start_price' ] = floatval( preg_replace( "/$ts|\s/", "", $_POST[ 'start_price' ] ) );
 			update_post_meta( $post_id, 'start_price', $_POST[ 'start_price' ] );
+		}
+
+		$old_buy_price = get_post_meta( $post_id, 'buy_now_price', true );
+
+		if( isset( $_POST[ 'buy_now_price' ] ) && $old_buy_price >= $this->get_winning_bid_value( $post_id ) ) {
+			$_POST[ 'buy_now_price' ] = floatval( preg_replace( "/$ts|\s/", "", $_POST[ 'buy_now_price' ] ) );
+			update_post_meta( $post_id, 'buy_now_price', $_POST[ 'buy_now_price' ] );
 		}
 	}
 
@@ -239,7 +258,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		$permalink = get_permalink( $post_id );
 
 		$actions[ 'edit-bid' ] = array( 'label' =>  __( 'Increase Bid', 'prospress' ),
-											'url' => $permalink );
+										'url' => $permalink );
 
 		return $actions;
 	}
