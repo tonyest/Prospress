@@ -1,6 +1,6 @@
 jQuery(document).ready(function($) {
 	$(".bid-form").live( 'submit', function() {
-		var link = window.location;
+		var link = window.location.href;
 		var bidFormId = $(this).attr('id');
 		var formData = $(this).serialize() + '&bid_submit=ajax';
 
