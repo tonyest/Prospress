@@ -1486,8 +1486,7 @@ function pp_invoice_user_accepted_payments( $payee_id ) {
 
 function pp_invoice_accepted_payment( $invoice_id = 'global' ) {
 
-	// fix the occasional issue with empty value being passed
-	if(empty( $invoice_id ))
+	if( empty( $invoice_id ) )
 		$invoice_id = "global";
 
  	if( $invoice_id == 'global' ) {
