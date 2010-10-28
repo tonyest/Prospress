@@ -280,7 +280,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 
 		$winning_bid = parent::get_winning_bid( $post_id );
 
-		if( get_post_meta( $post_id, 'purchased', true ) == 'true' ){
+		if( get_post_meta( $post_id, 'purchased', true ) == 'true' )
 			$winning_bid->post_author = 0;
 	}
 
