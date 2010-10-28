@@ -15,9 +15,9 @@ class pp_invoice_get {
 
 		$this->invoice_id = $invoice_id;
 
-		if(empty( $this->invoice_id))
+		if( empty( $this->invoice_id ) )
 			return false;
-		
+
 		$row_obj = $wpdb->get_row( "SELECT * FROM " . $wpdb->payments . "  WHERE id = '$invoice_id'" );
 
 		foreach( $row_obj as $key => $value ) {		

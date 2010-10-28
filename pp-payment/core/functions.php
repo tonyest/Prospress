@@ -1566,12 +1566,12 @@ function pp_invoice_accepted_payment( $invoice_id = 'global' ) {
 	}
 }
 
-function pp_invoice_create_wp_user( $p) {
+function pp_invoice_create_wp_user( $p ) {
 
 	$username = $p['pp_invoice_new_user_username'];
 	if(!$username or pp_invoice_username_taken( $username )) {
 		$username = pp_invoice_get_user_login_name();
-	}   
+	}
 
 	$userdata = array(
 	 'user_pass' => wp_generate_password(),

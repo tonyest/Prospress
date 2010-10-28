@@ -161,9 +161,7 @@ function pp_money_format( $number, $decimals = '', $currency = '' ){
 	else
 		$decimals = 2;
 
-	$currency = strtoupper( $currency );
-
-	if( empty( $currency ) || !array_key_exists( $currency, $currencies ) )
+	if( empty( $currency ) || !array_key_exists( strtoupper( $currency ), $currencies ) )
 		$currency_sym = $currency_symbol;
 	else
 		$currency_sym = $currencies[ $currency ][ 'symbol' ];

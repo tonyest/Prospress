@@ -19,7 +19,8 @@
 
 abstract class PP_Market_System {
 
-	private $name;					// Internal name of the market system, probably plural e.g. "auctions".
+	protected $name;					// Internal name of the market system, probably plural e.g. "auctions".
+	public $bid_form_heading;		// Text to output as the heading in the bid form
 	public $label;					// Label to display the market system publicly, e.g. "Auction".
 	public $labels;					// Array of labels used to represent market system elements publicly, includes name & singular_name
 	public $post;					// Hold the custom PP_Post object for this market system.
@@ -42,6 +43,7 @@ abstract class PP_Market_System {
 		$this->name = sanitize_user( $name, true );
 
 		$defaults = array(
+						'bid_form_heading' => __( 'Place Bid', 'prospress' ),
 						'description' => '',
 						'label' => ucfirst( $this->name ),
 						'labels' => array(
@@ -67,6 +69,7 @@ abstract class PP_Market_System {
 
 		$args = wp_parse_args( $args, $defaults );
 
+		$this->bid_form_heading		= $args[ 'bid_form_heading' ];
 		$this->label 				= $args[ 'label' ];
 		$this->labels 				= $args[ 'labels' ];
 		$this->post_table_columns 	= $args[ 'post_table_columns' ];
@@ -164,12 +167,9 @@ abstract class PP_Market_System {
 
 		if ( $this->is_post_valid( $post_id ) ) {
 			$form .= '<form id="bid_form-' . $post_id . '" class="bid-form" method="post" action="">';
+			$form .= '<h6>' . $this->bid_form_heading . '</h6>';
 			$form .= '<div class="bid-updated bid_msg" >' . $this->get_message() . '</div><div>';
-
 			$form .= $this->bid_form_fields( $post_id );
-
-			apply_filters( 'bid_form_hidden_fields', $form );
-
 			$form .= wp_nonce_field( __FILE__, 'bid_nonce', false, false );
 			$form .= '<input type="hidden" name="post_ID" value="' . $post_id . '" id="post_ID" /> ';
 			$form .= '<input name="bid_submit" type="submit" id="bid_submit" value="' . $this->labels[ 'bid_button' ] .'" />';
@@ -181,10 +181,21 @@ abstract class PP_Market_System {
 		}
 
 		$form = apply_filters( 'bid_form', $form );
+		$form = apply_filters( $this->name . '-bid_form', $form );
 
 		return $form;		
 	}
 	
+	public function the_bid_form( $post_id = NULL ) {
+		echo '<div class="bid-container">';
+		do_action( 'pre_bid_form', $post_id );
+		do_action( 'pre-' . $this->name . '-bid_form', $post_id );
+		echo $this->bid_form( $post_id );
+		do_action( 'post_bid_form', $post_id );
+		do_action( 'post-' . $this->name . '-bid_form', $post_id );
+		echo '</div>';
+	}
+
 	protected function is_bid_valid( $post_id, $bid_value, $bidder_id ) {
 
 		$this->validate_bid( $post_id, $bid_value, $bidder_id );
@@ -448,10 +459,10 @@ abstract class PP_Market_System {
 	 * A message can be passed to a bid form using the URL. This function pulls any messages
 	 * passed to a page containing a bid form and prints the messages. 
 	 */
-	private function get_message(){
+	protected function get_message(){
 
 		// Avoid showing messages passed in latent url parameters
-		if ( !is_user_logged_in() )
+		if ( !is_user_logged_in() && !isset( $_GET[ 'buy_now' ] ) )
 			return;
 
 		if ( isset( $this->message_id ) )
@@ -506,8 +517,13 @@ abstract class PP_Market_System {
 				case 14:
 					$message = sprintf( __( 'You cannot bid on a draft, scheduled or pending %s.', 'prospress' ), $this->labels[ 'singular_name' ] );
 					break;
+				default:
+					$message = apply_filters( 'bid_message_unknown', sprintf( __( "Error: %d"), $message_id ), $message_id );
+					break;
 			}
 			$message = apply_filters( 'bid_message', $message, $message_id );
+			$message = apply_filters( $this->name . '-bid_message', $message, $message_id );
+
 			return $message;
 		}
 	}
@@ -845,6 +861,9 @@ abstract class PP_Market_System {
 	// Hooked to init to determine if a bid has been submitted. If it has, bid_form_submit is called.
 	// Takes care of the logic of the class, determining if and when to call a function.
 	public function controller(){
+
+		do_action( 'market_system_controller' );
+		do_action( $this->name . '-controller' );
 
 		// If a bid is not being sumbited, exist asap to avoid wasting user's time
 		if( !isset( $_REQUEST[ 'bid_submit' ] ) )

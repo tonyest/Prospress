@@ -12,6 +12,6 @@ function the_bid_form( $post_id = '' ) {
 
 	$market = $market_systems[ get_post_type( $post_id ) ];
 
-	echo $market->bid_form();
+	$market->the_bid_form();
 }
 
