@@ -507,18 +507,3 @@ class PP_Post {
 				wp_delete_post( $pp_post_id );
 	}
 }
-/*
-public function enqueue_final_countdown(){
-	if( is_admin() ) //only needed on public facing pages
-		return;
-
-	wp_enqueue_script( 'final_countdown', PP_BIDS_URL . '/bid-form-ajax.js', array( 'jquery' ) );
-	wp_localize_script( 'bid-form-ajax', 'pppostL10n', array(
-		'endedOn' => __( 'Ended on:', 'prospress' ),
-		'endOn' => __( 'End on:', 'prospress' ),
-		'end' => __( 'End', 'prospress' ),
-		'update' => __( 'Update', 'prospress' ),
-		'repost' => __( 'Repost', 'prospress' ),
-		));
-}
-*/
