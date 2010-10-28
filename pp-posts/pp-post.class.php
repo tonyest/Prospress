@@ -191,6 +191,10 @@ class PP_Post {
 								'not_found'		=> sprintf( __( 'No %s found', 'prospress' ), $this->labels[ 'name' ] ),
 								'not_found_in_trash' => sprintf( __( 'No %s found in Trash', 'prospress' ), $this->labels[ 'name' ] ) )
 					);
+
+		$args = apply_filters( 'prospress_post_type_args', $args );
+		$args = apply_filters( $this->name . '-post_type_args', $args );
+
 		register_post_type( $this->name, $args );
 	}
 
