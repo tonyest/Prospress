@@ -93,7 +93,7 @@ function pp_invoice_metabox_billing_details( $invoice ) {
 		 	<div class="<?php echo $name; ?>_ui payment_info"><?php include PP_INVOICE_UI_PATH . "payment_{$name}.php"; ?></div>
 	 	<?php }
 	} else { ?>
-		<p>The payee has not set up any billing options yet. You cannot pay until this is done. Please contact the payee to resolve this.</p>
+		<p><?php printf( __( '%s has not provided a payment method. Please contact %s to request he/she provide at least one payment method.' ), ucfirst( $invoice->payee_class->user_nicename ),  $invoice->payee_class->user_nicename ); ?></p>
 	<?php }
 }
 
