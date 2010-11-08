@@ -169,7 +169,7 @@ class PP_Post {
 				'label' 	=> $this->labels[ 'name' ],
 				'public' 	=> true,
 				'show_ui' 	=> true,
-				'rewrite' 	=> array( 'slug' => $this->labels[ 'name' ], 'with_front' => false ),
+				'rewrite' 	=> array( 'slug' => $this->name, 'with_front' => false ),
 				'capability_type' => 'prospress_post', //generic to cover multiple Prospress marketplace types
 				'show_in_nav_menus' => false,
 				'exclude_from_search' => true,
