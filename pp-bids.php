@@ -10,7 +10,7 @@
  */
 
 if ( !defined( 'PP_BIDS_DB_VERSION' ) )
-	define ( 'PP_BIDS_DB_VERSION', '0023' );
+	define ( 'PP_BIDS_DB_VERSION', '0024' );
 if ( !defined( 'PP_BIDS_DIR' ) )
 	define( 'PP_BIDS_DIR', PP_PLUGIN_DIR . '/pp-bids' );
 if ( !defined( 'PP_BIDS_URL' ) )
