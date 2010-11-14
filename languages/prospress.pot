@@ -1,7 +1,7 @@
-# Translation of the WordPress plugin   by .
+# Translation of the WordPress plugin Prospres by Brent Shepherd.
 # Copyright (C) 2010 
-# This file is distributed under the same license as the  package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+# This file is distributed under the same license as the Prospress package.
+# Brent Shepherd <brent@prospress.org>, 2010.
 #
 #, fuzzy
 msgid ""
