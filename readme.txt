@@ -145,7 +145,7 @@ Nope. There are a few surprises but you'll have to download & explore Prospress 
 == Upgrade Notice ==
 
 = 1.0.1 =
-Please upgrade to fix the bid form bug in IE, localization issues & provide an admin page for viewing all bids.
+Please upgrade to fix bid form & localization bugs. This release also changes bids page to show all bids to the site admin.
 
 = 1.0 =
 The first non-beta release ready for prime-time - enjoy! Please note, this is a breaking upgrade. If you need to preserve feedback from a beta installation, post in the prospress.org/forums/ to request an upgrade script.
