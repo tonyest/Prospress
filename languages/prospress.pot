@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/prospress\n"
-"POT-Creation-Date: 2010-10-18 10:16+0000\n"
+"POT-Creation-Date: 2010-11-14 06:31+0000\n"
 "PO-Revision-Date: 2010-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,7 +34,7 @@ msgstr ""
 msgid "Filter"
 msgstr ""
 
-#: pp-bids/bids-filter.php:48 pp-posts/pp-post.class.php:278
+#: pp-bids/bids-filter.php:48 pp-posts/pp-post.class.php:277
 msgid "Price:"
 msgstr ""
 
@@ -55,12 +55,12 @@ msgstr ""
 msgid "Auction"
 msgstr ""
 
-#: pp-bids/pp-auction-system.class.php:28
+#: pp-bids/pp-auction-system.class.php:27
 msgid "Bid!"
 msgstr ""
 
 #: pp-bids/pp-auction-system.class.php:46
-#: pp-bids/pp-auction-system.class.php:195
+#: pp-bids/pp-auction-system.class.php:194
 msgid "Starting Price: "
 msgstr ""
 
@@ -80,7 +80,7 @@ msgstr ""
 msgid "Enter max bid: "
 msgstr ""
 
-#: pp-bids/pp-auction-system.class.php:199
+#: pp-bids/pp-auction-system.class.php:198
 msgid "Bids have been made on your auction, you cannot change the start price."
 msgstr ""
 
@@ -88,183 +88,225 @@ msgstr ""
 msgid "Increase Bid"
 msgstr ""
 
-#: pp-bids/pp-auction-system.class.php:248
+#: pp-bids/pp-auction-system.class.php:249
 msgid "Price: low to high"
 msgstr ""
 
-#: pp-bids/pp-auction-system.class.php:249
+#: pp-bids/pp-auction-system.class.php:250
 msgid "Price: high to low"
 msgstr ""
 
-#: pp-bids/pp-market-system.class.php:49
+#: pp-bids/pp-market-system.class.php:50
 msgid "Bid Now!"
 msgstr ""
 
-#: pp-bids/pp-market-system.class.php:258
-#: pp-bids/pp-market-system.class.php:425
+#: pp-bids/pp-market-system.class.php:53 pp-posts/pp-index-auctions.php:22
+#: pp-posts/pp-taxonomy-auctions.php:27
+msgid "Price"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:54
+msgid "Winning Bidder"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:56
+msgid "Bid On"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:57
+#: pp-bids/pp-market-system.class.php:591
+msgid "Bidder"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:58 pp-payment/pp-invoice.php:119
+#: pp-payment/pp-invoice.php:130
+msgid "Status"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:59
+msgid "Bid Amount"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:60
+msgid "Current Price"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:61
+msgid "Bid Date"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:62
+msgid "Post End Date"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:278
+#: pp-bids/pp-market-system.class.php:324
+#: pp-bids/pp-market-system.class.php:439
 msgid "No Bids"
 msgstr ""
 
-#: pp-bids/pp-market-system.class.php:325
-#: pp-bids/pp-market-system.class.php:818
+#: pp-bids/pp-market-system.class.php:339
 msgid "No bids."
 msgstr ""
 
-#: pp-bids/pp-market-system.class.php:344
+#: pp-bids/pp-market-system.class.php:358
 msgid "You"
 msgstr ""
 
-#: pp-bids/pp-market-system.class.php:399
+#: pp-bids/pp-market-system.class.php:413
 msgid "No Bids."
 msgstr ""
 
-#: pp-bids/pp-market-system.class.php:456
+#: pp-bids/pp-market-system.class.php:470
 msgid "Congratulations, you are the winning bidder."
 msgstr ""
 
-#: pp-bids/pp-market-system.class.php:459
+#: pp-bids/pp-market-system.class.php:473
 msgid "You have been outbid."
 msgstr ""
 
-#: pp-bids/pp-market-system.class.php:462
+#: pp-bids/pp-market-system.class.php:476
 msgid "You must bid more than the winning bid."
 msgstr ""
 
-#: pp-bids/pp-market-system.class.php:465
+#: pp-bids/pp-market-system.class.php:479
 msgid "Your maximum bid has been increased."
 msgstr ""
 
-#: pp-bids/pp-market-system.class.php:468
+#: pp-bids/pp-market-system.class.php:482
 msgid "You can not decrease your maximum bid."
 msgstr ""
 
-#: pp-bids/pp-market-system.class.php:471
+#: pp-bids/pp-market-system.class.php:485
 msgid "You have entered a bid equal to your current maximum bid."
 msgstr ""
 
-#: pp-bids/pp-market-system.class.php:474
+#: pp-bids/pp-market-system.class.php:488
 msgid "Invalid bid. Please enter a valid number. e.g. 11.23 or 58"
 msgstr ""
 
-#: pp-bids/pp-market-system.class.php:477
+#: pp-bids/pp-market-system.class.php:491
 msgid "Invalid bid. Bid nonce did not validate."
 msgstr ""
 
-#: pp-bids/pp-market-system.class.php:480
+#: pp-bids/pp-market-system.class.php:494
 msgid "Invalid bid. Please enter a bid greater than the starting price."
 msgstr ""
 
-#: pp-bids/pp-market-system.class.php:483
+#: pp-bids/pp-market-system.class.php:497
 msgid "Bid submitted."
 msgstr ""
 
-#: pp-bids/pp-market-system.class.php:486
+#: pp-bids/pp-market-system.class.php:500
 #, php-format
 msgid "You cannot bid on your own %s."
 msgstr ""
 
-#: pp-bids/pp-market-system.class.php:489
+#: pp-bids/pp-market-system.class.php:503
 #, php-format
 msgid "This %s has completed, bids cannot be accepted."
 msgstr ""
 
-#: pp-bids/pp-market-system.class.php:492
+#: pp-bids/pp-market-system.class.php:506
 #, php-format
 msgid "This %s can not be found."
 msgstr ""
 
-#: pp-bids/pp-market-system.class.php:495
+#: pp-bids/pp-market-system.class.php:509
 #, php-format
 msgid "You cannot bid on a draft, scheduled or pending %s."
 msgstr ""
 
-#: pp-bids/pp-market-system.class.php:575
+#: pp-bids/pp-market-system.class.php:589
 msgid "Post Author"
 msgstr ""
 
-#: pp-bids/pp-market-system.class.php:577
-msgid "Bidder"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:599
+#: pp-bids/pp-market-system.class.php:608
+#: pp-bids/pp-market-system.class.php:626
 #, php-format
 msgid "%s Bids"
 msgstr ""
 
-#: pp-bids/pp-market-system.class.php:607
+#: pp-bids/pp-market-system.class.php:627
+#, php-format
+msgid "%s Bid"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:628
+msgid "Place Bid"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:629
+msgid "Edit Bid"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:630
+msgid "New Bid"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:631
+msgid "View Bid"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:632
+msgid "Search Bids"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:633
+msgid "No Bids Found"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:634
+msgid "No Bids Found in Trash"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:635
+msgid "Bid on post:"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:642
+msgctxt "post status"
+msgid "Outbid"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:643
+#, php-format
+msgid "Outbid <span class=\"count\">(%s)</span>"
+msgid_plural "Outbid <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#: pp-bids/pp-market-system.class.php:654
+msgid "Winning"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:655
+#, php-format
+msgid "Winning <span class=\"count\">(%s)</span>"
+msgid_plural "Winning <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#: pp-bids/pp-market-system.class.php:734
+msgid "g:ia d M Y"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:755
+#, php-format
+msgid "All %s"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:756
 #, php-format
 msgid "Completed %s"
 msgstr ""
 
-#: pp-bids/pp-market-system.class.php:608
+#: pp-bids/pp-market-system.class.php:757
 #, php-format
-msgid "Active %s"
+msgid "Published %s"
 msgstr ""
 
-#: pp-bids/pp-market-system.class.php:630
-#, php-format
-msgid "Bids on Active %s"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:647
-#, php-format
-msgid "Bids on Completed %s"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:725
-msgid "Any bid status"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:726
-msgid "Outbid"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:727
-msgid "Winning"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:741
-msgid "Show all dates"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:763
-msgid "Sort by"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:764
-msgid "Bid Value"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:765 pp-feedback.php:127
-msgid "Post"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:766
-msgid "Bid Status"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:767
-msgid "Bid Date"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:793
-#: pp-bids/pp-market-system.class.php:794
-msgid "g:ia d M Y"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:801 pp-posts/pp-post.class.php:457
-msgid "Take action:"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:809 pp-posts/pp-post.class.php:465
-msgid "No action can be taken."
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:837 pp-posts/pp-post.class.php:417
-msgid "Action"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:886
+#: pp-bids/pp-market-system.class.php:836
 #, php-format
 msgid "%s Options"
 msgstr ""
@@ -321,7 +363,7 @@ msgstr ""
 #: pp-core.php:209
 #, php-format
 msgid ""
-"Your WordPress site is now prosperous. You can add your first <a href=\"%1$s"
+"Your WordPress is prosperous. You can add your first <a href=\"%1$s"
 "\">auction</a>, "
 msgstr ""
 
@@ -421,6 +463,10 @@ msgstr ""
 
 #: pp-feedback.php:126
 msgid "Date"
+msgstr ""
+
+#: pp-feedback.php:127
+msgid "Post"
 msgstr ""
 
 #: pp-feedback.php:150 pp-feedback/pp-feedback-form-view.php:54
@@ -546,10 +592,11 @@ msgid "negative"
 msgstr ""
 
 #: pp-feedback/pp-feedback-templatetags.php:47
-msgid "From: "
+#, php-format
+msgid "From: %s"
 msgstr ""
 
-#: pp-feedback/pp-feedback-templatetags.php:51
+#: pp-feedback/pp-feedback-templatetags.php:50
 #, php-format
 msgid "%s has not yet received any feedback."
 msgstr ""
@@ -594,8 +641,16 @@ msgid ""
 "installation to run Prospress.<br/><a href="
 msgstr ""
 
+#: pp-load.php:66 pp-payment/pp-invoice.php:91
+msgid "Settings"
+msgstr ""
+
+#: pp-load.php:67
+msgid "Support"
+msgstr ""
+
 #: pp-payment.php:70
-msgid "Make Payment"
+msgid "Pay Now"
 msgstr ""
 
 #: pp-payment.php:73 pp-payment/core/ui/send_invoice.php:48
@@ -910,6 +965,13 @@ msgstr ""
 #: pp-payment/core/ui/metaboxes/make_payment.php:31
 #: pp-payment/core/ui/metaboxes/send_invoice.php:97
 msgid "Total Amount"
+msgstr ""
+
+#: pp-payment/core/ui/metaboxes/make_payment.php:96
+#, php-format
+msgid ""
+"%s has not provided a payment method. Please contact %s to request he/she "
+"provide at least one payment method."
 msgstr ""
 
 #: pp-payment/core/ui/metaboxes/send_invoice.php:63
@@ -1246,10 +1308,6 @@ msgstr ""
 msgid "Payments"
 msgstr ""
 
-#: pp-payment/pp-invoice.php:91
-msgid "Settings"
-msgstr ""
-
 #: pp-payment/pp-invoice.php:102 pp-payment/pp-invoice.php:108
 #: pp-payment/pp-invoice.php:205
 msgid "Invoice Details"
@@ -1281,10 +1339,6 @@ msgstr ""
 
 #: pp-payment/pp-invoice.php:118 pp-payment/pp-invoice.php:129
 msgid "User Email"
-msgstr ""
-
-#: pp-payment/pp-invoice.php:119 pp-payment/pp-invoice.php:130
-msgid "Status"
 msgstr ""
 
 #: pp-payment/pp-invoice.php:120
@@ -1477,10 +1531,6 @@ msgstr ""
 msgid "Ending"
 msgstr ""
 
-#: pp-posts/pp-index-auctions.php:22 pp-posts/pp-taxonomy-auctions.php:27
-msgid "Price"
-msgstr ""
-
 #: pp-posts/pp-index-auctions.php:42 pp-posts/pp-taxonomy-auctions.php:43
 #, php-format
 msgid "View %s &raquo"
@@ -1550,79 +1600,91 @@ msgstr ""
 msgid "Ending:"
 msgstr ""
 
-#: pp-posts/pp-post.class.php:64
+#: pp-posts/pp-post.class.php:63
 msgid "This is the index for your "
 msgstr ""
 
-#: pp-posts/pp-post.class.php:187
+#: pp-posts/pp-post.class.php:186
 #, php-format
 msgid "Add New %s"
 msgstr ""
 
-#: pp-posts/pp-post.class.php:188
+#: pp-posts/pp-post.class.php:187
 #, php-format
 msgid "Edit %s"
 msgstr ""
 
-#: pp-posts/pp-post.class.php:189
+#: pp-posts/pp-post.class.php:188
 #, php-format
 msgid "New %s"
 msgstr ""
 
-#: pp-posts/pp-post.class.php:190
+#: pp-posts/pp-post.class.php:189
 #, php-format
 msgid "View %s"
 msgstr ""
 
-#: pp-posts/pp-post.class.php:191
+#: pp-posts/pp-post.class.php:190
 #, php-format
 msgid "Seach %s"
 msgstr ""
 
-#: pp-posts/pp-post.class.php:192
+#: pp-posts/pp-post.class.php:191
 #, php-format
 msgid "No %s found"
 msgstr ""
 
-#: pp-posts/pp-post.class.php:193
+#: pp-posts/pp-post.class.php:192
 #, php-format
 msgid "No %s found in Trash"
 msgstr ""
 
-#: pp-posts/pp-post.class.php:212
+#: pp-posts/pp-post.class.php:211
 #, php-format
 msgid "%s Index Sidebar"
 msgstr ""
 
-#: pp-posts/pp-post.class.php:214
+#: pp-posts/pp-post.class.php:213
 #, php-format
 msgid "The sidebar for the index of your %s."
 msgstr ""
 
-#: pp-posts/pp-post.class.php:224
+#: pp-posts/pp-post.class.php:223
 #, php-format
 msgid "Single %s Sidebar"
 msgstr ""
 
-#: pp-posts/pp-post.class.php:226
+#: pp-posts/pp-post.class.php:225
 #, php-format
 msgid "The sidebar for a single %s."
 msgstr ""
 
-#: pp-posts/pp-post.class.php:257
+#: pp-posts/pp-post.class.php:256
 msgid "Sort by:"
 msgstr ""
 
-#: pp-posts/pp-post.class.php:416 pp-posts/pp-post.class.php:421
+#: pp-posts/pp-post.class.php:415 pp-posts/pp-post.class.php:420
 msgid "End Time"
 msgstr ""
 
-#: pp-posts/pp-post.class.php:420
+#: pp-posts/pp-post.class.php:416
+msgid "Action"
+msgstr ""
+
+#: pp-posts/pp-post.class.php:419
 msgid "Date Published"
 msgstr ""
 
-#: pp-posts/pp-post.class.php:443
+#: pp-posts/pp-post.class.php:442
 msgid "Not set."
+msgstr ""
+
+#: pp-posts/pp-post.class.php:454
+msgid "Take action:"
+msgstr ""
+
+#: pp-posts/pp-post.class.php:462
+msgid "No action can be taken."
 msgstr ""
 
 #: pp-posts/pp-posts-templatetags.php:84
@@ -1688,13 +1750,9 @@ msgstr ""
 msgid "Custom %s Taxonomies"
 msgstr ""
 
-#: pp-posts/pp-taxonomy.class.php:28
+#: pp-posts/pp-taxonomy.class.php:28 pp-posts/pp-taxonomy.class.php:64
 #, php-format
 msgid "%s Taxonomies"
-msgstr ""
-
-#: pp-posts/pp-taxonomy.class.php:64
-msgid "Taxonomies"
 msgstr ""
 
 #: pp-posts/pp-taxonomy.class.php:71 pp-posts/pp-taxonomy.class.php:79
