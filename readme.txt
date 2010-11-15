@@ -115,6 +115,9 @@ Nope. There are a few surprises but you'll have to download & explore Prospress 
 
 == Changelog ==
 
+= 1.0.2 =
+* Fixed bug causing Price & Winning Bidder columns to display on the admin page for all custom post type
+
 = 1.0.1 =
 * Bug on bid form ajax fixed
 * Bids are now a custom post type (and all bids are visible to admin)
@@ -144,8 +147,11 @@ Nope. There are a few surprises but you'll have to download & explore Prospress 
 
 == Upgrade Notice ==
 
+= 1.0.2 =
+Upgrade to fix bug displaying Price & Winning Bidder columns on the admin page for all custom post types.
+
 = 1.0.1 =
-Please upgrade to fix bid form & localization bugs. This release also changes bids page to show all bids to the site admin.
+Please upgrade to fix bid form & localization bugs. This release also changes the bids page to show the site admin all bids.
 
 = 1.0 =
 The first non-beta release ready for prime-time - enjoy! Please note, this is a breaking upgrade. If you need to preserve feedback from a beta installation, post in the prospress.org/forums/ to request an upgrade script.

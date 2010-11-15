@@ -782,7 +782,7 @@ abstract class PP_Market_System {
 	// Add market system columns to tables of posts
 	public function add_post_column_headings( $column_headings ) {
 
-		if( !( $_GET[ 'post_type' ] == $this->name || get_post_type( $_GET[ 'post' ] ==  $this->name ) ) )
+		if( !( $_GET[ 'post_type' ] == $this->name || get_post_type( $_GET[ 'post' ] ) ==  $this->name ) )
 			return $column_headings;
 
 		foreach( $this->post_table_columns as $key => $column )
