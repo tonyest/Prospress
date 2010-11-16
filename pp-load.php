@@ -4,7 +4,7 @@ Plugin Name: Prospress
 Plugin URI: http://prospress.org
 Description: Add an auction marketplace to your WordPress site.
 Author: Brent Shepherd, Prospress.org
-Version: 1.0.2
+Version: 1.1
 Author URI: http://prospress.org/
 */
 
@@ -27,6 +27,8 @@ require_once( PP_PLUGIN_DIR . '/pp-bids.php' );
 require_once( PP_PLUGIN_DIR . '/pp-feedback.php' );
 
 require_once( PP_PLUGIN_DIR . '/pp-payment.php' );
+
+require_once( PP_PLUGIN_DIR . '/pp-cubepoints.php');
 
 function pp_activate(){
 	// Safely prevent activation on installations pre 3.0 or with php 4
@@ -69,3 +71,8 @@ function pp_register_plugin_links( $links, $file ) {
 	return $links;
 }
 add_filter( 'plugin_row_meta', 'pp_register_plugin_links', 10, 2 );
+
+
+
+
+
