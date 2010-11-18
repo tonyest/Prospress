@@ -577,3 +577,32 @@ function pp_posts_deactivate(){
 	}
 }
 add_action( 'pp_deactivation', 'pp_posts_deactivate' );
+
+/** 
+ * Create first prospress auction-type post "Hello World"
+ * 
+ * @package Prospress
+ * @subpackage Posts
+ * @since 1.01
+ */
+
+function pp_post_hello_world(){
+	$post = array(
+	'comment_status' => 'open',// 'closed' means no comments.
+	'post_content' => "This is an example of an auction item. You could add an enticing description or alluring picture right here!",
+	'post_status' => 'publish',
+	'post_title' => 'Hello World',
+	'post_type' => 'auctions'
+	);
+// Insert the hello world post into the database
+	$post_id = wp_insert_post( $post );
+//set end date to 2 weeks from now
+	$post_end_date = date( 'Y-m-d H:i:s', current_time_fixed( 'timestamp',0) + 60 * 60 * 24 * 14 );
+	$post_end_date_gmt = get_gmt_from_date( $post_end_date );
+
+	update_post_meta( $post_id, 'post_end_date', $post_end_date );
+	update_post_meta( $post_id, 'post_end_date_gmt', $post_end_date_gmt);
+		pp_schedule_end_post( $post_id, strtotime( $post_end_date_gmt ) );
+	update_post_meta( $post_id, 'start_price', 2.71 );
+}
+add_action( 'pp_activation', 'pp_post_hello_world' );
