@@ -589,7 +589,7 @@ add_action( 'pp_deactivation', 'pp_posts_deactivate' );
 function pp_post_hello_world(){
 	$post = array(
 	'comment_status' => 'open',// 'closed' means no comments.
-	'post_content' => "This is an example of an auction item.",
+	'post_content' => "This is an example of an auction item. You could add an enticing description or alluring picture right here!",
 	'post_status' => 'publish',
 	'post_title' => 'Hello World',
 	'post_type' => 'auctions'
