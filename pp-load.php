@@ -8,9 +8,6 @@ Version: 1.0.2
 Author URI: http://prospress.org/
 */
 
-if ( !defined( 'PP_VERSION' ) )
-	define( 'PP_VERSION', '0.2' );
-
 if( !defined( 'PP_PLUGIN_DIR' ) )
 	define( 'PP_PLUGIN_DIR', WP_PLUGIN_DIR . '/' . basename(dirname(__FILE__)) );
 if( !defined( 'PP_PLUGIN_URL' ) )
@@ -48,7 +45,7 @@ function pp_deactivate(){
 register_deactivation_hook( __FILE__, 'pp_deactivate' );
 
 function pp_uninstall(){
-	//do_action( 'pp_uninstall' ); // some don't want their plugins to delete all its data upon uninstallation
+	do_action( 'pp_uninstall' ); // delete data Prospress creates upon uninstallation, never delete user generated data
 }
 register_uninstall_hook( __FILE__, 'pp_uninstall' );
 
