@@ -106,13 +106,12 @@ abstract class PP_Market_System {
 
 		// Columns for printing bid history table
 		add_filter( 'manage_' . $this->bid_object_name . '_posts_columns', array( &$this, 'add_bid_column_headings' ) );
-		// hierarchical post types use pages custom columns
+		// For < WP 3.1
 		add_action( 'manage_pages_custom_column', array( &$this, 'add_bid_column_content' ), 10, 2 );
+		// For >= WP 3.1
+		add_action( 'manage_posts_custom_column', array( &$this, 'add_bid_column_content' ), 10, 2 );
 
-		//add_action( 'load-edit.php', create_function( '', 'add_filter( "posts_where", array( &$this, "admin_filter_bids" ) );' ) );
 		add_action( 'load-edit.php', array( &$this, 'add_admin_filters' ) );
-		//add_action( 'restrict_manage_posts', array( &$this, 'admin_bids_filters' ) );
-		//add_filter( 'posts_where', array( &$this, 'admin_filter_bids' ) );
 
 		// For Ajax & other scripts
 		add_action( 'wp_print_scripts', array( &$this, 'enqueue_bid_form_scripts' ) );
@@ -200,10 +199,10 @@ abstract class PP_Market_System {
 
 		$this->validate_bid( $post_id, $bid_value, $bidder_id );
 
-		if( $this->bid_status != 'invalid' )
-			return true;
-		else
+		if( $this->bid_status == 'invalid' )
 			return false;
+		else
+			return true;
 	}
 
 	protected function is_post_valid( $post_id = '' ) {
@@ -226,10 +225,10 @@ abstract class PP_Market_System {
 		$post_status = get_post( $post_id )->post_status;
 
 		if ( $post_status == 'completed' ){
-			do_action( 'bid_on_completed_post', $post_id);
+			do_action( 'bid_on_completed_post', $post_id );
 			$this->message_id = 12;
 		} elseif ( $post_status === NULL ) {
-			do_action( 'bid_post_not_found', $post_id);
+			do_action( 'bid_post_not_found', $post_id );
 			$this->message_id = 13;
 			$post_status = 'invalid';
 		} elseif ( in_array( $post_status, array( 'draft', 'pending', 'future' ) ) ) {
@@ -237,9 +236,11 @@ abstract class PP_Market_System {
 			$this->message_id = 14;
 			$post_status = 'invalid';
 		} else {
-			return 'valid';
+			$post_status = 'valid';
 		}
 
+		apply_filters( 'pp_validate_post', $post_status );
+		apply_filters( 'pp_validate_post', $post_status );
 		return $post_status;
 	}
 
@@ -256,6 +257,7 @@ abstract class PP_Market_System {
 		$bid_post[ 'post_status' ]	= $bid[ 'bid_status' ];
 		$bid_post[ 'post_type' ]	= $this->bid_object_name;
 
+		error_log( 'bid_post = ' . print_r( $bid_post, true ) );
 		wp_insert_post( $bid_post );
 
 		return $bid[ 'bid_value' ];
@@ -474,7 +476,7 @@ abstract class PP_Market_System {
 
 		if ( isset( $message_id ) ){
 			switch( $message_id ) {
-				case 0:
+				case 0: //first bid
 				case 1:
 					$message = __( 'Congratulations, you are the winning bidder.', 'prospress' );
 					break;
@@ -833,7 +835,7 @@ abstract class PP_Market_System {
 		global $current_screen;
 
 		if( $current_screen->post_type == $this->bid_object_name ){
-			echo '<style type="text/css">.add-new-h2,.actions select:first-child,#doaction';
+			echo '<style type="text/css">.add-new-h2,.actions select:first-child,#doaction,#doaction2';
 			echo ( !current_user_can( 'edit_others_prospress_posts' ) ) ? ',.count' : '';
 			echo '{display: none;}</style>';  
 		}

@@ -4,12 +4,12 @@ Based on Web Invoicing and Billing Plugin
 URL http://twincitiestech.com/services/wp-invoice/
 */
 
-define("PP_INVOICE_UI_PATH", PP_PAYMENT_DIR . "/core/ui/");
+define( 'PP_INVOICE_UI_PATH', PP_PAYMENT_DIR . '/core/ui/' );
 
-require_once("core/functions.php");
-require_once("core/display.php");
-require_once("core/frontend.php");
-require_once("core/invoice_class.php");
+require_once( PP_PAYMENT_DIR . '/core/functions.php' );
+require_once( PP_PAYMENT_DIR . '/core/display.php' );
+require_once( PP_PAYMENT_DIR . '/core/frontend.php' );
+require_once( PP_PAYMENT_DIR . '/core/invoice_class.php' );
 
 $PP_Invoice = new PP_Invoice();	
 

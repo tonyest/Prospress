@@ -8,7 +8,7 @@
 	<input type="hidden" name="upload" value="1">
 	<input type="hidden" name="return" value="<?php echo $invoice->pay_link; ?>&return_info=success">
 	<input type="hidden" name="cancel_return" value="<?php echo $invoice->pay_link; ?>&return_info=cancel">
-	<input type="hidden" name="notify_url" value="<?php echo $invoice->pay_link; ?>">
+	<input type="hidden" name="notify_url" value="<?php echo $invoice->pay_link; ?>&return_info=notify">
 
 	<?php if($invoice->tax_total != 0) : ?>
 	<input type="hidden" name="tax"  value="<?php echo $invoice->tax_total; ?>">

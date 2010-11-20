@@ -62,22 +62,26 @@ class PP_Auction_Bid_System extends PP_Market_System {
 	}
 
 	protected function bid_form_submit( $post_id = NULL, $bid_value = NULL, $bidder_id = NULL ){
-		global $user_ID, $wpdb;
+		global $user_ID;
 		nocache_headers();
 
 		//Get Bid details
-		$post_id 		= ( isset( $_REQUEST[ 'post_ID' ] ) ) ? intval( $_REQUEST[ 'post_ID' ] ) : $post_id;
-		$bid_value		= ( isset( $_REQUEST[ 'bid_value' ] ) ) ? floatval( $_REQUEST[ 'bid_value' ] ) : $bid_value;
+		if( $post_id === NULL && isset( $_REQUEST[ 'post_ID' ] ) )
+			$post_id = intval( $_REQUEST[ 'post_ID' ] );
+
+		if( $bid_value === NULL && isset( $_REQUEST[ 'bid_value' ] ) )
+			$bid_value = intval( $_REQUEST[ 'bid_value' ] );
+
 		$bidder_id 		= ( isset( $bidder_id ) ) ? $bidder_id : $user_ID;
 		$bid_date 		= current_time( 'mysql' );
 		$bid_date_gmt 	= current_time( 'mysql', 1 );
 
-		do_action( 'get_auction_bid', $post_id, $bid_value, $bidder_id );
+		$bid = compact( "post_id", "bidder_id", "bid_value", "bid_date", "bid_date_gmt" );
 
-		$bid = compact("post_id", "bidder_id", "bid_value", "bid_date", "bid_date_gmt" );
+		do_action( 'get_auction_bid', $bid );
 
 		if( $this->is_post_valid( $post_id ) && $this->is_bid_valid( $post_id, $bid_value, $bidder_id ) ) {
-			$bid[ 'bid_status' ] = $this->bid_status; //set in is_valid calls
+			$bid[ 'bid_status' ] = $this->bid_status; //set in is_valid call
 			$bid = apply_filters( 'bid_pre_db_insert', $bid );
 			$this->update_bid( $bid );
 		} else {
@@ -85,7 +89,22 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		}
 
 		$bid[ 'message_id' ] = $this->message_id;
+		error_log( 'bid_form_submit bid = ' . print_r( $bid, true ) );
 		return $bid;
+	}
+	
+	protected function buy_form_submit( $post_id = NULL, $bid_value = NULL, $bidder_id = NULL ) {
+		global $user_ID;
+
+		if( $post_id == NULL || empty( $post_id ) )
+			$post_id = ( isset( $_REQUEST[ 'pid' ] ) ) ? intval( $_REQUEST[ 'pid' ] ) : 0;
+
+		if( $bidder_id == NULL || empty( $bidder_id ) ) // Allow anonymous buyers
+			$bidder_id = ( is_user_logged_in() ) ? $user_ID : 0;
+
+		$bid_value = get_post_meta( $post_id, 'buy_now_price', true );
+
+		return $this->bid_form_submit( $post_id, $bid_value, $bidder_id );
 	}
 
 	protected function validate_bid( $post_id, $bid_value, $bidder_id ){
@@ -93,7 +112,10 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		$post_max_bid		= $this->get_max_bid( $post_id );
 		$bidders_max_bid	= $this->get_users_max_bid( $bidder_id, $post_id );
 
-		if ( $bidder_id == get_post( $post_id )->post_author ) {
+		if( isset( $_GET[ 'buy_now' ] ) && $_GET[ 'buy_now' ] == 'paypal' ){
+			$this->message_id = 16;
+			$this->bid_status = 'winning';
+		} elseif ( $bidder_id == get_post( $post_id )->post_author ) {
 			$this->message_id = 11;
 			$this->bid_status = 'invalid';
 		} elseif ( empty( $bid_value ) || $bid_value === NULL || !preg_match( '/^[0-9]*\.?[0-9]*$/', $bid_value ) ) {
@@ -146,41 +168,35 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		$posts_max_bid			= $this->get_max_bid( $bid[ 'post_id' ] );
 		$current_winning_bid_id	= $this->get_winning_bid( $bid[ 'post_id' ] )->ID;
 
-		if( $this->message_id == 0 ) { // first bid
-			$start_price = get_post_meta( $bid[ 'post_id' ], 'start_price', true );
-			if( (float)$start_price != 0 ){
-				$new_winning_bid_value = $start_price;
-			} else {
-				$new_winning_bid_value = ( $bid[ 'bid_value' ] * AUCTION_BID_INCREMENT );
-			}
-		} elseif ( $this->message_id == 1 ) { //Bid value is over max bid & bidder different to current winning bidder
-			if ( $bid[ 'bid_value' ] > ( $posts_max_bid->post_content * ( AUCTION_BID_INCREMENT + 1 ) ) ) {
-				$new_winning_bid_value = $posts_max_bid->post_content * ( AUCTION_BID_INCREMENT + 1 );
-			} else {
+		switch( $this->message_id ){
+			case 0:
+				$start_price = get_post_meta( $bid[ 'post_id' ], 'start_price', true );
+				$new_winning_bid_value = ( (float)$start_price != 0 ) ? $start_price :  ( $bid[ 'bid_value' ] * AUCTION_BID_INCREMENT );
+				break;
+			case 1:
+				$new_winning_bid_value = ( $bid[ 'bid_value' ] > ( $posts_max_bid->post_content * ( AUCTION_BID_INCREMENT + 1 ) ) ) ? $new_winning_bid_value = $posts_max_bid->post_content * ( AUCTION_BID_INCREMENT + 1 ) : $bid[ 'bid_value' ];
+				break;
+			case 2:
+				$bid_value_incremented = $bid[ 'bid_value' ] * ( 1 + AUCTION_BID_INCREMENT );
+				$new_winning_bid_value = ( $posts_max_bid->post_content > $bid_value_incremented ) ? $bid_value_incremented : $posts_max_bid->post_content;
+				break;
+			case 4:
+				$new_winning_bid_value = $current_winning_bid_value;
+				break;
+			case 16:
 				$new_winning_bid_value = $bid[ 'bid_value' ];
-			}
-		} elseif ( $this->message_id == 2 ) {
-			$bid_value_incremented = $bid[ 'bid_value' ] * ( 1 + AUCTION_BID_INCREMENT );
-			if ( $posts_max_bid->post_content > $bid_value_incremented ) {
-				$new_winning_bid_value = $bid_value_incremented;
-			} else {
-				$new_winning_bid_value = $posts_max_bid->post_content;
-			}
-		} elseif ( $this->message_id == 4 ) { // bidder increasing max bid, set their previous bid as 'outbid'
-			$wpdb->update( $wpdb->posts, array( 'post_status' => 'outbid' ), array( 'ID' => $current_winning_bid_id ) );
-			$new_winning_bid_value = $current_winning_bid_value;
+				break;
 		}
 
 		parent::update_bid( $bid );
 
-		if( $this->message_id != 2 ){ // valid bid, over existing max, change winning bid id and bid value in bids meta table
+		if( $this->message_id != 2 ){ // valid bid, over existing max, change winning bid id and bid value in meta table
 			$wpdb->update( $wpdb->posts, array( 'post_status' => 'outbid' ), array( 'ID' => $current_winning_bid_id ) );
-			$wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->postmeta WHERE post_id = %d AND meta_key = 'winning_bid_value'", $current_winning_bid_id ) );
 			delete_post_meta( $current_winning_bid_id, 'winning_bid_value' );
 			$new_winning_bid_id = $this->get_winning_bid( $bid[ 'post_id' ] )->ID;
-			$wpdb->insert( $wpdb->postmeta, array( 'post_id' => $new_winning_bid_id, 'meta_key' => 'winning_bid_value', 'meta_value' => $new_winning_bid_value ) );
+			update_post_meta( $new_winning_bid_id, 'winning_bid_value', $new_winning_bid_value );
 		} else { // current winning bid is still winning bid, just need to update winning bid value
-			$wpdb->update( $wpdb->postmeta, array( 'meta_value' => $new_winning_bid_value ), array( 'post_id' => $current_winning_bid_id, 'meta_key' => 'winning_bid_value' ) );
+			update_post_meta( $current_winning_bid_id, 'winning_bid_value', $new_winning_bid_value );
 		}
 
 		return $new_winning_bid_value;
@@ -276,14 +292,6 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		return $sort_options;
 	}
 
-	public function get_winning_bid( $post_id = '' ) {
-
-		$winning_bid = parent::get_winning_bid( $post_id );
-
-		if( get_post_meta( $post_id, 'purchased', true ) == 'true' )
-			$winning_bid->post_author = 0;
-	}
-
 	/**
 	 * Gets the value of the current winning bid for a post, optionally specified with $post_id.
 	 *
@@ -300,9 +308,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		if ( empty( $post_id ) )
 			$post_id = $post->ID;
 
-		if( get_post_meta( $post_id, 'purchased', true ) == 'true' ){
-			$winning_bid_value = get_post_meta( $post_id, 'buy_now_price', true );
-		}elseif ( $this->get_bid_count( $post_id ) == 0 ){
+		if ( $this->get_bid_count( $post_id ) == 0 ){
 			$winning_bid_value = get_post_meta( $post_id, 'start_price', true );
 		} else {
 			$winning_bid = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $wpdb->posts WHERE post_type = %s AND post_parent = %d AND post_status = %s", $this->bid_object_name, $post_id, 'winning' ) );
@@ -324,11 +330,12 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		if ( !$this->is_post_valid( $post_id ) )
 			return;
 
-		//If Auction author has setup PayPal & set a "Buy Now" price for the auction > 0 and current price
+		// If auction author has setup PayPal & set a "Buy Now" price for the auction > 0 and current price
 		$post_details = get_post( $post_id );
-		$invoice->payee_class = get_userdata( $post_details->post_author );
 		$accepted_payments = pp_invoice_user_accepted_payments( $post_details->post_author );
 
+		// Create mock invoice object for setting up PayPal form
+		$invoice->payee_class = get_userdata( $post_details->post_author );
 		$invoice->amount = get_post_meta( $post_id, 'buy_now_price', true );
 
 		if( $invoice->amount == 0 || $invoice->amount < $this->get_winning_bid_value( $post_id ) || true != $accepted_payments[ 'paypal_allow' ] || !is_email( $invoice->payee_class->pp_invoice_settings[ 'paypal_address' ] ) )
@@ -338,28 +345,22 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		$invoice->pay_link 	= get_permalink( $post_id );
 		$invoice->pay_link 	= add_query_arg( 'buy_now', 'paypal', $invoice->pay_link );
 		$invoice->pay_link 	= add_query_arg( 'pid', $post_id, $invoice->pay_link );
-		//$invoice->id 		= $post_id; //temp until invoice is generated to prevent duplicate payments
+		//$invoice->id 		= $post_id; // prevent duplicate payments on post?
 		$invoice->currency_code = $currency;
 
 		$button = 'buy';
 		$class = 'buy-form';
 		$form_extras = '<h6 class="buy-title">' . __( 'Buy Now', 'prospress' ) . '</h6>';
-		if( $this->message_id == 15 )
+		if( in_array( $this->message_id, array( 15, 16 ) ) )
 			$form_extras .= '<div class="bid-updated bid_msg" >' . $this->get_message() . '</div>';
 		$form_extras .= '<div class="buy-price">';
 		$form_extras .= sprintf( __( 'Price: %s', 'prospress' ), pp_money_format( $invoice->amount ) );
 		$form_extras .= '</div>';
 
-		echo '<div></div>';
 		include_once( PP_INVOICE_UI_PATH . "payment_paypal.php" );
 	}
 
 	public function buy_now_return() {
-
-		error_log( 'post_ID = ' . print_r( $post_ID, true ) );
-		error_log( 'post = ' . print_r( $post, true ) );
-		error_log( 'GET = ' . print_r( $_GET, true ) );
-		error_log( 'POST = ' . print_r( $_POST, true ) );
 
 		if( !isset( $_GET[ 'buy_now' ] ) || $_GET[ 'buy_now' ] != 'paypal' )
 			return;
@@ -371,11 +372,10 @@ class PP_Auction_Bid_System extends PP_Market_System {
 					break;
 				case 'success':
 					$post_id = intval( $_GET[ 'pid' ] );
-					//update_post_meta( $post_id, 'purchased', 'true' );
-					error_log( 'updating post meta on post = ' . print_r( $post_id, true ) );
-					//pp_end_post( $post_id );
-					error_log( 'ending post = ' . print_r( $post_id, true ) );
-					$this->message_id = 16;
+					$output = $this->buy_form_submit( $post_id );
+					pp_end_post( $post_id ); // also generates invoice with pending status
+					$invoice_id = pp_get_invoice_id( $post_id );
+					pp_invoice_paid( $invoice_id, 'PayPal' );
 					break;
 			}
 	}
@@ -385,7 +385,6 @@ class PP_Auction_Bid_System extends PP_Market_System {
 			$message = __( 'Purchase Cancelled.', 'prospress' );
 		elseif( $message_id == 16 )
 			$message = __( 'Purchase successful, congratulations.', 'prospress' );
-
 		return $message;
 	}
 
