@@ -50,9 +50,9 @@ class PP_Tag_Cloud_Widget extends WP_Widget {
 
 		$current_taxonomy = $this->get_current_taxonomy($instance);
 		?>
-		<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:') ?></label>
+		<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:', 'prospress' ) ?></label>
 		<input type="text" class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" value="<?php if (isset ( $instance['title'])) {echo esc_attr( $instance['title'] );} ?>" /></p>
-		<p><label for="<?php echo $this->get_field_id('taxonomy'); ?>"><?php _e('Taxonomy:') ?></label>
+		<p><label for="<?php echo $this->get_field_id('taxonomy'); ?>"><?php _e('Taxonomy:', 'prospress' ) ?></label>
 		<select class="widefat" id="<?php echo $this->get_field_id('taxonomy'); ?>" name="<?php echo $this->get_field_name('taxonomy'); ?>">
 		<?php foreach ( get_object_taxonomies( $market_systems[ 'auctions' ]->name() ) as $taxonomy ) :
 				$tax = get_taxonomy( $taxonomy );

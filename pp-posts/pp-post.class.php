@@ -489,7 +489,7 @@ class PP_Post {
 
 
 	/** 
-	 * When Prospress is uninstalled completely, remove the index page created on activation. 
+	 * When Prospress is uninstalled completely, remove the index page created on activation.
 	 * 
 	 * @package Prospress
 	 * @subpackage Posts
@@ -503,10 +503,6 @@ class PP_Post {
 
 		wp_delete_post( $this->get_index_id() );
 
-		$pp_post_ids = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type = '" . $this->name . "'" ) );
-
-		if ( $pp_post_ids )
-			foreach ( $pp_post_ids as $pp_post_id )
-				wp_delete_post( $pp_post_id );
+		// Don't delete auctions
 	}
 }
