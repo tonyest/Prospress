@@ -117,10 +117,11 @@ Index & Single Page Layouts
 .bid-form{
 	float:left;
 	clear:both;
+	width:60%;
 }
 .buy-form{
 	float:right;
-	width:44%;
+	width:30%;
 }
 
 /* Buy Now Form Elements
