@@ -2,8 +2,8 @@
 /**
  * Prospress Payment
  * 
- * Money - the great enabler of trade. This component provides a system for traders in a Prospress market place 
- * to exchange money in return to posted items/services.
+ * Money - the great enabler of trade. This component provides a system for traders in a Prospress marketplace 
+ * to exchange money in return for posted items/services.
  * 
  * @package Prospress
  * @author Brent Shepherd
@@ -33,6 +33,8 @@ if ( !isset($wpdb->payments_log) || empty($wpdb->payments_log))
  */
 require_once( PP_PAYMENT_DIR . '/pp-invoice.php' );
 
+require_once( PP_PAYMENT_DIR . '/core/gateways/paypal-ipn.php' );
+
 include_once( PP_PAYMENT_DIR . '/pp-payment-templatetags.php' );
 
 
@@ -45,7 +47,7 @@ include_once( PP_PAYMENT_DIR . '/pp-payment-templatetags.php' );
  * performing a feedback action and label for outputting as the link text. 
  * 
  * @see bid_table_actions hook
- * @see winning_bid_actions hook
+ * @see completed_post_actions hook
  * 
  * @param actions array existing actions for the hook
  * @param post_id int for identifying the post
@@ -87,11 +89,6 @@ add_filter( 'bid_table_actions', 'pp_add_payment_action', 10, 2 );
 // Automatically hooked on post completion.
 function pp_generate_invoice( $post_id ) { //receive post ID from hook
 	global $wpdb, $market_systems;
-
-	$invoice_id = $wpdb->get_var( "SELECT id FROM " . $wpdb->payments . " WHERE post_id = '$post_id'" );
-
-	if( $invoice_id != NULL )
-		return $invoice_id;
 
 	$type = get_post_type( $post_id );
 
