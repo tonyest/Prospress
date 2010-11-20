@@ -15,6 +15,15 @@ if ( !defined( 'PP_BASE_CAP' ) )
 
 include_once( PP_CORE_DIR . '/core-widgets.php' );
 
+/** 
+ * Create first prospress auction-type post "Hello World"
+ * 
+ * @package Prospress
+ * @subpackage Posts
+ * @since 1.01
+ */
+
+
 /**
  * Sets up Prospress environment with any settings required and/or shared across the 
  * other components. 
@@ -204,7 +213,7 @@ function pp_welcome_notice(){
 	$index_id = $market_systems['auctions']->post->get_index_id();
 
 	echo "<div id='prospress-welcome' class='updated fade'><p><strong>".__('Congratulations.', 'prospress')."</strong> ".
-	sprintf( __('Your WordPress site is now prosperous. You can add your first <a href="%1$s">auction</a>, '), "post-new.php?post_type=auctions").
+	sprintf( __('Your WordPress is prosperous. You can add your first <a href="%1$s">auction</a>, '), "post-new.php?post_type=auctions").
 	sprintf( __('modify your auctions\' <a href="%1$s">index page</a> or '), "post.php?post=$index_id&action=edit").
 	sprintf( __('configure your marketplace <a href="%1$s">settings</a>. '), "admin.php?page=Prospress").
 	sprintf( __('<a href="%1$s">&laquo; Hide &raquo;</a>'), add_query_arg( 'pp_hide_wel', '1', $_SERVER['REQUEST_URI'] ))."</p></div>";
