@@ -117,6 +117,9 @@ Nope. There are a few surprises but you'll have to download & explore Prospress 
 
 = 1.1 =
 * Bids are now a custom post type
+* PayPal Buy Now option available
+
+= 1.0.1 =
 * Bug on bid form ajax fixed
 
 = 1.0 =
@@ -139,6 +142,9 @@ Nope. There are a few surprises but you'll have to download & explore Prospress 
 
 
 == Upgrade Notice ==
+
+= 1.0.1 =
+Please upgrade to fix a bid form bug in IE7.
 
 = 1.0 =
 The first non-beta release ready for prime-time - enjoy! Please note, this is a breaking upgrade. If you need to preserve feedback from a beta installation, post in the prospress.org/forums/ to request an upgrade script.
