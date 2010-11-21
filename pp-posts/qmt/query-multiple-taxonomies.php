@@ -4,6 +4,8 @@ The Fantastic Query Multiple Taxonomies Plugin by scribu http://scribu.net/wordp
 Version 1.1.1
 */
 
+include dirname( __FILE__ ) . '/widget.php';
+
 class PP_QMT_Core {
 
 	private static $post_ids = array();
@@ -182,8 +184,8 @@ class PP_QMT_Core {
 	}
 
 	function get_terms( $tax ) {
-		if ( empty(self::$post_ids) )
-			return get_terms($tax);
+		if ( empty( self::$post_ids ) )
+			return get_terms( $tax );
 
 		global $wpdb;
 
@@ -214,20 +216,10 @@ class PP_QMT_Core {
 		return add_query_arg($key, $value, $base);
 	}
 }
+PP_QMT_Core::init();
 
 function _is_pp_multitax() {
 	global $wp_query;
 
 	return @$wp_query->is_pp_multitax;
 }
-
-function _pp_qmt_init() {
-	include dirname(__FILE__) . '/scb/load.php';
-
-	include dirname(__FILE__) . '/widget.php';
-
-	PP_QMT_Core::init();
-
-	scbWidget::init('PP_Taxonomy_Filter_Widget', __FILE__, 'taxonomy-filter');
-}
-_pp_qmt_init();
