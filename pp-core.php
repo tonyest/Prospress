@@ -46,7 +46,7 @@ function pp_add_core_admin_menu() {
 	$pp_core_admin_page = add_menu_page( __( 'Prospress', 'prospress' ), __( 'Prospress', 'prospress' ), 10, 'Prospress', '', PP_PLUGIN_URL . '/images/prospress16.png', 4 );
 	$pp_core_settings_page = add_submenu_page( 'Prospress', __( 'Prospress Settings', 'prospress' ), __( 'General Settings', 'prospress' ), 10, 'Prospress', 'pp_settings_page' );
 }
-add_action( 'admin_menu', 'pp_add_core_admin_menu', 50 );
+add_action( 'admin_menu', 'pp_add_core_admin_menu' );
 
 
 /**
