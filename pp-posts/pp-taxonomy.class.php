@@ -2,12 +2,12 @@
 
 class PP_Taxonomy {
 
+	public $name;
+	public $admin_url;
+	public $market_type;
 	private $labels;	// An array with details of the market system to which this taxonomy belongs
 	protected $add_tax;
 	protected $edit_tax;
-	public $admin_url;
-	public $name;
-	public $market_type;
 
 	public function __construct( $name, $args ) {
 
@@ -118,7 +118,7 @@ class PP_Taxonomy {
 				<p><a href="<?php echo $add_url; ?>" class="button add-new-h2"><?php _e( "Add New", 'prospress' ); ?></a></p>
 			<?php
 			}
-			echo '</div>';
+		echo '</div>';
 	}
 
 	public function edit_tax_page( $error = '', $label = '', $singular_label = '' ) {
@@ -194,7 +194,7 @@ class PP_Taxonomy {
 	}
 
 	public function edit_taxonomies() {
-		global $wp_rewrite, $wpdb;
+		global $wpdb;
 
 		check_admin_referer( 'pp_custom_taxonomy' );
 
@@ -230,9 +230,8 @@ class PP_Taxonomy {
 
 		update_option( $this->name , $taxonomies );
 
-		//flush_rewrite_rules();
-		$wp_rewrite->flush_rules();
-
+		$this->register_taxonomies();
+		flush_rewrite_rules(); // doesn't work for unknown reasons
 		$this->manage_taxonomies( $msg );
 	}
 
