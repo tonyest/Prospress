@@ -269,15 +269,15 @@ class PP_Taxonomy {
 			$tax_type[ 'query_var' ] 		= $tax_name;
 			$tax_type[ 'rewrite' ] 			= array( 'slug' => $object_type . '/' . $tax_name, 'with_front' => false );
 			$tax_type[ 'capabilities' ] 	= array( 'assign_terms' => 'edit_prospress_posts' );
-			$tax_type[ 'labels' ][ 'search_items' ] 	= __( 'Search ', 'prospress' ) . $tax_type[ 'label' ];
-			$tax_type[ 'labels' ][ 'popular_items' ]	= __( 'Popular ', 'prospress' ) . $tax_type[ 'label' ];
-			$tax_type[ 'labels' ][ 'all_items' ] 		= __( 'All ', 'prospress' ) . $tax_type[ 'label' ];
-			$tax_type[ 'labels' ][ 'parent_item' ] 		= __( 'Parent ', 'prospress' ) . $tax_type[ 'label' ];
-			$tax_type[ 'labels' ][ 'parent_item_colon' ]= __( 'Parent ', 'prospress' ) . $tax_type[ 'label' ] . ':';
-			$tax_type[ 'labels' ][ 'edit_item' ]		= __( 'Edit ', 'prospress' ) . $tax_type[ 'labels' ][ 'singular_label' ];
-			$tax_type[ 'labels' ][ 'update_item' ]		= __( 'Update ', 'prospress' ) . $tax_type[ 'labels' ][ 'singular_label' ];
-			$tax_type[ 'labels' ][ 'add_new_item' ]		= __( 'Add New ', 'prospress' ) . $tax_type[ 'labels' ][ 'singular_label' ];
-			$tax_type[ 'labels' ][ 'new_item_name' ]	= __( 'New ', 'prospress' ) . $tax_type[ 'labels' ][ 'singular_label' ];
+			$tax_type[ 'labels' ][ 'search_items' ] 	= sprintf( __( 'Search %s', 'prospress' ), $tax_type[ 'label' ] );
+			$tax_type[ 'labels' ][ 'popular_items' ]	= sprintf( __( 'Popular %s', 'prospress' ), $tax_type[ 'label' ] );
+			$tax_type[ 'labels' ][ 'all_items' ] 		= sprintf( __( 'All %s', 'prospress' ), $tax_type[ 'label' ] );
+			$tax_type[ 'labels' ][ 'parent_item' ] 		= sprintf( __( 'Parent %s', 'prospress' ), $tax_type[ 'label' ] );
+			$tax_type[ 'labels' ][ 'parent_item_colon' ]= sprintf( __( 'Parent %s:', 'prospress' ), $tax_type[ 'label' ] );
+			$tax_type[ 'labels' ][ 'edit_item' ]		= sprintf( __( 'Edit %s', 'prospress' ), $tax_type[ 'labels' ][ 'singular_label' ] );
+			$tax_type[ 'labels' ][ 'update_item' ]		= sprintf( __( 'Update %s', 'prospress' ), $tax_type[ 'labels' ][ 'singular_label' ] );
+			$tax_type[ 'labels' ][ 'add_new_item' ]		= sprintf( __( 'Add New %s', 'prospress' ), $tax_type[ 'labels' ][ 'singular_label' ] );
+			$tax_type[ 'labels' ][ 'new_item_name' ]	=sprintf(  __( 'New %s', 'prospress' ), $tax_type[ 'labels' ][ 'singular_label' ] );
 
 			register_taxonomy( $tax_name, $object_type, $tax_type );
 		}
