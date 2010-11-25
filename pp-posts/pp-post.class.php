@@ -294,7 +294,7 @@ class PP_Post {
 	 * A boolean function to centralise the logic for whether the current page is an admin page for this post type.
 	 *
 	 * This is required when enqueuing scripts, styles and performing other Prospress post admin page 
-	 * specific functions so it makes sense to centralise it. 
+	 * specific functions.
 	 * 
 	 * @package Prospress
 	 * @subpackage Posts
@@ -303,7 +303,11 @@ class PP_Post {
 	public function is_post_admin_page(){
 		global $post;
 
-		if( $_GET[ 'post_type' ] == $this->name || $_GET[ 'post' ] == $this->name || $post->post_type == $this->name )
+		if( !is_admin() )
+			return false;
+		elseif( isset( $post->post_type ) && $post->post_type == $this->name ) // edit page
+			return true;
+		elseif ( isset( $_GET[ 'post_type' ] ) && ( $_GET[ 'post_type' ] == $this->name || $_GET[ 'post' ] == $this->name ) )  // admin list page
 			return true;
 		else
 			return false;

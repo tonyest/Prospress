@@ -296,6 +296,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		if ( $this->get_bid_count( $post_id ) == 0 ){
 			$winning_bid_value = get_post_meta( $post_id, 'start_price', true );
 		} else {
+			// Need to do this manually as get_winning_bid() call this function
 			$winning_bid = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $wpdb->posts WHERE post_type = %s AND post_parent = %d AND post_status = %s", $this->bid_object_name, $post_id, 'winning' ) );
 
 			$winning_bid_value = $wpdb->get_var( $wpdb->prepare( "SELECT meta_value FROM $wpdb->postmeta WHERE post_id = %d AND meta_key = %s", $winning_bid->ID, 'winning_bid_value' ) );

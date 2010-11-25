@@ -228,7 +228,7 @@ class PP_Taxonomy_Filter_Widget extends WP_Widget {
 		);
 
 		$widget_ops = array(
-			'description' => sprintf( __( 'Filter %s by your custom taxonomies' ), $market_system[ 'auctions' ]->label )
+			'description' => sprintf( __( 'Filter %s by your custom taxonomies' ), $market_systems[ 'auctions' ]->label )
 		);
 
 		parent::WP_Widget( 'taxonomy-filter', __( 'Prospress Taxonomy Filter', 'prospress' ), $widget_ops );
@@ -321,7 +321,7 @@ class PP_QMT_Term_Walker extends Walker_Category {
 		$term_name = esc_attr($term->name);
 		$link = '<a href="' . get_term_link($term, $this->taxonomy) . '" ';
 		if ( $use_desc_for_title == 0 || empty($term->description) )
-			$link .= 'title="' . sprintf(__( 'View all %s filed under %s', 'prospress' ), $market_system[ 'auctions' ]->label, $term_name) . '"';
+			$link .= 'title="' . sprintf(__( 'View all %s filed under %s', 'prospress' ), $market_systems[ 'auctions' ]->label, $term_name) . '"';
 		else
 			$link .= 'title="' . esc_attr( strip_tags( $term->description ) ) . '"';
 		$link .= '>';

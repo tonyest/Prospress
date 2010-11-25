@@ -52,16 +52,22 @@ class pp_invoice_get {
 		$this->data->current_user_is = pp_invoice_user_has_permissions( $invoice_id);
 
 		// Determine if invoice has been paid
-		if( $this->data->status == 'paid')
+		if( isset( $this->data->status ) && $this->data->status == 'paid' )
 			$this->data->is_paid = true;
+		else
+			$this->data->is_paid = false;
 
 		// Determine if invoice has been sent
-		if(!empty( $this->data->sent_date ))
+		if( !empty( $this->data->sent_date ) )
 			$this->data->is_sent = true;
+		else
+			$this->data->is_sent = false;
 
 		// Determine if invoice is archived
-		if( $this->data->archive_status == 'archived')
+		if( isset( $this->data->archive_status ) && $this->data->archive_status == 'archived')
 			$this->data->is_archived = true;
+		else
+			$this->data->is_archived = false;
 
 		// Load Invoice History
 		if( $raw_history = $wpdb->get_results( "SELECT * FROM ".$wpdb->payments_log." WHERE invoice_id = '$invoice_id' ORDER BY time_stamp DESC" ))
