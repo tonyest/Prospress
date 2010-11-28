@@ -45,7 +45,7 @@ include_once( PP_PAYMENT_DIR . '/pp-payment-templatetags.php' );
  * performing a feedback action and label for outputting as the link text. 
  * 
  * @see bid_table_actions hook
- * @see winning_bid_actions hook
+ * @see completed_post_actions hook
  * 
  * @param actions array existing actions for the hook
  * @param post_id int for identifying the post
@@ -103,7 +103,9 @@ function pp_generate_invoice( $post_id ) { //receive post ID from hook
 	$status		= 'pending';
 
 	$args = compact( 'post_id', 'payer_id', 'payee_id', 'amount', 'status', 'type' );
-
+	error_log('generate_invoice');
+	do_action('generate_invoice',$args);
+	
 	return pp_invoice_create( $args );
 }
 add_action( 'post_completed', 'pp_generate_invoice' );
