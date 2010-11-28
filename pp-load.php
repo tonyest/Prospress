@@ -25,8 +25,6 @@ require_once( PP_PLUGIN_DIR . '/pp-feedback.php' );
 
 require_once( PP_PLUGIN_DIR . '/pp-payment.php' );
 
-require_once( PP_PLUGIN_DIR . '/pp-cubepoints.php');
-
 function pp_activate(){
 	// Safely prevent activation on installations pre 3.0 or with php 4
 	if ( !function_exists( 'register_post_status' ) || version_compare( PHP_VERSION, '5.0.0', '<' ) ) {
