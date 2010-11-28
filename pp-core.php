@@ -117,7 +117,7 @@ function pp_settings_page(){
  * 
  * To make a new currency available, add an array to the global $currencies variable. The key for this array must be the currency's 
  * ISO 4217 code. The array must contain the currency name and symbol. 
- * e.g. $currencies['CAD'] = array( 'currency' => __('Canadian Dollar'), 'symbol' => '&#36;' ).
+ * e.g. $currencies['CAD'] = array( 'currency_name' => __('Canadian Dollar'), 'symbol' => '&#36;' ).
  * 
  * Once added, the currency will be available for selection from the admin page.
  * 
@@ -131,12 +131,12 @@ function pp_settings_page(){
 function pp_set_currency(){
 	global $currencies, $currency, $currency_symbol;
 
-	$currencies = array(
+	$currencies = apply_filters('pp_set_currency',array(
 		'AUD' => array( 'currency_name' => __('Australian Dollar', 'prospress' ), 'symbol' => '&#36;' ),
 		'GBP' => array( 'currency_name' => __('British Pound', 'prospress' ), 'symbol' => '&#163;' ),
 		'EUR' => array( 'currency_name' => __('Euro', 'prospress' ), 'symbol' => '&#8364;' ),
 		'USD' => array( 'currency_name' => __('United States Dollar', 'prospress' ), 'symbol' => '&#36;' )
-		);
+		));
 
 	$currency = get_option( 'currency_type' );
 
@@ -167,10 +167,13 @@ function pp_money_format( $number, $decimals = '', $currency = '' ){
 		$currency_sym = $currency_symbol;
 	else
 		$currency_sym = $currencies[ $currency ][ 'symbol' ];
-
-	return $currency_sym . number_format_i18n( $number, $decimals );
+		return implode('', apply_filters('pp_money_format', array($currency_sym , number_format_i18n( $number, $decimals ))));
 }
-
+//switch euro to after currency
+function euro_format($currency){
+	return (get_option( 'currency_type' )=='EUR')?array($currency[1],$currency[0]):$currency;
+}
+add_filter('pp_money_format','euro_format');
 
 /** 
  * Add admin style and scripts that are required by more than one component. 
@@ -206,7 +209,7 @@ function pp_welcome_notice(){
 	$index_id = $market_systems['auctions']->post->get_index_id();
 
 	echo "<div id='prospress-welcome' class='updated fade'><p><strong>".__('Congratulations.', 'prospress')."</strong> ".
-	sprintf( __('Your WordPress is prosperous. You can add your first <a href="%1$s">auction</a>, '), "post-new.php?post_type=auctions").
+	sprintf( __('Your WordPress site is now prosperous. You can add your first <a href="%1$s">auction</a>, '), "post-new.php?post_type=auctions").
 	sprintf( __('modify your auctions\' <a href="%1$s">index page</a> or '), "post.php?post=$index_id&action=edit").
 	sprintf( __('configure your marketplace <a href="%1$s">settings</a>. '), "admin.php?page=Prospress").
 	sprintf( __('<a href="%1$s">&laquo; Hide &raquo;</a>'), add_query_arg( 'pp_hide_wel', '1', $_SERVER['REQUEST_URI'] ))."</p></div>";
