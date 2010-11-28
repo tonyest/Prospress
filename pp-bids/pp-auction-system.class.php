@@ -66,19 +66,18 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		$bid_date 		= current_time( 'mysql' );
 		$bid_date_gmt 	= current_time( 'mysql', 1 );
 
-		do_action( 'get_auction_bid', $post_id, $bid_value, $bidder_id );
-
 		$bid = compact("post_id", "bidder_id", "bid_value", "bid_date", "bid_date_gmt" );
-
 		if( $this->is_post_valid( $post_id ) && $this->is_bid_valid( $post_id, $bid_value, $bidder_id ) ) {
 			$bid[ 'bid_status' ] = $this->bid_status; //set in is_valid calls
-			$bid = apply_filters( 'bid_pre_db_insert', $bid );
-			$this->update_bid( $bid );
 		} else {
 			$bid[ 'bid_status' ] = $this->bid_status;
 		}
-
+		
 		$bid[ 'message_id' ] = $this->message_id;
+		$bid = apply_filters( 'bid_pre_db_insert', $bid );
+		do_action('get_auction_bid',$bid);
+		$this->message_id = $bid[ 'message_id' ];
+		$this->update_bid( $bid );
 		return $bid;
 	}
 
@@ -132,11 +131,9 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		global $wpdb;
 
 		$current_winning_bid_value 	= $this->get_winning_bid_value( $bid[ 'post_id' ] );
-
 		// No need to update winning bid for invalid bids, bids too low
 		if ( $bid[ 'bid_status' ] == 'invalid' )
 			return $current_winning_bid_value;
-
 		$posts_max_bid			= $this->get_max_bid( $bid[ 'post_id' ] );
 		$current_winning_bid_id	= $this->get_winning_bid( $bid[ 'post_id' ] )->ID;
 
@@ -194,7 +191,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 					<label for="start_price"><?php echo __( "Starting Price: ", 'prospress' ) . $currency_symbol; ?></label>
 					</td>
 					<td>
-				 		<input type="text" name="start_price" value="<?php echo number_format_i18n( $start_price, 2 ); ?>" size="20" <?php echo $disabled; ?>/>
+				 		<input type="text" name="start_price" value="<?php echo number_format_i18n( (float)$start_price, 2 ); ?>" size="20" <?php echo $disabled; ?>/>
 						<?php if( $disabled != '' ) echo '<span>' . __( 'Bids have been made on your auction, you cannot change the start price.', 'prospress' ) . '</span>'; ?>
 					</td>
 				</tr>
