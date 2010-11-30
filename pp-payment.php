@@ -21,11 +21,11 @@ if( !defined( 'PP_PAYMENT_URL' ) )
 global $wpdb;
 
 if ( !isset($wpdb->payments) || empty($wpdb->payments))
-	$wpdb->payments = $wpdb->prefix . 'payments';
+	$wpdb->payments = $wpdb->base_prefix . 'payments';
 if ( !isset($wpdb->paymentsmeta) || empty($wpdb->paymentsmeta))
-	$wpdb->paymentsmeta = $wpdb->prefix . 'paymentsmeta';
+	$wpdb->paymentsmeta = $wpdb->base_prefix . 'paymentsmeta';
 if ( !isset($wpdb->payments_log) || empty($wpdb->payments_log))
-	$wpdb->payments_log = $wpdb->prefix . 'payments_log';
+	$wpdb->payments_log = $wpdb->base_prefix . 'payments_log';
 
 /**
  * The engine behind the payment system - TwinCitiesTech's WP Invoice modified for marketplace payments. 
