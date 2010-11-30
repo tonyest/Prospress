@@ -37,9 +37,11 @@ class pp_invoice_get {
 		$this->data->payee_class = get_userdata( $this->data->payee_id);
 		
 		// Get Post information
-		$post_class = get_post( $this->data->post_id);
-
-		if(count( $post_class ) > 0) {
+		switch_to_blog( $this->data->blog_id );
+		$post_class = get_post( $this->data->post_id );
+		restore_current_blog();
+		
+		if( count( $post_class ) > 0 ) {
 			foreach( $post_class as $key => $value ) {
 				$this->data->$key = $value;		
 			}
