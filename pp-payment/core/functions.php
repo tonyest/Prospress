@@ -63,7 +63,7 @@ function pp_invoice_user_settings( $what, $user_id = false ) {
 		$user_id = $user_ID;
 
 	// Load user ALL settings
-	$user_settings = get_user_meta( $user_id, 'pp_invoice_settings' );
+	$user_settings = get_user_meta( $user_id, 'pp_invoice_settings', true );
 
 	// If there are no settin found, load defaults
  	if( !is_array( $user_settings ) || count( $user_settings ) < 1 )	{

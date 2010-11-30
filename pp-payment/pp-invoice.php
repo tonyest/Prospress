@@ -473,7 +473,7 @@ class PP_Invoice {
 		}
 
 		// Load default user settings if none exist
-		if( !get_user_meta( $user_ID, 'pp_invoice_settings' ) && $user_ID != 0 ) {
+		if( !get_user_meta( $user_ID, 'pp_invoice_settings', true ) && $user_ID != 0 ) {
 			pp_invoice_load_default_user_settings( $user_ID);
 		}
 
@@ -684,43 +684,43 @@ class PP_Invoice_GetInfo {
 			break;
 
 			case 'first_name':
-				return get_user_meta( $uid,'first_name' );
+				return get_user_meta( $uid,'first_name', true );
 			break;
 			
 			case 'last_name':
-				return get_user_meta( $uid,'last_name' );
+				return get_user_meta( $uid,'last_name', true );
 			break;
 			
 			case 'company_name':
-				return get_user_meta( $uid,'company_name' );
+				return get_user_meta( $uid,'company_name', true );
 			break;
 			
 			case 'phonenumber':
-				return pp_invoice_format_phone(get_user_meta( $uid,'phonenumber' ) );
+				return pp_invoice_format_phone( get_user_meta( $uid, 'phonenumber', true ) );
 			break;
 			
 			case 'paypal_phonenumber':
-				return get_user_meta( $uid,'phonenumber' );
+				return get_user_meta( $uid, 'phonenumber', true );
 			break;
 			
 			case 'streetaddress':
-				return get_user_meta( $uid,'streetaddress' );	
+				return get_user_meta( $uid, 'streetaddress', true );
 			break;
 			
 			case 'state':
-				return strtoupper(get_user_meta( $uid,'state' ) );
+				return strtoupper( get_user_meta( $uid, 'state', true ) );
 			break;
 			
 			case 'city':
-				return get_user_meta( $uid,'city' );
+				return get_user_meta( $uid, 'city', true );
 			break;
 			
 			case 'zip':
-				return get_user_meta( $uid,'zip' );
+				return get_user_meta( $uid, 'zip', true );
 			break;
 			
 			case 'country':
-				if(get_user_meta( $uid,'country' ) ) return get_user_meta( $uid,'country' );  else  return "US";
+				if( get_user_meta( $uid, 'country', true ) ) return get_user_meta( $uid, 'country', true );  else  return "US";
 			break;	
 		}
 		
