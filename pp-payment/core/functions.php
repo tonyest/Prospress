@@ -5,7 +5,7 @@
 */
 
 // Hide errors if using PHP4, otherwise we get many html_entity_decode() errors
-if (phpversion() <= 5 ) { ini_set('error_reporting', 0); }
+if ( phpversion() <= 5 ) { ini_set('error_reporting', 0); }
 
 //Delete any invoices associated with a post that is being deleted.	
 function pp_invoice_delete_post( $post_id ) {

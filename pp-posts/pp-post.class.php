@@ -97,7 +97,7 @@ class PP_Post {
 	 * @since 0.1
 	 */
 	public function template_redirects() {
-		global $post, $market_systems;
+		global $post, $market_systems, $wp_query, $paged;
 
 		$market = $market_systems[ $this->name ];
 
@@ -337,7 +337,7 @@ class PP_Post {
 	public function is_index() {
 		global $post;
 
-		if( $post->post_name == $this->name )
+		if( isset( $post->post_name ) && $post->post_name == $this->name )
 			return true;
 		else
 			return false;
@@ -350,7 +350,7 @@ class PP_Post {
 	public function is_single() {
 		global $post;
 
-		if( $post->post_type == $this->name )
+		if( isset( $post->post_type ) && $post->post_type == $this->name )
 			return true;
 		else
 			return false;

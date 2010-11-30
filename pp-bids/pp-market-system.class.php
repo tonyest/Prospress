@@ -165,7 +165,7 @@ abstract class PP_Market_System {
 		$the_post = ( empty ( $post ) ) ? get_post( $post_id) : $post;
 
 		if ( $this->is_post_valid( $post_id ) ) {
-			$form .= '<form id="bid_form-' . $post_id . '" class="bid-form" method="post" action="">';
+			$form = '<form id="bid_form-' . $post_id . '" class="bid-form" method="post" action="">';
 			$form .= '<div class="bid-updated bid_msg" >' . $this->get_message() . '</div><div>';
 
 			$form .= $this->bid_form_fields( $post_id );
@@ -177,7 +177,7 @@ abstract class PP_Market_System {
 			$form .= '<input name="bid_submit" type="submit" id="bid_submit" value="' . $this->labels[ 'bid_button' ] .'" />';
 			$form .= '</div></form>';
 		} else {
-			$form .= '<div id="bid_form-' . $post_id . '" class="bid-form">';
+			$form = '<div id="bid_form-' . $post_id . '" class="bid-form">';
 			$form .= '<div class="bid-updated bid_msg" >' . $this->get_message() . '</div>';
 			$form .= '</div>';
 		}

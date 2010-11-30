@@ -78,8 +78,14 @@ class PP_Invoice {
 		$_wp_last_object_menu++;
 
 		// outgoing_invoices is currently sent to main
-		$unsent_invoices = ( count( $this->unsent_invoices) > 0 ? "(" . count( $this->unsent_invoices) . ")" : "");
-		$unpaid_invoices = ( count( $this->unpaid_invoices) > 0 ? "(" . count( $this->unpaid_invoices) . ")" : "");
+		if( isset( $this->unsent_invoices ) )
+			$unsent_invoices = ( count( $this->unsent_invoices ) > 0 ? "(" . count( $this->unsent_invoices) . ")" : "");
+		else 
+			$unsent_invoices = '';
+		if( isset( $this->unpaid_invoices ) )
+			$unpaid_invoices = ( count( $this->unpaid_invoices ) > 0 ? "(" . count( $this->unpaid_invoices) . ")" : "");
+		else 
+			$unpaid_invoices = '';
 
 		// Global Settings
 		$pp_invoice_page_names[ 'global_settings' ] 	= add_submenu_page( 'Prospress',  __( 'Payment Settings', 'prospress' ),  __( 'Payment Settings', 'prospress' ), 'manage_options', 'invoice_settings', array( &$this,'settings_page' ) );
@@ -360,7 +366,7 @@ class PP_Invoice {
 			}
 		}
 
-		if( $_REQUEST[ 'action' ] == 'post_save_and_preview' ) {
+		if( isset( $_REQUEST[ 'action' ] ) && $_REQUEST[ 'action' ] == 'post_save_and_preview' ) {
 			$invoice_id = $_REQUEST[ 'invoice_id' ];
  			if( $_REQUEST[ 'pp_invoice_action' ] == 'Email to Client' ) {
 				pp_invoice_update_invoice_meta( $invoice_id, 'email_payment_request', $_REQUEST[ 'pp_invoice_payment_request' ][ 'email_message_content' ]);
@@ -406,7 +412,7 @@ class PP_Invoice {
 		// The pp_invoice_user_settings() needs to be ran, it converts certain text values into bool values
 		$user_settings = pp_invoice_user_settings( 'all', $user_ID);
 
-		include PP_INVOICE_UI_PATH . 'user_settings_page.php';	
+		include( PP_INVOICE_UI_PATH . 'user_settings_page.php' );
 	}
 
 	function settings_page() {
@@ -467,7 +473,7 @@ class PP_Invoice {
 		}
 
 		// Load default user settings if none exist
-		if(!get_user_meta( $user_ID, 'pp_invoice_settings' ) ) {
+		if( !get_user_meta( $user_ID, 'pp_invoice_settings' ) && $user_ID != 0 ) {
 			pp_invoice_load_default_user_settings( $user_ID);
 		}
 
