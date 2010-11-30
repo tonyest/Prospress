@@ -95,7 +95,7 @@ class Bid_Filter_Query {
 		if ( !$min && !$max )
 			return $where;
 
-		$bidsmeta_value = "CAST($wpdb->postmeta.meta_value AS decimal)";
+		$bidsmeta_value = "CAST($wpdb->postmeta.meta_value AS decimal(20,2))";
 
 		if ( $min && $max )
 			$clause = "$bidsmeta_value >= $min AND $bidsmeta_value <= $max";
@@ -107,7 +107,7 @@ class Bid_Filter_Query {
 		$where .= " AND ( $wpdb->posts.ID IN ( SELECT post_parent FROM $wpdb->posts WHERE ID IN ( SELECT post_id FROM $wpdb->postmeta WHERE meta_key = 'winning_bid_value' AND $clause ) )";
 
 		if( $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->postmeta WHERE meta_key = 'start_price' AND meta_value > 0" ) ){
-			$postmeta_value = "CAST($wpdb->postmeta.meta_value AS decimal)";
+			$postmeta_value = "CAST($wpdb->postmeta.meta_value AS decimal(20,2))";
 
 			if ( $min && $max )
 				$clause_sp = "$postmeta_value >= $min AND $postmeta_value <= $max";
