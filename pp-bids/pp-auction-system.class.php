@@ -136,30 +136,44 @@ class PP_Auction_Bid_System extends PP_Market_System {
 			return $current_winning_bid_value;
 		$posts_max_bid			= $this->get_max_bid( $bid[ 'post_id' ] );
 		$current_winning_bid_id	= $this->get_winning_bid( $bid[ 'post_id' ] )->ID;
-
-		if( $this->message_id == 0 ) { // first bid
-			$start_price = get_post_meta( $bid[ 'post_id' ], 'start_price', true );
-			if( (float)$start_price != 0 ){
-				$new_winning_bid_value = $start_price;
-			} else {
-				$new_winning_bid_value = ( $bid[ 'bid_value' ] * AUCTION_BID_INCREMENT );
-			}
-		} elseif ( $this->message_id == 1 ) { //Bid value is over max bid & bidder different to current winning bidder
-			if ( $bid[ 'bid_value' ] > ( $posts_max_bid->post_content * ( AUCTION_BID_INCREMENT + 1 ) ) ) {
-				$new_winning_bid_value = $posts_max_bid->post_content * ( AUCTION_BID_INCREMENT + 1 );
-			} else {
-				$new_winning_bid_value = $bid[ 'bid_value' ];
-			}
-		} elseif ( $this->message_id == 2 ) {
-			$bid_value_incremented = $bid[ 'bid_value' ] * ( 1 + AUCTION_BID_INCREMENT );
-			if ( $posts_max_bid->post_content > $bid_value_incremented ) {
-				$new_winning_bid_value = $bid_value_incremented;
-			} else {
-				$new_winning_bid_value = $posts_max_bid->post_content;
-			}
-		} elseif ( $this->message_id == 4 ) { // bidder increasing max bid, set their previous bid as 'outbid'
-			$wpdb->update( $wpdb->posts, array( 'post_status' => 'outbid' ), array( 'ID' => $current_winning_bid_id ) );
-			$new_winning_bid_value = $current_winning_bid_value;
+		//bid increment in the form of a linear equation
+		function increment_bid( $var , $increment = true ) {
+			$coefficient = AUCTION_BID_INCREMENT;
+			$constant = ($increment)? $var : 0 ;//default arrange eqn as self increased percentage
+			$eqn = apply_filter( 'increment_bid_coefficient' , array( $var , $coefficient , $constant ) );
+			return  $eqn['var'] * $eqn['coefficient'] + $eqn['constant'] ;
+		}
+		switch ($this->message_id){
+			case 0 : // first bid
+				$start_price = get_post_meta( $bid[ 'post_id' ], 'start_price', true );
+				if( (float)$start_price == 0 ){
+//					$new_winning_bid_value = ( $bid[ 'bid_value' ] * AUCTION_BID_INCREMENT );
+					$new_winning_bid_value = increment_bid( $bid[ 'bid_value' ] , false );
+				} else {
+					$new_winning_bid_value = $start_price;
+				}	
+			break;
+			case 1 : //Bid value is over max bid & bidder different to current winning bidder
+				if ( $bid[ 'bid_value' ] > ( $posts_max_bid->post_content * ( AUCTION_BID_INCREMENT + 1 ) ) ) {
+//					$new_winning_bid_value = $posts_max_bid->post_content * ( AUCTION_BID_INCREMENT + 1 );
+					$new_winning_bid_value = increment_bid( $posts_max_bid->post_content );
+				} else {
+					$new_winning_bid_value = $bid[ 'bid_value' ];
+				}
+			break;
+			case 2 :
+//				$bid_value_incremented = $bid[ 'bid_value' ] * ( AUCTION_BID_INCREMENT + 1 );
+				$bid_value_incremented = increment_bid( $bid[ 'bid_value' ] );
+				if ( $posts_max_bid->post_content > $bid_value_incremented ) {
+					$new_winning_bid_value = $bid_value_incremented;
+				} else {
+					$new_winning_bid_value = $posts_max_bid->post_content;
+				}
+			break;
+			case 4 :	// bidder increasing max bid, set their previous bid as 'outbid'
+				$wpdb->update( $wpdb->posts, array( 'post_status' => 'outbid' ), array( 'ID' => $current_winning_bid_id ) );
+				$new_winning_bid_value = $current_winning_bid_value;
+			break;			
 		}
 
 		parent::update_bid( $bid );

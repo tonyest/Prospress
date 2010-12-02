@@ -24,6 +24,7 @@ include_once( PP_CORE_DIR . '/core-widgets.php' );
  */
 function pp_core_install(){
 	add_option( 'currency_type', 'USD' ); //default to the mighty green back
+	register_setting( 'general', 'currency_type' );
 }
 add_action( 'pp_activation', 'pp_core_install' );
 
@@ -59,6 +60,7 @@ function pp_settings_page(){
 
 	if( isset( $_POST[ 'submit' ] ) && $_POST[ 'submit' ] == 'Save' ){
 
+
 		$pp_options_whitelist = apply_filters( 'pp_options_whitelist', array( 'general' => array( 'currency_type' ) ) );
 
 		foreach ( $pp_options_whitelist[ 'general' ] as $option ) {
@@ -77,6 +79,11 @@ function pp_settings_page(){
 		}
 		update_option( 'pp_show_welcome', 'false' );
 		$updated_message = __( 'Settings Updated.' );
+	}
+	if( isset( $_POST[ 'submit' ] ) && $_POST[ 'submit' ] == 'Save' ){
+	
+	register_setting( 'general', 'currency_type' );
+	foreach ()
 	}
 	?>
 	<div class="wrap">
@@ -216,3 +223,32 @@ function pp_welcome_notice(){
 }
 add_action( 'admin_notices', 'pp_welcome_notice' );
 
+function pp_custom_bid_increment() {
+
+	if ( isset( $_POST[ 'submit' ] ) && $_POST[ 'submit' ] == 'Save' && isset( $_POST['factor'] ) ){
+		update_option( 'bid_increment_factor', $_POST['factor'] );
+	}
+?>
+	<h3><?php _e( 'Auction Bid Increment', 'prospress' )?></h3>
+	<p><?php _e( 'Value for incrementing bids .', 'prospress' ); ?></p>
+
+	<label for='bid_increment'>
+		<?php _e('Auction Bid Increment:' , 'prospress' );?>
+		<select id='bid_increment' name='bid_increment'>
+			<option name="percentage">Percentage</option>
+			<option name="amount">Set Amount</option>
+		</select>
+	
+	</label>
+		<input type="text" name="factor" id="factor" value="<?php echo get_option('bid_increment_factor'); ?>"></input>
+<?php
+}
+add_action( 'pp_core_settings_page' , 'pp_custom_bid_increment');
+function pp_custom_bid_init(){
+ return array_merge( $pp_options_whitelist , array( 'bid_increment' => array( 'factor' ) ,  ( 'format' )  ) );
+}
+add_filter('pp_options_whitelist','pp_custom_bid_init',1,2);
+
+
+if ( $sanitize_callback != '' )
+	add_filter( "sanitize_option_{$option_name}", $sanitize_callback );
