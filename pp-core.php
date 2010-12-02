@@ -23,8 +23,7 @@ include_once( PP_CORE_DIR . '/core-widgets.php' );
  * @since 0.1
  */
 function pp_core_install(){
-	add_option( 'currency_type', 'USD' ); //default to the mighty green back
-	register_setting( 'general', 'currency_type' );
+//	add_option( 'currency_type', 'USD' ); //default to the mighty green back
 }
 add_action( 'pp_activation', 'pp_core_install' );
 
@@ -42,7 +41,15 @@ function pp_add_core_admin_menu() {
 	$pp_core_settings_page = add_submenu_page( 'Prospress', __( 'Prospress Settings', 'prospress' ), __( 'General Settings', 'prospress' ), 10, 'Prospress', 'pp_settings_page' );
 }
 add_action( 'admin_menu', 'pp_add_core_admin_menu' );
-
+function register_pp_core_options(){
+	register_setting( 'pp_core_options', 'currency_type');
+	register_setting( 'pp_core_options', 'updated_message');
+	register_setting( 'pp_core_options' , 'bid_factor' , 'intval' );
+	register_setting( 'pp_core_options' , 'bid_function' );
+//	$arr = array("bid_function"=>"amount", "bid_factor" => "1");
+//    update_option('bid_increment', $arr);
+}
+add_action( 'admin_init', 'register_pp_core_options' );
 
 /**
  * The core component only knows about a few settings required for Prospress to run. This functions outputs those settings as a
@@ -57,34 +64,7 @@ add_action( 'admin_menu', 'pp_add_core_admin_menu' );
  */
 function pp_settings_page(){
 	global $currencies, $currency;
-
-	if( isset( $_POST[ 'submit' ] ) && $_POST[ 'submit' ] == 'Save' ){
-
-
-		$pp_options_whitelist = apply_filters( 'pp_options_whitelist', array( 'general' => array( 'currency_type' ) ) );
-
-		foreach ( $pp_options_whitelist[ 'general' ] as $option ) {
-			$option = trim($option);
-			$value = null;
-			if ( isset( $_POST[ $option ] ) )
-				$value = $_POST[ $option ];
-			if ( !is_array( $value ) )
-				$value = trim( $value );
-			$value = stripslashes_deep( $value );
-			
-			update_option( $option, $value );
-			
-			if( $option == 'currency_type' )
-				$currency = $value;
-		}
-		update_option( 'pp_show_welcome', 'false' );
-		$updated_message = __( 'Settings Updated.' );
-	}
-	if( isset( $_POST[ 'submit' ] ) && $_POST[ 'submit' ] == 'Save' ){
-	
-	register_setting( 'general', 'currency_type' );
-	foreach ()
-	}
+	$updated_message = get_option('updated_message');
 	?>
 	<div class="wrap">
 		<?php screen_icon( 'prospress' ); ?>
@@ -94,13 +74,14 @@ function pp_settings_page(){
 				<p><?php echo $updated_message; ?></p>
 			</div>
 		<?php } ?>
-		<form action="" method="post">
+		<form action="options.php" method="post">
+			<?php settings_fields( 'pp_core_options' );//settings fields pp_core_options?>
 			<h3><?php _e( 'Currency', 'prospress' )?></h3>
 			<p><?php _e( 'Please choose a default currency for all transactions in your marketplace.', 'prospress' ); ?></p>
 
 			<label for='currency_type'>
 				<?php _e('Currency:' , 'prospress' );?>
-				<select id='currency_type' name='currency_type'>
+				<select id='currency_type' name="currency_type">
 				<?php foreach( $currencies as $code => $details ) { ?>
 					<option value='<?php echo $code; ?>' <?php selected( $currency, $code ); ?> >
 						<?php echo $details[ 'currency_name' ]; ?> (<?php echo $code . ', ' . $details[ 'symbol' ]; ?>)
@@ -108,7 +89,7 @@ function pp_settings_page(){
 				<?php } ?>
 				</select>
 			</label>
-		<?php do_action( 'pp_core_settings_page' ); ?>
+		<?php do_action( 'core_settings_page' ); ?>
 		<p class="submit">
 			<input type="submit" value="Save" class="button-primary" name="submit">
 		</p>
@@ -225,30 +206,18 @@ add_action( 'admin_notices', 'pp_welcome_notice' );
 
 function pp_custom_bid_increment() {
 
-	if ( isset( $_POST[ 'submit' ] ) && $_POST[ 'submit' ] == 'Save' && isset( $_POST['factor'] ) ){
-		update_option( 'bid_increment_factor', $_POST['factor'] );
-	}
 ?>
 	<h3><?php _e( 'Auction Bid Increment', 'prospress' )?></h3>
 	<p><?php _e( 'Value for incrementing bids .', 'prospress' ); ?></p>
 
-	<label for='bid_increment'>
-		<?php _e('Auction Bid Increment:' , 'prospress' );?>
-		<select id='bid_increment' name='bid_increment'>
-			<option name="percentage">Percentage</option>
-			<option name="amount">Set Amount</option>
+	<label for="bid_function">
+		<?php _e('Auction Bid Increment:' , 'prospress' );?>	</label>
+		<select name="bid_function">
+			<option value="percentage" <?php  selected( get_option('bid_function'), 'percentage' );?> >Percentage</option>
+			<option value="amount" <?php  selected( get_option('bid_function'), 'amount' );?> >Set Amount</option>
 		</select>
-	
-	</label>
-		<input type="text" name="factor" id="factor" value="<?php echo get_option('bid_increment_factor'); ?>"></input>
+
+		<input type="text" name="bid_factor" value="<?php echo get_option('bid_factor');?>"></input>
 <?php
 }
-add_action( 'pp_core_settings_page' , 'pp_custom_bid_increment');
-function pp_custom_bid_init(){
- return array_merge( $pp_options_whitelist , array( 'bid_increment' => array( 'factor' ) ,  ( 'format' )  ) );
-}
-add_filter('pp_options_whitelist','pp_custom_bid_init',1,2);
-
-
-if ( $sanitize_callback != '' )
-	add_filter( "sanitize_option_{$option_name}", $sanitize_callback );
+add_action( 'core_settings_page' , 'pp_custom_bid_increment');
