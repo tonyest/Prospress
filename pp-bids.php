@@ -255,16 +255,19 @@ add_action( 'pp_core_settings_page' , 'pp_custom_bid_increment' , 10);
  * 
  */
 function pp_bid_format( $args ) {
-
-	switch( get_option('bid_function') ){
-		case 'percentage' : 
-			$args['coefficient'] = get_option('bid_factor')/100;
-		break;
-		case 'amount' :
-			$args['coefficient'] = 1;	//unscaled amount
-			$args['constant'] = get_option('bid_factor');	//set increment
-		break;
-		return $args;
+	$bid_factor = get_option('bid_function');
+	$bid_function = get_option('bid_factor');
+	if( !empty( $bid_function ) && !empty( $bid_factor ) ){
+		switch( $bid_function ){
+			case 'percentage' : 
+				$args['coefficient'] = $bid_factor/100;
+			break;
+			case 'amount' :
+				$args['coefficient'] = 1;	//unscaled amount
+				$args['constant'] = $bid_factor;	//set increment
+			break;
+			return $args;
+		}
 	}
 }
-add_filter( 'increment_bid_equation' , 'pp_bid_format' , 1 , 1 );
+//add_filter( 'increment_bid_equation' , 'pp_bid_format' , 1 , 1 );
