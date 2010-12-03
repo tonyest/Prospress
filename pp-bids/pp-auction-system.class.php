@@ -16,9 +16,6 @@ class PP_Auction_Bid_System extends PP_Market_System {
 	public function __construct() {
 		do_action( 'auction_pre_construct' );
 
-		if ( !defined( 'AUCTION_BID_INCREMENT' ) )
-			define( 'AUCTION_BID_INCREMENT', '0.05' );
-
 		$args = array(
 				'label' => __( 'Auctions', 'prospress' ),
 				'labels' => array(
@@ -145,18 +142,18 @@ class PP_Auction_Bid_System extends PP_Market_System {
 				} else {
 					$new_winning_bid_value = $start_price;
 				}	
-			break;
+				break;
 			case 1 : //Bid value is over max bid & bidder different to current winning bidder
-				if ( $bid[ 'bid_value' ] > ( $posts_max_bid->post_content * ( AUCTION_BID_INCREMENT + 1 ) ) ) {
+				if ( (float)$bid[ 'bid_value' ] > ((float)$posts_max_bid->post_content + $this->bid_increment( $posts_max_bid->post_content )) ) {
 //					$new_winning_bid_value = $posts_max_bid->post_content * ( AUCTION_BID_INCREMENT + 1 );
-					$new_winning_bid_value += $this->bid_increment( $posts_max_bid->post_content );
+					$new_winning_bid_value = (float)$posts_max_bid->post_content + $this->bid_increment( $posts_max_bid->post_content );
 				} else {
 					$new_winning_bid_value = $bid[ 'bid_value' ];
 				}
-			break;
+				break;
 			case 2 :
 //				$bid_value_incremented = $bid[ 'bid_value' ] * ( AUCTION_BID_INCREMENT + 1 );
-				$bid_value_incremented += $this->bid_increment( $bid[ 'bid_value' ] );
+				$bid_value_incremented = (float)$bid[ 'bid_value' ] + $this->bid_increment( $bid[ 'bid_value' ] );
 				if ( $posts_max_bid->post_content > $bid_value_incremented ) {
 					$new_winning_bid_value = $bid_value_incremented;
 				} else {
@@ -166,7 +163,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 			case 4 :	// bidder increasing max bid, set their previous bid as 'outbid'
 				$wpdb->update( $wpdb->posts, array( 'post_status' => 'outbid' ), array( 'ID' => $current_winning_bid_id ) );
 				$new_winning_bid_value = $current_winning_bid_value;
-			break;			
+				break;			
 		}
 
 		parent::update_bid( $bid );
@@ -191,13 +188,13 @@ class PP_Auction_Bid_System extends PP_Market_System {
 	 * @package Prospress
 	 * @since 0.1
 	 */
-	protected function bid_increment( $value ) {
-		$coefficient = AUCTION_BID_INCREMENT;
-		$eqn['constant'] = 0;
-		$eqn = apply_filters( 'increment_bid_equation' , array( 'variable' => $value , 'coefficient' => $coefficient , 'constant' => $constant ) );
-		return  $eqn['value'] * $eqn['coefficient'] + $eqn['constant'] ;
+	protected function bid_increment( $bid_value ) {
+		$coefficient	= 0.05;//default 5% increase
+		$constant		= 0;
+		$eqn = apply_filters( 'increment_bid_equation' , array( 'bid_value' => $bid_value , 'coefficient' => $coefficient , 'constant' => $constant ) );
+		return  $eqn['bid_value'] * $eqn['coefficient'] + $eqn['constant'] ;
 	}
-	
+
 	public function post_fields(){
 		global $post_ID, $currency_symbol;
 

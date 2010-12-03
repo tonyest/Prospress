@@ -104,7 +104,7 @@ function pp_capabilities_settings_page() {
 			</label>
 			<?php endforeach; ?>
 		</div>
--->
+
 	</div>
 <?php
 }
@@ -121,23 +121,23 @@ add_action( 'pp_core_settings_page', 'pp_capabilities_settings_page' );
  */
 function pp_capabilities_roleset($pp_capabilities) {
 	global $wp_roles;
-	//for the unlikely event that all permissions are disabled create empty array to pass.
-	if(isset($pp_capabilities) && empty($pp_capabilities))
+	//for the unlikely event that all permissions are disabled create empty array to iterate.
+	if( isset($pp_capabilities) && empty($pp_capabilities) )
 		$pp_capabilities = array();
 		
 		$roles = $wp_roles->get_names();
 
 	foreach ( $roles as $role => $value ):
 		//Edit Others' Auctions / Edit Own Auctions / Publish Auctions	
-		if ( checked( $pp_capabilities['publish'][$role] , 'on' , false ) || 
-		checked( $pp_capabilities['edit'][$role] , 'on' , false ) || 
-		checked( $pp_capabilities['edit-others'][$role] , 'on' , false ) ) {
+		if ( isset( $pp_capabilities['publish'][$role] ) || 
+		isset( $pp_capabilities['edit'][$role] ) || 
+		isset( $pp_capabilities['edit-others'][$role] ) ) {
 			$wp_roles->add_cap( $role , 'edit_prospress_posts');	
 		} else {
 			$wp_roles->remove_cap( $role , 'edit_prospress_posts' );
 		}			
 		//Publish Auctions
-		if ( checked( $pp_capabilities['publish'][$role] , 'on' , false ) ) {
+		if ( isset( $pp_capabilities['publish'][$role] ) ) {
 			$wp_roles->add_cap( $role , 'publish_prospress_posts');
 			$wp_roles->add_cap( $role , 'delete_prospress_posts');	
 		} else {
@@ -145,8 +145,8 @@ function pp_capabilities_roleset($pp_capabilities) {
 			$wp_roles->remove_cap( $role , 'delete_prospress_posts' );	
 		}		
 		//Edit Own  /  Edit Others
-		if ( checked( $pp_capabilities['edit'][$role] , 'on' , false ) || 
-		checked( $pp_capabilities['edit-others'][$role] , 'on' , false ) ) {
+		if ( isset( $pp_capabilities['edit'][$role] ) || 
+		isset( $pp_capabilities['edit-others'][$role] ) ) {
 			$wp_roles->add_cap( $role , 'edit_published_prospress_posts' );
 			$wp_roles->add_cap( $role , 'delete_published_prospress_posts' );
 			$wp_roles->add_cap( $role , 'edit_private_prospress_posts' );
@@ -156,19 +156,19 @@ function pp_capabilities_roleset($pp_capabilities) {
 			$wp_roles->remove_cap( $role , 'edit_private_prospress_posts' );
 		}	
 		//Edit-Others	
-		if ( checked( $pp_capabilities['edit-others'][$role] , 'on' , false ) ) {
+		if ( isset( $pp_capabilities['edit-others'][$role] ) ) {
 			$wp_roles->add_cap( $role , 'edit_others_prospress_posts' );
 		} else {
 			$wp_roles->remove_cap( $role , 'edit_others_prospress_posts' );
         }
 		//View Private Auctions
-		if ( checked( $pp_capabilities['private'][$role] , 'on' , false ) ) {
+		if ( isset( $pp_capabilities['private'][$role] ) ) {
 			$wp_roles->add_cap( $role , 'read_private_prospress_posts' );
 		} else {
 			$wp_roles->remove_cap( $role , 'read_private_prospress_posts' );
 		}
 		//Upload Media
-		if ( checked( $pp_capabilities['media'][$role] , 'on' , false ) ) {
+		if ( isset( $pp_capabilities['media'][$role] ) ) {
 			$wp_roles->add_cap( $role , 'upload_files' );
 		} else {
 			$wp_roles->remove_cap( $role , 'upload_files' );

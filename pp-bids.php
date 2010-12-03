@@ -215,7 +215,7 @@ function pp_get_users_role( $post, $user_id = NULL ) {
  * @since 1.01
  * @param none.
  * 
- */
+ *//*										DEPRECATED - USERS MAY USE CUSTOM FILTER TO  ALTER BID INCREMENT
 function pp_custom_bid_increment() {
 	global $currency_symbol;
 ?>
@@ -242,8 +242,8 @@ function pp_custom_bid_increment() {
 	</p>
 <?php
 }
-add_action( 'pp_core_settings_page' , 'pp_custom_bid_increment' , 10);
-
+//add_action( 'pp_core_settings_page' , 'pp_custom_bid_increment' , 10);
+*/
 /**
  *
  * filters input to the bid increment equation based upon settings
@@ -253,7 +253,7 @@ add_action( 'pp_core_settings_page' , 'pp_custom_bid_increment' , 10);
  * @since 1.01
  * @param args array ( $var , $coefficient , $ constant) 
  * 
- */
+ *//*						DEPRECATED - USERS MAY USE CUSTOM FILTER TO  ALTER BID INCREMENT 
 function pp_bid_format( $args ) {
 	$bid_factor = get_option('bid_function');
 	$bid_function = get_option('bid_factor');
@@ -269,5 +269,5 @@ function pp_bid_format( $args ) {
 			return $args;
 		}
 	}
-}
+}*/
 //add_filter( 'increment_bid_equation' , 'pp_bid_format' , 1 , 1 );
