@@ -33,6 +33,17 @@ $market_systems[ $market_system->name() ] = $market_system;
 
 $market_systems = apply_filters( 'add_market_system', $market_systems );
 
+/**
+ * Register Prospress bid options
+ *
+ * @package Prospress
+ * @since 1.01
+ */
+function register_pp_bid_options(){
+	register_setting( 'pp_core_options' , 'bid_factor' , 'floatVal' );
+	register_setting( 'pp_core_options' , 'bid_function' );
+}
+add_action( 'admin_init', 'register_pp_bid_options' );
 
 /**
  * To save updating/installing the bids tables when they already exist and are up-to-date, check 
@@ -94,8 +105,10 @@ function pp_bids_install($blog_id = 0) {
 		//for another day
 		//$wpdb->query( "DROP TABLE IF EXISTS $wpdb->bidsmeta" );
 	}
-
 	update_option( 'pp_bids_db_version', PP_BIDS_DB_VERSION );
+	//initialise bid increment settings
+	update_option('bid_function', 'percentage');
+	update_option('bid_factor' , 0.05);
 }
 
 
@@ -193,3 +206,65 @@ function pp_get_users_role( $post, $user_id = NULL ) {
 
 	return $market_systems[ get_post_type( $post ) ]->get_users_role( $post->ID, $user_id );
 }
+
+/** 
+ *
+ * Options page allows customisation of bid increments through the Prospress General-Settings page.
+ *
+ * @package Prospress
+ * @since 1.01
+ * @param none.
+ * 
+ */
+function pp_custom_bid_increment() {
+	global $currency_symbol;
+?>
+	<h3><?php _e( 'Bid Increments', 'prospress' )?></h3>
+	<p><?php _e( 'These values allow customisation of bid increments in a Prospress auction.', 'prospress' ); ?></p>
+	<p>
+		<label for="bid_function">
+			<?php _e('Increment bids by:' , 'prospress' );?>
+		</label>
+		<select name="bid_function">
+			<option value="percentage" <?php  selected( get_option('bid_function'), 'percentage' );?> >Percentage</option>
+			<option value="amount" <?php  selected( get_option('bid_function'), 'amount' );?> >Set Amount</option>
+		</select>
+	</p>
+	<p>
+		<label for="bid_factor">
+			<?php 
+				_e('Bid increment value:' , 'prospress' );
+				if ( selected( get_option('bid_function'), 'amount' ,false) )
+					echo ' '.$currency_symbol;
+			?>
+		</label>
+		<input type="text" name="bid_factor" size="2" value="<?php echo get_option('bid_factor');?>"><?php if( selected( get_option('bid_function'), 'percentage' ,false ) ) { echo "%"; } ?></input>
+	</p>
+<?php
+}
+add_action( 'pp_core_settings_page' , 'pp_custom_bid_increment' , 10);
+
+/**
+ *
+ * filters input to the bid increment equation based upon settings
+ * increment function is a general linear equation. eqn = coefficient*var + constant
+ *
+ * @package Prospress
+ * @since 1.01
+ * @param args array ( $var , $coefficient , $ constant) 
+ * 
+ */
+function pp_bid_format( $args ) {
+
+	switch( get_option('bid_function') ){
+		case 'percentage' : 
+			$args['coefficient'] = get_option('bid_factor')/100;
+		break;
+		case 'amount' :
+			$args['coefficient'] = 1;	//unscaled amount
+			$args['constant'] = get_option('bid_factor');	//set increment
+		break;
+		return $args;
+	}
+}
+add_filter( 'increment_bid_equation' , 'pp_bid_format' , 1 , 1 );

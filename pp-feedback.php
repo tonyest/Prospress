@@ -40,6 +40,16 @@ function pp_feedback_install() {
 }
 add_action( 'pp_activation', 'pp_feedback_install' );
 
+/**
+ * Register Prospress feedback options
+ *
+ * @package Prospress
+ * @since 1.01
+ */
+function pp_feedback_options() {
+	register_setting( 'pp_core_options' , 'edit_feedback' );
+}
+add_action('admin_init' , 'pp_feedback_options' );
 
 /**
  * Registers the feedback post type with WordPress
@@ -456,12 +466,12 @@ function pp_feedback_history_admin( $user_id = '' ) {
  * @see pp_settings_page()
  **/
 function pp_feedback_settings_section() { 
-	$edit_feedback = get_option( 'edit_feedback' );
 	?>
 	<h3><?php _e( 'Feedback' , 'prospress' )?></h3>
 	<p><?php _e( 'Allowing feedback to be amended helps to make it more accurate. Mistakes happen and circumstances change.' , 'prospress' ); ?></p>
+	
 	<label for='edit_feedback'>
-		<input type='checkbox' value='true' name='edit_feedback' id='edit_feedback' <?php checked( (boolean)$edit_feedback ); ?> />
+		<input type="checkbox" value='true' id="edit_feedback" name="edit_feedback"<?php checked( (boolean)get_option( 'edit_feedback' ) ); ?> />
 		  <?php _e( 'Allow feedback to be revised.' , 'prospress' ); ?>
 	</label>
 <?php

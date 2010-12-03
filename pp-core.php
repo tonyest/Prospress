@@ -41,13 +41,15 @@ function pp_add_core_admin_menu() {
 	$pp_core_settings_page = add_submenu_page( 'Prospress', __( 'Prospress Settings', 'prospress' ), __( 'General Settings', 'prospress' ), 10, 'Prospress', 'pp_settings_page' );
 }
 add_action( 'admin_menu', 'pp_add_core_admin_menu' );
+
+/**
+ * Register pp core opitons settings 
+ *
+ * @package Prospress
+ * @since 1.01
+ */
 function register_pp_core_options(){
 	register_setting( 'pp_core_options', 'currency_type');
-	register_setting( 'pp_core_options', 'updated_message');
-	register_setting( 'pp_core_options' , 'bid_factor' , 'intval' );
-	register_setting( 'pp_core_options' , 'bid_function' );
-//	$arr = array("bid_function"=>"amount", "bid_factor" => "1");
-//    update_option('bid_increment', $arr);
 }
 add_action( 'admin_init', 'register_pp_core_options' );
 
@@ -64,21 +66,18 @@ add_action( 'admin_init', 'register_pp_core_options' );
  */
 function pp_settings_page(){
 	global $currencies, $currency;
-	$updated_message = get_option('updated_message');
+	settings_errors();
 	?>
 	<div class="wrap">
-		<?php screen_icon( 'prospress' ); ?>
-		<h2><?php _e( 'Prospress Settings', 'prospress' ) ?></h2>
-		<?php if( isset( $updated_message ) ) { ?>
-			<div id='message' class='updated fade'>
-				<p><?php echo $updated_message; ?></p>
-			</div>
-		<?php } ?>
+		<!--                 FORM                -->
 		<form action="options.php" method="post">
-			<?php settings_fields( 'pp_core_options' );//settings fields pp_core_options?>
+			<?php 
+			settings_fields( 'pp_core_options' );//settings fields pp_core_options
+			screen_icon( 'prospress' ); 
+			?>
+			<h2><?php _e( 'Prospress Settings', 'prospress' ) ?></h2>
 			<h3><?php _e( 'Currency', 'prospress' )?></h3>
 			<p><?php _e( 'Please choose a default currency for all transactions in your marketplace.', 'prospress' ); ?></p>
-
 			<label for='currency_type'>
 				<?php _e('Currency:' , 'prospress' );?>
 				<select id='currency_type' name="currency_type">
@@ -89,7 +88,7 @@ function pp_settings_page(){
 				<?php } ?>
 				</select>
 			</label>
-		<?php do_action( 'core_settings_page' ); ?>
+		<?php do_action( 'pp_core_settings_page' ); ?>
 		<p class="submit">
 			<input type="submit" value="Save" class="button-primary" name="submit">
 		</p>
@@ -204,20 +203,3 @@ function pp_welcome_notice(){
 }
 add_action( 'admin_notices', 'pp_welcome_notice' );
 
-function pp_custom_bid_increment() {
-
-?>
-	<h3><?php _e( 'Auction Bid Increment', 'prospress' )?></h3>
-	<p><?php _e( 'Value for incrementing bids .', 'prospress' ); ?></p>
-
-	<label for="bid_function">
-		<?php _e('Auction Bid Increment:' , 'prospress' );?>	</label>
-		<select name="bid_function">
-			<option value="percentage" <?php  selected( get_option('bid_function'), 'percentage' );?> >Percentage</option>
-			<option value="amount" <?php  selected( get_option('bid_function'), 'amount' );?> >Set Amount</option>
-		</select>
-
-		<input type="text" name="bid_factor" value="<?php echo get_option('bid_factor');?>"></input>
-<?php
-}
-add_action( 'core_settings_page' , 'pp_custom_bid_increment');

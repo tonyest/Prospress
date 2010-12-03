@@ -54,6 +54,17 @@ function pp_posts_install(){
 add_action( 'pp_activation', 'pp_posts_install' );
 
 
+/**
+ * Register Prospress custom taxonomies settings
+ *
+ * @package Prospress
+ * @since 1.01
+ */
+function pp_taxonomies_options() {
+	register_setting( 'pp_core_options' , 'pp_use_custom_taxonomies' );
+}
+add_action('admin_init' , 'pp_taxonomies_options' );
+
 /** 
  * Create first prospress auction-type post "Hello World"
  * 
@@ -482,7 +493,6 @@ function pp_taxonomies_option_page() {
 ?>
 	<h3><?php _e( 'Custom Taxonomies', 'prospress' )?></h3>
 	<p><?php echo sprintf( __( 'Custom taxonomies provide a way to classify %s. If your site lists more than 20 %s at a time, you should use custom taxonomies.', 'prospress' ), $market->label, $market->label ); ?></p>
-
 	<label for="pp_use_custom_taxonomies">
 		<input type="checkbox" value='true' id="pp_use_custom_taxonomies" name="pp_use_custom_taxonomies"<?php checked( (boolean)get_option( 'pp_use_custom_taxonomies' ) ); ?> />
 		<?php _e( 'Use custom taxonomies' ); ?>
@@ -498,8 +508,8 @@ add_action( 'pp_core_settings_page', 'pp_taxonomies_option_page' );
  * 
  * @package Prospress
  * @subpackage Posts
- * @since 0.1
- */
+ * @since 0.1				DEPRECATED 1.01
+ *//*				
 function pp_taxonomies_whitelist( $whitelist_options ) {
 
 	$whitelist_options[ 'general' ][] = 'pp_use_custom_taxonomies';
@@ -507,7 +517,7 @@ function pp_taxonomies_whitelist( $whitelist_options ) {
 	return $whitelist_options;
 }
 add_filter( 'pp_options_whitelist', 'pp_taxonomies_whitelist' );
-
+*/
 
 /**
  * A boolean function to centralise the logic for whether the current page is an admin page for this post type.

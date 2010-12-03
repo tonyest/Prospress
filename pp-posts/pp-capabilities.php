@@ -9,7 +9,16 @@
  * @version 0.1
  */
 
-
+/**
+ * Register Prospress capabilities settings
+ *
+ * @package Prospress
+ * @since 1.01
+ */
+function pp_capabilities_options() {
+	register_setting( 'pp_core_options' , 'pp_capabilities' , 'pp_capabilities_roleset' );
+}
+add_action('admin_init' , 'pp_capabilities_options' );
 /** 
  * Allow site admins to choose which roles can do what to marketplace posts.
  * 
@@ -25,7 +34,7 @@
  */
 function pp_capabilities_settings_page() { 
 	global $wp_roles;
-	
+				
 	$post_type = 'Auctions'; // Less confusing referring to Prospress posts as Auctions when that is the only option for a Prospress post, this will be changed once there are more options available
 
 	$role_names = $wp_roles->get_names();
@@ -36,16 +45,17 @@ function pp_capabilities_settings_page() {
 		$roles[ $key ]->display_name = $value;
 	}
 	?>
-
-	<?php wp_nonce_field( 'pp_capabilities_settings' ); ?>
 	<div class="prospress-capabilities">
 		<h3><?php _e( 'Capabilities', 'prospress' ); ?></h3>
 		<p><?php printf( __( 'All registered users can make bids, but you can control which users are able to publish and edit %s.', 'prospress' ), $post_type ); ?></p>
+		
 		<div class="prospress-capability">
 			<h4><?php printf( __( "Publish %s", 'prospress' ), $post_type ); ?></h4>
 			<?php foreach ( $roles as $role ): ?>
 			<label for="<?php echo $role->name; ?>-publish">
-				<input type="checkbox" id="<?php echo $role->name; ?>-publish" name="<?php echo $role->name; ?>-publish"<?php checked( $role->capabilities[ 'publish_prospress_posts' ], 1 ); ?> />
+				<input type="checkbox" id="<?php echo $role->name; ?>-publish" 
+					name="pp_capabilities[publish][<?php echo $role->name; ?>]"
+					<?php checked( $role->capabilities[ 'publish_prospress_posts' ], 1 ); ?> />
 				<?php echo $role->display_name; ?>
 			</label>
 			<?php endforeach; ?>
@@ -54,7 +64,9 @@ function pp_capabilities_settings_page() {
 			<h4><?php printf( __( "Edit Own %s", 'prospress' ), $post_type ); ?></h4>
 			<?php foreach ( $roles as $role ): ?>
 			<label for="<?php echo $role->name; ?>-edit">
-			  	<input type="checkbox" id="<?php echo $role->name; ?>-edit" name="<?php echo $role->name; ?>-edit"<?php checked( $role->capabilities[ 'edit_published_prospress_posts' ], 1 ); ?> />
+			  	<input type="checkbox" id="<?php echo $role->name; ?>-edit" 
+					name="pp_capabilities[edit][<?php echo $role->name; ?>]"
+					<?php checked( $role->capabilities[ 'edit_published_prospress_posts' ], 1 ); ?> />
 				<?php echo $role->display_name; ?>
 			</label>
 			<?php endforeach; ?>
@@ -63,7 +75,9 @@ function pp_capabilities_settings_page() {
 			<h4><?php printf( __( "Edit Others' %s", 'prospress' ), $post_type ); ?></h4>
 			<?php foreach ( $roles as $role ): ?>
 			<label for="<?php echo $role->name; ?>-edit-others">
-				<input type="checkbox" id="<?php echo $role->name; ?>-edit-others" name="<?php echo $role->name; ?>-edit-others"<?php checked( $role->capabilities[ 'edit_others_prospress_posts' ], 1 ); ?> />
+				<input type="checkbox" id="<?php echo $role->name; ?>-edit-others" 
+					name="pp_capabilities[edit-others][<?php echo $role->name; ?>]"
+					<?php checked( $role->capabilities[ 'edit_others_prospress_posts' ], 1 ); ?> />
 				<?php echo $role->display_name; ?>
 			</label>
 			<?php endforeach; ?>
@@ -72,7 +86,9 @@ function pp_capabilities_settings_page() {
 			<h4><?php printf( __( "View Private %s", 'prospress' ), $post_type ); ?></h4>
 			<?php foreach ( $roles as $role ): ?>
 			<label for="<?php echo $role->name; ?>-private">
-				<input type="checkbox" id="<?php echo $role->name; ?>-private" name="<?php echo $role->name; ?>-private"<?php checked( $role->capabilities[ 'read_private_prospress_posts' ], 1 ); ?> />
+				<input type="checkbox" id="<?php echo $role->name; ?>-private" 
+					name="pp_capabilities[private][<?php echo $role->name; ?>]"
+					<?php checked( $role->capabilities[ 'read_private_prospress_posts' ], 1 ); ?> />
 				<?php echo $role->display_name; ?>
 			</label>
 			<?php endforeach; ?>
@@ -81,16 +97,18 @@ function pp_capabilities_settings_page() {
 			<h4><?php printf( __( "Upload Media", 'prospress' ) ); ?></h4>
 			<?php foreach ( $roles as $role ): ?>
 			<label for="<?php echo $role->name; ?>-media">
-				<input type="checkbox" id="<?php echo $role->name; ?>-media" name="<?php echo $role->name; ?>-media"<?php checked( $role->capabilities[ 'upload_files' ], 1 ); ?> />
+				<input type="checkbox" id="<?php echo $role->name; ?>-media" 
+					name="pp_capabilities[media][<?php echo $role->name; ?>]"
+					<?php checked( $role->capabilities[ 'upload_files' ], 1 ); ?> />
 				<?php echo $role->display_name; ?>
 			</label>
 			<?php endforeach; ?>
 		</div>
+-->
 	</div>
 <?php
 }
 add_action( 'pp_core_settings_page', 'pp_capabilities_settings_page' );
-
 
 /** 
  * Save capabilities settings when the admin page is submitted page. As the settings don't need to be stored in 
@@ -101,6 +119,72 @@ add_action( 'pp_core_settings_page', 'pp_capabilities_settings_page' );
  * @subpackage Posts
  * @since 0.1
  */
+function pp_capabilities_roleset($pp_capabilities) {
+	global $wp_roles;
+	//for the unlikely event that all permissions are disabled create empty array to pass.
+	if(isset($pp_capabilities) && empty($pp_capabilities))
+		$pp_capabilities = array();
+		
+		$roles = $wp_roles->get_names();
+
+	foreach ( $roles as $role => $value ):
+		//Edit Others' Auctions / Edit Own Auctions / Publish Auctions	
+		if ( checked( $pp_capabilities['publish'][$role] , 'on' , false ) || 
+		checked( $pp_capabilities['edit'][$role] , 'on' , false ) || 
+		checked( $pp_capabilities['edit-others'][$role] , 'on' , false ) ) {
+			$wp_roles->add_cap( $role , 'edit_prospress_posts');	
+		} else {
+			$wp_roles->remove_cap( $role , 'edit_prospress_posts' );
+		}			
+		//Publish Auctions
+		if ( checked( $pp_capabilities['publish'][$role] , 'on' , false ) ) {
+			$wp_roles->add_cap( $role , 'publish_prospress_posts');
+			$wp_roles->add_cap( $role , 'delete_prospress_posts');	
+		} else {
+			$wp_roles->remove_cap( $role , 'publish_prospress_posts' );
+			$wp_roles->remove_cap( $role , 'delete_prospress_posts' );	
+		}		
+		//Edit Own  /  Edit Others
+		if ( checked( $pp_capabilities['edit'][$role] , 'on' , false ) || 
+		checked( $pp_capabilities['edit-others'][$role] , 'on' , false ) ) {
+			$wp_roles->add_cap( $role , 'edit_published_prospress_posts' );
+			$wp_roles->add_cap( $role , 'delete_published_prospress_posts' );
+			$wp_roles->add_cap( $role , 'edit_private_prospress_posts' );
+		} else {
+			$wp_roles->remove_cap( $role , 'edit_published_prospress_posts' );
+			$wp_roles->remove_cap( $role , 'delete_published_prospress_posts' );
+			$wp_roles->remove_cap( $role , 'edit_private_prospress_posts' );
+		}	
+		//Edit-Others	
+		if ( checked( $pp_capabilities['edit-others'][$role] , 'on' , false ) ) {
+			$wp_roles->add_cap( $role , 'edit_others_prospress_posts' );
+		} else {
+			$wp_roles->remove_cap( $role , 'edit_others_prospress_posts' );
+        }
+		//View Private Auctions
+		if ( checked( $pp_capabilities['private'][$role] , 'on' , false ) ) {
+			$wp_roles->add_cap( $role , 'read_private_prospress_posts' );
+		} else {
+			$wp_roles->remove_cap( $role , 'read_private_prospress_posts' );
+		}
+		//Upload Media
+		if ( checked( $pp_capabilities['media'][$role] , 'on' , false ) ) {
+			$wp_roles->add_cap( $role , 'upload_files' );
+		} else {
+			$wp_roles->remove_cap( $role , 'upload_files' );
+		}	
+	endforeach;
+}
+
+/** 
+ * Save capabilities settings when the admin page is submitted page. As the settings don't need to be stored in 
+ * the options table of the database, they're not added to the whitelist as is expected by this filter, instead 
+ * they're added to the appropriate roles.
+ * 
+ * @package Prospress
+ * @subpackage Posts
+ * @since 0.1			DEPRECATED 1.01
+ *//*
 function pp_capabilities_whitelist( $whitelist_options ) {
 	global $wp_roles;
 
@@ -165,7 +249,7 @@ function pp_capabilities_whitelist( $whitelist_options ) {
 	return $whitelist_options;
 }
 add_filter( 'pp_options_whitelist', 'pp_capabilities_whitelist' );
-
+ */
 
 /** 
  * Custom Post meta capabilities are not mapped by WordPress, so need to manually

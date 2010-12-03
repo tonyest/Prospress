@@ -140,7 +140,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		function increment_bid( $var , $increment = true ) {
 			$coefficient = AUCTION_BID_INCREMENT;
 			$constant = ($increment)? $var : 0 ;//default arrange eqn as self increased percentage
-			$eqn = apply_filter( 'increment_bid_coefficient' , array( $var , $coefficient , $constant ) );
+			$eqn = apply_filter( 'increment_bid_equation' , array( $var , $coefficient , $constant ) );
 			return  $eqn['var'] * $eqn['coefficient'] + $eqn['constant'] ;
 		}
 		switch ($this->message_id){
