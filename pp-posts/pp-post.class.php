@@ -307,7 +307,7 @@ class PP_Post {
 			return false;
 		elseif( isset( $post->post_type ) && $post->post_type == $this->name ) // edit page
 			return true;
-		elseif ( isset( $_GET[ 'post_type' ] ) && ( $_GET[ 'post_type' ] == $this->name || $_GET[ 'post' ] == $this->name ) )  // admin list page
+		elseif( ( isset( $_GET[ 'post_type' ] ) && $_GET[ 'post_type' ] == $this->name ) || ( isset( $_GET[ 'post' ] ) && $_GET[ 'post' ] == $this->name ) )  // admin list page
 			return true;
 		else
 			return false;
