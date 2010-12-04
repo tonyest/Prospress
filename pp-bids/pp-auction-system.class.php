@@ -191,8 +191,8 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		$start_price = get_post_meta( $post_ID, 'start_price', true );
 		$buy_now_price = get_post_meta( $post_ID, 'buy_now_price', true );
 
-		$disabled = ( $this->get_bid_count( $post_id ) ) ? 'disabled="disabled" ' : '';
-		$disable_buy = ( $buy_now_price < $this->get_winning_bid_value( $bid->post_parent ) ) ? 'disabled="disabled" ' : '';
+		$disabled = ( $this->get_bid_count( $post_ID ) ) ? 'disabled="disabled" ' : '';
+		$disable_buy = ( $this->get_bid_count( $post_ID ) > 0 && $old_buy_price >= $this->get_winning_bid_value( $post_ID ) ) ? 'disabled="disabled" ' : '';
 
 		$accepted_payments = pp_invoice_user_accepted_payments( $user_ID );
 
@@ -230,7 +230,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		if( wp_is_post_revision( $post_id ) )
 			$post_id = wp_is_post_revision( $post_id );
 
-		if ( 'page' == $_POST[ 'post_type' ] )
+		if ( 'page' == @$_POST[ 'post_type' ] )
 			return $post_id;
 		elseif( !current_user_can( 'edit_post', $post_id ) )
 			return $post_id;
@@ -246,9 +246,10 @@ class PP_Auction_Bid_System extends PP_Market_System {
 
 		$old_buy_price = get_post_meta( $post_id, 'buy_now_price', true );
 
-		if( isset( $_POST[ 'buy_now_price' ] ) && $old_buy_price >= $this->get_winning_bid_value( $post_id ) ) {
-			$_POST[ 'buy_now_price' ] = floatval( preg_replace( "/$ts|\s/", "", $_POST[ 'buy_now_price' ] ) );
-			update_post_meta( $post_id, 'buy_now_price', $_POST[ 'buy_now_price' ] );
+		if( isset( $_POST[ 'buy_now_price' ] ) && ( $this->get_bid_count( $post_id ) == 0 || $old_buy_price >= $this->get_winning_bid_value( $post_id ) ) ) {
+			$buy_now_price = floatval( preg_replace( "/$ts|\s/", "", $_POST[ 'buy_now_price' ] ) );
+			$buy_now_price = ( $buy_now_price < $_POST[ 'start_price' ] ) ? $_POST[ 'start_price' ] : $buy_now_price;
+			update_post_meta( $post_id, 'buy_now_price', $buy_now_price );
 		}
 	}
 
