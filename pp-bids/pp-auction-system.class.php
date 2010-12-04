@@ -93,7 +93,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		} elseif ( empty( $bid_value ) || $bid_value === NULL || !preg_match( '/^[0-9]*\.?[0-9]*$/', $bid_value ) ) {
 			$this->message_id = 7;
 			$this->bid_status = 'invalid';
-		} elseif ( $bidder_id != $this->get_winning_bid( $post_id )->post_author ) { // bidder not current winning bidder
+		} elseif ( $bidder_id != @$this->get_winning_bid( $post_id )->post_author ) { // bidder not current winning bidder
 			$current_winning_bid_value = $this->get_winning_bid_value( $post_id );
 			if ( $this->get_bid_count( $post_id ) == 0 ) { // first bid
 				$start_price = get_post_meta( $post_id, 'start_price', true );
@@ -144,7 +144,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 			return $current_winning_bid_value;
 
 		$posts_max_bid			= $this->get_max_bid( $bid[ 'post_id' ] );
-		$current_winning_bid_id	= $this->get_winning_bid( $bid[ 'post_id' ] )->ID;
+		$current_winning_bid_id	= @$this->get_winning_bid( $bid[ 'post_id' ] )->ID;
 
 		if( $this->message_id == 0 ) { // first bid
 			$start_price = get_post_meta( $bid[ 'post_id' ], 'start_price', true );

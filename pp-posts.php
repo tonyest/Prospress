@@ -147,7 +147,7 @@ function pp_post_save_postdata( $post_id, $post ) {
 	if( wp_is_post_revision( $post_id ) )
 		$post_id = wp_is_post_revision( $post_id );
 
-	if ( empty( $_POST ) || 'page' == $_POST['post_type'] ) {
+	if ( empty( $_POST ) || 'page' == @$_POST['post_type'] ) {
 		return $post_id;
 	} else if ( !current_user_can( 'edit_post', $post_id )) {
 		return $post_id;
