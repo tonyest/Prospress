@@ -26,6 +26,7 @@ class pp_invoice_get {
 
 		// Get meta
 		$meta_obj = $wpdb->get_results( "SELECT meta_key, meta_value FROM " . $wpdb->paymentsmeta . "  WHERE invoice_id = '$invoice_id'" );
+
 		foreach( $meta_obj as $meta_row ) {
 			$meta_key = $meta_row->meta_key;
 			$meta_value = $meta_row->meta_value;

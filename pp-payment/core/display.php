@@ -87,7 +87,6 @@ function pp_invoice_invoice_row($invoice, $page) {
 		if(!$invoice->is_archived)
 			$row_actions .= "<span class='archive'><a href='$overview_link&pp_invoice_action=archive_invoice&multiple_invoices[0]=$invoice_id' class=''>" . __( "Archive", "prospress" ) . "</a></span>";
 
-		// $row_actions .= "<span class='delete'><a onclick='return pp_invoice_confirm_delete();' href='$overview_link&pp_invoice_action=delete_invoice&multiple_invoices[0]=$invoice_id' class='submitdelete'>Delete</a></span>";		
 		$row_actions .= "</div>";
 	}
 

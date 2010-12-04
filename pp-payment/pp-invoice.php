@@ -939,12 +939,13 @@ class PP_Invoice_GetInfo {
 				$pp_invoice_custom_invoice_id = pp_invoice_meta( $this->id,'pp_invoice_custom_invoice_id' );
 				if(empty( $pp_invoice_custom_invoice_id) ) { return $this->id; }	else { return $pp_invoice_custom_invoice_id; }	
 			break;
-			
+
 			case 'due_date':
 				$pp_invoice_due_date_month = pp_invoice_meta( $this->id,'pp_invoice_due_date_month' );
 				$pp_invoice_due_date_year = pp_invoice_meta( $this->id,'pp_invoice_due_date_year' );
 				$pp_invoice_due_date_day = pp_invoice_meta( $this->id,'pp_invoice_due_date_day' );
-				if(!empty( $pp_invoice_due_date_month) && !empty( $pp_invoice_due_date_year) && !empty( $pp_invoice_due_date_day ) ) return "$pp_invoice_due_date_year/$pp_invoice_due_date_month/$pp_invoice_due_date_day";	
+				if(!empty( $pp_invoice_due_date_month) && !empty( $pp_invoice_due_date_year) && !empty( $pp_invoice_due_date_day ) ) 
+					return "$pp_invoice_due_date_year/$pp_invoice_due_date_month/$pp_invoice_due_date_day";	
 			break;
 			
 			case 'amount':
