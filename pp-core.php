@@ -144,7 +144,7 @@ function pp_set_currency(){
 		'USD' => array( 'currency_name' => __('United States Dollar', 'prospress' ), 'symbol' => '&#36;' )
 		);
 
-	$currency = get_option( 'currency_type' );
+	$currency = get_option( 'currency_type', 'USD' );
 
 	$currency_symbol = $currencies[ $currency ][ 'symbol' ];
 }
