@@ -69,13 +69,13 @@ function pp_settings_page(){
 	settings_errors();
 	?>
 	<div class="wrap">
-		<!--                 FORM                -->
 		<form action="options.php" method="post">
 			<?php 
 			settings_fields( 'pp_core_options' );//settings fields pp_core_options
 			screen_icon( 'prospress' ); 
 			?>
 			<h2><?php _e( 'Prospress Settings', 'prospress' ) ?></h2>
+
 			<h3><?php _e( 'Currency', 'prospress' )?></h3>
 			<p><?php _e( 'Please choose a default currency for all transactions in your marketplace.', 'prospress' ); ?></p>
 			<label for='currency_type'>

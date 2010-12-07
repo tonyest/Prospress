@@ -171,6 +171,22 @@ function get_winning_bid( $post_id = '' ) {
 }
 
 /**
+ * Get's all the details of the winning bid on a post, optionally specified with $post_id.
+ *
+ * If no post id is specified, the global $post var is used. 
+ */
+function get_max_bid( $post_id = '' ) {
+	global $post, $market_systems;
+
+	if ( empty( $post_id ) )
+		$post_id = $post->ID;
+
+	$market = $market_systems[ get_post_type( $post_id ) ];
+
+	return $market->get_max_bid( $post_id );
+}
+
+/**
  * Provides the user id of the winning bidder on a post.  
  */
 function get_winning_bidder( $post_id = '' ) {

@@ -189,10 +189,14 @@ class PP_Auction_Bid_System extends PP_Market_System {
 	 * @since 0.1
 	 */
 	protected function bid_increment( $bid_value ) {
+
 		$coefficient	= 0.05;//default 5% increase
 		$constant		= 0;
-		$eqn = apply_filters( 'increment_bid_equation' , array( 'bid_value' => $bid_value , 'coefficient' => $coefficient , 'constant' => $constant ) );
-		return  $eqn['bid_value'] * $eqn['coefficient'] + $eqn['constant'] ;
+		$increment = $bid_value * $coefficient + $constant;
+		$eqn = apply_filters( 'increment_bid_value' , array( 'increment' => $increment , 'bid_value' => $bid_value , 'coefficient' => $coefficient , 'constant' => $constant ) );
+		extract( $eqn );
+		return $increment;
+
 	}
 
 	public function post_fields(){
