@@ -103,7 +103,6 @@ function pp_generate_invoice( $post_id ) { //receive post ID from hook
 	$status		= 'pending';
 
 	$args = compact( 'post_id', 'payer_id', 'payee_id', 'amount', 'status', 'type' );
-	error_log('generate_invoice');
 	do_action('generate_invoice',$args);
 	
 	return pp_invoice_create( $args );

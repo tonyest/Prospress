@@ -248,7 +248,7 @@ function pp_end_post( $post_id ) {
 	$post_status = apply_filters( 'post_end_status', 'completed' );
 
 	$wpdb->update( $wpdb->posts, array( 'post_status' => $post_status ), array( 'ID' => $post_id ) );
-	error_log('post complete');
+
 	do_action( 'post_completed', $post_id );
 }
 add_action( 'schedule_end_post', 'pp_end_post', 10, 1 );
