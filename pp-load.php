@@ -17,13 +17,17 @@ load_plugin_textdomain( 'prospress', PP_PLUGIN_DIR . '/languages', dirname( plug
 
 require_once( PP_PLUGIN_DIR . '/pp-core.php' );
 
-require_once( PP_PLUGIN_DIR . '/pp-posts.php' );
+if( apply_filters( 'pp_load_posts', true ) )
+	require_once( PP_PLUGIN_DIR . '/pp-posts.php' );
 
-require_once( PP_PLUGIN_DIR . '/pp-bids.php' );
+if( apply_filters( 'pp_load_bids', true ) )
+	require_once( PP_PLUGIN_DIR . '/pp-bids.php' );
 
-require_once( PP_PLUGIN_DIR . '/pp-feedback.php' );
+if( apply_filters( 'pp_load_feedback', true ) )
+	require_once( PP_PLUGIN_DIR . '/pp-feedback.php' );
 
-require_once( PP_PLUGIN_DIR . '/pp-payment.php' );
+if( apply_filters( 'pp_load_payment', true ) )
+	require_once( PP_PLUGIN_DIR . '/pp-payment.php' );
 
 function pp_activate(){
 	// Safely prevent activation on installations pre 3.0 or with php 4
