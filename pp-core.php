@@ -23,7 +23,7 @@ include_once( PP_CORE_DIR . '/core-widgets.php' );
  * @since 0.1
  */
 function pp_core_install(){
-//	add_option( 'currency_type', 'USD' ); //default to the mighty green back
+	add_option( 'currency_type', 'USD' ); //default to the mighty green back
 }
 add_action( 'pp_activation', 'pp_core_install' );
 

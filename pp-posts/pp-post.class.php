@@ -54,7 +54,6 @@ class PP_Post {
 	 */
 	public function activate(){
 		global $wpdb;
-
 		if( $this->get_index_id() == false ){ // Need an index page for this post type
 			$index_page = array();
 			$index_page['post_title'] = $this->labels[ 'name' ];
@@ -63,7 +62,8 @@ class PP_Post {
 			$index_page['post_content'] = __( 'This is the index for your ' . $this->labels[ 'name' ] . '. Your ' . $this->labels[ 'name' ] . ' will automatically show up here, but you change this text to provide an introduction or instructions.', 'prospress' );
 			$index_page['post_type'] = 'page';
 
-			wp_insert_post( $index_page );
+			$post_id = wp_insert_post( $index_page );
+			add_option( 'pp_index_page' , $post_id );
 
 		} else { // Index page exists, make sure it's published as it get's trashed on plugin deactivation
 			$index_page = get_post( $this->get_index_id(), ARRAY_A );
@@ -328,11 +328,13 @@ class PP_Post {
 	 */
 	public function is_index() {
 		global $post;
+		return ( $this->ID == get_option( 'pp_index_page') )? true : false ;
 
-		if( $post->post_name == $this->name )
-			return true;
-		else
-			return false;
+		// 
+		// if( $post->post_name == $this->name )
+		// 	return true;
+		// else
+		// 	return false;
 	}
 
 
@@ -348,16 +350,11 @@ class PP_Post {
 			return false;
 	}
 
-
+	/*
+	 *	Retrieves stored index page ID, returns false by default if option does not yet exist.
+	 */
 	public function get_index_id() {
-		global $wpdb;
-
-		$index_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . $this->name . "'" );
-
-		if( $index_id == NULL)
-			return false; 
-		else 
-			return $index_id;
+		return get_option( 'pp_index_page');
 	}
 
 	public function get_index_permalink() {

@@ -52,8 +52,27 @@ function pp_posts_install(){
 		pp_add_default_caps();
 }
 add_action( 'pp_activation', 'pp_posts_install' );
+/**
+ * Sets up Prospress environment with taxonomies enabled and a default taxonomy installed
+ *
+ * @uses add_option() declare & initialise taxonomies option
+ *
+ */
+function pp_taxonomies_install() {
+	global $market_systems;
+
+	$market = $market_systems[ $this->name ];
+//error_log(print_r($market,true));
+	
+	add_option( 'pp_use_custom_taxonomies' , true );
+
+		// $args = array( 'label' => 'cat' , object_type => '', 'capabilities' => array( 'assign_terms' => 'edit_prospress_posts' ) , 'labels' => array( 'singular_label' => 'categories') );
 
 
+	// if( class_exists( 'PP_Taxonomy' ) )
+	// 	$taxonomy = new PP_Taxonomy( 'category' , $args );
+
+}
 /**
  * Register Prospress custom taxonomies settings
  *
@@ -547,8 +566,7 @@ function is_pp_post_admin_page(){
  * @since 0.1
  */
 function is_using_custom_taxonomies(){
-
-	if( get_option( 'pp_use_custom_taxonomies' ) == 'true' )
+	 if( get_option( 'pp_use_custom_taxonomies' ) == 'true' )
 		return true;
 	else
 		return false;
