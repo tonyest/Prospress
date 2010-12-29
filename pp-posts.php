@@ -25,10 +25,9 @@ include_once( PP_POSTS_DIR . '/pp-post-sort.php' );
 
 include_once( PP_POSTS_DIR . '/pp-post-widgets.php' );
 
-if( is_using_custom_taxonomies() ){
-	include_once( PP_POSTS_DIR . '/pp-taxonomy.class.php' );
-	include_once( PP_POSTS_DIR . '/qmt/query-multiple-taxonomies.php' );
-}
+include_once( PP_POSTS_DIR . '/pp-taxonomy.class.php' );
+
+include_once( PP_POSTS_DIR . '/qmt/query-multiple-taxonomies.php' );
 
 /**
  * Sets up Prospress environment with any settings required and/or shared across the 
@@ -467,48 +466,6 @@ function pp_post_sort_options( $pp_sort_options ){
 }
 add_filter( 'pp_sort_options', 'pp_post_sort_options' );
 
-
-/** 
- * Small marketplaces do not require a custom classification system. Furthermore, custom taxonomies
- * add a degree of complexity that may bewilder young players - best to make it opt-in.
- * 
- * @package Prospress
- * @subpackage Posts
- * @since 0.1
- */
-function pp_taxonomies_option_page() {
-	global $market_systems;
-	$market = $market_systems['auctions'];
-?>
-	<h3><?php _e( 'Custom Taxonomies', 'prospress' )?></h3>
-	<p><?php echo sprintf( __( 'Custom taxonomies provide a way to classify %s. If your site lists more than 20 %s at a time, you should use custom taxonomies.', 'prospress' ), $market->label, $market->label ); ?></p>
-
-	<label for="pp_use_custom_taxonomies">
-		<input type="checkbox" value='true' id="pp_use_custom_taxonomies" name="pp_use_custom_taxonomies"<?php checked( (boolean)get_option( 'pp_use_custom_taxonomies' ) ); ?> />
-		<?php _e( 'Use custom taxonomies' ); ?>
-	</label>
-<?php
-}
-add_action( 'pp_core_settings_page', 'pp_taxonomies_option_page' );
-
-
-/** 
- * Save custom taxonomy setting @see pp_options_whitelist for details about adding pp_use_custom_taxonomies to
- * the settings whitelist.
- * 
- * @package Prospress
- * @subpackage Posts
- * @since 0.1
- */
-function pp_taxonomies_whitelist( $whitelist_options ) {
-
-	$whitelist_options[ 'general' ][] = 'pp_use_custom_taxonomies';
-
-	return $whitelist_options;
-}
-add_filter( 'pp_options_whitelist', 'pp_taxonomies_whitelist' );
-
-
 /**
  * A boolean function to centralise the logic for whether the current page is an admin page for this post type.
  *
@@ -527,23 +484,6 @@ function is_pp_post_admin_page(){
 			return true;
 	return false;
 }
-
-
-/** 
- * Simple boolean function to check if current site is using custom taxonomies.
- * 
- * @package Prospress
- * @subpackage Posts
- * @since 0.1
- */
-function is_using_custom_taxonomies(){
-
-	if( get_option( 'pp_use_custom_taxonomies' ) == 'true' )
-		return true;
-	else
-		return false;
-}
-
 
 /** 
  * Check is a query is for multiple Prospress taxonomies. A wrapper for

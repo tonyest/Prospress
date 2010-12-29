@@ -101,7 +101,7 @@ class PP_Post {
 
 		$market = $market_systems[ $this->name ];
 
-		if ( is_using_custom_taxonomies() && is_pp_multitax() ) {
+		if ( is_pp_multitax() ) {
 
 			$taxonomy = esc_attr( get_query_var( 'taxonomy' ) );
 			$tax = get_taxonomy( $taxonomy );

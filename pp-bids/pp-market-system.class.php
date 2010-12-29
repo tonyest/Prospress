@@ -77,7 +77,7 @@ abstract class PP_Market_System {
 
 		$this->post	= new PP_Post( $this->name, array( 'labels' => $this->labels ) );
 
-		if( is_using_custom_taxonomies() && class_exists( 'PP_Taxonomy' ) )
+		if( class_exists( 'PP_Taxonomy' ) )
 			$this->taxonomy = new PP_Taxonomy( $this->name, array( 'labels' => $this->labels ) );
 
 		if( $this->adds_post_fields != null ){
