@@ -38,6 +38,7 @@ function pp_capabilities_settings_page() {
 	?>
 
 	<?php wp_nonce_field( 'pp_capabilities_settings' ); ?>
+	
 	<div class="prospress-capabilities">
 		<h3><?php _e( 'Capabilities', 'prospress' ); ?></h3>
 		<p><?php printf( __( 'All registered users can make bids, but you can control which users are able to publish and edit %s.', 'prospress' ), $post_type ); ?></p>
@@ -46,24 +47,6 @@ function pp_capabilities_settings_page() {
 			<?php foreach ( $roles as $role ): ?>
 			<label for="<?php echo $role->name; ?>-publish">
 				<input type="checkbox" id="<?php echo $role->name; ?>-publish" name="<?php echo $role->name; ?>-publish"<?php checked( $role->capabilities[ 'publish_prospress_posts' ], 1 ); ?> />
-				<?php echo $role->display_name; ?>
-			</label>
-			<?php endforeach; ?>
-		</div>
-		<div class="prospress-capability">
-			<h4><?php printf( __( "Edit Own %s", 'prospress' ), $post_type ); ?></h4>
-			<?php foreach ( $roles as $role ): ?>
-			<label for="<?php echo $role->name; ?>-edit">
-			  	<input type="checkbox" id="<?php echo $role->name; ?>-edit" name="<?php echo $role->name; ?>-edit"<?php checked( $role->capabilities[ 'edit_published_prospress_posts' ], 1 ); ?> />
-				<?php echo $role->display_name; ?>
-			</label>
-			<?php endforeach; ?>
-		</div>
-		<div class="prospress-capability">
-			<h4><?php printf( __( "Edit Others' %s", 'prospress' ), $post_type ); ?></h4>
-			<?php foreach ( $roles as $role ): ?>
-			<label for="<?php echo $role->name; ?>-edit-others">
-				<input type="checkbox" id="<?php echo $role->name; ?>-edit-others" name="<?php echo $role->name; ?>-edit-others"<?php checked( $role->capabilities[ 'edit_others_prospress_posts' ], 1 ); ?> />
 				<?php echo $role->display_name; ?>
 			</label>
 			<?php endforeach; ?>
@@ -116,36 +99,15 @@ function pp_capabilities_whitelist( $whitelist_options ) {
 
 		foreach ( $roles as $key => $role ) {
 
-			// Shared capability
-			if ( ( isset( $_POST[ $key . '-publish' ] )  && $_POST[ $key . '-publish' ] == 'on' ) || ( isset( $_POST[ $key . '-edit' ] )  && $_POST[ $key . '-edit' ] == 'on' ) || ( isset( $_POST[ $key . '-edit-others' ] )  && $_POST[ $key . '-edit-others' ] == 'on' ) ) {
-				$role->add_cap( 'edit_prospress_posts' );
-			} else {
-				$role->remove_cap( 'edit_prospress_posts' );
-			}
-
 			if ( isset( $_POST[ $key . '-publish' ] )  && $_POST[ $key . '-publish' ] == 'on' ) {
+				$role->add_cap( 'edit_prospress_posts' );
 				$role->add_cap( 'publish_prospress_posts' );
 				$role->add_cap( 'delete_prospress_posts' );
 			} else {
+				$role->remove_cap( 'edit_prospress_posts' );
 				$role->remove_cap( 'publish_prospress_posts' );
 				$role->remove_cap( 'delete_prospress_posts' );
 			}
-
-			if ( ( isset( $_POST[ $key . '-edit' ] )  && $_POST[ $key . '-edit' ] == 'on' ) || ( isset( $_POST[ $key . '-edit-others' ] )  && $_POST[ $key . '-edit-others' ] == 'on' ) ) {
-				$role->add_cap( 'edit_published_prospress_posts' );
-				$role->add_cap( 'delete_published_prospress_posts' );
-				$role->add_cap( 'edit_private_prospress_posts' );
-			} else {
-				$role->remove_cap( 'edit_published_prospress_posts' );
-				$role->remove_cap( 'delete_published_prospress_posts' );
-				$role->remove_cap( 'edit_private_prospress_posts' );
-			}
-
-			if ( isset( $_POST[ $key . '-edit-others' ] )  && $_POST[ $key . '-edit-others' ] == 'on' ) {
-				$role->add_cap( 'edit_others_prospress_posts' );
-			} else {
-				$role->remove_cap( 'edit_others_prospress_posts' );
-	        }
 
 			if ( isset( $_POST[ $key . '-private' ] )  && $_POST[ $key . '-private' ] == 'on' ) {
 				$role->add_cap( 'read_private_prospress_posts' );
