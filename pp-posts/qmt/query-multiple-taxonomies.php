@@ -19,7 +19,7 @@ class PP_QMT_Core {
 		//Hook function to change title of multitax search pages to include the taxonomies being queried
 		add_filter( 'wp_title', array( __CLASS__, 'set_title' ), 10, 3);
 
-		remove_action('template_redirect', 'redirect_canonical');
+		remove_action('template_redirect', 'redirect_canonical');	
 	}
 
 	function get_actual_query() {
@@ -76,7 +76,6 @@ class PP_QMT_Core {
 
 	function query( $wp_query ) {
 		global $market_systems;
-		
 		$market = $market_systems['auctions'];
 
 		self::$url = $market->get_index_permalink();
@@ -85,6 +84,7 @@ class PP_QMT_Core {
 
 		$query = array();
 		foreach ( get_object_taxonomies($post_type) as $taxname ) {
+
 			$taxobj = get_taxonomy($taxname);
 
 			if ( ! $qv = $taxobj->query_var )
@@ -98,7 +98,6 @@ class PP_QMT_Core {
 
 			foreach ( explode(' ', $value) as $slug )
 				$query[] = array($slug, $taxname);
-
 		}
 
 		if ( empty($query) )
@@ -182,10 +181,42 @@ class PP_QMT_Core {
 	}
 
 	function get_terms( $tax ) {
-		if ( empty( self::$post_ids ) )
-			return get_terms( $tax );
+		global $market_systems;
+		$market = $market_systems['auctions'];
+		$post_type = $market->name();
+		$post_type = esc_sql($post_type);
 
 		global $wpdb;
+		// get published posts to ensure non-listing of taxonomies without active items
+		$publish = $wpdb->get_col("
+			SELECT ID FROM $wpdb->posts 
+			WHERE post_type = '$post_type'
+			AND post_status = 'publish' 
+		");
+		$completed = $wpdb->get_col("
+			SELECT ID FROM $wpdb->posts 
+			WHERE post_type = '$post_type'
+			AND post_status = 'completed' 
+		");
+
+		$query = $wpdb->prepare("
+			SELECT term_id FROM (
+						SELECT DISTINCT term_id
+						FROM wp_term_relationships
+						JOIN wp_term_taxonomy USING (term_taxonomy_id)
+						WHERE taxonomy = %s
+						AND object_id IN (" . implode(',', $completed) . ")) AS tbl1
+			WHERE term_id NOT IN (
+						SELECT DISTINCT term_id
+						FROM wp_term_relationships
+						JOIN wp_term_taxonomy USING (term_taxonomy_id)
+						WHERE taxonomy = 'taxonomy-for-the-dead'
+						AND object_id IN (" . implode(',', $publish) . "))
+		", $tax);
+		$exclude_ids = $wpdb->get_col($query);
+
+		if ( empty( self::$post_ids ) )
+		return get_terms($tax, array('exclude' => implode(',', $exclude_ids)));
 
 		$query = $wpdb->prepare("
 			SELECT DISTINCT term_id
@@ -340,7 +371,7 @@ class PP_QMT_Term_Walker extends Walker_Category {
 			else {
 				$tmp[] = $term->slug;
 
-				$new_url = PP_QMT_Core::get_url($this->qv, $tmp);
+				$new_url = get_term_link($term, $this->taxonomy);
 				$link .= " <a class='add-term' href='$new_url'>(+)</a>";
 			}
 		}
@@ -362,6 +393,7 @@ class PP_QMT_Term_Walker extends Walker_Category {
 
 
 function pp_qmt_walk_terms( $taxonomy, $args = '' ) {
+
 	$terms = PP_QMT_Core::get_terms( $taxonomy );
 
 	if ( empty( $terms ) )
