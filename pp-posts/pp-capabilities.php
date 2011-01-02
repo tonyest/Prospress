@@ -61,28 +61,6 @@ function pp_capabilities_settings_page() {
 			<?php endforeach; ?>
 		</div>
 		<div class="prospress-capability">
-			<h4><?php printf( __( "Edit Own %s", 'prospress' ), $post_type ); ?></h4>
-			<?php foreach ( $roles as $role ): ?>
-			<label for="<?php echo $role->name; ?>-edit">
-			  	<input type="checkbox" id="<?php echo $role->name; ?>-edit" 
-					name="pp_capabilities[edit][<?php echo $role->name; ?>]"
-					<?php checked( $role->capabilities[ 'edit_published_prospress_posts' ], 1 ); ?> />
-				<?php echo $role->display_name; ?>
-			</label>
-			<?php endforeach; ?>
-		</div>
-		<div class="prospress-capability">
-			<h4><?php printf( __( "Edit Others' %s", 'prospress' ), $post_type ); ?></h4>
-			<?php foreach ( $roles as $role ): ?>
-			<label for="<?php echo $role->name; ?>-edit-others">
-				<input type="checkbox" id="<?php echo $role->name; ?>-edit-others" 
-					name="pp_capabilities[edit-others][<?php echo $role->name; ?>]"
-					<?php checked( $role->capabilities[ 'edit_others_prospress_posts' ], 1 ); ?> />
-				<?php echo $role->display_name; ?>
-			</label>
-			<?php endforeach; ?>
-		</div>
-		<div class="prospress-capability">
 			<h4><?php printf( __( "View Private %s", 'prospress' ), $post_type ); ?></h4>
 			<?php foreach ( $roles as $role ): ?>
 			<label for="<?php echo $role->name; ?>-private">
@@ -128,39 +106,16 @@ function pp_capabilities_roleset($pp_capabilities) {
 		$roles = $wp_roles->get_names();
 
 	foreach ( $roles as $role => $value ):
-		//Edit Others' Auctions / Edit Own Auctions / Publish Auctions	
-		if ( isset( $pp_capabilities['publish'][$role] ) || 
-		isset( $pp_capabilities['edit'][$role] ) || 
-		isset( $pp_capabilities['edit-others'][$role] ) ) {
-			$wp_roles->add_cap( $role , 'edit_prospress_posts');	
-		} else {
-			$wp_roles->remove_cap( $role , 'edit_prospress_posts' );
-		}			
 		//Publish Auctions
 		if ( isset( $pp_capabilities['publish'][$role] ) ) {
+			$wp_roles->add_cap( $role , 'edit_prospress_posts');
 			$wp_roles->add_cap( $role , 'publish_prospress_posts');
 			$wp_roles->add_cap( $role , 'delete_prospress_posts');	
 		} else {
 			$wp_roles->remove_cap( $role , 'publish_prospress_posts' );
 			$wp_roles->remove_cap( $role , 'delete_prospress_posts' );	
-		}		
-		//Edit Own  /  Edit Others
-		if ( isset( $pp_capabilities['edit'][$role] ) || 
-		isset( $pp_capabilities['edit-others'][$role] ) ) {
-			$wp_roles->add_cap( $role , 'edit_published_prospress_posts' );
-			$wp_roles->add_cap( $role , 'delete_published_prospress_posts' );
-			$wp_roles->add_cap( $role , 'edit_private_prospress_posts' );
-		} else {
-			$wp_roles->remove_cap( $role , 'edit_published_prospress_posts' );
-			$wp_roles->remove_cap( $role , 'delete_published_prospress_posts' );
-			$wp_roles->remove_cap( $role , 'edit_private_prospress_posts' );
-		}	
-		//Edit-Others	
-		if ( isset( $pp_capabilities['edit-others'][$role] ) ) {
-			$wp_roles->add_cap( $role , 'edit_others_prospress_posts' );
-		} else {
-			$wp_roles->remove_cap( $role , 'edit_others_prospress_posts' );
-        }
+			$wp_roles->remove_cap( $role , 'edit_prospress_posts' );
+		}
 		//View Private Auctions
 		if ( isset( $pp_capabilities['private'][$role] ) ) {
 			$wp_roles->add_cap( $role , 'read_private_prospress_posts' );
@@ -175,81 +130,6 @@ function pp_capabilities_roleset($pp_capabilities) {
 		}	
 	endforeach;
 }
-
-/** 
- * Save capabilities settings when the admin page is submitted page. As the settings don't need to be stored in 
- * the options table of the database, they're not added to the whitelist as is expected by this filter, instead 
- * they're added to the appropriate roles.
- * 
- * @package Prospress
- * @subpackage Posts
- * @since 0.1			DEPRECATED 1.01
- *//*
-function pp_capabilities_whitelist( $whitelist_options ) {
-	global $wp_roles;
-
-    if ( $_POST['_wpnonce' ] && check_admin_referer( 'pp_capabilities_settings' ) && current_user_can( 'manage_options' ) ){
-
-		$role_names = $wp_roles->get_names();
-		$roles = array();
-
-		foreach ( $role_names as $key=>$value ) {
-			$roles[ $key ] = get_role( $key );
-			$roles[ $key ]->display_name = $value;
-		}
-
-		foreach ( $roles as $key => $role ) {
-
-			// Shared capability
-			if ( ( isset( $_POST[ $key . '-publish' ] )  && $_POST[ $key . '-publish' ] == 'on' ) || ( isset( $_POST[ $key . '-edit' ] )  && $_POST[ $key . '-edit' ] == 'on' ) || ( isset( $_POST[ $key . '-edit-others' ] )  && $_POST[ $key . '-edit-others' ] == 'on' ) ) {
-				$role->add_cap( 'edit_prospress_posts' );
-			} else {
-				$role->remove_cap( 'edit_prospress_posts' );
-			}
-
-			if ( isset( $_POST[ $key . '-publish' ] )  && $_POST[ $key . '-publish' ] == 'on' ) {
-				$role->add_cap( 'publish_prospress_posts' );
-				$role->add_cap( 'delete_prospress_posts' );
-			} else {
-				$role->remove_cap( 'publish_prospress_posts' );
-				$role->remove_cap( 'delete_prospress_posts' );
-			}
-
-			if ( ( isset( $_POST[ $key . '-edit' ] )  && $_POST[ $key . '-edit' ] == 'on' ) || ( isset( $_POST[ $key . '-edit-others' ] )  && $_POST[ $key . '-edit-others' ] == 'on' ) ) {
-				$role->add_cap( 'edit_published_prospress_posts' );
-				$role->add_cap( 'delete_published_prospress_posts' );
-				$role->add_cap( 'edit_private_prospress_posts' );
-			} else {
-				$role->remove_cap( 'edit_published_prospress_posts' );
-				$role->remove_cap( 'delete_published_prospress_posts' );
-				$role->remove_cap( 'edit_private_prospress_posts' );
-			}
-
-			if ( isset( $_POST[ $key . '-edit-others' ] )  && $_POST[ $key . '-edit-others' ] == 'on' ) {
-				$role->add_cap( 'edit_others_prospress_posts' );
-			} else {
-				$role->remove_cap( 'edit_others_prospress_posts' );
-	        }
-
-			if ( isset( $_POST[ $key . '-private' ] )  && $_POST[ $key . '-private' ] == 'on' ) {
-				$role->add_cap( 'read_private_prospress_posts' );
-			} else {
-				$role->remove_cap( 'read_private_prospress_posts' );
-			}
-
-			if ( isset( $_POST[ $key . '-media' ] )  && $_POST[ $key . '-media' ] == 'on' ) {
-				$role->add_cap( 'upload_files' );
-			} else {
-				$role->remove_cap( 'upload_files' );
-			}
-
-		}
-    }
-
-	return $whitelist_options;
-}
-add_filter( 'pp_options_whitelist', 'pp_capabilities_whitelist' );
- */
 
 /** 
  * Custom Post meta capabilities are not mapped by WordPress, so need to manually
