@@ -64,7 +64,6 @@ function get_post_end_time( $post_id = '', $format = 'timestamp', $timezone = 'g
 	return $time;
 }
 
-
 /**
  * Prints the end time for a post. If the post is ending within a week, it will print
  * it as a countdown, eg. 2 days 1 hour 3 minutes. If the post ends in more than a week
@@ -155,3 +154,4 @@ function pp_human_interval( $time_period, $units = 3, $separator = ' ' ) {
 	return $output;
 }
 
+?>

@@ -152,8 +152,7 @@ class PP_Countdown_Widget extends WP_Widget {
 		echo $before_title;
 		echo ( $instance['title'] ) ? $instance['title'] : __( 'Ending:', 'prospress' );
 		echo $after_title;
-
-		echo '<div class="countdown">';
+		echo "<div class='countdown' id='".get_post_end_time( $the_ID, 'timestamp', 'gmt' )."'>";
 		the_post_end_time();
 		echo '</div>';
 
