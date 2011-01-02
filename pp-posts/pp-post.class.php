@@ -328,13 +328,9 @@ class PP_Post {
 	 */
 	public function is_index() {
 		global $post;
-		return ( $this->ID == get_option( 'pp_index_page') )? true : false ;
-
-		// 
-		// if( $post->post_name == $this->name )
-		// 	return true;
-		// else
-		// 	return false;
+		global $wp_query;
+		$thePostID = $wp_query->post->ID;
+		return ( $thePostID == get_option( 'pp_index_page') )? true : false ;
 	}
 
 
@@ -476,6 +472,7 @@ class PP_Post {
 			return false;
 
 		wp_delete_post( $this->get_index_id() );
+		delete_option('pp_index_page');
 
 		flush_rewrite_rules();
 	}
