@@ -78,8 +78,14 @@ class PP_Invoice {
 		$_wp_last_object_menu++;
 
 		// outgoing_invoices is currently sent to main
-		$unsent_invoices = ( count( $this->unsent_invoices) > 0 ? "(" . count( $this->unsent_invoices) . ")" : "");
-		$unpaid_invoices = ( count( $this->unpaid_invoices) > 0 ? "(" . count( $this->unpaid_invoices) . ")" : "");
+		if( isset( $this->unsent_invoices ) )
+			$unsent_invoices = ( count( $this->unsent_invoices ) > 0 ? "(" . count( $this->unsent_invoices) . ")" : "");
+		else 
+			$unsent_invoices = '';
+		if( isset( $this->unpaid_invoices ) )
+			$unpaid_invoices = ( count( $this->unpaid_invoices ) > 0 ? "(" . count( $this->unpaid_invoices) . ")" : "");
+		else 
+			$unpaid_invoices = '';
 
 		// Global Settings
 		$pp_invoice_page_names[ 'global_settings' ] 	= add_submenu_page( 'Prospress',  __( 'Payment Settings', 'prospress' ),  __( 'Payment Settings', 'prospress' ), 'manage_options', 'invoice_settings', array( &$this,'settings_page' ) );
@@ -360,7 +366,7 @@ class PP_Invoice {
 			}
 		}
 
-		if( $_REQUEST[ 'action' ] == 'post_save_and_preview' ) {
+		if( isset( $_REQUEST[ 'action' ] ) && $_REQUEST[ 'action' ] == 'post_save_and_preview' ) {
 			$invoice_id = $_REQUEST[ 'invoice_id' ];
  			if( $_REQUEST[ 'pp_invoice_action' ] == 'Email to Client' ) {
 				pp_invoice_update_invoice_meta( $invoice_id, 'email_payment_request', $_REQUEST[ 'pp_invoice_payment_request' ][ 'email_message_content' ]);
@@ -406,7 +412,7 @@ class PP_Invoice {
 		// The pp_invoice_user_settings() needs to be ran, it converts certain text values into bool values
 		$user_settings = pp_invoice_user_settings( 'all', $user_ID);
 
-		include PP_INVOICE_UI_PATH . 'user_settings_page.php';	
+		include( PP_INVOICE_UI_PATH . 'user_settings_page.php' );
 	}
 
 	function settings_page() {
@@ -450,7 +456,7 @@ class PP_Invoice {
 
 	function admin_init() {
 		// Admin Redirections. Has to go here to load before headers
-		if( $_REQUEST[ 'pp_invoice_action' ] == __( 'Continue Editing', 'prospress' ) ) {
+		if( isset( $_REQUEST[ 'pp_invoice_action' ] ) && $_REQUEST[ 'pp_invoice_action' ] == __( 'Continue Editing', 'prospress' ) ) {
 			wp_redirect( admin_url( "admin.php?page=new_invoice&pp_invoice_action=doInvoice&invoice_id={$_REQUEST[ 'invoice_id' ]}" ) );
 			die();
 		}
@@ -467,7 +473,7 @@ class PP_Invoice {
 		}
 
 		// Load default user settings if none exist
-		if(!get_usermeta( $user_ID, 'pp_invoice_settings' ) ) {
+		if( !get_user_meta( $user_ID, 'pp_invoice_settings', true ) && $user_ID != 0 ) {
 			pp_invoice_load_default_user_settings( $user_ID);
 		}
 
@@ -479,11 +485,11 @@ class PP_Invoice {
 			$invoice_class = new pp_invoice_get( $incoming_id);
 
 			// Don't include archived invoices in the counts
-			if( $invoice_class->data->is_archived)
+			if( $invoice_class->data->is_archived )
 				continue;
 
 			// Don't include paid invocies either
-			if( $invoice_class->data->is_paid)
+			if( $invoice_class->data->is_paid )
 				continue;
 
 			if(!$invoice_class->data->is_paid)
@@ -493,29 +499,31 @@ class PP_Invoice {
 		foreach( $this->outgoing_invoices as $outgoing_id) {
 
 			// Don't add this invoice to unset array if it was just sent
-			if( $_REQUEST[ 'pp_invoice_action' ] == 'Email to Client' && $_REQUEST[ 'invoice_id' ] == $outgoing_id)
+			if( isset( $_REQUEST[ 'pp_invoice_action' ] ) && $_REQUEST[ 'pp_invoice_action' ] == 'Email to Client' && $_REQUEST[ 'invoice_id' ] == $outgoing_id )
 				continue;
 
-			$invoice_class = new pp_invoice_get( $outgoing_id);			
+			$invoice_class = new pp_invoice_get( $outgoing_id );
 
 			// Don't include archived invoices in the counts
-			if( $invoice_class->data->is_archived)
+			if( $invoice_class->data->is_archived )
 				continue;
 
 			// Don't include paid invocies either
-			if( $invoice_class->data->is_paid)
+			if( $invoice_class->data->is_paid )
 				continue;
 
-			if(!$invoice_class->data->is_sent) 
+			if(!$invoice_class->data->is_sent )
 				$this->unsent_invoices[$outgoing_id] = true;
 
 		}
 
 			// Make sure proper MD5 is being passed (32 chars), and strip of everything but numbers and letters
-			if( isset( $_GET[ 'invoice_id' ]) && strlen( $_GET[ 'invoice_id' ]) != 32) unset( $_GET[ 'invoice_id' ]); 
-			$_GET[ 'invoice_id' ] = preg_replace( '/[^A-Za-z0-9-]/', '', $_GET[ 'invoice_id' ]);
+			if( isset( $_GET[ 'invoice_id' ] ) && strlen( $_GET[ 'invoice_id' ]) != 32 )
+				unset( $_GET[ 'invoice_id' ] );
 
-			if(!empty( $_GET[ 'invoice_id' ] ) ) {
+			if( !empty( $_GET[ 'invoice_id' ] ) ) {
+
+				$_GET[ 'invoice_id' ] = preg_replace( '/[^A-Za-z0-9-]/', '', $_GET[ 'invoice_id' ]);
 
 				$md5_invoice_id = $_GET[ 'invoice_id' ];
 
@@ -676,43 +684,43 @@ class PP_Invoice_GetInfo {
 			break;
 
 			case 'first_name':
-				return get_usermeta( $uid,'first_name' );
+				return get_user_meta( $uid,'first_name', true );
 			break;
 			
 			case 'last_name':
-				return get_usermeta( $uid,'last_name' );
+				return get_user_meta( $uid,'last_name', true );
 			break;
 			
 			case 'company_name':
-				return get_usermeta( $uid,'company_name' );
+				return get_user_meta( $uid,'company_name', true );
 			break;
 			
 			case 'phonenumber':
-				return pp_invoice_format_phone(get_usermeta( $uid,'phonenumber' ) );
+				return pp_invoice_format_phone( get_user_meta( $uid, 'phonenumber', true ) );
 			break;
 			
 			case 'paypal_phonenumber':
-				return get_usermeta( $uid,'phonenumber' );
+				return get_user_meta( $uid, 'phonenumber', true );
 			break;
 			
 			case 'streetaddress':
-				return get_usermeta( $uid,'streetaddress' );	
+				return get_user_meta( $uid, 'streetaddress', true );
 			break;
 			
 			case 'state':
-				return strtoupper(get_usermeta( $uid,'state' ) );
+				return strtoupper( get_user_meta( $uid, 'state', true ) );
 			break;
 			
 			case 'city':
-				return get_usermeta( $uid,'city' );
+				return get_user_meta( $uid, 'city', true );
 			break;
 			
 			case 'zip':
-				return get_usermeta( $uid,'zip' );
+				return get_user_meta( $uid, 'zip', true );
 			break;
 			
 			case 'country':
-				if(get_usermeta( $uid,'country' ) ) return get_usermeta( $uid,'country' );  else  return "US";
+				if( get_user_meta( $uid, 'country', true ) ) return get_user_meta( $uid, 'country', true );  else  return "US";
 			break;	
 		}
 		

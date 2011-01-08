@@ -165,7 +165,7 @@ abstract class PP_Market_System {
 		$the_post = ( empty ( $post ) ) ? get_post( $post_id) : $post;
 
 		if ( $this->is_post_valid( $post_id ) ) {
-			$form .= '<form id="bid_form-' . $post_id . '" class="bid-form" method="post" action="">';
+			$form = '<form id="bid_form-' . $post_id . '" class="bid-form" method="post" action="">';
 			$form .= '<h6>' . $this->bid_form_heading . '</h6>';
 			$form .= '<div class="bid-updated bid_msg" >' . $this->get_message() . '</div><div>';
 			$form .= $this->bid_form_fields( $post_id );
@@ -174,7 +174,7 @@ abstract class PP_Market_System {
 			$form .= '<input name="bid_submit" type="submit" id="bid_submit" value="' . $this->labels[ 'bid_button' ] .'" />';
 			$form .= '</div></form>';
 		} else {
-			$form .= '<div id="bid_form-' . $post_id . '" class="bid-form">';
+			$form = '<div id="bid_form-' . $post_id . '" class="bid-form">';
 			$form .= '<div class="bid-updated bid_msg" >' . $this->get_message() . '</div>';
 			$form .= '</div>';
 		}
@@ -359,14 +359,15 @@ abstract class PP_Market_System {
 	 * Prints the display name of the winning bidder for a post, optionally specified with $post_id.
 	 */
 	public function the_winning_bidder( $post_id = '', $echo = true ) {
-		global $user_ID, $display_name;
+		global $user_ID;
 
-		get_currentuserinfo(); // to set global $display_name
+		get_currentuserinfo(); // to set $user_ID
 
-		$winning_bidder = $this->get_winning_bid( $post_id )->post_author;
+		$winning_bid 	= $this->get_winning_bid( $post_id );
+		$winning_bidder = ( isset( $winning_bid->post_author ) ) ? $winning_bid->post_author : '';
 
-		if ( !empty( $winning_bidder ) )
-			$winning_bidder = ( $winning_bidder == $user_ID) ? __( 'You', 'prospress' ) : get_userdata( $winning_bidder )->display_name;
+		if ( !empty( $winning_bid->post_author ) )
+			$winning_bidder = ( $winning_bid->post_author == $user_ID) ? __( 'You', 'prospress' ) : get_userdata( $winning_bid->post_author )->display_name;
 		else 
 			$winning_bidder = 'No bids.';
 
@@ -691,7 +692,7 @@ abstract class PP_Market_System {
 	public function admin_pages() {
 		global $submenu;
 
-		if( false !== stripos($_SERVER['REQUEST_URI'], 'post-new.php?post_type=' . $this->bid_object_name ) || get_post_type( $_GET[ 'post' ] ) ==  $this->bid_object_name )
+		if( false !== stripos( $_SERVER['REQUEST_URI'], 'post-new.php?post_type=' . $this->bid_object_name ) || ( isset( $_GET[ 'post' ]) && get_post_type( $_GET[ 'post' ] ) ==  $this->bid_object_name ) )
 			wp_redirect( get_option('siteurl') . '/wp-admin/edit.php?post_type=' . $this->bid_object_name );
 
 		//Remove Add New Menu
@@ -833,7 +834,7 @@ abstract class PP_Market_System {
 	public function admin_css(){
 		global $current_screen;
 
-		if( $current_screen->post_type == $this->bid_object_name ){
+		if( isset( $current_screen->post_type ) && $current_screen->post_type == $this->bid_object_name ){
 			echo '<style type="text/css">.add-new-h2,.actions select:first-child,#doaction,#doaction2';
 			echo ( !current_user_can( 'edit_others_prospress_posts' ) ) ? ',.count' : '';
 			echo '{display: none;}</style>';  

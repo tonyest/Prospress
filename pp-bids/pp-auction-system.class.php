@@ -121,9 +121,9 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		} elseif ( empty( $bid_value ) || $bid_value === NULL || !preg_match( '/^[0-9]*\.?[0-9]*$/', $bid_value ) ) {
 			$this->message_id = 7;
 			$this->bid_status = 'invalid';
-		} elseif ( $bidder_id != $this->get_winning_bid( $post_id )->post_author ) {
+		} elseif ( $bidder_id != $this->get_winning_bid( $post_id )->post_author ) { // bidder not current winning bidder
 			$current_winning_bid_value = $this->get_winning_bid_value( $post_id );
-			if ( $this->get_bid_count( $post_id ) == 0 ) {
+			if ( $this->get_bid_count( $post_id ) == 0 ) { // first bid
 				$start_price = get_post_meta( $post_id, 'start_price', true );
 				if ( $bid_value < $start_price ){
 					$this->message_id = 9;
@@ -131,29 +131,35 @@ class PP_Auction_Bid_System extends PP_Market_System {
 				} else {
 					$this->message_id = 0;
 					$this->bid_status = 'winning';
+					do_action( 'first_auction_bid', $post_id, $bid_value, $bidder_id );
 				}
-			} elseif ( $bid_value > $post_max_bid->post_content ) {
+			} elseif ( $bid_value > $post_max_bid->post_content ) { // bid above winning bid
 				$this->message_id = 1;
 				$this->bid_status = 'winning';
+				do_action( 'auction_outbid', $post_id, $bid_value, $bidder_id, $post_max_bid );
 			} elseif ( $bid_value <= $current_winning_bid_value ) {
 				$this->message_id = 3;
 				$this->bid_status = 'invalid';
 			} elseif ( $bid_value <= $post_max_bid->post_content ) {
 				$this->message_id = 2;
 				$this->bid_status = 'outbid';
+				do_action( 'auction_auto_outbid', $post_id, $bid_value, $bidder_id, $post_max_bid );
 			}
-		} elseif ( $bid_value > $bidders_max_bid->post_content ){ //user increasing max bid
+		} elseif ( $bid_value > $bidders_max_bid->post_content ){ //bidder increasing max bid
 			$this->message_id = 4;
 			$this->bid_status = 'winning';
-		} elseif ( $bid_value < $bidders_max_bid->post_content ) { //user trying to decrease max bid
+			do_action( 'auction_increase_bid', $post_id, $bid_value, $bidder_id, $post_max_bid );
+		} elseif ( $bid_value < $bidders_max_bid->post_content ) { //bidder trying to decrease max bid
 			$this->message_id = 5;
 			$this->bid_status = 'invalid';
-		} else {
+		} else {  //bidder entering bid equal to her current max bid
 			$this->message_id = 6;
 			$this->bid_status = 'invalid';
 		}
 
-		return array( 'bid_status' => $this->bid_status, 'message_id' => $this->message_id );
+		$bid_status_msg = array( 'bid_status' => $this->bid_status, 'message_id' => $this->message_id );
+		do_action( 'auction_validate_bid', $bid_status_msg, $post_id, $bid_value, $bidder_id, $post_max_bid );
+		return $bid_status_msg;
 	}
 
 	protected function update_bid( $bid ){
@@ -311,6 +317,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		if ( $this->get_bid_count( $post_id ) == 0 ){
 			$winning_bid_value = get_post_meta( $post_id, 'start_price', true );
 		} else {
+			// Need to do this manually as get_winning_bid() call this function
 			$winning_bid = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $wpdb->posts WHERE post_type = %s AND post_parent = %d AND post_status = %s", $this->bid_object_name, $post_id, 'winning' ) );
 
 			$winning_bid_value = get_post_meta( $winning_bid->ID, 'winning_bid_value', true );

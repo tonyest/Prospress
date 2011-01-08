@@ -1,8 +1,9 @@
+<?PHP error_log('in user settings page, user_settings = ' . print_r( $user_settings, true )); ?>
 <div class="wrap">
 <form method='POST'>
 <h2><?php _e("Payment Settings", 'prospress') ?></h2>
 <style>
-	<?php if($user_settings[paypal_allow] != 'true') : ?>
+	<?php if( $user_settings[ 'paypal_allow' ] != 'true' ) : ?>
 		.paypal_settings { display:none; }
 	<?php endif; ?>
 	<?php if($user_settings[cc_allow] != 'true') : ?>
