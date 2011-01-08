@@ -116,7 +116,7 @@ class PP_Invoice {
 
 		add_filter( 'screen_layout_columns', array( &$this, 'on_screen_layout_columns' ), 10, 2);		
 
-		register_column_headers("web-invoice_page_incoming_invoices", array(
+		register_column_headers( "web-invoice_page_incoming_invoices", array(
 			'cb' => '<input type="checkbox" />',
 			'subject' => __( 'Item', 'prospress' ),
 			'balance' => __( 'Amount', 'prospress' ),
@@ -127,7 +127,7 @@ class PP_Invoice {
 			'due_date' => __( 'Payment Due', 'prospress' ),
 		) );
 
-		register_column_headers("toplevel_page_outgoing_invoices", array(
+		register_column_headers( "toplevel_page_outgoing_invoices", array(
 			'cb' => '<input type="checkbox" />',
 			'subject' => __( 'Item', 'prospress' ),
 			'balance' => __( 'Amount', 'prospress' ),
@@ -278,8 +278,8 @@ class PP_Invoice {
 	}
 
 	function save_and_preview() {
+		global $user_ID, $wpdb,$pp_invoice_email_variables;
 
-	global $user_ID, $wpdb,$pp_invoice_email_variables;
 		echo $page_now;
 		$invoice_id = $_REQUEST[ 'invoice_id' ];
 		$has_invoice_permissions = pp_invoice_user_has_permissions( $invoice_id, $user_id);
@@ -402,10 +402,10 @@ class PP_Invoice {
 				$user_settings[ 'default_payment_venue' ] = '';
 			}
 
-			update_usermeta( $user_ID, 'pp_invoice_settings', $user_settings);
+			update_usermeta( $user_ID, 'pp_invoice_settings', $user_settings );
 		} else {
 			if( !$user_settings ) {
-				$user_settings = pp_invoice_load_default_user_settings( $user_ID);
+				$user_settings = pp_invoice_load_default_user_settings( $user_ID );
 			}
 		}
 
@@ -474,7 +474,8 @@ class PP_Invoice {
 
 		// Load default user settings if none exist
 		if( !get_user_meta( $user_ID, 'pp_invoice_settings', true ) && $user_ID != 0 ) {
-			pp_invoice_load_default_user_settings( $user_ID);
+			$settings = pp_invoice_load_default_user_settings( $user_ID );
+			update_usermeta( $user_id, 'pp_invoice_settings', $settings );
 		}
 
 		// Load these variables early
@@ -616,28 +617,30 @@ class PP_Invoice {
 
 global $_pp_invoice_getinfo;
 
+// Gets information about an Invoice, specifically about the recipient of the invoice 
+// or details to display
+// No idea why it exists instead of simpler functions.
 class PP_Invoice_GetInfo {
 	var $id;
 	var $_row_cache;
 
-	function __construct( $invoice_id) {
+	function __construct( $invoice_id ) {
 		global $_pp_invoice_getinfo, $wpdb;
 
 		$this->id = $invoice_id;
 	
-		if ( isset( $_pp_invoice_getinfo[$this->id]) && $_pp_invoice_getinfo[$this->id]) {
+		if( isset( $_pp_invoice_getinfo[$this->id]) && $_pp_invoice_getinfo[$this->id] )
 			$this->_row_cache = $_pp_invoice_getinfo[$this->id];
-		}
 
-		if (!$this->_row_cache) {
+		if( !$this->_row_cache )
 			$this->_setRowCache( $wpdb->get_row("SELECT * FROM " . $wpdb->payments . " WHERE id = '{$this->id}'") );
-		}
-		}
+
+	}
 
 	function _setRowCache( $row) {
 		global $_pp_invoice_getinfo;
 
-		if (!$row) {
+		if( !$row ) {
 			$this->id = null;
 			return;
 		}
@@ -649,11 +652,10 @@ class PP_Invoice_GetInfo {
 	function recipient( $what) {
 		global $wpdb;
 		
-		if (!$this->_row_cache) {
+		if( !$this->_row_cache )
 			$this->_setRowCache( $wpdb->get_row("SELECT * FROM " . $wpdb->payments . " WHERE id = '{$this->id}'") );
-		}
 
-		if ( $this->_row_cache) {
+		if( $this->_row_cache) {
 			$uid = $this->_row_cache->user_id;
 			$user_email = $wpdb->get_var("SELECT user_email FROM " . $wpdb->prefix . "users WHERE id=".$uid);
 		} else {
@@ -663,7 +665,7 @@ class PP_Invoice_GetInfo {
 
 		$invoice_info = $this->_row_cache;
 		
-		switch ( $what) {
+		switch ( $what ) {
 			case 'callsign':
 				$first_name = $this->recipient( 'first_name' );
 				$last_name = $this->recipient( 'last_name' );
@@ -726,7 +728,7 @@ class PP_Invoice_GetInfo {
 		
 	}
 	
-	function display( $what) {
+	function display( $what ) {
 		global $wpdb;	
 		
 		if (!$this->_row_cache) {
@@ -795,55 +797,6 @@ class PP_Invoice_GetInfo {
 				if(pp_invoice_meta( $this->id,'pp_invoice_recurring_gateway_url' ) ) return pp_invoice_meta( $this->id,'pp_invoice_recurring_gateway_url' );
 				// if no custom paypal address is set, use default
 				return get_option( 'pp_invoice_recurring_gateway_url' );		
-			break;
-
-			case 'pp_invoice_moneybookers_allow':
-				if(pp_invoice_meta( $this->id,'pp_invoice_moneybookers_allow' ) == 'yes' ) return  'yes';
-				if(pp_invoice_meta( $this->id,'pp_invoice_moneybookers_allow' ) == 'no' ) return 'no';
-				if(get_option( 'pp_invoice_moneybookers_allow' ) == 'yes' ) return  'yes';
-				if(get_option( 'pp_invoice_moneybookers_allow' ) == 'no' ) return 'no';
-				return false;
-
-			break;	
-
-			case 'pp_invoice_moneybookers_ip':
-				if(pp_invoice_meta( $this->id,'pp_invoice_moneybookers_ip' ) ) return pp_invoice_meta( $this->id,'pp_invoice_moneybookers_ip' );	
-				return false;
-			break;	
-
-			case 'pp_invoice_moneybookers_secret':
-				if(pp_invoice_meta( $this->id,'pp_invoice_moneybookers_secret' ) ) return pp_invoice_meta( $this->id,'pp_invoice_moneybookers_secret' );	
-				return false;
-			break;	
-
-			case 'pp_invoice_moneybookers_address':
-				if(pp_invoice_meta( $this->id,'pp_invoice_moneybookers_address' ) ) return pp_invoice_meta( $this->id,'pp_invoice_moneybookers_address' );
-				if(get_option( 'pp_invoice_moneybookers_address' ) != '' ) return get_option( 'pp_invoice_moneybookers_address' );	
-				return false;		
-			break;	
-	
-			case 'pp_invoice_alertpay_allow':
-				if(pp_invoice_meta( $this->id,'pp_invoice_alertpay_allow' ) == 'yes' ) return 'yes';
-				if(pp_invoice_meta( $this->id,'pp_invoice_alertpay_allow' ) == 'no' ) return 'no';
-				if(get_option( 'pp_invoice_alertpay_allow' ) == 'yes' ) return  'yes';
-				if(get_option( 'pp_invoice_alertpay_allow' ) == 'no' ) return  'no';
-				return false;
-			break;	
-
-			case 'pp_invoice_alertpay_address':
-				if(pp_invoice_meta( $this->id,'pp_invoice_alertpay_address' ) ) return pp_invoice_meta( $this->id,'pp_invoice_alertpay_address' );	
-				return false;
-			break;		
-
-			case 'pp_invoice_alertpay_secret':
-				if(pp_invoice_meta( $this->id,'pp_invoice_alertpay_secret' ) ) return pp_invoice_meta( $this->id,'pp_invoice_alertpay_secret' );	
-				return false;
-			break;	
-
-			case 'pp_invoice_googlecheckout_address':
-				if(pp_invoice_meta( $this->id,'pp_invoice_googlecheckout_address' ) ) return pp_invoice_meta( $this->id,'pp_invoice_googlecheckout_address' );
-				if(get_option( 'pp_invoice_googlecheckout_address' ) != '' ) return get_option( 'pp_invoice_googlecheckout_address' );	
-				return false;		
 			break;
 
 			case 'log_status':
@@ -925,10 +878,8 @@ class PP_Invoice_GetInfo {
 			break;
 
 			case 'currency':
-				if(pp_invoice_meta( $this->id,'pp_invoice_currency_code' ) != '' ) {
-					$currency_code = pp_invoice_meta( $this->id,'pp_invoice_currency_code' );
-				} else if (get_option( 'pp_invoice_default_currency_code' ) != '' ) {
-					$currency_code = get_option( 'pp_invoice_default_currency_code' );
+				if( pp_invoice_meta( $this->id, 'pp_invoice_currency_code' ) != '' ) {
+					$currency_code = pp_invoice_meta( $this->id, 'pp_invoice_currency_code' );
 				} else {
 					$currency_code = "USD";
 				}

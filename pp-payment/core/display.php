@@ -189,114 +189,13 @@ function pp_invoice_user_selection_screen() {
 
 }
 
-function pp_invoice_show_welcome_message() {
-	global $wpdb; ?>
-
-<h2>Prospress Payments Setup Steps</h2>
-
-	<ol style="list-style-type:decimal;padding-left: 20px;" id="pp_invoice_first_time_setup">
-<?php 
-	$pp_invoice_web_invoice_page = get_option("pp_invoice_web_invoice_page");
-	$pp_invoice_paypal_address = get_option("pp_invoice_paypal_address");
-	$pp_invoice_moneybookers_address = get_option("pp_invoice_moneybookers_address");
-	$pp_invoice_googlecheckout_address = get_option("pp_invoice_googlecheckout_address");
-	$pp_invoice_gateway_username = get_option("pp_invoice_gateway_username");
-	$pp_invoice_payment_method = get_option("pp_invoice_payment_method");
-
-?>
-	<form action="admin.php?page=new_invoice" method='POST'>
-	<input type="hidden" name="pp_invoice_action" value="first_setup">
-<?php if(empty($pp_invoice_web_invoice_page) ) { ?>
-	<li><a class="pp_invoice_tooltip"  title="Your clients will have to follow their secure link to this page to see their invoice. Opening this page without following a link will result in the standard page content begin shown.">Select a page to display your web invoices</a>:  
-		<select name='pp_invoice_web_invoice_page'>
-		<option></option>
-		<?php $list_pages = $wpdb->get_results("SELECT ID, post_title, post_name, guid FROM ". $wpdb->prefix ."posts WHERE post_status = 'publish' AND post_type = 'page' ORDER BY post_title");
-		foreach ($list_pages as $page)
-		{ 
-		echo "<option  style='padding-right: 10px;'";
-		if(isset($pp_invoice_web_invoice_page) && $pp_invoice_web_invoice_page == $page->ID) echo " SELECTED ";
-		echo " value=\"".$page->ID."\">". $page->post_title . "</option>\n"; 
-		} ?>
-		</select>
-	</li>
-<?php } ?>
-
-<?php if(empty($pp_invoice_payment_method)) { ?>
-	<li>Select how you want to accept money: 
-		<select id="pp_invoice_payment_method" name="pp_invoice_payment_method">
-		<option></option>
-		<option value="paypal" style="padding-right: 10px;"<?php if(get_option('pp_invoice_payment_method') == 'paypal') echo 'selected="yes"';?>>PayPal</option>
-		<option value="cc" style="padding-right: 10px;"<?php if(get_option('pp_invoice_payment_method') == 'cc') echo 'selected="yes"';?>>Credit Card</option>
-		</select> 
-
-		<li class="paypal_info payment_info">Your PayPal username: <input id='pp_invoice_paypal_address' name="pp_invoice_paypal_address" class="search-input input_field"  type="text" value="<?php echo stripslashes(get_option('pp_invoice_paypal_address')); ?>"></li>
-
-		<li class="gateway_info payment_info">
-		<a class="pp_invoice_tooltip"  title="Your credit card processor will provide you with a gateway username.">Gateway Username</a>
-		<input AUTOCOMPLETE="off" name="pp_invoice_gateway_username" class="input_field search-input" type="text" value="<?php echo stripslashes(get_option('pp_invoice_gateway_username')); ?>">
-		</li>
-
-		<li class="gateway_info payment_info">
-		<a class="pp_invoice_tooltip"  title="You will be able to generate this in our credit card processor's control panel.">Gateway Transaction Key</a>
-		<input AUTOCOMPLETE="off" name="pp_invoice_gateway_tran_key" class="input_field search-input" type="text" value="<?php echo stripslashes(get_option('pp_invoice_gateway_tran_key')); ?>">
-		</li>
-
-		<li class="gateway_info payment_info">
-		Gateway URL
-		<input name="pp_invoice_gateway_url" class="input_field search-input" type="text" value="<?php echo stripslashes(get_option('pp_invoice_gateway_url')); ?>">
-		<span class="pp_invoice_click_me" onclick="jQuery('#pp_invoice_gateway_url').val('https://gateway.merchantplus.com/cgi-bin/PAWebClient.cgi');">MerchantPlus</span> |
-		<span class="pp_invoice_click_me" onclick="jQuery('#pp_invoice_gateway_url').val('https://secure.authorize.net/gateway/transact.dll');">Authorize.Net</span> |
-		<span class="pp_invoice_click_me" onclick="jQuery('#pp_invoice_gateway_url').val('https://test.authorize.net/gateway/transact.dll');">Authorize.Net Developer</span> 
-		</li>
-
-<?php } ?>
-
-	<li>Send an invoice:
-		<select name='user_id' class='user_selection'>
-		<option ></option>
-		<?php
-		$get_all_users = $wpdb->get_results("SELECT * FROM ". $wpdb->prefix . "users LEFT JOIN ". $wpdb->prefix . "usermeta on ". $wpdb->prefix . "users.id=". $wpdb->prefix . "usermeta.user_id and ". $wpdb->prefix . "usermeta.meta_key='last_name' ORDER BY ". $wpdb->prefix . "usermeta.meta_value");
-		foreach ($get_all_users as $user)
-		{ 
-		$profileuser = @get_user_to_edit($user->ID);
-		echo "<option ";
-		if(isset($user_id) && $user_id == $user->ID) echo " SELECTED ";
-		if(!empty($profileuser->last_name) && !empty($profileuser->first_name)) { echo " value=\"".$user->ID."\">". $profileuser->last_name. ", " . $profileuser->first_name . " (".$profileuser->user_email.")</option>\n";  }
-		else 
-		{
-		echo " value=\"".$user->ID."\">". $profileuser->user_login. " (".$profileuser->user_email.")</option>\n"; 
-		}
-		}
-		?>
-		</select>
-	</li>
-	</ol>
-
-	<input type='submit' class='button' value='Save Settings and Create Invoice'>
-	</form>
-	<?php  if(pp_invoice_is_not_merchant()) pp_invoice_cc_setup(false); ?>
-
-<?php
-}
-
-function pp_invoice_cc_setup($show_title = TRUE) {
-if($show_title) { ?> 	<div id="pp_invoice_need_mm" style="border-top: 1px solid #DFDFDF; ">Do you need to accept credit cards?</div> <?php } ?>
-
-<div class="wrap">
-<div class="pp_invoice_credit_card_processors pp_invoice_rounded_box">
-<p>Prospress Payments users are eligible for special credit card processing rates from <a href="http://twincitiestech.com/links/MerchantPlus.php">MerchantPlus</a> (800-546-1997) and <a href="http://twincitiestech.com/links/MerchantExpress.php">MerchantExpress.com</a> (888-845-9457). <a href="http://twincitiestech.com/links/MerchantWarehouse.php">MerchantWarehouse</a> (866-345-5959) was unable to offer us special rates due to their unique pricing structure. However, they are one of the most respected credit card processing companies and have our recommendation.
-</p>
-</div>
-</div>
-<?php
-}
-
 function pp_invoice_show_email($invoice_id, $force_original = false) {
 	global $pp_invoice_email_variables;
+
 	$pp_invoice_email_variables = pp_invoice_email_variables($invoice_id);
 
-	if(!$force_original && pp_invoice_meta($invoice_id, 'pp_invoice_email_message_content') != "") return str_replace("<br />", "\n",pp_invoice_meta($invoice_id, 'pp_invoice_email_message_content'));
-	return str_replace("<br />", "\n",preg_replace_callback('/(%([a-z_]+)%)/',  'pp_invoice_email_apply_variables', get_option('pp_invoice_email_send_invoice_content')));
+	if(!$force_original && pp_invoice_meta($invoice_id, 'pp_invoice_email_message_content') != "") return str_replace("<br />", "\n",pp_invoice_meta($invoice_id, 'pp_invoice_email_message_content') );
+		return str_replace("<br />", "\n",preg_replace_callback('/(%([a-z_]+)%)/',  'pp_invoice_email_apply_variables', get_option('pp_invoice_email_send_invoice_content')));
 
 }
 
@@ -642,7 +541,6 @@ function pp_invoice_draw_user_selection_form($user_id) {
 }
 
 /*
-	Function from WPI Premium
 	Shorthand function for drawing input fields
 */
 function wpi_input($args = '') {
@@ -663,7 +561,6 @@ function wpi_input($args = '') {
 }
 
 /*
-	Function from WPI Premium
 	Shorthand function for drawing select boxes
 */
 function select($args = '') {
@@ -729,7 +626,6 @@ function select($args = '') {
 }
 
 /*
-	Function from WPI Premium
 	Shorthand function for drawing checkbox fields
 */	
 function wpi_checkbox($args = '', $checked = false) {

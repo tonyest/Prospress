@@ -68,17 +68,19 @@ function pp_invoice_payment_nicename( $slug) {
 
 }
 
-// Return a user's Prospress Payment setting, if no user_id is passed, current user is used
+// Return a user's Prospress Payment settings, if no user_id is passed, the current user is used
 function pp_invoice_user_settings( $what, $user_id = false ) {
 	global $user_ID;
 
 	if(!$user_id )
 		$user_id = $user_ID;
 
-	// Load user ALL settings
+	// Load user settings
 	$user_settings = get_user_meta( $user_id, 'pp_invoice_settings', true );
+	$default_settings = pp_invoice_load_default_user_settings( $user_id );
+	$user_settings = array_merge( $default_settings, $user_settings );
 
-	// If there are no settin found, load defaults
+	// If there are no settings found, load defaults
  	if( !is_array( $user_settings ) || count( $user_settings ) < 1 )	{
 		$user_settings = pp_invoice_load_default_user_settings( $user_id );
 	}
@@ -87,20 +89,19 @@ function pp_invoice_user_settings( $what, $user_id = false ) {
 	$user_settings = stripslashes_deep( $user_settings);
 
 	// Replace "false" and "true" strings with boolean values
-	if(is_array( $user_settings)) {
+	if( is_array( $user_settings ) ) {
 		foreach( $user_settings as $setting_name => $setting_value ) {
 
 			if( $setting_value == 'true' )
-				$user_settings[$setting_name] = true;
+				$user_settings[ $setting_name ] = true;
 
 			if( $setting_value == 'false' )
-				$user_settings[$setting_name] = false;
-
+				$user_settings[ $setting_name ] = false;
 		}
 	}
 
 	if( $what != 'all' ) 
-		return $user_settings[$what];
+		return $user_settings[ $what ];
 
 	if( $what == 'all' ) 
 		return $user_settings;
@@ -113,13 +114,17 @@ function pp_invoice_load_default_user_settings( $user_id ) {
 
 	$user_data = get_userdata( $user_id );
 
-	$settings[ 'business_name' ] = $user_data->display_name;
-	$settings[ 'user_email' ] = $user_data->user_email;
-	$settings[ 'reminder_message' ] = "This is a reminder to pay your invoice.";
-	$settings[ 'default_currency_code' ] = "USD";
-	$settings[ 'tax_label' ] = "Tax";
+	$settings[ 'show_address_on_invoice' ] 		= false;
+	$settings[ 'paypal_allow' ] 				= false;
+	$settings[ 'cc_allow' ] 					= false;
+	$settings[ 'draft_allow' ] 					= false;
+	$settings[ 'paypal_sandbox' ] 				= false;
+	$settings[ 'payment_received_notification' ] = false;
 
-	update_usermeta( $user_id, 'pp_invoice_settings', $settings);
+	$settings[ 'business_name' ] 				= $user_data->display_name;
+	$settings[ 'user_email' ] 					= $user_data->user_email;
+	$settings[ 'reminder_message' ] 			= "This is a reminder to pay your invoice.";
+	$settings[ 'tax_label' ] 					= "Tax";
 
 	return $settings;
 }
@@ -595,9 +600,10 @@ function pp_invoice_format_phone( $phone ) {
 }
 
 function pp_invoice_complete_removal()  {
-	// Run regular deactivation, but also delete the main table - all invoice data is gone
 	global $wpdb;
-	pp_invoice_deactivation() ;;
+
+	// Run regular deactivation, but also delete the main table - all invoice data is gone
+	pp_invoice_deactivation();
 	$wpdb->query("DROP TABLE " . $wpdb->payments_log .";" );
 	$wpdb->query("DROP TABLE " . $wpdb->payments .";" );
 	$wpdb->query("DROP TABLE " . $wpdb->paymentsmeta .";" );
@@ -611,8 +617,6 @@ function pp_invoice_complete_removal()  {
 	delete_option('pp_invoice_business_address' );
 	delete_option('pp_invoice_business_phone' );
 	delete_option('pp_invoice_paypal_address' );
-	delete_option('pp_invoice_moneybookers_address' );
-	delete_option('pp_invoice_googlecheckout_address' );
 	delete_option('pp_invoice_default_currency_code' );
 	delete_option('pp_invoice_web_invoice_page' );
 	delete_option('pp_invoice_billing_meta' );
@@ -1249,20 +1253,7 @@ function pp_invoice_process_invoice_update( $invoice_id ) {
 	"pp_invoice_gateway_email_customer",
 	"pp_invoice_recurring_gateway_url",
 
-	"pp_invoice_moneybookers_allow",
-	"pp_invoice_moneybookers_address",
-	"pp_invoice_moneybookers_merchant",
-	"pp_invoice_moneybookers_secret",
-	"pp_invoice_moneybookers_ip",
-
-	"pp_invoice_googlecheckout_address",
-
-	"pp_invoice_alertpay_allow",
-	"pp_invoice_alertpay_address",
-	"pp_invoice_alertpay_merchant",
-	"pp_invoice_alertpay_secret",
 	"pp_invoice_gateway_email_customer",
-	"pp_invoice_alertpay_test_mode",
 
 	"pp_invoice_subscription_name",
 	"pp_invoice_subscription_unit",
@@ -1344,146 +1335,7 @@ function pp_invoice_md5_to_invoice( $md5) {
 	}
 }
 
-function pp_invoice_create_paypal_itemized_list( $itemized_array,$invoice_id ) {
-	$invoice = new PP_Invoice_GetInfo( $invoice_id );
-	$tax = $invoice->display('tax_percent' );
-	$amount = $invoice->display('amount' );
-	$display_id = $invoice->display('display_id' );
 
-	$tax_free_sum = 0;
-	$counter = 1;
-	foreach( $itemized_array as $itemized_item) {
-
-		// If we have a negative item, PayPal will not accept, we must group everything into one amount
-		if( $itemized_item[price] * $itemized_item[quantity] < 0) {
-			$tax = 0;
-			$output = "
-			<input type='hidden' name='item_name' value='Reference Invoice #$display_id' /> \n
-			<input type='hidden' name='amount' value='$amount' />\n";
-
-			$single_item = true;
-			break;
-		}
-
-		$output .= "<input type='hidden' name='item_name_$counter' value='".$itemized_item[name]."' />\n";
-		$output .= "<input type='hidden' name='amount_$counter' value='".$itemized_item[price] * $itemized_item[quantity]."' />\n";
-
-		$tax_free_sum = $tax_free_sum + $itemized_item[price] * $itemized_item[quantity];
-		$counter++;
-	}
-
-	// Add tax onnly by using tax_free_sum (which is the sums of all the individual items * quantities. 
-	if(!empty( $tax)) {
-		$tax_cart = round( $tax_free_sum * ( $tax / 100),2);
-		$output .= "<input type='hidden' name='tax_cart' value='". $tax_cart ."' />\n";	
-	}
-
-	if( $single_item) $output .= "<input type='hidden' name='cmd' value='_xclick' />\n";	
-	if(!$single_item) $output .= "
-	<input type='hidden' name='cmd' value='_ext-enter' />
-	<input type='hidden' name='redirect_cmd' value='_cart' />\n";	
-	return $output;
-}
-
-function pp_invoice_create_googlecheckout_itemized_list( $itemized_array,$invoice_id ) {
-	$invoice = new PP_Invoice_GetInfo( $invoice_id );
-	$tax = $invoice->display('tax_percent' );
-	$amount = $invoice->display('amount' );
-	$display_id = $invoice->display('display_id' );
-	$currency = $invoice->display('currency' );
-	$tax_percent = $invoice->display('tax_percent' );
-
-	$tax_free_sum = 0;
-	$counter = 1;
-	foreach( $itemized_array as $itemized_item) {
-		// If we have a negative item, PayPal will not accept, we must group everything into one amount
-		$output .= "<input type='hidden' name='item_name_$counter' value='".$itemized_item[name]."'>\n";
-		$output .= "<input type='hidden' name='item_quantity_$counter' value='".$itemized_item[quantity]."'>\n";
-		$output .= "<input type='hidden' name='item_price_$counter' value='".$itemized_item[price]."'>\n";
-		$output .= "<input type='hidden' name='item_currency_$counter' value='$currency'>\n";
-		$tax_free_sum = $tax_free_sum + $itemized_item[price] * $itemized_item[quantity];
-		$counter++;
-	}
-
-	// Add tax onnly by using tax_free_sum (which is the sums of all the individual items * quantities. 
-	if(!empty( $tax)) {
-	$tax_cart = round( $tax_free_sum * ( $tax / 100),2);
-		$output .= "<input type='hidden' value='$tax_percent' name='tax_rate'>\n";
-		}
-
-	return $output;
-}
-
-function pp_invoice_create_moneybookers_itemized_list( $itemized_array,$invoice_id ) {
-	$invoice = new PP_Invoice_GetInfo( $invoice_id );
-	$tax = $invoice->display('tax_percent' );
-	$amount = $invoice->display('amount' );
-	$display_id = $invoice->display('display_id' );
-	$single_item = false;
-
-	$tax_free_sum = 0;
-	$counter = 1;
-
-	if (empty( $tax) && count( $itemized_array) >  3) {
-		$single_item = true;
-	} else if (count( $itemized_array) >  2) {
-		$single_item = true;
-	}
-
-	foreach( $itemized_array as $itemized_item) {
-		if (!$single_item) {
-			$output .= "<input type='hidden' name='detail{$counter}_description' value='".$itemized_item[name]."' />\n";
-			$output .= "<input type='hidden' name='detail{$counter}_text' value='".$itemized_item[description]."' />\n";
-
-			$counter++;
-
-			$output .= "<input type='hidden' name='amount{$counter}' value='".$itemized_item[price] * $itemized_item[quantity]."' />\n";
-		}
-
-		$tax_free_sum = $tax_free_sum + $itemized_item[price] * $itemized_item[quantity];
-	}
-
-	// Add tax only by using tax_free_sum (which is the sums of all the individual items * quantities.
-	if(!$single_item && !empty( $tax)) {
-		$tax_cart = round( $tax_free_sum * ( $tax / 100),2);
-		$output .= "<input type='hidden' name='detail{$counter}_description' value='Tax' />\n";
-		$output .= "<input type='hidden' name='detail{$counter}_text' value='({$tax} %)' />\n";
-		$counter++;
-		$output .= "<input type='hidden' name='amount{$counter}' value='". $tax_cart ."' />\n";
-	}
-
-	$output .= "<input type='hidden' name='detail1_description' value='Reference Invoice #:' />\n";
-	$output .= "<input type='hidden' name='detail1_text' value='$display_id' />\n";
-
-	return $output;
-}
-
-function pp_invoice_create_alertpay_itemized_list( $itemized_array,$invoice_id ) {
-	$invoice = new PP_Invoice_GetInfo( $invoice_id );
-	$tax = $invoice->display('tax_percent' );
-	$amount = $invoice->display('amount' );
-	$display_id = $invoice->display('display_id' );
-
-	$tax_free_sum = 0;
-	$counter = 1;
-	foreach( $itemized_array as $itemized_item) {
-		$counter++;
-		$tax_free_sum = $tax_free_sum + $itemized_item[price] * $itemized_item[quantity];
-	}
-
-	$output = "
-		<input type='hidden' name='ap_description' value='Reference Invoice # $display_id' /> \n
-		<input type='hidden' name='ap_amount' value='$tax_free_sum' />\n
-		<input type='hidden' name='ap_quantity' value='1' />\n";
-
-	// Add tax only by using tax_free_sum (which is the sums of all the individual items * quantities.
-	if(!empty( $tax)) {
-		$tax_cart = round( $tax_free_sum * ( $tax / 100),2);
-		$output .= "<input type='hidden' name='ap_taxamount' value='". $tax_cart ."' />\n";
-	}
-
-	return $output;
-}
 
 function pp_invoice_user_accepted_payments( $payee_id ) {
 
@@ -1519,21 +1371,6 @@ function pp_invoice_accepted_payment( $invoice_id = 'global' ) {
 			$payment_array['cc']['nicename'] = "Credit Card"; 
 			if(get_option('pp_invoice_payment_method' ) == 'cc' || get_option('pp_invoice_payment_method' ) == 'Credit Card' ) $payment_array['cc']['default'] = true; 
 		}
-/*
-		if(get_option('pp_invoice_moneybookers_allow' ) == 'yes' ) { 
-			$payment_array['moneybookers']['name'] = 'moneybookers'; 
-			$payment_array['moneybookers']['active'] = true; 
-			$payment_array['moneybookers']['nicename'] = "Moneybookers"; 
-			if(get_option('pp_invoice_payment_method' ) == 'moneybookers' ) $payment_array['moneybookers']['default'] = true; 
-		}
-
-		if(get_option('pp_invoice_alertpay_allow' ) == 'yes' ) { 
-			$payment_array['alertpay']['name'] = 'alertpay'; 
-			$payment_array['alertpay']['active'] = true; 
-			$payment_array['alertpay']['nicename'] = "AlertPay"; 
-			if(get_option('pp_invoice_payment_method' ) == 'alertpay' ) $payment_array['alertpay']['default'] = true; 
-		}	
-*/	
 
 		return $payment_array;
 	} else {
@@ -1560,22 +1397,6 @@ function pp_invoice_accepted_payment( $invoice_id = 'global' ) {
 			if(!$custom_default_payment && empty( $payment_array['cc']['default']) && get_option('pp_invoice_payment_method' ) == 'cc' ) $payment_array['cc']['default'] = true; 
 
 		}
-
-/*
-		if( $invoice_info->display('pp_invoice_moneybookers_allow' ) == 'yes' ) { 
-			$payment_array['moneybookers']['name'] = 'moneybookers'; 
-			$payment_array['moneybookers']['active'] = true; 
-			$payment_array['moneybookers']['nicename'] = "Moneybookers"; 
-			if( $invoice_info->display('pp_invoice_payment_method' ) == 'moneybookers' ) $payment_array['moneybookers']['default'] = true; 
-		}
-
-		if( $invoice_info->display('pp_invoice_alertpay_allow' ) == 'yes' ) { 
-			$payment_array['alertpay']['name'] = 'alertpay'; 
-			$payment_array['alertpay']['active'] = true; 
-			$payment_array['alertpay']['nicename'] = "AlertPay"; 
-			if( $invoice_info->display('pp_invoice_payment_method' ) == 'alertpay' ) $payment_array['alertpay']['default'] = true; 
-		}
-*/
 
 		return $payment_array;
 	}
@@ -1704,13 +1525,6 @@ class load_pp_invoice {
 		$this->paypal_allow = get_option('pp_invoice_paypal_allow' );
 		$this->paypal_address = get_option('pp_invoice_paypal_address' );
 
-		$this->googlecheckout_address = get_option('pp_invoice_googlecheckout_address' );
-
-		$this->moneybookers_address = get_option('pp_invoice_moneybookers_address' );	
-		$this->moneybookers_allow = get_option('pp_invoice_moneybookers_allow' );
-		$this->moneybookers_secret = get_option('pp_invoice_moneybookers_secret' );
-		$this->moneybookers_ip = get_option('pp_invoice_moneybookers_ip' );
-
 		$this->cc_allow = get_option('pp_invoice_cc_allow' );		
 		$this->gateway_username = get_option('pp_invoice_gateway_username' );
 		$this->gateway_tran_key = get_option('pp_invoice_gateway_tran_key' );
@@ -1722,9 +1536,6 @@ class load_pp_invoice {
 		$this->gateway_merchant_email = get_option('pp_invoice_gateway_merchant_email' );
 		$this->gateway_email_customer = get_option('pp_invoice_gateway_email_customer' );
 		$this->gateway_MD5Hash = get_option('pp_invoice_gateway_MD5Hash' );	
-
-		$this->alertpay_allow = get_option('pp_invoice_alertpay_allow' );
-		$this->alertpay_secret = get_option('pp_invoice_alertpay_secret' );
 
 		$this->currency_code = $currency;
 
@@ -1820,17 +1631,6 @@ class load_pp_invoice {
 		$this->gateway_url = $billing_information->display('pp_invoice_gateway_url' );
 		$this->recurring_gateway_url = $billing_information->display('pp_invoice_recurring_gateway_url' );
 
-		$this->moneybookers_allow = $billing_information->display('pp_invoice_moneybookers_allow' ); 
-		$this->moneybookers_secret = $billing_information->display('pp_invoice_moneybookers_secret' ); 
-		$this->moneybookers_address = $billing_information->display('pp_invoice_moneybookers_address' );
-		$this->moneybookers_ip = $billing_information->display('pp_invoice_moneybookers_ip' ); 
-
-		$this->googlecheckout_address = $billing_information->display('pp_invoice_googlecheckout_address' );
-
-		$this->alertpay_allow = $billing_information->display('pp_invoice_alertpay_allow' ); 
-		$this->alertpay_address = $billing_information->display('pp_invoice_alertpay_address' );
-		$this->alertpay_secret = $billing_information->display('pp_invoice_alertpay_secret' ); 
-
 	}
 
 	function load_existing( $invoice_id = false ) {
@@ -1903,16 +1703,6 @@ class load_pp_invoice {
 		$this->gateway_url = $billing_information->display('pp_invoice_gateway_url' );
 		$this->recurring_gateway_url = $billing_information->display('pp_invoice_recurring_gateway_url' );
 
-		$this->moneybookers_allow = $billing_information->display('pp_invoice_moneybookers_allow' ); 
-		$this->moneybookers_secret = $billing_information->display('pp_invoice_moneybookers_secret' ); 
-		$this->moneybookers_address = $billing_information->display('pp_invoice_moneybookers_address' );
-		$this->moneybookers_ip = $billing_information->display('pp_invoice_moneybookers_ip' ); 
-
-		$this->googlecheckout_address = $billing_information->display('pp_invoice_googlecheckout_address' );
-
-		$this->alertpay_allow = $billing_information->display('pp_invoice_alertpay_allow' ); 
-		$this->alertpay_address = $billing_information->display('pp_invoice_alertpay_address' );
-		$this->alertpay_secret = $billing_information->display('pp_invoice_alertpay_secret' ); 	
 	}
 
 }

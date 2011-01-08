@@ -4,8 +4,8 @@ function pp_invoice_metabox_submit_payment( $invoice ) {
 	?>
 	<div id="misc-publishing-actions">
 		<div class="misc-pub-section">
-			<label for="post_status">Status:</label>
-			Unpaid
+			<label for="post_status"><?php _e( 'Status:', 'prospress' ) ?></label>
+			<?php _e( 'Unpaid', 'prospress' ) ?>
 		</div>
 		<div class="price_information">
 		<?php _e( 'Total Due: ', 'prospress' ); echo pp_money_format( $invoice->amount ); ?>
@@ -74,7 +74,7 @@ function pp_invoice_metabox_billing_details( $invoice ) {
 	<fieldset id="pp_invoice_select_payment_method">
 		<ol>
 			<li>
-				<label for="first_name">Select Payment Method </label>
+				<label for="first_name"><?php _e( 'Select Payment Method', 'prospress' ) ?></label>
 				<select id="pp_invoice_select_payment_method_selector" onChange="changePaymentOption()">
 					<?php foreach ($payment_array as $payment_name => $allowed) { 
 						$name =  str_replace('_allow', '', $payment_name); ?>
@@ -93,7 +93,7 @@ function pp_invoice_metabox_billing_details( $invoice ) {
 		 	<div class="<?php echo $name; ?>_ui payment_info"><?php include PP_INVOICE_UI_PATH . "payment_{$name}.php"; ?></div>
 	 	<?php }
 	} else { ?>
-		<p><?php printf( __( '%s has not provided a payment method. Please contact %s to request he/she provide at least one payment method.' ), ucfirst( $invoice->payee_class->user_nicename ),  $invoice->payee_class->user_nicename ); ?></p>
+		<p><?php printf( __( '%s has not provided a payment method. Please contact %s to request instructions for payment.' ), ucfirst( $invoice->payee_class->user_nicename ),  $invoice->payee_class->user_nicename ); ?></p>
 	<?php }
 }
 

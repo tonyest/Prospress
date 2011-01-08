@@ -1,4 +1,4 @@
-<?PHP error_log('in user settings page, user_settings = ' . print_r( $user_settings, true )); ?>
+<?php global $currency; ?>
 <div class="wrap">
 <form method='POST'>
 <h2><?php _e("Payment Settings", 'prospress') ?></h2>
@@ -57,11 +57,14 @@
 		<th><?php _e("Payment Types:");?></th>
 		<td>
 			<div class="pp_invoice_payment_option">
-			<?php echo wpi_checkbox("group=pp_invoice_user_settings&name=paypal_allow&label=PayPal.&value=true&id=paypal", $user_settings['paypal_allow']); ?><br />
-			<?php if( get_option( 'currency_type' ) == 'USD' ) echo wpi_checkbox("group=pp_invoice_user_settings&name=cc_allow&label=Credit Cards.&value=true&id=cc", $user_settings['cc_allow']) . '<br />'; ?>
-			<?php echo wpi_checkbox("group=pp_invoice_user_settings&name=draft_allow&label=Bank Transfer.&value=true&id=draft", $user_settings['draft_allow']); ?><br />
+			<?php echo wpi_checkbox( "group=pp_invoice_user_settings&name=paypal_allow&label=PayPal&value=true&id=paypal", $user_settings['paypal_allow'] ); ?><br />
+			<?php if( $currency == 'USD' ) echo wpi_checkbox( "group=pp_invoice_user_settings&name=cc_allow&label=Credit Cards&value=true&id=cc", $user_settings['cc_allow'] ) . '<br />'; ?>
+			<?php echo wpi_checkbox( "group=pp_invoice_user_settings&name=draft_allow&label=Bank Transfer&value=true&id=draft", $user_settings['draft_allow'] ); ?><br />
 			</div>
 		</td>
+	</tr>
+	<tr class="paypal_settings">
+		<th><h3><?php _e( 'PayPal Settings', 'prospress' ); ?></h3></th>
 	</tr>
 	<tr class="paypal_settings">
 		<th><?php _e( 'PayPal Username:', 'prospress' ); ?></th>
@@ -74,7 +77,7 @@
 	</tr>
 <?php if( get_option( 'currency_type' ) == 'USD' ):?>
 	<tr class="gateway_info">
-		<th colspan="2"><?php _e( 'Credit Card Settings:', 'prospress' ); ?></th>
+		<th colspan="2"><h3><?php _e( 'Credit Card Settings:', 'prospress' ); ?></h3></th>
 	</tr>
 	<tr class="gateway_info">
 		<th><a class="pp_invoice_tooltip" title="<?php _e('Your credit card processor will provide you with a gateway username.', 'prospress'); ?>"><?php _e('Gateway Username', 'prospress'); ?></a></th>
@@ -107,6 +110,9 @@
 		<td><?php echo pp_invoice_draw_select('pp_invoice_user_settings[gateway_delim_data]',array("TRUE" => "True","FALSE" => "False"), $user_settings[gateway_delim_data]); ?></td>
 	</tr>
 <?php endif;?>
+	<tr class="draft_info">
+		<th colspan="2"><h3><?php _e( 'Bank Transfer', 'prospress' ); ?></h3></th>
+	</tr>
 	<tr class="draft_info">
 		<th><?php _e( 'Draft Instructions:', 'prospress' ); ?></th>
 		<td><textarea name='pp_invoice_user_settings[draft_text]' cols='50%' rows='5'><?php echo $user_settings[draft_text]; ?></textarea></td>

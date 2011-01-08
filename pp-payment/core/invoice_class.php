@@ -4,13 +4,13 @@
 	Gets an invoice
 */
 class pp_invoice_get {
-	
+
 	var $invoice_id; 
 	var $data;
 	var $error;
 
 	//Load invoice variables
-	function pp_invoice_get( $invoice_id) {
+	function pp_invoice_get( $invoice_id ) {
 		global $wpdb, $user_ID, $currency, $currency_symbol;
 
 		$this->invoice_id = $invoice_id;
@@ -34,8 +34,8 @@ class pp_invoice_get {
 		}
 
 		// Get user information
-		$this->data->payer_class = get_userdata( $this->data->payer_id);
-		$this->data->payee_class = get_userdata( $this->data->payee_id);
+		$this->data->payer_class = get_userdata( $this->data->payer_id );
+		$this->data->payee_class = get_userdata( $this->data->payee_id );
 		
 		// Get Post information
 		if( is_multisite() ){
