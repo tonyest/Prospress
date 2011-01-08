@@ -770,8 +770,8 @@ abstract class PP_Market_System {
 		?>
 		<select name='<?php echo $filter_name; ?>' id='<?php echo $filter_name; ?>' class='postform'>
 			<option value="0"><?php printf( __( 'All %s', 'prospress' ), $this->labels[ 'name' ] ); ?></option>
-			<option value="completed" <?php selected( $_GET[ $filter_name ], 'completed' ); ?>><?php printf( __( 'Completed %s', 'prospress' ), $this->labels[ 'name' ] ); ?></option>
-			<option value="published" <?php selected( $_GET[ $filter_name ], 'published' ); ?>><?php printf( __( 'Published %s', 'prospress' ), $this->labels[ 'name' ] ); ?></option>
+			<option value="completed" <?php selected( @$_GET[ $filter_name ], 'completed' ); ?>><?php printf( __( 'Completed %s', 'prospress' ), $this->labels[ 'name' ] ); ?></option>
+			<option value="published" <?php selected( @$_GET[ $filter_name ], 'published' ); ?>><?php printf( __( 'Published %s', 'prospress' ), $this->labels[ 'name' ] ); ?></option>
 		</select>
 		<?php
 	}
@@ -787,10 +787,12 @@ abstract class PP_Market_System {
 		if( !current_user_can( 'edit_others_prospress_posts' ) )
 	    	$where .= $wpdb->prepare( " AND post_author= %d", $user_ID );
 
-		if( $_GET[ $filter_name ] == 'completed' ) {
-		    $where .= " AND post_parent IN (SELECT ID FROM {$wpdb->posts} WHERE post_status='completed' )";
-		} else if( $_GET[ $filter_name ] == 'published' ) {
-		    $where .= " AND post_parent IN (SELECT ID FROM {$wpdb->posts} WHERE post_status='publish' )";
+		if( isset( $_GET[ $filter_name ] ) ) {
+			if( $_GET[ $filter_name ] == 'completed' ) {
+			    $where .= " AND post_parent IN (SELECT ID FROM {$wpdb->posts} WHERE post_status='completed' )";
+			} else if( $_GET[ $filter_name ] == 'published' ) {
+			    $where .= " AND post_parent IN (SELECT ID FROM {$wpdb->posts} WHERE post_status='publish' )";
+			}
 		}
 		return $where;
 	}
@@ -799,7 +801,7 @@ abstract class PP_Market_System {
 	// Add market system columns to tables of posts
 	public function add_post_column_headings( $column_headings ) {
 
-		if( !( $_GET[ 'post_type' ] == $this->name || get_post_type( $_GET[ 'post' ] ) ==  $this->name ) )
+		if( !( @$_GET[ 'post_type' ] == $this->name || get_post_type( @$_GET[ 'post' ] ) ==  $this->name ) )
 			return $column_headings;
 
 		foreach( $this->post_table_columns as $key => $column )

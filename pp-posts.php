@@ -147,7 +147,7 @@ function pp_post_save_postdata( $post_id, $post ) {
 	if( wp_is_post_revision( $post_id ) )
 		$post_id = wp_is_post_revision( $post_id );
 
-	if ( empty( $_POST ) || 'page' == $_POST['post_type'] ) {
+	if ( empty( $_POST ) || 'page' == @$_POST['post_type'] ) {
 		return $post_id;
 	} else if ( !current_user_can( 'edit_post', $post_id )) {
 		return $post_id;
@@ -192,9 +192,9 @@ function pp_post_save_postdata( $post_id, $post ) {
 	} else {
 		wp_unschedule_event( strtotime( $original_post_end_date_gmt ), 'schedule_end_post', array( 'ID' => $post_id ) );
 
-		if( $post_status != 'draft' ){
+		if( $post->post_status != 'draft' ){
 			pp_schedule_end_post( $post_id, strtotime( $post_end_date_gmt ) );
-			do_action( 'publish_end_date_change', $post_status, $post_end_date );
+			do_action( 'publish_end_date_change', $post->post_status, $post_end_date );
 		}
 	}
 	update_option( 'pp_show_welcome', 'false' );

@@ -124,7 +124,7 @@ function pp_invoice_load_default_user_settings( $user_id ) {
 	return $settings;
 }
 
-function pp_invoice_create( $args ) {
+function pp_invoice_create( $args, $meta = '' ) {
 	global $blog_id, $wpdb;
 
 	$defaults = array(
@@ -134,9 +134,17 @@ function pp_invoice_create( $args ) {
 		'amount' => false,
 		'status' => 'pending',
 		'type' => false,
-		'blog_id' => $blog_id );
+		'blog_id' => $blog_id
+		);
 
-	$args = wp_parse_args( $args, $defaults);
+	$meta_defaults = array(
+		'due_date_day' => date('j'),
+		'due_date_month' => date('n'),
+		'due_date_year' => date('Y')
+		);
+
+	$args = wp_parse_args( $args, $defaults );
+	$meta = wp_parse_args( $meta, $meta_defaults );
 	extract( $args, EXTR_SKIP );
 
 	if( !$post_id || !$payee_id || !$amount ) // payer can be 0 for buy now
@@ -146,11 +154,12 @@ function pp_invoice_create( $args ) {
 		$error = false;
 		$message = __( "New Invoice saved for $post_id.", 'prospress' );
 		$invoice_id = $wpdb->insert_id;
-		pp_invoice_update_log( $invoice_id, 'created', "Invoice created from post ( $post_id )." );;
+		pp_invoice_update_log( $invoice_id, 'created', "Invoice created from post ( $post_id )." );
+		foreach( $meta as $key => $value )
+			$wpdb->insert( $wpdb->paymentsmeta, array( 'invoice_id' => $invoice_id, 'meta_key' => $key, 'meta_value' => $value ) );
 	} else {
 		$error = true; 
-		$invoice_id = NULL;
-		$message = __( "There was a problem saving invoice. Try deactivating and reactivating plugin.", 'prospress' ); 
+		$message = __("There was a problem saving invoice.  Try deactivating and reactivating plugin.", 'prospress' ); 
 	}
 
 	return compact( 'error', 'message', 'invoice_id' );
@@ -271,25 +280,20 @@ function pp_invoice_update_status( $invoice_id, $status ) {
 	$wpdb->query( "UPDATE ".$wpdb->payments." SET status = '$status' WHERE  id = '$invoice_id'" );
 }
 
-function pp_invoice_update_invoice_meta( $invoice_id,$meta_key,$meta_value ) {
+function pp_invoice_update_invoice_meta( $invoice_id, $meta_key, $meta_value = '' ) {
 	global $wpdb;
 
 	if( empty( $meta_value ) ) {
-		// Dlete meta_key if no value is set
-		$wpdb->query("DELETE FROM ".$wpdb->paymentsmeta." WHERE  invoice_id = '$invoice_id' AND meta_key = '$meta_key'" ); 
+		// Delete meta_key if no value is set
+		$wpdb->query( "DELETE FROM ".$wpdb->paymentsmeta." WHERE  invoice_id = '$invoice_id' AND meta_key = '$meta_key'" ); 
 	} else {
-		// Check if meta key already exists, then we replace it $wpdb->paymentsmeta
-		if( $wpdb->get_var( "SELECT meta_key 	FROM `".$wpdb->paymentsmeta."` WHERE meta_key = '$meta_key' AND invoice_id = '$invoice_id'" )) { 
-			$wpdb->query("UPDATE `".$wpdb->paymentsmeta."` SET meta_value = '$meta_value' WHERE meta_key = '$meta_key' AND invoice_id = '$invoice_id'" ); 
-		} else { 
-			$wpdb->query("INSERT INTO `".$wpdb->paymentsmeta."` (invoice_id, meta_key, meta_value ) VALUES ('$invoice_id','$meta_key','$meta_value' )" );
-		}
+		$wpdb->update( $wpdb->paymentsmeta, array( 'meta_key' => $meta_value ), array( 'invoice_id' => $invoice_id, 'meta_key' => $meta_key ) );
 	}
 }
 
 function pp_invoice_delete_invoice_meta( $invoice_id,$meta_key='' ) {
-
 	global $wpdb;
+
 	if(empty( $meta_key))  { $wpdb->query("DELETE FROM `".$wpdb->paymentsmeta."` WHERE invoice_id = '$invoice_id' " );}
 	else { $wpdb->query("DELETE FROM `".$wpdb->paymentsmeta."` WHERE invoice_id = '$invoice_id' AND meta_key = '$meta_key'" );}
 
@@ -1483,17 +1487,16 @@ function pp_invoice_create_alertpay_itemized_list( $itemized_array,$invoice_id )
 
 function pp_invoice_user_accepted_payments( $payee_id ) {
 
-	if(pp_invoice_user_settings( 'paypal_allow', $payee_id ) == 'true' )
+	if( pp_invoice_user_settings( 'paypal_allow', $payee_id ) == 'true' )
 		$return[ 'paypal_allow' ] = true;
 
-	if(pp_invoice_user_settings( 'cc_allow', $payee_id ) == 'true' )
+	if( pp_invoice_user_settings( 'cc_allow', $payee_id ) == 'true' )
 		$return[ 'cc_allow' ] = true;
 
-	if(pp_invoice_user_settings( 'draft_allow', $payee_id ) == 'true' )
+	if( pp_invoice_user_settings( 'draft_allow', $payee_id ) == 'true' )
 		$return[ 'draft_allow' ] = true;
 
 	return $return;
-
 }
 
 function pp_invoice_accepted_payment( $invoice_id = 'global' ) {
