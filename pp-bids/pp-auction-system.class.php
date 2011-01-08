@@ -255,7 +255,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 
 		if( $this->name != @$_POST[ 'post_type' ] || !current_user_can( 'edit_post', $post_id ) ){
 			return $post_id;
-		} elseif( $this->get_bid_count( $post_ID ) || !isset( $_POST[ 'selling_options_nonce' ] ) || !wp_verify_nonce( $_POST[ 'selling_options_nonce' ], __FILE__ ) ){
+		} elseif( $this->get_bid_count( $post_id ) || !isset( $_POST[ 'selling_options_nonce' ] ) || !wp_verify_nonce( $_POST[ 'selling_options_nonce' ], __FILE__ ) ){
 			return $post_id;
 		}
 
@@ -345,6 +345,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 
 		// Create mock invoice object for setting up PayPal form
 		$invoice->payee_class = get_userdata( $post_details->post_author );
+		$invoice->payee_class->pp_invoice_settings = pp_invoice_user_settings( 'all', $post_details->post_author );
 		$invoice->amount = get_post_meta( $post_id, 'buy_now_price', true );
 
 		if( $invoice->amount == 0 || $invoice->amount < $this->get_winning_bid_value( $post_id ) || true != $accepted_payments[ 'paypal_allow' ] || !is_email( $invoice->payee_class->pp_invoice_settings[ 'paypal_address' ] ) )
@@ -360,7 +361,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		$button = 'buy';
 		$class = 'buy-form';
 		$form_extras = '<h6 class="buy-title">' . __( 'Buy Now', 'prospress' ) . '</h6>';
-		if( in_array( $this->message_id, array( 15, 16 ) ) )
+		if( in_array( @$this->message_id, array( 15, 16 ) ) )
 			$form_extras .= '<div class="bid-updated bid_msg" >' . $this->get_message() . '</div>';
 		$form_extras .= '<div class="buy-price">';
 		$form_extras .= sprintf( __( 'Price: %s', 'prospress' ), pp_money_format( $invoice->amount ) );
