@@ -389,7 +389,7 @@ class PP_Invoice {
 		$user_settings = pp_invoice_user_settings( 'all', $user_ID);
 
 		// Save settings
-		if( count( $_REQUEST[ 'pp_invoice_user_settings' ] ) > 1 ) {
+		if( count( @$_REQUEST[ 'pp_invoice_user_settings' ] ) > 1 ) {
 			$user_settings = $_REQUEST[ 'pp_invoice_user_settings' ];
 
 			if( $user_settings[ 'paypal_allow'] == 'true' ){
@@ -402,7 +402,7 @@ class PP_Invoice {
 				$user_settings[ 'default_payment_venue' ] = '';
 			}
 
-			update_usermeta( $user_ID, 'pp_invoice_settings', $user_settings );
+			update_user_meta( $user_ID, 'pp_invoice_settings', $user_settings );
 		} else {
 			if( !$user_settings ) {
 				$user_settings = pp_invoice_load_default_user_settings( $user_ID );
@@ -475,7 +475,7 @@ class PP_Invoice {
 		// Load default user settings if none exist
 		if( !get_user_meta( $user_ID, 'pp_invoice_settings', true ) && $user_ID != 0 ) {
 			$settings = pp_invoice_load_default_user_settings( $user_ID );
-			update_usermeta( $user_id, 'pp_invoice_settings', $settings );
+			update_user_meta( $user_id, 'pp_invoice_settings', $settings );
 		}
 
 		// Load these variables early

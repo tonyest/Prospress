@@ -373,8 +373,8 @@ function pp_invoice_show_paypal_reciept($invoice_id) {
 
 	$invoice = new PP_Invoice_GetInfo($invoice_id);
 
-	if(isset($_POST['first_name'])) update_usermeta($invoice->recipient('user_id'), 'first_name', $_POST['first_name']);
-	if(isset($_POST['last_name'])) update_usermeta($invoice->recipient('user_id'), 'last_name', $_POST['last_name']);
+	if(isset($_POST['first_name'])) update_user_meta($invoice->recipient('user_id'), 'first_name', $_POST['first_name']);
+	if(isset($_POST['last_name'])) update_user_meta($invoice->recipient('user_id'), 'last_name', $_POST['last_name']);
 
 	if(get_option('pp_invoice_send_thank_you_email') == 'yes') pp_invoice_send_email_receipt($invoice_id);
 
@@ -543,8 +543,8 @@ function pp_invoice_draw_user_selection_form($user_id) {
 /*
 	Shorthand function for drawing input fields
 */
-function wpi_input($args = '') {
-	$defaults = array('name' => '', 'group' => '','special' => '','value' => '', 'type' => '', 'hidden' => false, 'style' => false, 'readonly' => false, 'label' => false);
+function wpi_input( $args = '' ) {
+	$defaults = array('name' => '', 'class' => '', 'group' => '','special' => '','value' => '', 'type' => '', 'hidden' => false, 'style' => false, 'readonly' => false, 'label' => false, 'title' => '');
 	extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
 
 	// if [ character is present, we do not use the name in class and id field
@@ -553,9 +553,15 @@ function wpi_input($args = '') {
 		$class_from_name = $name;
 	}
 
-	if($label) $return .= "<label for='$name'>";
-	$return .= "<input ".($type ?  "type=\"$type\" " : '')." ".($style ?  "style=\"$style\" " : '')." id=\"$id\" class=\"".($type ?  "" : "input_field")." $class_from_name $class ".($hidden ?  " hidden " : '').""  .($group ? "group_$group" : ''). " \"  	name=\"" .($group ? $group."[".$name."]" : $name). "\" 	value=\"".stripslashes($value)."\" 	title=\"$title\" $special ".($type == 'forget' ?  " autocomplete='off'" : '')." ".($readonly ?  " readonly=\"readonly\" " : "")." />";		
-	if($label) $return .= "$label </label>";
+	$return = '';
+
+	if( $label ) 
+		$return .= "<label for='$name'>";
+	
+	$return .= "<input ".( $type ?  "type=\"$type\" " : '')." ".( $style ?  "style=\"$style\" " : '')." id=\"$id\" class=\"".( $type ?  "" : "input_field")." $class_from_name $class ".( $hidden ?  " hidden " : '').""  .( $group ? "group_$group" : ''). " \"  	name=\"" .( $group ? $group."[".$name."]" : $name). "\" 	value=\"".stripslashes($value)."\" 	title=\"$title\" $special ".($type == 'forget' ?  " autocomplete='off'" : '')." ".($readonly ?  " readonly=\"readonly\" " : "")." />";		
+
+	if( $label )
+		$return .= "$label </label>";
 
 	return $return;
 }
@@ -687,8 +693,11 @@ function wpi_checkbox($args = '', $checked = false) {
 			break;
 	}
 
+	$return = '';
+
 	// Print label if one is set
-	if($label) $return .= "<label for='$id'>";
+	if( $label ) 
+		$return .= "<label for='$id'>";
 
 	// Print hidden checkbox
 	$return .= "<input type='hidden' value='$opposite_value' $insert_name />";

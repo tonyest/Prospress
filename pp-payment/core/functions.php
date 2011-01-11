@@ -730,12 +730,12 @@ function pp_invoice_profile_update() {
 	global $wpdb;
 	$user_id =  $_REQUEST['user_id'];
 
-	if(isset( $_POST['company_name'])) update_usermeta( $user_id, 'company_name', $_POST['company_name']);
-	if(isset( $_POST['streetaddress'])) update_usermeta( $user_id, 'streetaddress', $_POST['streetaddress']);
-	if(isset( $_POST['zip']))  update_usermeta( $user_id, 'zip', $_POST['zip']);
-	if(isset( $_POST['state'])) update_usermeta( $user_id, 'state', $_POST['state']);
-	if(isset( $_POST['city'])) update_usermeta( $user_id, 'city', $_POST['city']);
-	if(isset( $_POST['phonenumber'])) update_usermeta( $user_id, 'phonenumber', $_POST['phonenumber']);
+	if(isset( $_POST['company_name'])) update_user_meta( $user_id, 'company_name', $_POST['company_name']);
+	if(isset( $_POST['streetaddress'])) update_user_meta( $user_id, 'streetaddress', $_POST['streetaddress']);
+	if(isset( $_POST['zip']))  update_user_meta( $user_id, 'zip', $_POST['zip']);
+	if(isset( $_POST['state'])) update_user_meta( $user_id, 'state', $_POST['state']);
+	if(isset( $_POST['city'])) update_user_meta( $user_id, 'city', $_POST['city']);
+	if(isset( $_POST['phonenumber'])) update_user_meta( $user_id, 'phonenumber', $_POST['phonenumber']);
 
 }
 
@@ -1099,15 +1099,15 @@ function pp_invoice_process_cc_transaction( $cc_data = false ) {
 			// Returning valid nonce marks transaction as good on front-end
 			echo wp_create_nonce('pp_invoice_process_cc_' . $invoice_id );
 
-			update_usermeta( $wp_users_id,'last_name',$_POST['last_name']);
-			update_usermeta( $wp_users_id,'last_name',$_POST['last_name']);
-			update_usermeta( $wp_users_id,'first_name',$_POST['first_name']);
-			update_usermeta( $wp_users_id,'city',$_POST['city']);
-			update_usermeta( $wp_users_id,'state',$_POST['state']);
-			update_usermeta( $wp_users_id,'zip',$_POST['zip']);
-			update_usermeta( $wp_users_id,'streetaddress',$_POST['address']);
-			update_usermeta( $wp_users_id,'phonenumber',$_POST['phonenumber']);
-			update_usermeta( $wp_users_id,'country',$_POST['country']);
+			update_user_meta( $wp_users_id,'last_name',$_POST['last_name']);
+			update_user_meta( $wp_users_id,'last_name',$_POST['last_name']);
+			update_user_meta( $wp_users_id,'first_name',$_POST['first_name']);
+			update_user_meta( $wp_users_id,'city',$_POST['city']);
+			update_user_meta( $wp_users_id,'state',$_POST['state']);
+			update_user_meta( $wp_users_id,'zip',$_POST['zip']);
+			update_user_meta( $wp_users_id,'streetaddress',$_POST['address']);
+			update_user_meta( $wp_users_id,'phonenumber',$_POST['phonenumber']);
+			update_user_meta( $wp_users_id,'country',$_POST['country']);
 
 			//Mark invoice as paid
 			pp_invoice_paid( $invoice_id );
@@ -1170,13 +1170,13 @@ function pp_invoice_process_invoice_update( $invoice_id ) {
 	$amount = $_REQUEST['amount'];
 
 	//Update User Information
-	if(!empty( $_REQUEST['pp_invoice_first_name'])) update_usermeta( $user_id, 'first_name', $_REQUEST['pp_invoice_first_name']);
-	if(!empty( $_REQUEST['pp_invoice_last_name'])) update_usermeta( $user_id, 'last_name', $_REQUEST['pp_invoice_last_name']);
-	if(!empty( $_REQUEST['pp_invoice_streetaddress'])) update_usermeta( $user_id, 'streetaddress', $_REQUEST['pp_invoice_streetaddress']);
-	if(!empty( $_REQUEST['pp_invoice_company_name'])) update_usermeta( $user_id, 'company_name',$_REQUEST['pp_invoice_company_name']);
-	if(!empty( $_REQUEST['pp_invoice_city'])) update_usermeta( $user_id, 'city',$_REQUEST['pp_invoice_city']);
-	if(!empty( $_REQUEST['pp_invoice_state'])) update_usermeta( $user_id, 'state', $_REQUEST['pp_invoice_state']);
-	if(!empty( $_REQUEST['pp_invoice_zip'])) update_usermeta( $user_id, 'zip', $_REQUEST['pp_invoice_zip']);
+	if(!empty( $_REQUEST['pp_invoice_first_name'])) update_user_meta( $user_id, 'first_name', $_REQUEST['pp_invoice_first_name']);
+	if(!empty( $_REQUEST['pp_invoice_last_name'])) update_user_meta( $user_id, 'last_name', $_REQUEST['pp_invoice_last_name']);
+	if(!empty( $_REQUEST['pp_invoice_streetaddress'])) update_user_meta( $user_id, 'streetaddress', $_REQUEST['pp_invoice_streetaddress']);
+	if(!empty( $_REQUEST['pp_invoice_company_name'])) update_user_meta( $user_id, 'company_name',$_REQUEST['pp_invoice_company_name']);
+	if(!empty( $_REQUEST['pp_invoice_city'])) update_user_meta( $user_id, 'city',$_REQUEST['pp_invoice_city']);
+	if(!empty( $_REQUEST['pp_invoice_state'])) update_user_meta( $user_id, 'state', $_REQUEST['pp_invoice_state']);
+	if(!empty( $_REQUEST['pp_invoice_zip'])) update_user_meta( $user_id, 'zip', $_REQUEST['pp_invoice_zip']);
 
 	// Itemized List
 	$itemized_list = $_REQUEST['itemized_list'];

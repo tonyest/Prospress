@@ -6,10 +6,10 @@
 	<?php if( $user_settings[ 'paypal_allow' ] != 'true' ) : ?>
 		.paypal_settings { display:none; }
 	<?php endif; ?>
-	<?php if($user_settings[cc_allow] != 'true') : ?>
+	<?php if($user_settings[ 'cc_allow' ] != 'true') : ?>
 		.gateway_info{ display:none; }
 	<?php endif; ?>
-	<?php if($user_settings[draft_allow] != 'true') : ?>
+	<?php if($user_settings[ 'draft_allow' ] != 'true') : ?>
 		.draft_info{ display:none; }
 	<?php endif; ?>
 </style>
@@ -43,14 +43,14 @@
 	<tr>
 		<th><?php _e("Basic Settings:");?></th>
 		<td>
-		<?php echo wpi_checkbox("group=pp_invoice_user_settings&name=show_address_on_invoice&label=Display my address on invoice page (set your address under <a href='profile.php#billing_info'>Profile</a>).&value=true", $user_settings[show_address_on_invoice]); ?><br />
-		<?php _e("Tax Label:"); echo wpi_input("group=pp_invoice_user_settings&name=tax_label&value={$user_settings[tax_label]}&style=width: 80px;"); ?><br />
+		<?php echo wpi_checkbox("group=pp_invoice_user_settings&name=show_address_on_invoice&label=Display my address on invoice page (set your address under <a href='profile.php#billing_info'>Profile</a>).&value=true", $user_settings[ 'show_address_on_invoice' ]); ?><br />
+		<?php _e("Tax Label:"); echo wpi_input("group=pp_invoice_user_settings&name=tax_label&value={$user_settings[ 'tax_label' ]}&style=width: 80px;"); ?><br />
 		</td>
 	</tr>
 	<tr>
 		<th><?php _e("Payment Settings:");?></th>
 		<td>
-			<?php echo wpi_checkbox("group=pp_invoice_user_settings&name=payment_received_notification&label=Notify me when payment is made.&value=true", $user_settings[payment_received_notification]); ?><br />
+			<?php echo wpi_checkbox("group=pp_invoice_user_settings&name=payment_received_notification&label=Notify me when payment is made.&value=true", $user_settings[ 'payment_received_notification' ]); ?><br />
 		</td>
 	</tr>
 	<tr>
@@ -71,7 +71,7 @@
 		<td>
 			<?php echo pp_invoice_draw_inputfield('pp_invoice_user_settings[paypal_address]',$user_settings['paypal_address']); ?>
 			<?php if( current_user_can( 'manage_options' ) ) {?>
-				<?php echo wpi_checkbox('group=pp_invoice_user_settings&name=paypal_sandbox&value=true&label=Use <a href="https://developer.paypal.com/">PayPal Sandbox</a> Mode',$user_settings[paypal_sandbox]); ?>
+				<?php echo wpi_checkbox('group=pp_invoice_user_settings&name=paypal_sandbox&value=true&label=Use <a href="https://developer.paypal.com/">PayPal Sandbox</a> Mode',$user_settings[ 'paypal_sandbox' ]); ?>
 			<?php } ?>
 		</td>
 	</tr>
@@ -81,33 +81,33 @@
 	</tr>
 	<tr class="gateway_info">
 		<th><a class="pp_invoice_tooltip" title="<?php _e('Your credit card processor will provide you with a gateway username.', 'prospress'); ?>"><?php _e('Gateway Username', 'prospress'); ?></a></th>
-		<td><?php echo pp_invoice_draw_inputfield('pp_invoice_user_settings[gateway_username]',$user_settings[gateway_username], ' AUTOCOMPLETE="off"  '); ?></td>
+		<td><?php echo pp_invoice_draw_inputfield('pp_invoice_user_settings[gateway_username]',$user_settings[ 'gateway_username' ], ' AUTOCOMPLETE="off"  '); ?></td>
 	</tr>
 	<tr class="gateway_info">
 		<th><a class="pp_invoice_tooltip" title="<?php _e("You will be able to generate this in your credit card processor's control panel.", 'prospress'); ?>"><?php _e('Gateway Transaction Key', 'prospress'); ?></a></th>
-		<td><?php echo pp_invoice_draw_inputfield('pp_invoice_user_settings[gateway_tran_key]',$user_settings[gateway_tran_key], ' AUTOCOMPLETE="off"  '); ?></td>
+		<td><?php echo pp_invoice_draw_inputfield('pp_invoice_user_settings[gateway_tran_key]',$user_settings[ 'gateway_tran_key' ], ' AUTOCOMPLETE="off"  '); ?></td>
 	<tr class="gateway_info payment_info">
 		<th width="300"><a class="pp_invoice_tooltip"  title="<?php _e('This is the URL provided to you by your credit card processing company.', 'prospress'); ?>"><?php _e('Gateway URL', 'prospress'); ?></a></th>
-		<td><?php echo pp_invoice_draw_inputfield('pp_invoice_user_settings[gateway_url]',$user_settings[gateway_url]); ?><br />
+		<td><?php echo pp_invoice_draw_inputfield('pp_invoice_user_settings[gateway_url]',$user_settings[ 'gateway_url' ]); ?><br />
 			<span class="pp_invoice_click_me" onclick="jQuery('#pp_invoice_user_settings\\[gateway_url\\]').val('https://secure.authorize.net/gateway/transact.dll');">Authorize.Net</span> |
 			<span class="pp_invoice_click_me" onclick="jQuery('#pp_invoice_user_settings\\[gateway_url\\]').val('https://test.authorize.net/gateway/transact.dll');">Authorize.Net Developer</span> 
 		</td>
 	</tr>
 	<tr class="gateway_info">
 		<th width="300"><a class="pp_invoice_tooltip"  title="<?php _e('Get this from your credit card processor. If the transactions are not going through, this character is most likely wrong.', 'prospress'); ?>"><?php _e('Delimiter Character', 'prospress'); ?></a></th>
-		<td><?php echo pp_invoice_draw_inputfield('pp_invoice_user_settings[gateway_delim_char]',$user_settings[gateway_delim_char]); ?>
+		<td><?php echo pp_invoice_draw_inputfield('pp_invoice_user_settings[gateway_delim_char]',$user_settings[ 'gateway_delim_char' ]); ?>
 	</tr>
 	<tr class="gateway_info">
 		<th width="300"><a class="pp_invoice_tooltip" title="<?php _e('Authorize.net default is blank. Otherwise, get this from your credit card processor. If the transactions are going through, but getting strange responses, this character is most likely wrong.', 'prospress'); ?>"><?php _e('Encapsulation Character', 'prospress'); ?></a></th>
-		<td><?php echo pp_invoice_draw_inputfield('pp_invoice_user_settings[gateway_encap_char]',$user_settings[gateway_encap_char]); ?></td>
+		<td><?php echo pp_invoice_draw_inputfield('pp_invoice_user_settings[gateway_encap_char]',$user_settings[ 'gateway_encap_char' ]); ?></td>
 	</tr>
 	<tr class="gateway_info">
 		<th width="300"><?php _e('Security: MD5 Hash', 'prospress'); ?></th>
-		<td><?php echo pp_invoice_draw_inputfield('pp_invoice_user_settings[gateway_MD5Hash]',$user_settings[gateway_MD5Hash]); ?></td>
+		<td><?php echo pp_invoice_draw_inputfield('pp_invoice_user_settings[gateway_MD5Hash]',$user_settings[ 'gateway_MD5Hash' ]); ?></td>
 	</tr>
 	<tr class="gateway_info">
 		<th><?php _e('Delim Data:', 'prospress'); ?></th>
-		<td><?php echo pp_invoice_draw_select('pp_invoice_user_settings[gateway_delim_data]',array("TRUE" => "True","FALSE" => "False"), $user_settings[gateway_delim_data]); ?></td>
+		<td><?php echo pp_invoice_draw_select('pp_invoice_user_settings[gateway_delim_data]',array("TRUE" => "True","FALSE" => "False"), $user_settings[ 'gateway_delim_data' ]); ?></td>
 	</tr>
 <?php endif;?>
 	<tr class="draft_info">
@@ -115,7 +115,7 @@
 	</tr>
 	<tr class="draft_info">
 		<th><?php _e( 'Draft Instructions:', 'prospress' ); ?></th>
-		<td><textarea name='pp_invoice_user_settings[draft_text]' cols='50%' rows='5'><?php echo $user_settings[draft_text]; ?></textarea></td>
+		<td><textarea name='pp_invoice_user_settings[draft_text]' cols='50%' rows='5'><?php echo $user_settings[ 'draft_text' ]; ?></textarea></td>
 	</tr>
 </table>
 <div class="clear"></div>
