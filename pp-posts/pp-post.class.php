@@ -54,7 +54,6 @@ class PP_Post {
 	 */
 	public function activate(){
 		global $wpdb;
-
 		if( $this->get_index_id() == false ){ // Need an index page for this post type
 			$index_page = array();
 			$index_page['post_title'] = $this->labels[ 'name' ];
@@ -63,7 +62,8 @@ class PP_Post {
 			$index_page['post_content'] = __( 'This is the index for your ' . $this->labels[ 'name' ] . '. Your ' . $this->labels[ 'name' ] . ' will automatically show up here, but you change this text to provide an introduction or instructions.', 'prospress' );
 			$index_page['post_type'] = 'page';
 
-			wp_insert_post( $index_page );
+			$post_id = wp_insert_post( $index_page );
+			add_option( 'pp_index_page' , $post_id );
 
 		} else { // Index page exists, make sure it's published as it get's trashed on plugin deactivation
 			$index_page = get_post( $this->get_index_id(), ARRAY_A );
@@ -335,12 +335,9 @@ class PP_Post {
 	 * Template tag - is the current page/post the index for this market system's posts.
 	 */
 	public function is_index() {
-		global $post;
-
-		if( isset( $post->post_name ) && $post->post_name == $this->name )
-			return true;
-		else
-			return false;
+		global $wp_query;
+		$thePostID = $wp_query->post->ID;
+		return ( $thePostID == get_option( 'pp_index_page') )? true : false ;
 	}
 
 
@@ -356,16 +353,11 @@ class PP_Post {
 			return false;
 	}
 
-
+	/*
+	 *	Retrieves stored index page ID, returns false by default if option does not yet exist.
+	 */
 	public function get_index_id() {
-		global $wpdb;
-
-		$index_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . $this->name . "'" );
-
-		if( $index_id == NULL)
-			return false; 
-		else 
-			return $index_id;
+		return get_option( 'pp_index_page');
 	}
 
 	public function get_index_permalink() {
@@ -487,6 +479,7 @@ class PP_Post {
 			return false;
 
 		wp_delete_post( $this->get_index_id() );
+		delete_option('pp_index_page');
 
 		flush_rewrite_rules();
 	}

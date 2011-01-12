@@ -52,7 +52,37 @@ function pp_posts_install(){
 		pp_add_default_caps();
 }
 add_action( 'pp_activation', 'pp_posts_install' );
+/**
+ * Sets up Prospress environment with taxonomies enabled and a default taxonomy installed
+ *
+ * @uses add_option() declare & initialise taxonomies option
+ *
+ */
+function pp_taxonomies_install() {
+	global $market_systems;
 
+	$market = $market_systems[ $this->name ];
+//error_log(print_r($market,true));
+	
+	add_option( 'pp_use_custom_taxonomies' , true );
+
+		// $args = array( 'label' => 'cat' , object_type => '', 'capabilities' => array( 'assign_terms' => 'edit_prospress_posts' ) , 'labels' => array( 'singular_label' => 'categories') );
+
+
+	// if( class_exists( 'PP_Taxonomy' ) )
+	// 	$taxonomy = new PP_Taxonomy( 'category' , $args );
+
+}
+/**
+ * Register Prospress custom taxonomies settings
+ *
+ * @package Prospress
+ * @since 1.01
+ */
+function pp_taxonomies_options() {
+	register_setting( 'pp_core_options' , 'pp_use_custom_taxonomies' );
+}
+add_action('admin_init' , 'pp_taxonomies_options' );
 
 /** 
  * Create first prospress auction-type post "Hello World"
@@ -482,7 +512,6 @@ function pp_taxonomies_option_page() {
 ?>
 	<h3><?php _e( 'Custom Taxonomies', 'prospress' )?></h3>
 	<p><?php echo sprintf( __( 'Custom taxonomies provide a way to classify %s. If your site lists more than 20 %s at a time, you should use custom taxonomies.', 'prospress' ), $market->label, $market->label ); ?></p>
-
 	<label for="pp_use_custom_taxonomies">
 		<input type="checkbox" value='true' id="pp_use_custom_taxonomies" name="pp_use_custom_taxonomies"<?php checked( (boolean)get_option( 'pp_use_custom_taxonomies' ) ); ?> />
 		<?php _e( 'Use custom taxonomies' ); ?>
@@ -498,8 +527,8 @@ add_action( 'pp_core_settings_page', 'pp_taxonomies_option_page' );
  * 
  * @package Prospress
  * @subpackage Posts
- * @since 0.1
- */
+ * @since 0.1				DEPRECATED 1.01
+ *//*				
 function pp_taxonomies_whitelist( $whitelist_options ) {
 
 	$whitelist_options[ 'general' ][] = 'pp_use_custom_taxonomies';
@@ -507,7 +536,7 @@ function pp_taxonomies_whitelist( $whitelist_options ) {
 	return $whitelist_options;
 }
 add_filter( 'pp_options_whitelist', 'pp_taxonomies_whitelist' );
-
+*/
 
 /**
  * A boolean function to centralise the logic for whether the current page is an admin page for this post type.
@@ -537,8 +566,7 @@ function is_pp_post_admin_page(){
  * @since 0.1
  */
 function is_using_custom_taxonomies(){
-
-	if( get_option( 'pp_use_custom_taxonomies' ) == 'true' )
+	 if( get_option( 'pp_use_custom_taxonomies' ) == 'true' )
 		return true;
 	else
 		return false;
