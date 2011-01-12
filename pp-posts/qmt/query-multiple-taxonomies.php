@@ -188,43 +188,46 @@ class PP_QMT_Core {
 
 		global $wpdb;
 		// get published posts to ensure non-listing of taxonomies without active items
-		$publish = $wpdb->get_col("
-			SELECT ID FROM $wpdb->posts 
+		$publish = implode( ',', $wpdb->get_col(
+			"SELECT ID FROM $wpdb->posts 
 			WHERE post_type = '$post_type'
-			AND post_status = 'publish' 
-		");
-		$completed = $wpdb->get_col("
-			SELECT ID FROM $wpdb->posts 
+			AND post_status = 'publish'"
+		) );
+		$publish = ( empty($publish) )? '0' : $publish;
+		$completed = implode(',', $wpdb->get_col(
+			"SELECT ID FROM $wpdb->posts 
 			WHERE post_type = '$post_type'
-			AND post_status = 'completed' 
-		");
-
-		$query = $wpdb->prepare("
-			SELECT term_id FROM (
+			AND post_status = 'completed'"
+		) );
+		$completed = ( empty($completed) )? '0' : $completed;
+		$query = $wpdb->prepare(
+			"SELECT term_id FROM (
 						SELECT DISTINCT term_id
 						FROM wp_term_relationships
 						JOIN wp_term_taxonomy USING (term_taxonomy_id)
 						WHERE taxonomy = %s
-						AND object_id IN (" . implode(',', $completed) . ")) AS tbl1
+						AND object_id IN ( ".$completed." )
+						) AS tbl1
 			WHERE term_id NOT IN (
 						SELECT DISTINCT term_id
 						FROM wp_term_relationships
 						JOIN wp_term_taxonomy USING (term_taxonomy_id)
-						WHERE taxonomy = 'taxonomy-for-the-dead'
-						AND object_id IN (" . implode(',', $publish) . "))
-		", $tax);
+						WHERE taxonomy = %s
+						AND object_id IN ( ".$publish." )
+						)",
+		$tax , $tax );
 		$exclude_ids = $wpdb->get_col($query);
-
+		
 		if ( empty( self::$post_ids ) )
-		return get_terms($tax, array('exclude' => implode(',', $exclude_ids)));
+			return get_terms($tax, array('exclude' => implode(',', $exclude_ids)));
 
-		$query = $wpdb->prepare("
-			SELECT DISTINCT term_id
+		$query = $wpdb->prepare(
+			"SELECT DISTINCT term_id
 			FROM $wpdb->term_relationships
 			JOIN $wpdb->term_taxonomy USING (term_taxonomy_id)
 			WHERE taxonomy = %s
-			AND object_id IN (" . implode(',', self::$post_ids) . ")
-		", $tax);
+			AND object_id IN (".implode(',', self::$post_ids).")"
+		, $tax);
 
 		$term_ids = $wpdb->get_col($query);
 
