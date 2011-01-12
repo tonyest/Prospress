@@ -2,12 +2,12 @@
 
 class PP_Taxonomy {
 
+	public $name;
+	public $admin_url;
+	public $market_type;
 	private $labels;	// An array with details of the market system to which this taxonomy belongs
 	protected $add_tax;
 	protected $edit_tax;
-	public $admin_url;
-	public $name;
-	public $market_type;
 
 	public function __construct( $name, $args ) {
 
@@ -110,7 +110,7 @@ class PP_Taxonomy {
 					} ?>
 					</tbody>
 				</table>
-				<p><?php printf( __( 'Note: Deleting a taxonomy does not delete the %s and taxonomy types associated with it.', 'prospress' ), $this->labels[ 'name' ] ); ?></p>
+				<p><?php printf( __( 'Note: Deleting a taxonomy does not delete the %s or terms associated with it.', 'prospress' ), $this->labels[ 'name' ] ); ?></p>
 			<?php
 			}else{ ?>
 				<p><?php printf( __( 'Taxonomies provide a way to categorise items based on unique characteristics. Well thought out taxonomies make it easier for buyers to find an item matching specific criteria.', 'prospress' ), $this->labels[ 'name' ] ) ?></p>
@@ -118,14 +118,13 @@ class PP_Taxonomy {
 				<p><a href="<?php echo $add_url; ?>" class="button add-new-h2"><?php _e( "Add New", 'prospress' ); ?></a></p>
 			<?php
 			}
-			echo '</div>';
+		echo '</div>';
 	}
 
 	public function edit_tax_page( $error = '', $label = '', $singular_label = '' ) {
 
 		if ( isset( $_GET[ 'edittax' ] ) ) {
 			check_admin_referer( 'pp_custom_taxonomy' );
-
 			$submit_name = __( 'Edit Taxonomy', 'prospress' );
 			$tax_to_edit = $_GET[ 'edittax' ];
 			$taxonomies = get_option( $this->name );
@@ -137,7 +136,6 @@ class PP_Taxonomy {
 			$tax_to_edit = '';
 			$pp_add_or_edit = $this->add_tax;
 		}
-
 		?>
 		<div class="wrap">
 		<?php 
@@ -164,7 +162,7 @@ class PP_Taxonomy {
 								<th scope="row"><?php _e( 'Taxonomy Name', 'prospress' ) ?> <span style="color:red;">*</span></th>
 								<td>
 									<input type="text" name="pp_custom_tax" tabindex="21" value="<?php echo esc_attr( $tax_to_edit ); ?>" />
-									<label><?php _e( 'Used to define the taxonomy. Make it short and sweet. e.g. artist', 'prospress' ); ?></label>
+									<label><?php _e( 'A URL-friendly name. It should be all lowercase and contain only letters, numbers, and hyphens. e.g. artist', 'prospress' ); ?></label>
 								</td>
 							</tr>
 
@@ -196,11 +194,11 @@ class PP_Taxonomy {
 	}
 
 	public function edit_taxonomies() {
-		global $wp_rewrite;
+		global $wpdb;
 
 		check_admin_referer( 'pp_custom_taxonomy' );
 
-		$tax_name = strip_tags( $_POST[ 'pp_custom_tax' ] );
+		$tax_name = sanitize_title( $_POST[ 'pp_custom_tax' ] );
 
 		if ( empty( $tax_name ) ) {
 			$this->edit_tax_page( __( 'Taxonomy name is required.', 'prospress' ), $_POST[ 'label' ], $_POST[ 'singular_label' ] );
@@ -220,16 +218,20 @@ class PP_Taxonomy {
 			$edit_tax_url = '<a href="' . add_query_arg( array( 'post_type' => $this->name, 'taxonomy' => $tax_name ), admin_url( 'edit-tags.php' ) ) . '">' . $this->labels[ 'name' ] . '</a>';
 			$msg = sprintf( __( 'Taxonomy created. You can add elements under the %s menu.', 'prospress' ), $edit_tax_url );
 		} elseif ( isset( $_POST[ $this->edit_tax ] ) ) {
+			$old_tax_name = $_GET['edittax'];
+			// Change existing terms for this taxonomy to be associated with its new name
+			$wpdb->update( $wpdb->term_taxonomy, array( 'taxonomy' => $tax_name ), array( 'taxonomy' => $old_tax_name ) );
 			unset( $taxonomies[ $_GET['edittax'] ] );
 			$msg = __('Taxonomy updated.', 'prospress' );
+			do_action( 'pp_taxonomy_edit', $old_tax_name, $tax_name );
 		}
 
 		$taxonomies[ $tax_name ] = $new_tax;
 
 		update_option( $this->name , $taxonomies );
 
-		flush_rewrite_rules();
-
+		$this->register_taxonomies();
+		flush_rewrite_rules(); // doesn't work for unknown reasons
 		$this->manage_taxonomies( $msg );
 	}
 
@@ -242,6 +244,8 @@ class PP_Taxonomy {
 		unset( $taxonomies[ $_GET['deltax'] ] );
 
 		update_option( $this->name, $taxonomies );
+
+		do_action( 'pp_taxonomy_delete', $_GET['deltax'] );
 
 		$this->manage_taxonomies( __('Taxonomy deleted.', 'prospress' ) );
 	}
@@ -265,21 +269,17 @@ class PP_Taxonomy {
 			$tax_type[ 'query_var' ] 		= $tax_name;
 			$tax_type[ 'rewrite' ] 			= array( 'slug' => $object_type . '/' . $tax_name, 'with_front' => false );
 			$tax_type[ 'capabilities' ] 	= array( 'assign_terms' => 'edit_prospress_posts' );
-			$tax_type[ 'labels' ][ 'search_items' ] 	= __( 'Search ', 'prospress' ) . $tax_type[ 'label' ];
-			$tax_type[ 'labels' ][ 'popular_items' ]	= __( 'Popular ', 'prospress' ) . $tax_type[ 'label' ];
-			$tax_type[ 'labels' ][ 'all_items' ] 		= __( 'All ', 'prospress' ) . $tax_type[ 'label' ];
-			$tax_type[ 'labels' ][ 'parent_item' ] 		= __( 'Parent ', 'prospress' ) . $tax_type[ 'label' ];
-			$tax_type[ 'labels' ][ 'parent_item_colon' ]= __( 'Parent ', 'prospress' ) . $tax_type[ 'label' ] . ':';
-			$tax_type[ 'labels' ][ 'edit_item' ]		= __( 'Edit ', 'prospress' ) . $tax_type[ 'labels' ][ 'singular_label' ];
-			$tax_type[ 'labels' ][ 'update_item' ]		= __( 'Update ', 'prospress' ) . $tax_type[ 'labels' ][ 'singular_label' ];
-			$tax_type[ 'labels' ][ 'add_new_item' ]		= __( 'Add New ', 'prospress' ) . $tax_type[ 'labels' ][ 'singular_label' ];
-			$tax_type[ 'labels' ][ 'new_item_name' ]	= __( 'New ', 'prospress' ) . $tax_type[ 'labels' ][ 'singular_label' ];
+			$tax_type[ 'labels' ][ 'search_items' ] 	= sprintf( __( 'Search %s', 'prospress' ), $tax_type[ 'label' ] );
+			$tax_type[ 'labels' ][ 'popular_items' ]	= sprintf( __( 'Popular %s', 'prospress' ), $tax_type[ 'label' ] );
+			$tax_type[ 'labels' ][ 'all_items' ] 		= sprintf( __( 'All %s', 'prospress' ), $tax_type[ 'label' ] );
+			$tax_type[ 'labels' ][ 'parent_item' ] 		= sprintf( __( 'Parent %s', 'prospress' ), $tax_type[ 'label' ] );
+			$tax_type[ 'labels' ][ 'parent_item_colon' ]= sprintf( __( 'Parent %s:', 'prospress' ), $tax_type[ 'label' ] );
+			$tax_type[ 'labels' ][ 'edit_item' ]		= sprintf( __( 'Edit %s', 'prospress' ), $tax_type[ 'labels' ][ 'singular_label' ] );
+			$tax_type[ 'labels' ][ 'update_item' ]		= sprintf( __( 'Update %s', 'prospress' ), $tax_type[ 'labels' ][ 'singular_label' ] );
+			$tax_type[ 'labels' ][ 'add_new_item' ]		= sprintf( __( 'Add New %s', 'prospress' ), $tax_type[ 'labels' ][ 'singular_label' ] );
+			$tax_type[ 'labels' ][ 'new_item_name' ]	=sprintf(  __( 'New %s', 'prospress' ), $tax_type[ 'labels' ][ 'singular_label' ] );
 
-			register_taxonomy( $tax_name,
-				$object_type,
-				$tax_type 
-				);
+			register_taxonomy( $tax_name, $object_type, $tax_type );
 		}
 	}
-	
 }

@@ -20,6 +20,6 @@
  
 	<div id="major-publishing-actions">
 		<img alt="" style="display: none;" id="ajax-loading" src="<?php echo admin_url('images/wpspin_light.gif');?>">
-		<input type="submit" value="<?php _e( 'Proceed to PayPal', 'prospress' ); ?>" accesskey="p" id="process_payment" class="button-primary" name="process_payment">
+		<input type="image" src="https://www.paypal.com/en_US/i/btn/btn_paynow_LG.gif" accesskey="p" id="process_payment" name="process_payment" alt="<?php _e( 'Proceed to PayPal', 'prospress' ); ?>">	
 	</div>
 </form>

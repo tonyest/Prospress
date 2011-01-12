@@ -97,9 +97,12 @@ class PP_Post {
 	 * @since 0.1
 	 */
 	public function template_redirects() {
-		global $post, $market_systems;
+		global $post, $market_systems, $wp_query, $paged;
+
 		$market = $market_systems[ $this->name ];
-		if ( is_using_custom_taxonomies() && is_pp_multitax() ) {
+
+		if ( is_pp_multitax() ) {
+
 			$taxonomy = esc_attr( get_query_var( 'taxonomy' ) );
 			$tax = get_taxonomy( $taxonomy );
 			$term = esc_attr( get_query_var( 'term' ) );
@@ -186,6 +189,10 @@ class PP_Post {
 								'not_found'		=> sprintf( __( 'No %s found', 'prospress' ), $this->labels[ 'name' ] ),
 								'not_found_in_trash' => sprintf( __( 'No %s found in Trash', 'prospress' ), $this->labels[ 'name' ] ) )
 					);
+
+		$args = apply_filters( 'prospress_post_type_args', $args );
+		$args = apply_filters( $this->name . '-post_type_args', $args );
+
 		register_post_type( $this->name, $args );
 	}
 
@@ -285,7 +292,7 @@ class PP_Post {
 	 * A boolean function to centralise the logic for whether the current page is an admin page for this post type.
 	 *
 	 * This is required when enqueuing scripts, styles and performing other Prospress post admin page 
-	 * specific functions so it makes sense to centralise it. 
+	 * specific functions.
 	 * 
 	 * @package Prospress
 	 * @subpackage Posts
@@ -294,7 +301,11 @@ class PP_Post {
 	public function is_post_admin_page(){
 		global $post;
 
-		if( $_GET[ 'post_type' ] == $this->name || $_GET[ 'post' ] == $this->name || $post->post_type == $this->name )
+		if( !is_admin() )
+			return false;
+		elseif( isset( $post->post_type ) && $post->post_type == $this->name ) // edit page
+			return true;
+		elseif ( isset( $_GET[ 'post_type' ] ) && ( $_GET[ 'post_type' ] == $this->name || $_GET[ 'post' ] == $this->name ) )  // admin list page
 			return true;
 		else
 			return false;
@@ -322,7 +333,6 @@ class PP_Post {
 	 * Template tag - is the current page/post the index for this market system's posts.
 	 */
 	public function is_index() {
-		global $post;
 		global $wp_query;
 		$thePostID = $wp_query->post->ID;
 		return ( $thePostID == get_option( 'pp_index_page') )? true : false ;
@@ -335,7 +345,7 @@ class PP_Post {
 	public function is_single() {
 		global $post;
 
-		if( $post->post_type == $this->name )
+		if( isset( $post->post_type ) && $post->post_type == $this->name )
 			return true;
 		else
 			return false;

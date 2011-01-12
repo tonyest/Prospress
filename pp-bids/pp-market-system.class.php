@@ -77,7 +77,7 @@ abstract class PP_Market_System {
 
 		$this->post	= new PP_Post( $this->name, array( 'labels' => $this->labels ) );
 
-		if( is_using_custom_taxonomies() && class_exists( 'PP_Taxonomy' ) )
+		if( class_exists( 'PP_Taxonomy' ) )
 			$this->taxonomy = new PP_Taxonomy( $this->name, array( 'labels' => $this->labels ) );
 
 		if( $this->adds_post_fields != null ){
@@ -114,7 +114,8 @@ abstract class PP_Market_System {
 		//add_filter( 'posts_where', array( &$this, 'admin_filter_bids' ) );
 
 		// For Ajax & other scripts
-		add_action( 'wp_print_scripts', array( &$this, 'enqueue_bid_form_scripts' ) );
+		add_action( 'wp_print_scripts', array( &$this, 'enqueue_auction_scripts' ) );
+
 		add_action( 'admin_menu', array( &$this, 'enqueue_bid_admin_scripts' ) );
 		add_action( 'admin_head', array( &$this, 'admin_css' ) );
 
@@ -165,7 +166,7 @@ abstract class PP_Market_System {
 		$the_post = ( empty ( $post ) ) ? get_post( $post_id) : $post;
 
 		if ( $this->is_post_valid( $post_id ) ) {
-			$form .= '<form id="bid_form-' . $post_id . '" class="bid-form" method="post" action="">';
+			$form = '<form id="bid_form-' . $post_id . '" class="bid-form" method="post" action="">';
 			$form .= '<div class="bid-updated bid_msg" >' . $this->get_message() . '</div><div>';
 
 			$form .= $this->bid_form_fields( $post_id );
@@ -177,7 +178,7 @@ abstract class PP_Market_System {
 			$form .= '<input name="bid_submit" type="submit" id="bid_submit" value="' . $this->labels[ 'bid_button' ] .'" />';
 			$form .= '</div></form>';
 		} else {
-			$form .= '<div id="bid_form-' . $post_id . '" class="bid-form">';
+			$form = '<div id="bid_form-' . $post_id . '" class="bid-form">';
 			$form .= '<div class="bid-updated bid_msg" >' . $this->get_message() . '</div>';
 			$form .= '</div>';
 		}
@@ -348,14 +349,15 @@ abstract class PP_Market_System {
 	 * Prints the display name of the winning bidder for a post, optionally specified with $post_id.
 	 */
 	public function the_winning_bidder( $post_id = '', $echo = true ) {
-		global $user_ID, $display_name;
+		global $user_ID;
 
-		get_currentuserinfo(); // to set global $display_name
+		get_currentuserinfo(); // to set $user_ID
 
-		$winning_bidder = $this->get_winning_bid( $post_id )->post_author;
+		$winning_bid 	= $this->get_winning_bid( $post_id );
+		$winning_bidder = ( isset( $winning_bid->post_author ) ) ? $winning_bid->post_author : '';
 
-		if ( !empty( $winning_bidder ) )
-			$winning_bidder = ( $winning_bidder == $user_ID) ? __( 'You', 'prospress' ) : get_userdata( $winning_bidder )->display_name;
+		if ( !empty( $winning_bid->post_author ) )
+			$winning_bidder = ( $winning_bid->post_author == $user_ID) ? __( 'You', 'prospress' ) : get_userdata( $winning_bid->post_author )->display_name;
 		else 
 			$winning_bidder = 'No bids.';
 
@@ -675,7 +677,7 @@ abstract class PP_Market_System {
 	public function admin_pages() {
 		global $submenu;
 
-		if( false !== stripos($_SERVER['REQUEST_URI'], 'post-new.php?post_type=' . $this->bid_object_name ) || get_post_type( $_GET[ 'post' ] ) ==  $this->bid_object_name )
+		if( false !== stripos( $_SERVER['REQUEST_URI'], 'post-new.php?post_type=' . $this->bid_object_name ) || ( isset( $_GET[ 'post' ]) && get_post_type( $_GET[ 'post' ] ) ==  $this->bid_object_name ) )
 			wp_redirect( get_option('siteurl') . '/wp-admin/edit.php?post_type=' . $this->bid_object_name );
 
 		//Remove Add New Menu
@@ -802,12 +804,14 @@ abstract class PP_Market_System {
 		}
 	}
 
-	public function enqueue_bid_form_scripts(){
+	public function enqueue_auction_scripts(){
 		if( is_admin() || ( !$this->is_index() && !$this->is_single() ) )
 			return;
 
   		wp_enqueue_script( 'bid-form-ajax', PP_BIDS_URL . '/bid-form-ajax.js', array( 'jquery' ) );
 		wp_localize_script( 'bid-form-ajax', 'bidi18n', array( 'siteUrl' => get_bloginfo('wpurl') ) );
+		wp_enqueue_script( 'final-countdown', PP_PLUGIN_URL . '/js/final-countdown.js', array( 'jquery' ) );
+		wp_localize_script( 'final-countdown', 'bidi18n', array( 'siteUrl' => get_bloginfo('wpurl') ) );
 	}
 
 	public function enqueue_bid_admin_scripts(){
@@ -817,7 +821,7 @@ abstract class PP_Market_System {
 	public function admin_css(){
 		global $current_screen;
 
-		if( $current_screen->post_type == $this->bid_object_name ){
+		if( isset( $current_screen->post_type ) && $current_screen->post_type == $this->bid_object_name ){
 			echo '<style type="text/css">.add-new-h2,.actions select:first-child,#doaction';
 			echo ( !current_user_can( 'edit_others_prospress_posts' ) ) ? ',.count' : '';
 			echo '{display: none;}</style>';  

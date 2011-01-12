@@ -101,12 +101,11 @@ class PP_Sort_Query {
 	static function add_filters( $obj ) {
 		global $market_systems;
 
-		// Fix YARPP incompatibility
-		if( is_array( $obj->query_vars[ 'post_type' ] ) )
-			return;
-
 		// Don't touch the main query or queries for non-Prospress posts
 		if ( $GLOBALS[ 'wp_query' ] == $obj || !array_key_exists( $obj->query_vars['post_type'], $market_systems ) )
+			return;
+		// Fix YARPP incompatibility
+		else if( is_array( $obj->query_vars[ 'post_type' ] ) )
 			return;
 			
 		add_filter( 'posts_join_paged', array(__CLASS__, 'posts_join_paged' ) );
@@ -129,10 +128,10 @@ class PP_Sort_Query {
 		else
 			$order = 'DESC';
 
-		if  ('price'==$orderby){
-			$price_meta_value 	= "CAST(meta_value AS UNSIGNED) ";			
-			$sql = $price_meta_value. " $order";
-			
+		if  ( 'price'==$orderby ){
+			$price_meta_value = "CAST(meta_value AS DECIMAL(20,2)) ";
+			$sql = $price_meta_value . " $order";
+
 		} elseif ( 'end' == $orderby ) {
 			$sql = "(
 				SELECT meta_value
@@ -156,24 +155,24 @@ class PP_Sort_Query {
 		list( $orderby, $order ) = explode( '-', $sort );
 
 		if ( 'price' == $orderby ) {
-		$sql = "	JOIN (
-				SELECT post_parent AS post_id,meta_key,meta_value,post_parent parent
-				FROM wp_postmeta
-				JOIN wp_posts
-					ON ID=post_id
-				WHERE meta_key = 'winning_bid_value'
-				UNION ALL 
-				SELECT post_id,meta_key,meta_value,post_parent parent
-				FROM wp_postmeta
-				JOIN wp_posts
-					ON ID=post_id
-				WHERE meta_key ='start_price'
-				AND post_id NOT IN (
-					SELECT post_parent
-					FROM wp_posts
-					WHERE post_status='winning')
-			) AS newmeta 
-				ON ID = post_id AND (meta_key = 'start_price' OR meta_key = 'winning_bid_value')";
+			$sql = "JOIN (
+						SELECT post_parent AS post_id,meta_key,meta_value
+						FROM $wpdb->postmeta
+						JOIN $wpdb->posts
+							ON $wpdb->posts.ID = $wpdb->postmeta.post_id
+						WHERE meta_key = 'winning_bid_value'
+						UNION ALL 
+						SELECT post_id,meta_key,meta_value
+						FROM $wpdb->postmeta
+						JOIN $wpdb->posts
+							ON $wpdb->posts.ID = $wpdb->postmeta.post_id
+						WHERE meta_key ='start_price'
+						AND post_id NOT IN (
+							SELECT post_parent
+							FROM $wpdb->posts
+							WHERE post_status = 'winning')
+					) AS new_meta
+						ON $wpdb->posts.ID = post_id AND (meta_key = 'start_price' OR meta_key = 'winning_bid_value')";
 		}
 		return $sql;
 	}

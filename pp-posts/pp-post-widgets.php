@@ -50,9 +50,9 @@ class PP_Tag_Cloud_Widget extends WP_Widget {
 
 		$current_taxonomy = $this->get_current_taxonomy($instance);
 		?>
-		<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:') ?></label>
+		<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:', 'prospress' ) ?></label>
 		<input type="text" class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" value="<?php if (isset ( $instance['title'])) {echo esc_attr( $instance['title'] );} ?>" /></p>
-		<p><label for="<?php echo $this->get_field_id('taxonomy'); ?>"><?php _e('Taxonomy:') ?></label>
+		<p><label for="<?php echo $this->get_field_id('taxonomy'); ?>"><?php _e('Taxonomy:', 'prospress' ) ?></label>
 		<select class="widefat" id="<?php echo $this->get_field_id('taxonomy'); ?>" name="<?php echo $this->get_field_name('taxonomy'); ?>">
 		<?php foreach ( get_object_taxonomies( $market_systems[ 'auctions' ]->name() ) as $taxonomy ) :
 				$tax = get_taxonomy( $taxonomy );
@@ -67,8 +67,7 @@ class PP_Tag_Cloud_Widget extends WP_Widget {
 			return $instance['taxonomy'];
 	}
 }
-if( is_using_custom_taxonomies() )
-	add_action( 'widgets_init', create_function( '', 'return register_widget("PP_Tag_Cloud_Widget");' ) );
+add_action( 'widgets_init', create_function( '', 'return register_widget("PP_Tag_Cloud_Widget");' ) );
 
 /**
  * A list of the taxonomy items that apply to the current Prospress post
@@ -122,8 +121,7 @@ class PP_Taxonomies_List_Widget extends WP_Widget {
 		return $instance;
 	}
 }
-if( is_using_custom_taxonomies() )
-	add_action( 'widgets_init', create_function( '', 'return register_widget("PP_Taxonomies_List_Widget");' ) );
+add_action( 'widgets_init', create_function( '', 'return register_widget("PP_Taxonomies_List_Widget");' ) );
 
 
 /**
@@ -152,8 +150,7 @@ class PP_Countdown_Widget extends WP_Widget {
 		echo $before_title;
 		echo ( $instance['title'] ) ? $instance['title'] : __( 'Ending:', 'prospress' );
 		echo $after_title;
-
-		echo '<div class="countdown">';
+		echo "<div class=\"countdown\" id=\"".get_post_end_time( $the_ID, 'timestamp', 'gmt' )."\">";
 		the_post_end_time();
 		echo '</div>';
 

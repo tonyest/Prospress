@@ -66,5 +66,16 @@ function pp_register_plugin_links( $links, $file ) {
 }
 add_filter( 'plugin_row_meta', 'pp_register_plugin_links', 10, 2 );
 
+/**
+ * Clean up database meta deprecated beteen versions.
+ *
+ * @package Prospress
+ * @since 1.1
+ */
+function pp_update () {
+//	admin settings option for taxonomies deprecated v1.1
+	delete_option( 'pp_use_custom_taxonomies' );
+}
+add_action( 'pp_activation', 'pp_update' );
 
-
+?>

@@ -5,7 +5,7 @@
 */
 
 // Hide errors if using PHP4, otherwise we get many html_entity_decode() errors
-if (phpversion() <= 5 ) { ini_set('error_reporting', 0); }
+if ( phpversion() <= 5 ) { ini_set('error_reporting', 0); }
 
 //Delete any invoices associated with a post that is being deleted.	
 function pp_invoice_delete_post( $post_id ) {
@@ -63,7 +63,7 @@ function pp_invoice_user_settings( $what, $user_id = false ) {
 		$user_id = $user_ID;
 
 	// Load user ALL settings
-	$user_settings = get_usermeta( $user_id, 'pp_invoice_settings' );
+	$user_settings = get_user_meta( $user_id, 'pp_invoice_settings', true );
 
 	// If there are no settin found, load defaults
  	if( !is_array( $user_settings ) || count( $user_settings ) < 1 )	{
@@ -1486,8 +1486,7 @@ function pp_invoice_user_accepted_payments( $payee_id ) {
 
 function pp_invoice_accepted_payment( $invoice_id = 'global' ) {
 
-	// fix the occasional issue with empty value being passed
-	if(empty( $invoice_id ))
+	if( empty( $invoice_id ) )
 		$invoice_id = "global";
 
  	if( $invoice_id == 'global' ) {

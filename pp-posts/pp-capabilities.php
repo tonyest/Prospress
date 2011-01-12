@@ -45,6 +45,7 @@ function pp_capabilities_settings_page() {
 		$roles[ $key ]->display_name = $value;
 	}
 	?>
+
 	<div class="prospress-capabilities">
 		<h3><?php _e( 'Capabilities', 'prospress' ); ?></h3>
 		<p><?php printf( __( 'All registered users can make bids, but you can control which users are able to publish and edit %s.', 'prospress' ), $post_type ); ?></p>
@@ -53,9 +54,8 @@ function pp_capabilities_settings_page() {
 			<h4><?php printf( __( "Publish %s", 'prospress' ), $post_type ); ?></h4>
 			<?php foreach ( $roles as $role ): ?>
 			<label for="<?php echo $role->name; ?>-publish">
-				<input type="checkbox" id="<?php echo $role->name; ?>-publish" 
-					name="pp_capabilities[publish][<?php echo $role->name; ?>]"
-					<?php checked( $role->capabilities[ 'publish_prospress_posts' ], 1 ); ?> />
+				<input type="checkbox" id="<?php echo $role->name; ?>-publish" name="<?php echo $role->name; ?>-publish"<?php checked( $role->capabilities[ 'publish_prospress_posts' ], 1 ); ?> />
+
 				<?php echo $role->display_name; ?>
 			</label>
 			<?php endforeach; ?>
@@ -116,6 +116,7 @@ function pp_capabilities_roleset($pp_capabilities) {
 			$wp_roles->remove_cap( $role , 'delete_prospress_posts' );	
 			$wp_roles->remove_cap( $role , 'edit_prospress_posts' );
 		}
+
 		//View Private Auctions
 		if ( isset( $pp_capabilities['private'][$role] ) ) {
 			$wp_roles->add_cap( $role , 'read_private_prospress_posts' );

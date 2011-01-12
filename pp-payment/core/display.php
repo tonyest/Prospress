@@ -48,25 +48,29 @@ function pp_invoice_invoice_row($invoice, $page) {
 	}
 
 	// Color coding
-	if($invoice->is_paid) $class_settings .= " alternate ";
-	if($invoice->is_archived) $class_settings .= " pp_invoice_archived ";
+	$class_settings = "";
+	$class_settings .= ( $invoice->is_paid ) ? " alternate " : "";
+	$class_settings .= ( $invoice->is_archived ) ? " pp_invoice_archived " : "";
 
 	// Days Since Sent
-	if($invoice->is_paid) { 
+	if( $invoice->is_paid ) { 
 		$days_since = "<span style='display:none;'>-1</span>".__(' Paid', 'prospress'); }
 	else { 
-		if($invoice->sent_date) {
-
-		$date1 = $invoice->sent_date;
-		$date2 = date("Y-m-d", time());
-		$difference = abs(strtotime($date2) - strtotime($date1));
-		$days = round(((($difference/60)/60)/24), 0);
-		if($days == 0) { $days_since = "<span style='display:none;'>$days</span>".__('Sent Today. ', 'prospress'); }
-		elseif($days == 1) { $days_since = "<span style='display:none;'>$days</span>".__('Sent Yesterday. ', 'prospress'); }
-		elseif($days > 1) { $days_since = "<span style='display:none;'>$days</span>".sprintf(__('Sent %s days ago. ', 'prospress'),$days); }
+		if( isset( $invoice->sent_date ) ) {
+			$date1 = $invoice->sent_date;
+			$date2 = date( "Y-m-d", time() );
+			$difference = abs( strtotime( $date2 ) - strtotime( $date1 ) );
+			$days = round( ( ( ( $difference/60 )/60 )/24 ), 0 );
+			if( $days == 0 ) { 
+				$days_since = "<span style='display:none;'>$days</span>".__('Sent Today. ', 'prospress' ); 
+			} elseif( $days == 1) { 
+				$days_since = "<span style='display:none;'>$days</span>".__('Sent Yesterday. ', 'prospress' ); 
+			} elseif( $days > 1 ) { 
+				$days_since = "<span style='display:none;'>$days</span>".sprintf(__('Sent %s days ago. ', 'prospress'), $days ); 
+			}
+		} else {
+			$days_since ="<span style='display:none;'>999</span>".__('Not Sent', 'prospress');	
 		}
-		else {
-		$days_since ="<span style='display:none;'>999</span>".__('Not Sent', 'prospress');	}
 	}
 
 	// Setup row actions
@@ -75,13 +79,13 @@ function pp_invoice_invoice_row($invoice, $page) {
 		$row_actions = 	"<div class='row-actions'>";
 
 		if(!$invoice->is_paid)			
-			$row_actions .= "<span class='edit'><a href='$invoice_send_pay_link'>Send Invoice</a> | </span>";
+			$row_actions .= "<span class='edit'><a href='$invoice_send_pay_link'>" . __( "Send Invoice", "prospress" ) . "</a> | </span>";
 
 		if($invoice->is_archived)
-			$row_actions .= "<span class='unarchive'><a href='$overview_link&pp_invoice_action=unrachive_invoice&multiple_invoices[0]=$invoice_id' class=''>Un-Archive</a> </span>";
+			$row_actions .= "<span class='unarchive'><a href='$overview_link&pp_invoice_action=unrachive_invoice&multiple_invoices[0]=$invoice_id' class=''>" . __( "Un-Archive", "prospress" ) . "</a> </span>";
 
 		if(!$invoice->is_archived)
-			$row_actions .= "<span class='archive'><a href='$overview_link&pp_invoice_action=archive_invoice&multiple_invoices[0]=$invoice_id' class=''>Archive</a>  </span>";
+			$row_actions .= "<span class='archive'><a href='$overview_link&pp_invoice_action=archive_invoice&multiple_invoices[0]=$invoice_id' class=''>" . __( "Archive", "prospress" ) . "</a></span>";
 
 		// $row_actions .= "<span class='delete'><a onclick='return pp_invoice_confirm_delete();' href='$overview_link&pp_invoice_action=delete_invoice&multiple_invoices[0]=$invoice_id' class='submitdelete'>Delete</a></span>";		
 		$row_actions .= "</div>";
@@ -91,89 +95,77 @@ function pp_invoice_invoice_row($invoice, $page) {
 		$row_actions = 	"<div class='row-actions'>";
 
 		if(!$invoice->is_paid)
-			$row_actions .= "<span class='edit'><a href='$invoice_send_pay_link'>Make Payment</a> | </span>";
+			$row_actions .= "<span class='edit'><a href='$invoice_send_pay_link'>" . __( "Make Payment", "prospress" ) . "</a> | </span>";
 
 		if($invoice->is_archived)
-			$row_actions .= "<span class='unarchive'><a href='$overview_link&pp_invoice_action=unrachive_invoice&multiple_invoices[0]=$invoice_id' class=''>Un-Archive</a>  </span>";
+			$row_actions .= "<span class='unarchive'><a href='$overview_link&pp_invoice_action=unrachive_invoice&multiple_invoices[0]=$invoice_id' class=''>" . __( "Un-Archive", "prospress" ) . "</a>  </span>";
 
 		if(!$invoice->is_archived)
-			$row_actions .= "<span class='archive'><a href='$overview_link&pp_invoice_action=archive_invoice&multiple_invoices[0]=$invoice_id' class=''>Archive</a>  </span>";
+			$row_actions .= "<span class='archive'><a href='$overview_link&pp_invoice_action=archive_invoice&multiple_invoices[0]=$invoice_id' class=''>" . __( "Archive", "prospress" ) . "</a>  </span>";
 
 		$row_actions .= "</div>";
 
 	}
 
 	// Setup display
-
 	$r = "<tr id='invoice-$invoice_id' class='{$invoice_id}_row $class_settings'>";
 
 	foreach ( $columns as $column_name => $column_display_name ) {
-	$class = "class=\"$column_name column-$column_name\"";
+		$class = "class=\"$column_name column-$column_name\"";
 
-		$style = '';
-	if ( in_array($column_name, $hidden) )
-		$style = ' style="display:none;"';
+			$style = '';
+		if ( in_array($column_name, $hidden) )
+			$style = ' style="display:none;"';
 
-	$attributes = "$class$style";
+		$attributes = "$class$style";
 
-	switch ( $column_name ) {
-		case 'cb':
-			$r .= "<th scope='row' class='check-column'><input type='checkbox' name='multiple_invoices[]' value='$invoice_id'></th>";
-			break;
-		case 'subject':
-			$r .= "<td $attributes><a class='row-title' href='$invoice_send_pay_link' title='Edit $subject'>{$invoice->post_title}</a>";
-			$r .= $row_actions;
-			$r .= "</td>";
+		switch ( $column_name ) {
+			case 'cb':
+				$r .= "<th scope='row' class='check-column'><input type='checkbox' name='multiple_invoices[]' value='$invoice_id'></th>";
+				break;
+			case 'subject':
+				$r .= "<td $attributes><a class='row-title' href='$invoice_send_pay_link' title='Edit $invoice->post_title'>{$invoice->post_title}</a>";
+				$r .= $row_actions;
+				$r .= "</td>";
+				break;
+			case 'balance':
+				$r .= "<td $attributes>{$invoice->display_amount}</td>";
+				break;
+			case 'status':
+				$r .= "<td $attributes>". ($days_since ? " $days_since " : "-")."</td>";
+				break;
+			case 'date_sent':
+				$date_sent_string = strtotime(pp_invoice_meta($invoice_id,'sent_date')); 
+				if(!empty($date_sent_string))
+					$r .= "<td $attributes sortvalue='".date("Y-m-d", $date_sent_string)."'>". date("M d, Y", $date_sent_string). "</td>";
+				else 
+					$r .= "<td $attributes>&nbsp;</td>";
+				break;		
+			case 'invoice_id':
+				$r .= "<td $attributes>{$invoice->id}</td>";
+				break;			
+			case 'user_email':
+				$r .= "<td $attributes><a href='mailto:{{$user_class->user_email}'>{$user_class->user_email}</a></td>";
+				break;			
+			case 'display_name':
+				$r .= "<td $attributes>{$user_class->display_name}</td>";
+				break;	
+			case 'company_name':
+				$r .= "<td $attributes>{$user_class->company_name}&nbsp;</td>";
+				break;			
+			case 'due_date':
+				$due_date_string = strtotime($invoice->due_date_day . "-" . $invoice->due_date_month . "-" . $invoice->due_date_year);
+				if(!empty($due_date_string))
+					$r .= "<td $attributes sortvalue='".date(get_option('date_format'), $due_date_string)."'>" . date(get_option('date_format'), $due_date_string). "</td>";
+				else 
+					$r .= "<td $attributes>&nbsp;</td>";
+				break;			
+			default:
+				$r .= "<td $attributes>";
+					$r .= "$column_name";
+				$r .= "</td>";
 
-			break;
-		case 'balance':
-			$r .= "<td $attributes>{$invoice->display_amount}</td>";
-		break;			
-
-		case 'status':
-			$r .= "<td $attributes>". ($days_since ? " $days_since " : "-")."</td>";
-		break;		
-
-		case 'date_sent':
-			$date_sent_string = strtotime(pp_invoice_meta($invoice_id,'sent_date')); 
-			if(!empty($date_sent_string))
-				$r .= "<td $attributes sortvalue='".date("Y-m-d", $date_sent_string)."'>". date("M d, Y", $date_sent_string). "</td>";
-			else 
-				$r .= "<td $attributes>&nbsp;</td>";
-
-		break;		
-
-		case 'invoice_id':
-			$r .= "<td $attributes>{$invoice->id}</td>";
-		break;			
-
-		case 'user_email':
-			$r .= "<td $attributes><a href='mailto:{{$user_class->user_email}'>{$user_class->user_email}</a></td>";
-		break;			
-
-		case 'display_name':
-			$r .= "<td $attributes>{$user_class->display_name}</td>";
-		break;	
-
-		case 'company_name':
-			$r .= "<td $attributes>{$user_class->company_name}&nbsp;</td>";
-		break;			
-
-		case 'due_date':
-
-			$due_date_string = strtotime($invoice->due_date_day . "-" . $invoice->due_date_month . "-" . $invoice->due_date_year);
-			if(!empty($due_date_string))
-				$r .= "<td $attributes sortvalue='".date(get_option('date_format'), $due_date_string)."'>" . date(get_option('date_format'), $due_date_string). "</td>";
-			else 
-				$r .= "<td $attributes>&nbsp;</td>";
-		break;			
-
-		default:
-			$r .= "<td $attributes>";
-				$r .= "$column_name";
-			$r .= "</td>";
-
-	}
+		}
 	}
 	$r .= '</tr>';
 
@@ -438,33 +430,33 @@ function pp_invoice_user_profile_fields(){
 
 	<tr>
 	<th><label for="company_name"><?php _e( 'Company Name', 'prospress' ); ?></label></th>
-	<td><input type="text" name="company_name" id="company_name" class="regular-text" value="<?php echo get_usermeta($user_id,'company_name'); ?>" /></td>
+	<td><input type="text" name="company_name" id="company_name" class="regular-text" value="<?php echo get_user_meta($user_id,'company_name',true); ?>" /></td>
 	</tr>
 
 	<tr>
 	<th><label for="streetaddress"><?php _e( 'Street Address', 'prospress' ); ?></label></th>
-	<td><input type="text" name="streetaddress" id="streetaddress" class="regular-text" value="<?php echo get_usermeta($user_id,'streetaddress'); ?>" /></td>
+	<td><input type="text" name="streetaddress" id="streetaddress" class="regular-text" value="<?php echo get_user_meta($user_id,'streetaddress',true); ?>" /></td>
 	</tr>
 
 	<tr>
 	<th><label for="city"><?php _e( 'City', 'prospress' ); ?></label></th>
-	<td><input type="text" name="city" id="city" class="regular-text" value="<?php echo get_usermeta($user_id,'city'); ?>" /></td>
+	<td><input type="text" name="city" id="city" class="regular-text" value="<?php echo get_user_meta($user_id,'city',true); ?>" /></td>
 	</tr>
 
 	<tr>
 	<th><label for="state"><?php _e( 'State', 'prospress' ); ?></label></th>
-	<td><input type="text" name="state" id="state" class="regular-text" value="<?php echo get_usermeta($user_id,'state'); ?>" /><br />
+	<td><input type="text" name="state" id="state" class="regular-text" value="<?php echo get_user_meta($user_id,'state',true); ?>" /><br />
 	<p class="note"><?php _e( 'Use two-letter state codes for safe credit card processing.', 'prospress' ); ?></p></td>
 	</tr>
 
 	<tr>
 	<th><label for="streetaddress"><?php _e( 'ZIP Code', 'prospress' ); ?></label></th>
-	<td><input type="text" name="zip" id="zip" class="regular-text" value="<?php echo get_usermeta($user_id,'zip'); ?>" /></td>
+	<td><input type="text" name="zip" id="zip" class="regular-text" value="<?php echo get_user_meta($user_id,'zip',true); ?>" /></td>
 	</tr>
 
 	<tr>
 	<th><label for="phonenumber"><?php _e( 'Phone Number', 'prospress' ); ?></label></th>
-	<td><input type="text" name="phonenumber" id="phonenumber" class="regular-text" value="<?php echo get_usermeta($user_id,'phonenumber'); ?>" />
+	<td><input type="text" name="phonenumber" id="phonenumber" class="regular-text" value="<?php echo get_user_meta($user_id,'phonenumber',true); ?>" />
 	<p class="note"><?php _e( 'Enforce 555-555-5555 format if you are using PayPal.', 'prospress' ); ?></p></td>
 	</tr>
 
