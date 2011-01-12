@@ -230,7 +230,6 @@ class PP_QMT_Core {
 		, $tax);
 
 		$term_ids = $wpdb->get_col($query);
-
 		return get_terms($tax, array('include' => implode(',', $term_ids)));
 	}
 
