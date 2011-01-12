@@ -60,18 +60,8 @@ add_action( 'pp_activation', 'pp_posts_install' );
  */
 function pp_taxonomies_install() {
 	global $market_systems;
-
 	$market = $market_systems[ $this->name ];
-//error_log(print_r($market,true));
-	
 	add_option( 'pp_use_custom_taxonomies' , true );
-
-		// $args = array( 'label' => 'cat' , object_type => '', 'capabilities' => array( 'assign_terms' => 'edit_prospress_posts' ) , 'labels' => array( 'singular_label' => 'categories') );
-
-
-	// if( class_exists( 'PP_Taxonomy' ) )
-	// 	$taxonomy = new PP_Taxonomy( 'category' , $args );
-
 }
 /**
  * Register Prospress custom taxonomies settings

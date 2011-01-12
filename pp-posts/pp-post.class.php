@@ -98,11 +98,8 @@ class PP_Post {
 	 */
 	public function template_redirects() {
 		global $post, $market_systems;
-
 		$market = $market_systems[ $this->name ];
-
 		if ( is_using_custom_taxonomies() && is_pp_multitax() ) {
-
 			$taxonomy = esc_attr( get_query_var( 'taxonomy' ) );
 			$tax = get_taxonomy( $taxonomy );
 			$term = esc_attr( get_query_var( 'term' ) );
@@ -122,7 +119,6 @@ class PP_Post {
 			exit;
 
 		} elseif( $this->is_index() && TEMPLATEPATH . '/page.php' == get_page_template() ){ // No template set for default Prospress index
-
 			wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 
 			do_action( 'pp_index_template_redirect' );
@@ -136,7 +132,6 @@ class PP_Post {
 			exit;
 
 		} elseif ( $this->is_single() && is_single() && !isset( $_GET[ 's' ] ) ) {
-
 			wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 
 			do_action( 'pp_single_template_redirect' );
@@ -328,13 +323,9 @@ class PP_Post {
 	 */
 	public function is_index() {
 		global $post;
-		return ( $this->ID == get_option( 'pp_index_page') )? true : false ;
-
-		// 
-		// if( $post->post_name == $this->name )
-		// 	return true;
-		// else
-		// 	return false;
+		global $wp_query;
+		$thePostID = $wp_query->post->ID;
+		return ( $thePostID == get_option( 'pp_index_page') )? true : false ;
 	}
 
 
@@ -354,7 +345,7 @@ class PP_Post {
 	 *	Retrieves stored index page ID, returns false by default if option does not yet exist.
 	 */
 	public function get_index_id() {
-		return get_option( 'pp_index_page');
+		return get_option( 'pp_index_page' );
 	}
 
 	public function get_index_permalink() {
@@ -476,6 +467,7 @@ class PP_Post {
 			return false;
 
 		wp_delete_post( $this->get_index_id() );
+		delete_option('pp_index_page');
 
 		flush_rewrite_rules();
 	}

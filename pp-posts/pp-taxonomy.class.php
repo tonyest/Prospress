@@ -122,15 +122,13 @@ class PP_Taxonomy {
 	}
 
 	public function edit_tax_page( $error = '', $label = '', $singular_label = '' ) {
-		error_log(print_r($_GET,true));
-		
+
 		if ( isset( $_GET[ 'edittax' ] ) ) {
 			check_admin_referer( 'pp_custom_taxonomy' );
 
 			$submit_name = __( 'Edit Taxonomy', 'prospress' );
 			$tax_to_edit = $_GET[ 'edittax' ];
 			$taxonomies = get_option( $this->name );
-		error_log(print_r($taxonomies,true));			
 			$label = $taxonomies[ $tax_to_edit ][ 'label' ];
 			$singular_label = $taxonomies[ $tax_to_edit ][ 'labels' ][ 'singular_label' ];
 			$pp_add_or_edit = $this->edit_tax;
