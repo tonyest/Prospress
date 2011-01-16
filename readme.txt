@@ -3,7 +3,7 @@ Contributors: Prospress, thenbrent, tonyest
 Tags: marketplace, prospress, auction, ecommerce, e-commerce
 Requires at least: 3.0
 Tested up to: 3.0.1
-Stable tag: 1.0
+Stable tag: 1.0.2
 
 Add an auction marketplace to your WordPress site.
 
@@ -119,8 +119,15 @@ Nope. There are a few surprises but you'll have to download & explore Prospress 
 * Bids are now a custom post type
 * PayPal Buy Now option available
 
+= 1.0.2 =
+* Fixed bug causing Price & Winning Bidder columns to display on the admin page for all custom post type
+
 = 1.0.1 =
 * Bug on bid form ajax fixed
+* Bids are now a custom post type (and all bids are visible to admin)
+* Internationalization fixes
+* Market system now correctly uses an internal, non-localized, name
+* For the full commit log, see here: https://github.com/Prospress/Prospress/commits/v1.0.1
 
 = 1.0 =
 * SSL & credit card payments (for USD only) now supported
@@ -129,6 +136,7 @@ Nope. There are a few surprises but you'll have to download & explore Prospress 
 * Fixed bug preventing invoices being generated on manual post completion
 * Feedback now a custom post type
 * Markup fixes to Invoice pages
+* For the full commit log, see here: https://github.com/Prospress/Prospress/commits/v1.0
 
 = 0.2 =
 * Beta 2 
@@ -143,8 +151,11 @@ Nope. There are a few surprises but you'll have to download & explore Prospress 
 
 == Upgrade Notice ==
 
+= 1.0.2 =
+Upgrade to fix bug displaying Price & Winning Bidder columns on the admin page for all custom post types.
+
 = 1.0.1 =
-Please upgrade to fix a bid form bug in IE7.
+Please upgrade to fix bid form & localization bugs. This release also changes the bids page to show the site admin all bids.
 
 = 1.0 =
 The first non-beta release ready for prime-time - enjoy! Please note, this is a breaking upgrade. If you need to preserve feedback from a beta installation, post in the prospress.org/forums/ to request an upgrade script.

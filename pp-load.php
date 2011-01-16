@@ -4,12 +4,9 @@ Plugin Name: Prospress
 Plugin URI: http://prospress.org
 Description: Add an auction marketplace to your WordPress site.
 Author: Brent Shepherd, Prospress.org
-Version: 1.1
+Version: 1.0.2
 Author URI: http://prospress.org/
 */
-
-if ( !defined( 'PP_VERSION' ) )
-	define( 'PP_VERSION', '0.2' );
 
 if( !defined( 'PP_PLUGIN_DIR' ) )
 	define( 'PP_PLUGIN_DIR', WP_PLUGIN_DIR . '/' . basename(dirname(__FILE__)) );
@@ -20,13 +17,17 @@ load_plugin_textdomain( 'prospress', PP_PLUGIN_DIR . '/languages', dirname( plug
 
 require_once( PP_PLUGIN_DIR . '/pp-core.php' );
 
-require_once( PP_PLUGIN_DIR . '/pp-posts.php' );
+if( apply_filters( 'pp_load_posts', true ) )
+	require_once( PP_PLUGIN_DIR . '/pp-posts.php' );
 
-require_once( PP_PLUGIN_DIR . '/pp-bids.php' );
+if( apply_filters( 'pp_load_bids', true ) )
+	require_once( PP_PLUGIN_DIR . '/pp-bids.php' );
 
-require_once( PP_PLUGIN_DIR . '/pp-feedback.php' );
+if( apply_filters( 'pp_load_feedback', true ) )
+	require_once( PP_PLUGIN_DIR . '/pp-feedback.php' );
 
-require_once( PP_PLUGIN_DIR . '/pp-payment.php' );
+if( apply_filters( 'pp_load_payment', true ) )
+	require_once( PP_PLUGIN_DIR . '/pp-payment.php' );
 
 function pp_activate(){
 	// Safely prevent activation on installations pre 3.0 or with php 4
@@ -48,7 +49,7 @@ function pp_deactivate(){
 register_deactivation_hook( __FILE__, 'pp_deactivate' );
 
 function pp_uninstall(){
-	//do_action( 'pp_uninstall' ); // some don't want their plugins to delete all its data upon uninstallation
+	do_action( 'pp_uninstall' ); // delete data Prospress creates upon uninstallation, never delete user generated data
 }
 register_uninstall_hook( __FILE__, 'pp_uninstall' );
 

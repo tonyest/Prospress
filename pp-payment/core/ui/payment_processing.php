@@ -1,27 +1,25 @@
 <div id="pp_invoice_billing_information" class="pp_invoice_tabbed_content"> 
 	<ul> 
-		<li><a <?php if($pp_invoice_payment_method == 'paypal') echo 'class="selected"';?>  href="#paypal_tab"><?php _e("PayPal") ?></a></li> 
-<?php /*<li><a <?php if($pp_invoice_payment_method == 'moneybookers') echo 'class="selected"';?> href="#moneybookers_tab"><?php _e("Moneybookers") ?></a></li> */ ?>
-		<li><a <?php if($pp_invoice_payment_method == 'cc') echo 'class="selected"';?> href="#cc_tab"><?php _e("Credit Card") ?></a></li> 
-<?php /*<li><a <?php if($pp_invoice_payment_method == 'alertpay') echo 'class="selected"';?> href="#alertpay_tab"><?php _e("Alertpay") ?></a></li> */ ?>
+		<li><a <?php if( $pp_invoice_payment_method == 'paypal') echo 'class="selected"';?>  href="#paypal_tab"><?php _e("PayPal") ?></a></li> 
+		<li><a <?php if( $pp_invoice_payment_method == 'cc') echo 'class="selected"';?> href="#cc_tab"><?php _e("Credit Card") ?></a></li> 
 	</ul> 
 
   <div id="paypal_tab" class="pp_invoice_tab" >
 		<table class="form-table">
 			<tr>
-				<th width="300"><?php _e("Accept This Payment Venue?"); ?></th>
-				<td><?php echo pp_invoice_draw_select('pp_invoice_paypal_allow',array("yes" => "Yes","no" => "No"), $pp_invoice_paypal_allow); ?></td>
+				<th width="300"><?php _e( "Accept This Payment Venue?" ); ?></th>
+				<td><?php echo pp_invoice_draw_select( 'pp_invoice_paypal_allow',array("yes" => "Yes","no" => "No"), $pp_invoice_paypal_allow ); ?></td>
 			</tr>
 
 			<tr>
-				<th width="300"><?php _e("PayPal Username"); ?></th>
-				<td><?php echo pp_invoice_draw_inputfield('pp_invoice_paypal_address',$pp_invoice_paypal_address); ?></td>
+				<th width="300"><?php _e( "PayPal Username" ); ?></th>
+				<td><?php echo pp_invoice_draw_inputfield( 'pp_invoice_paypal_address', $pp_invoice_paypal_address ); ?></td>
 			</tr>
 
 <?php if($hide_advanced_paypal_features) { ?>
 			<tr>
-				<th width="300"><?php _e("PayPal Pay Button URL"); ?></th>
-				<td><?php echo pp_invoice_draw_inputfield('pp_invoice_fe_paypal_link_url',$pp_invoice_fe_paypal_link_url); ?></td>
+				<th width="300"><?php _e( "PayPal Pay Button URL" ); ?></th>
+				<td><?php echo pp_invoice_draw_inputfield( 'pp_invoice_fe_paypal_link_url', $pp_invoice_fe_paypal_link_url ); ?></td>
 			</tr>
 <?php } ?>
 

@@ -42,11 +42,45 @@ if( is_using_custom_taxonomies() ){
  * @global WP_Rewrite $wp_rewrite WordPress Rewrite Component.
  */
 function pp_posts_install(){
+	global $wpdb;
 
-	pp_add_default_caps();
+	if( !$wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $wpdb->posts WHERE post_type = 'auctions'" ) ) )
+		pp_post_hello_world();
 
+	// assign default capabiltiies only if prospress caps haven't been assigned before
+	if( !current_user_can( 'read_prospress_posts' ) || !current_user_can( 'edit_prospress_posts' ) )
+		pp_add_default_caps();
 }
 add_action( 'pp_activation', 'pp_posts_install' );
+
+
+/** 
+ * Create first prospress auction-type post "Hello World"
+ * 
+ * @package Prospress
+ * @subpackage Posts
+ * @since 1.1
+ */
+function pp_post_hello_world(){
+	
+	$post = array(
+		'comment_status' => 'open',// 'closed' means no comments.
+		'post_content' => "This is an example of an auction item. You could add an enticing description or alluring picture here.",
+		'post_status' => 'publish',
+		'post_title' => 'Hello Bidders',
+		'post_type' => 'auctions'
+	);
+	// Insert the hello world post into the database
+	$post_id = wp_insert_post( $post );
+	// Set end date to 2 weeks from now
+	$post_end_date = date( 'Y-m-d H:i:s', current_time( 'timestamp', 0 ) + 60 * 60 * 24 * 14 );
+	$post_end_date_gmt = get_gmt_from_date( $post_end_date );
+
+	pp_schedule_end_post( $post_id, strtotime( $post_end_date_gmt ) );
+	update_post_meta( $post_id, 'post_end_date', $post_end_date );
+	update_post_meta( $post_id, 'post_end_date_gmt', $post_end_date_gmt );
+	update_post_meta( $post_id, 'start_price', 2.71 );
+}
 
 
 /** 
@@ -113,7 +147,7 @@ function pp_post_save_postdata( $post_id, $post ) {
 	if( wp_is_post_revision( $post_id ) )
 		$post_id = wp_is_post_revision( $post_id );
 
-	if ( empty( $_POST ) || 'page' == $_POST['post_type'] ) {
+	if ( empty( $_POST ) || 'page' == @$_POST['post_type'] ) {
 		return $post_id;
 	} else if ( !current_user_can( 'edit_post', $post_id )) {
 		return $post_id;
@@ -158,9 +192,9 @@ function pp_post_save_postdata( $post_id, $post ) {
 	} else {
 		wp_unschedule_event( strtotime( $original_post_end_date_gmt ), 'schedule_end_post', array( 'ID' => $post_id ) );
 
-		if( $post_status != 'draft' ){
+		if( $post->post_status != 'draft' ){
 			pp_schedule_end_post( $post_id, strtotime( $post_end_date_gmt ) );
-			do_action( 'publish_end_date_change', $post_status, $post_end_date );
+			do_action( 'publish_end_date_change', $post->post_status, $post_end_date );
 		}
 	}
 	update_option( 'pp_show_welcome', 'false' );
@@ -556,7 +590,7 @@ add_action( 'admin_page_access_denied', 'pp_post_save_access_denied_redirect', 2
  * @subpackage Posts
  * @since 0.1
  */
-function pp_posts_deactivate(){
+function pp_posts_uninstall(){
 	global $wp_roles;
 
 	foreach ( $wp_roles->get_names() as $key => $role ) {
@@ -576,4 +610,4 @@ function pp_posts_deactivate(){
 		$role->remove_cap( 'read_prospress_posts' );
 	}
 }
-add_action( 'pp_deactivation', 'pp_posts_deactivate' );
+add_action( 'pp_uninstall', 'pp_posts_deactivate' );

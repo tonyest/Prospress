@@ -6,7 +6,7 @@
 	<?php screen_icon(); ?>
 	<h2><?php _e('Incoming Payments', 'prospress'); ?></h2>
 
-	<?php if( $message ): ?>
+	<?php if( isset( $message ) ): ?>
 	<div class="updated fade">
 		<?php if( is_array( $message ) ): foreach( $message as $m ): ?>
 			<p><?php echo $m; ?></p>

@@ -113,7 +113,6 @@ function pp_bids_uninstall() {
 
 	$wpdb->query( "DROP TABLE IF EXISTS $wpdb->bids" );
 	$wpdb->query( "DROP TABLE IF EXISTS $wpdb->bidsmeta" );
-
 }
 add_action( 'pp_uninstall', 'pp_bids_uninstall' );
 

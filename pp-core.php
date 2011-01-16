@@ -44,10 +44,16 @@ add_action( 'pp_activation', 'pp_core_install' );
  * @since 0.1
  */
 function pp_add_core_admin_menu() {
-	global $pp_core_admin_page;
+	global $pp_core_admin_page, $menu;
 
-	$pp_core_admin_page = add_menu_page( __( 'Prospress', 'prospress' ), __( 'Prospress', 'prospress' ), 10, 'Prospress', '', PP_PLUGIN_URL . '/images/prospress16.png', 3 );
-	$pp_core_settings_page = add_submenu_page( 'Prospress', __( 'Prospress Settings', 'prospress' ), __( 'General Settings', 'prospress' ), 10, 'Prospress', 'pp_settings_page' );
+	// Make space for Prospress menu when BuddyPress is installed
+	$menu[6] = $menu[4];
+	$menu[7] = $menu[5];
+	unset( $menu[4] );
+	unset( $menu[5] );
+
+	$pp_core_admin_page = add_menu_page( __( 'Prospress', 'prospress' ), __( 'Prospress', 'prospress' ), 'manage_options', 'Prospress', '', PP_PLUGIN_URL . '/images/prospress16.png', 4 );
+	$pp_core_settings_page = add_submenu_page( 'Prospress', __( 'Prospress Settings', 'prospress' ), __( 'General Settings', 'prospress' ), 'manage_options', 'Prospress', 'pp_settings_page' );
 }
 add_action( 'admin_menu', 'pp_add_core_admin_menu' );
 
@@ -147,7 +153,7 @@ function pp_set_currency(){
 		'USD' => array( 'currency_name' => __('United States Dollar', 'prospress' ), 'symbol' => '&#36;' )
 		);
 
-	$currency = get_option( 'currency_type' );
+	$currency = get_option( 'currency_type', 'USD' );
 
 	$currency_symbol = $currencies[ $currency ][ 'symbol' ];
 }

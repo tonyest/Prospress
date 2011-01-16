@@ -4,13 +4,13 @@
 	Gets an invoice
 */
 class pp_invoice_get {
-	
+
 	var $invoice_id; 
 	var $data;
 	var $error;
 
 	//Load invoice variables
-	function pp_invoice_get( $invoice_id) {
+	function pp_invoice_get( $invoice_id ) {
 		global $wpdb, $user_ID, $currency, $currency_symbol;
 
 		$this->invoice_id = $invoice_id;
@@ -26,6 +26,7 @@ class pp_invoice_get {
 
 		// Get meta
 		$meta_obj = $wpdb->get_results( "SELECT meta_key, meta_value FROM " . $wpdb->paymentsmeta . "  WHERE invoice_id = '$invoice_id'" );
+
 		foreach( $meta_obj as $meta_row ) {
 			$meta_key = $meta_row->meta_key;
 			$meta_value = $meta_row->meta_value;
@@ -33,13 +34,20 @@ class pp_invoice_get {
 		}
 
 		// Get user information
-		$this->data->payer_class = get_userdata( $this->data->payer_id);
-		$this->data->payee_class = get_userdata( $this->data->payee_id);
+		$this->data->payer_class = get_userdata( $this->data->payer_id );
+		$this->data->payee_class = get_userdata( $this->data->payee_id );
 		
 		// Get Post information
-		$post_class = get_post( $this->data->post_id);
+		if( is_multisite() ){
+			switch_to_blog( $this->data->blog_id );
+			$post_class = get_post( $this->data->post_id );
+			restore_current_blog();
+		} else {
+			$post_class = get_post( $this->data->post_id );
+		}
 
-		if(count( $post_class ) > 0) {
+		
+		if( count( $post_class ) > 0 ) {
 			foreach( $post_class as $key => $value ) {
 				$this->data->$key = $value;		
 			}
@@ -52,16 +60,22 @@ class pp_invoice_get {
 		$this->data->current_user_is = pp_invoice_user_has_permissions( $invoice_id);
 
 		// Determine if invoice has been paid
-		if( $this->data->status == 'paid')
+		if( isset( $this->data->status ) && $this->data->status == 'paid' )
 			$this->data->is_paid = true;
+		else
+			$this->data->is_paid = false;
 
 		// Determine if invoice has been sent
-		if(!empty( $this->data->sent_date ))
+		if( !empty( $this->data->sent_date ) )
 			$this->data->is_sent = true;
+		else
+			$this->data->is_sent = false;
 
 		// Determine if invoice is archived
-		if( $this->data->archive_status == 'archived')
+		if( isset( $this->data->archive_status ) && $this->data->archive_status == 'archived')
 			$this->data->is_archived = true;
+		else
+			$this->data->is_archived = false;
 
 		// Load Invoice History
 		if( $raw_history = $wpdb->get_results( "SELECT * FROM ".$wpdb->payments_log." WHERE invoice_id = '$invoice_id' ORDER BY time_stamp DESC" ))

@@ -2,7 +2,7 @@
 	<h2>Make Payment</h2>
  
 	<div class="pp_invoice_error_wrapper">
-	<?php if( count( $errors ) > 0): ?>
+	<?php if( isset( $errors) && count( $errors ) > 0 ): ?>
 	<div class="error">
 		<?php foreach( $errors as $error ): ?>
 			<p><?php echo $error; ?></p>
@@ -23,7 +23,7 @@
 		//<![CDATA[
 		jQuery(document).ready( function(jQuery) {
 			jQuery('.if-js-closed').removeClass('if-js-closed').addClass('closed');
-			postboxes.add_postbox_toggles('<?php echo $pp_invoice_page_names['view_invoice']; ?>');
+			postboxes.add_postbox_toggles('<?php echo @$pp_invoice_page_names['view_invoice']; ?>');
 		});
 	//]]>
 	</script>

@@ -10,6 +10,8 @@ require_once( PP_PAYMENT_DIR . '/core/functions.php' );
 require_once( PP_PAYMENT_DIR . '/core/display.php' );
 require_once( PP_PAYMENT_DIR . '/core/frontend.php' );
 require_once( PP_PAYMENT_DIR . '/core/invoice_class.php' );
+//A Prospress addition
+require_once( PP_PAYMENT_DIR . '/core/gateways/paypal-ipn.php' );
 
 $PP_Invoice = new PP_Invoice();	
 
@@ -78,8 +80,14 @@ class PP_Invoice {
 		$_wp_last_object_menu++;
 
 		// outgoing_invoices is currently sent to main
-		$unsent_invoices = ( count( $this->unsent_invoices) > 0 ? "(" . count( $this->unsent_invoices) . ")" : "");
-		$unpaid_invoices = ( count( $this->unpaid_invoices) > 0 ? "(" . count( $this->unpaid_invoices) . ")" : "");
+		if( isset( $this->unsent_invoices ) )
+			$unsent_invoices = ( count( $this->unsent_invoices ) > 0 ? "(" . count( $this->unsent_invoices) . ")" : "");
+		else 
+			$unsent_invoices = '';
+		if( isset( $this->unpaid_invoices ) )
+			$unpaid_invoices = ( count( $this->unpaid_invoices ) > 0 ? "(" . count( $this->unpaid_invoices) . ")" : "");
+		else 
+			$unpaid_invoices = '';
 
 		// Global Settings
 		$pp_invoice_page_names[ 'global_settings' ] 	= add_submenu_page( 'Prospress',  __( 'Payment Settings', 'prospress' ),  __( 'Payment Settings', 'prospress' ), 'manage_options', 'invoice_settings', array( &$this,'settings_page' ) );
@@ -110,7 +118,7 @@ class PP_Invoice {
 
 		add_filter( 'screen_layout_columns', array( &$this, 'on_screen_layout_columns' ), 10, 2);		
 
-		register_column_headers("web-invoice_page_incoming_invoices", array(
+		register_column_headers( "web-invoice_page_incoming_invoices", array(
 			'cb' => '<input type="checkbox" />',
 			'subject' => __( 'Item', 'prospress' ),
 			'balance' => __( 'Amount', 'prospress' ),
@@ -121,7 +129,7 @@ class PP_Invoice {
 			'due_date' => __( 'Payment Due', 'prospress' ),
 		) );
 
-		register_column_headers("toplevel_page_outgoing_invoices", array(
+		register_column_headers( "toplevel_page_outgoing_invoices", array(
 			'cb' => '<input type="checkbox" />',
 			'subject' => __( 'Item', 'prospress' ),
 			'balance' => __( 'Amount', 'prospress' ),
@@ -215,26 +223,28 @@ class PP_Invoice {
 		global $user_ID, $wpdb, $page_now, $pp_invoice_page_names, $screen_layout_columns;
 		
 		$invoice_id = $_REQUEST[ 'invoice_id' ];
-		$has_invoice_permissions = pp_invoice_user_has_permissions( $invoice_id, $user_id);
+		$has_invoice_permissions = pp_invoice_user_has_permissions( $invoice_id, $user_ID);
 
 		if( $has_invoice_permissions) {
 
 			// Invoice Update Actions:
 
 			// Draft Message
-			if (wp_verify_nonce( $_REQUEST[ 'pp_invoice_process_cc' ], 'pp_invoice_process_cc_' . $invoice_id) ) {
+			if ( isset( $_REQUEST[ 'pp_invoice_process_cc' ] ) && wp_verify_nonce( $_REQUEST[ 'pp_invoice_process_cc' ], 'pp_invoice_process_cc_' . $invoice_id) ) {
 				$draft_message = nl2br( $_REQUEST[ 'draft_message' ]);
 				pp_invoice_update_status( $invoice_id, 'paid' );
 				pp_invoice_update_log( $invoice_id,'paid', sprintf( __( "Invoice paid via bank transfer. Message from payer: %s", 'prospress' ), $draft_message ) );
 			}
 
 			// PayPal return
-			if( $_REQUEST[ 'return_info' ] == 'cancel' ) {
-				$errors[] = __( "Your PayPal payment has not been processed.", 'prospress' );
-			} elseif( $_REQUEST[ 'return_info' ] == 'success' ) {
-				pp_invoice_update_status( $invoice_id, 'paid' );
-				pp_invoice_update_log( $invoice_id, 'paid', __( 'Invoice paid via PayPal.', 'prospress' ) );
- 			}
+			if( isset( $_REQUEST[ 'return_info' ] ) ) {
+				if( $_REQUEST[ 'return_info' ] == 'cancel' ) {
+					$errors[] = __( "Your PayPal payment has not been processed.", 'prospress' );
+				} elseif( $_REQUEST[ 'return_info' ] == 'success' ) {
+					pp_invoice_update_status( $invoice_id, 'paid' );
+					pp_invoice_update_log( $invoice_id, 'paid', __( 'Invoice paid via PayPal.', 'prospress' ) );
+	 			}
+			}
 
 			// Load invoice
 			$invoice_class = new pp_invoice_get( $invoice_id);
@@ -272,8 +282,8 @@ class PP_Invoice {
 	}
 
 	function save_and_preview() {
+		global $user_ID, $wpdb,$pp_invoice_email_variables;
 
-	global $user_ID, $wpdb,$pp_invoice_email_variables;
 		echo $page_now;
 		$invoice_id = $_REQUEST[ 'invoice_id' ];
 		$has_invoice_permissions = pp_invoice_user_has_permissions( $invoice_id, $user_id);
@@ -360,7 +370,7 @@ class PP_Invoice {
 			}
 		}
 
-		if( $_REQUEST[ 'action' ] == 'post_save_and_preview' ) {
+		if( isset( $_REQUEST[ 'action' ] ) && $_REQUEST[ 'action' ] == 'post_save_and_preview' ) {
 			$invoice_id = $_REQUEST[ 'invoice_id' ];
  			if( $_REQUEST[ 'pp_invoice_action' ] == 'Email to Client' ) {
 				pp_invoice_update_invoice_meta( $invoice_id, 'email_payment_request', $_REQUEST[ 'pp_invoice_payment_request' ][ 'email_message_content' ]);
@@ -383,30 +393,30 @@ class PP_Invoice {
 		$user_settings = pp_invoice_user_settings( 'all', $user_ID);
 
 		// Save settings
-		if( count( $_REQUEST[ 'pp_invoice_user_settings' ] ) > 1 ) {
-			$user_settings = $_REQUEST[ 'pp_invoice_user_settings' ];
+		if( count( @$_REQUEST[ 'pp_invoice_user_settings' ] ) > 1 ) {
+			$user_settings = wp_parse_args( $_REQUEST[ 'pp_invoice_user_settings' ], $user_settings );
 
-			if( $user_settings[ 'paypal_allow'] == 'true' ){
-				$user_settings[ 'default_payment_venue' ] = 'paypal';
-			} elseif( $user_settings[ 'cc_allow'] == 'true' ){
+			if( $user_settings[ 'cc_allow'] == 'true' ){
 				$user_settings[ 'default_payment_venue' ] = 'cc';
 			} elseif( $user_settings[ 'draft_allow'] == 'true' ){
 				$user_settings[ 'default_payment_venue' ] = 'draft';
+			} elseif( $user_settings[ 'paypal_allow'] == 'true' ){
+				$user_settings[ 'default_payment_venue' ] = 'paypal';
 			} else {
 				$user_settings[ 'default_payment_venue' ] = '';
 			}
 
-			update_usermeta( $user_ID, 'pp_invoice_settings', $user_settings);
+			update_user_meta( $user_ID, 'pp_invoice_settings', $user_settings );
 		} else {
 			if( !$user_settings ) {
-				$user_settings = pp_invoice_load_default_user_settings( $user_ID);
+				$user_settings = pp_invoice_load_default_user_settings( $user_ID );
 			}
 		}
 
 		// The pp_invoice_user_settings() needs to be ran, it converts certain text values into bool values
 		$user_settings = pp_invoice_user_settings( 'all', $user_ID);
 
-		include PP_INVOICE_UI_PATH . 'user_settings_page.php';	
+		include( PP_INVOICE_UI_PATH . 'user_settings_page.php' );
 	}
 
 	function settings_page() {
@@ -450,7 +460,7 @@ class PP_Invoice {
 
 	function admin_init() {
 		// Admin Redirections. Has to go here to load before headers
-		if( $_REQUEST[ 'pp_invoice_action' ] == __( 'Continue Editing', 'prospress' ) ) {
+		if( isset( $_REQUEST[ 'pp_invoice_action' ] ) && $_REQUEST[ 'pp_invoice_action' ] == __( 'Continue Editing', 'prospress' ) ) {
 			wp_redirect( admin_url( "admin.php?page=new_invoice&pp_invoice_action=doInvoice&invoice_id={$_REQUEST[ 'invoice_id' ]}" ) );
 			die();
 		}
@@ -467,8 +477,9 @@ class PP_Invoice {
 		}
 
 		// Load default user settings if none exist
-		if(!get_usermeta( $user_ID, 'pp_invoice_settings' ) ) {
-			pp_invoice_load_default_user_settings( $user_ID);
+		if( !get_user_meta( $user_ID, 'pp_invoice_settings', true ) && $user_ID != 0 ) {
+			$settings = pp_invoice_load_default_user_settings( $user_ID );
+			update_user_meta( $user_id, 'pp_invoice_settings', $settings );
 		}
 
 		// Load these variables early
@@ -479,11 +490,11 @@ class PP_Invoice {
 			$invoice_class = new pp_invoice_get( $incoming_id);
 
 			// Don't include archived invoices in the counts
-			if( $invoice_class->data->is_archived)
+			if( $invoice_class->data->is_archived )
 				continue;
 
 			// Don't include paid invocies either
-			if( $invoice_class->data->is_paid)
+			if( $invoice_class->data->is_paid )
 				continue;
 
 			if(!$invoice_class->data->is_paid)
@@ -493,29 +504,31 @@ class PP_Invoice {
 		foreach( $this->outgoing_invoices as $outgoing_id) {
 
 			// Don't add this invoice to unset array if it was just sent
-			if( $_REQUEST[ 'pp_invoice_action' ] == 'Email to Client' && $_REQUEST[ 'invoice_id' ] == $outgoing_id)
+			if( isset( $_REQUEST[ 'pp_invoice_action' ] ) && $_REQUEST[ 'pp_invoice_action' ] == 'Email to Client' && $_REQUEST[ 'invoice_id' ] == $outgoing_id )
 				continue;
 
-			$invoice_class = new pp_invoice_get( $outgoing_id);			
+			$invoice_class = new pp_invoice_get( $outgoing_id );
 
 			// Don't include archived invoices in the counts
-			if( $invoice_class->data->is_archived)
+			if( $invoice_class->data->is_archived )
 				continue;
 
 			// Don't include paid invocies either
-			if( $invoice_class->data->is_paid)
+			if( $invoice_class->data->is_paid )
 				continue;
 
-			if(!$invoice_class->data->is_sent) 
+			if(!$invoice_class->data->is_sent )
 				$this->unsent_invoices[$outgoing_id] = true;
 
 		}
 
 			// Make sure proper MD5 is being passed (32 chars), and strip of everything but numbers and letters
-			if( isset( $_GET[ 'invoice_id' ]) && strlen( $_GET[ 'invoice_id' ]) != 32) unset( $_GET[ 'invoice_id' ]); 
-			$_GET[ 'invoice_id' ] = preg_replace( '/[^A-Za-z0-9-]/', '', $_GET[ 'invoice_id' ]);
+			if( isset( $_GET[ 'invoice_id' ] ) && strlen( $_GET[ 'invoice_id' ]) != 32 )
+				unset( $_GET[ 'invoice_id' ] );
 
-			if(!empty( $_GET[ 'invoice_id' ] ) ) {
+			if( !empty( $_GET[ 'invoice_id' ] ) ) {
+
+				$_GET[ 'invoice_id' ] = preg_replace( '/[^A-Za-z0-9-]/', '', $_GET[ 'invoice_id' ]);
 
 				$md5_invoice_id = $_GET[ 'invoice_id' ];
 
@@ -608,28 +621,30 @@ class PP_Invoice {
 
 global $_pp_invoice_getinfo;
 
+// Gets information about an Invoice, specifically about the recipient of the invoice 
+// or details to display
+// No idea why it exists instead of simpler functions.
 class PP_Invoice_GetInfo {
 	var $id;
 	var $_row_cache;
 
-	function __construct( $invoice_id) {
+	function __construct( $invoice_id ) {
 		global $_pp_invoice_getinfo, $wpdb;
 
 		$this->id = $invoice_id;
 	
-		if ( isset( $_pp_invoice_getinfo[$this->id]) && $_pp_invoice_getinfo[$this->id]) {
+		if( isset( $_pp_invoice_getinfo[$this->id]) && $_pp_invoice_getinfo[$this->id] )
 			$this->_row_cache = $_pp_invoice_getinfo[$this->id];
-		}
 
-		if (!$this->_row_cache) {
+		if( !$this->_row_cache )
 			$this->_setRowCache( $wpdb->get_row("SELECT * FROM " . $wpdb->payments . " WHERE id = '{$this->id}'") );
-		}
-		}
+
+	}
 
 	function _setRowCache( $row) {
 		global $_pp_invoice_getinfo;
 
-		if (!$row) {
+		if( !$row ) {
 			$this->id = null;
 			return;
 		}
@@ -641,11 +656,10 @@ class PP_Invoice_GetInfo {
 	function recipient( $what) {
 		global $wpdb;
 		
-		if (!$this->_row_cache) {
+		if( !$this->_row_cache )
 			$this->_setRowCache( $wpdb->get_row("SELECT * FROM " . $wpdb->payments . " WHERE id = '{$this->id}'") );
-		}
 
-		if ( $this->_row_cache) {
+		if( $this->_row_cache) {
 			$uid = $this->_row_cache->user_id;
 			$user_email = $wpdb->get_var("SELECT user_email FROM " . $wpdb->prefix . "users WHERE id=".$uid);
 		} else {
@@ -655,7 +669,7 @@ class PP_Invoice_GetInfo {
 
 		$invoice_info = $this->_row_cache;
 		
-		switch ( $what) {
+		switch ( $what ) {
 			case 'callsign':
 				$first_name = $this->recipient( 'first_name' );
 				$last_name = $this->recipient( 'last_name' );
@@ -676,49 +690,49 @@ class PP_Invoice_GetInfo {
 			break;
 
 			case 'first_name':
-				return get_usermeta( $uid,'first_name' );
+				return get_user_meta( $uid,'first_name', true );
 			break;
 			
 			case 'last_name':
-				return get_usermeta( $uid,'last_name' );
+				return get_user_meta( $uid,'last_name', true );
 			break;
 			
 			case 'company_name':
-				return get_usermeta( $uid,'company_name' );
+				return get_user_meta( $uid,'company_name', true );
 			break;
 			
 			case 'phonenumber':
-				return pp_invoice_format_phone(get_usermeta( $uid,'phonenumber' ) );
+				return pp_invoice_format_phone( get_user_meta( $uid, 'phonenumber', true ) );
 			break;
 			
 			case 'paypal_phonenumber':
-				return get_usermeta( $uid,'phonenumber' );
+				return get_user_meta( $uid, 'phonenumber', true );
 			break;
 			
 			case 'streetaddress':
-				return get_usermeta( $uid,'streetaddress' );	
+				return get_user_meta( $uid, 'streetaddress', true );
 			break;
 			
 			case 'state':
-				return strtoupper(get_usermeta( $uid,'state' ) );
+				return strtoupper( get_user_meta( $uid, 'state', true ) );
 			break;
 			
 			case 'city':
-				return get_usermeta( $uid,'city' );
+				return get_user_meta( $uid, 'city', true );
 			break;
 			
 			case 'zip':
-				return get_usermeta( $uid,'zip' );
+				return get_user_meta( $uid, 'zip', true );
 			break;
 			
 			case 'country':
-				if(get_usermeta( $uid,'country' ) ) return get_usermeta( $uid,'country' );  else  return "US";
+				if( get_user_meta( $uid, 'country', true ) ) return get_user_meta( $uid, 'country', true );  else  return "US";
 			break;	
 		}
 		
 	}
 	
-	function display( $what) {
+	function display( $what ) {
 		global $wpdb;	
 		
 		if (!$this->_row_cache) {
@@ -787,55 +801,6 @@ class PP_Invoice_GetInfo {
 				if(pp_invoice_meta( $this->id,'pp_invoice_recurring_gateway_url' ) ) return pp_invoice_meta( $this->id,'pp_invoice_recurring_gateway_url' );
 				// if no custom paypal address is set, use default
 				return get_option( 'pp_invoice_recurring_gateway_url' );		
-			break;
-
-			case 'pp_invoice_moneybookers_allow':
-				if(pp_invoice_meta( $this->id,'pp_invoice_moneybookers_allow' ) == 'yes' ) return  'yes';
-				if(pp_invoice_meta( $this->id,'pp_invoice_moneybookers_allow' ) == 'no' ) return 'no';
-				if(get_option( 'pp_invoice_moneybookers_allow' ) == 'yes' ) return  'yes';
-				if(get_option( 'pp_invoice_moneybookers_allow' ) == 'no' ) return 'no';
-				return false;
-
-			break;	
-
-			case 'pp_invoice_moneybookers_ip':
-				if(pp_invoice_meta( $this->id,'pp_invoice_moneybookers_ip' ) ) return pp_invoice_meta( $this->id,'pp_invoice_moneybookers_ip' );	
-				return false;
-			break;	
-
-			case 'pp_invoice_moneybookers_secret':
-				if(pp_invoice_meta( $this->id,'pp_invoice_moneybookers_secret' ) ) return pp_invoice_meta( $this->id,'pp_invoice_moneybookers_secret' );	
-				return false;
-			break;	
-
-			case 'pp_invoice_moneybookers_address':
-				if(pp_invoice_meta( $this->id,'pp_invoice_moneybookers_address' ) ) return pp_invoice_meta( $this->id,'pp_invoice_moneybookers_address' );
-				if(get_option( 'pp_invoice_moneybookers_address' ) != '' ) return get_option( 'pp_invoice_moneybookers_address' );	
-				return false;		
-			break;	
-	
-			case 'pp_invoice_alertpay_allow':
-				if(pp_invoice_meta( $this->id,'pp_invoice_alertpay_allow' ) == 'yes' ) return 'yes';
-				if(pp_invoice_meta( $this->id,'pp_invoice_alertpay_allow' ) == 'no' ) return 'no';
-				if(get_option( 'pp_invoice_alertpay_allow' ) == 'yes' ) return  'yes';
-				if(get_option( 'pp_invoice_alertpay_allow' ) == 'no' ) return  'no';
-				return false;
-			break;	
-
-			case 'pp_invoice_alertpay_address':
-				if(pp_invoice_meta( $this->id,'pp_invoice_alertpay_address' ) ) return pp_invoice_meta( $this->id,'pp_invoice_alertpay_address' );	
-				return false;
-			break;		
-
-			case 'pp_invoice_alertpay_secret':
-				if(pp_invoice_meta( $this->id,'pp_invoice_alertpay_secret' ) ) return pp_invoice_meta( $this->id,'pp_invoice_alertpay_secret' );	
-				return false;
-			break;	
-
-			case 'pp_invoice_googlecheckout_address':
-				if(pp_invoice_meta( $this->id,'pp_invoice_googlecheckout_address' ) ) return pp_invoice_meta( $this->id,'pp_invoice_googlecheckout_address' );
-				if(get_option( 'pp_invoice_googlecheckout_address' ) != '' ) return get_option( 'pp_invoice_googlecheckout_address' );	
-				return false;		
 			break;
 
 			case 'log_status':
@@ -917,10 +882,8 @@ class PP_Invoice_GetInfo {
 			break;
 
 			case 'currency':
-				if(pp_invoice_meta( $this->id,'pp_invoice_currency_code' ) != '' ) {
-					$currency_code = pp_invoice_meta( $this->id,'pp_invoice_currency_code' );
-				} else if (get_option( 'pp_invoice_default_currency_code' ) != '' ) {
-					$currency_code = get_option( 'pp_invoice_default_currency_code' );
+				if( pp_invoice_meta( $this->id, 'pp_invoice_currency_code' ) != '' ) {
+					$currency_code = pp_invoice_meta( $this->id, 'pp_invoice_currency_code' );
 				} else {
 					$currency_code = "USD";
 				}
@@ -931,12 +894,13 @@ class PP_Invoice_GetInfo {
 				$pp_invoice_custom_invoice_id = pp_invoice_meta( $this->id,'pp_invoice_custom_invoice_id' );
 				if(empty( $pp_invoice_custom_invoice_id) ) { return $this->id; }	else { return $pp_invoice_custom_invoice_id; }	
 			break;
-			
+
 			case 'due_date':
 				$pp_invoice_due_date_month = pp_invoice_meta( $this->id,'pp_invoice_due_date_month' );
 				$pp_invoice_due_date_year = pp_invoice_meta( $this->id,'pp_invoice_due_date_year' );
 				$pp_invoice_due_date_day = pp_invoice_meta( $this->id,'pp_invoice_due_date_day' );
-				if(!empty( $pp_invoice_due_date_month) && !empty( $pp_invoice_due_date_year) && !empty( $pp_invoice_due_date_day ) ) return "$pp_invoice_due_date_year/$pp_invoice_due_date_month/$pp_invoice_due_date_day";	
+				if(!empty( $pp_invoice_due_date_month) && !empty( $pp_invoice_due_date_year) && !empty( $pp_invoice_due_date_day ) ) 
+					return "$pp_invoice_due_date_year/$pp_invoice_due_date_month/$pp_invoice_due_date_day";	
 			break;
 			
 			case 'amount':

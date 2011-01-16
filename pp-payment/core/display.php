@@ -48,25 +48,29 @@ function pp_invoice_invoice_row($invoice, $page) {
 	}
 
 	// Color coding
-	if($invoice->is_paid) $class_settings .= " alternate ";
-	if($invoice->is_archived) $class_settings .= " pp_invoice_archived ";
+	$class_settings = "";
+	$class_settings .= ( $invoice->is_paid ) ? " alternate " : "";
+	$class_settings .= ( $invoice->is_archived ) ? " pp_invoice_archived " : "";
 
 	// Days Since Sent
-	if($invoice->is_paid) { 
+	if( $invoice->is_paid ) { 
 		$days_since = "<span style='display:none;'>-1</span>".__(' Paid', 'prospress'); }
 	else { 
-		if($invoice->sent_date) {
-
-		$date1 = $invoice->sent_date;
-		$date2 = date("Y-m-d", time());
-		$difference = abs(strtotime($date2) - strtotime($date1));
-		$days = round(((($difference/60)/60)/24), 0);
-		if($days == 0) { $days_since = "<span style='display:none;'>$days</span>".__('Sent Today. ', 'prospress'); }
-		elseif($days == 1) { $days_since = "<span style='display:none;'>$days</span>".__('Sent Yesterday. ', 'prospress'); }
-		elseif($days > 1) { $days_since = "<span style='display:none;'>$days</span>".sprintf(__('Sent %s days ago. ', 'prospress'),$days); }
+		if( isset( $invoice->sent_date ) ) {
+			$date1 = $invoice->sent_date;
+			$date2 = date( "Y-m-d", time() );
+			$difference = abs( strtotime( $date2 ) - strtotime( $date1 ) );
+			$days = round( ( ( ( $difference/60 )/60 )/24 ), 0 );
+			if( $days == 0 ) { 
+				$days_since = "<span style='display:none;'>$days</span>".__('Sent Today. ', 'prospress' ); 
+			} elseif( $days == 1) { 
+				$days_since = "<span style='display:none;'>$days</span>".__('Sent Yesterday. ', 'prospress' ); 
+			} elseif( $days > 1 ) { 
+				$days_since = "<span style='display:none;'>$days</span>".sprintf(__('Sent %s days ago. ', 'prospress'), $days ); 
+			}
+		} else {
+			$days_since ="<span style='display:none;'>999</span>".__('Not Sent', 'prospress');	
 		}
-		else {
-		$days_since ="<span style='display:none;'>999</span>".__('Not Sent', 'prospress');	}
 	}
 
 	// Setup row actions
@@ -75,15 +79,14 @@ function pp_invoice_invoice_row($invoice, $page) {
 		$row_actions = 	"<div class='row-actions'>";
 
 		if(!$invoice->is_paid)			
-			$row_actions .= "<span class='edit'><a href='$invoice_send_pay_link'>Send Invoice</a> | </span>";
+			$row_actions .= "<span class='edit'><a href='$invoice_send_pay_link'>" . __( "Send Invoice", "prospress" ) . "</a> | </span>";
 
 		if($invoice->is_archived)
-			$row_actions .= "<span class='unarchive'><a href='$overview_link&pp_invoice_action=unrachive_invoice&multiple_invoices[0]=$invoice_id' class=''>Un-Archive</a> </span>";
+			$row_actions .= "<span class='unarchive'><a href='$overview_link&pp_invoice_action=unrachive_invoice&multiple_invoices[0]=$invoice_id' class=''>" . __( "Un-Archive", "prospress" ) . "</a> </span>";
 
 		if(!$invoice->is_archived)
-			$row_actions .= "<span class='archive'><a href='$overview_link&pp_invoice_action=archive_invoice&multiple_invoices[0]=$invoice_id' class=''>Archive</a>  </span>";
+			$row_actions .= "<span class='archive'><a href='$overview_link&pp_invoice_action=archive_invoice&multiple_invoices[0]=$invoice_id' class=''>" . __( "Archive", "prospress" ) . "</a></span>";
 
-		// $row_actions .= "<span class='delete'><a onclick='return pp_invoice_confirm_delete();' href='$overview_link&pp_invoice_action=delete_invoice&multiple_invoices[0]=$invoice_id' class='submitdelete'>Delete</a></span>";		
 		$row_actions .= "</div>";
 	}
 
@@ -91,89 +94,77 @@ function pp_invoice_invoice_row($invoice, $page) {
 		$row_actions = 	"<div class='row-actions'>";
 
 		if(!$invoice->is_paid)
-			$row_actions .= "<span class='edit'><a href='$invoice_send_pay_link'>Make Payment</a> | </span>";
+			$row_actions .= "<span class='edit'><a href='$invoice_send_pay_link'>" . __( "Make Payment", "prospress" ) . "</a> | </span>";
 
 		if($invoice->is_archived)
-			$row_actions .= "<span class='unarchive'><a href='$overview_link&pp_invoice_action=unrachive_invoice&multiple_invoices[0]=$invoice_id' class=''>Un-Archive</a>  </span>";
+			$row_actions .= "<span class='unarchive'><a href='$overview_link&pp_invoice_action=unrachive_invoice&multiple_invoices[0]=$invoice_id' class=''>" . __( "Un-Archive", "prospress" ) . "</a>  </span>";
 
 		if(!$invoice->is_archived)
-			$row_actions .= "<span class='archive'><a href='$overview_link&pp_invoice_action=archive_invoice&multiple_invoices[0]=$invoice_id' class=''>Archive</a>  </span>";
+			$row_actions .= "<span class='archive'><a href='$overview_link&pp_invoice_action=archive_invoice&multiple_invoices[0]=$invoice_id' class=''>" . __( "Archive", "prospress" ) . "</a>  </span>";
 
 		$row_actions .= "</div>";
 
 	}
 
 	// Setup display
-
 	$r = "<tr id='invoice-$invoice_id' class='{$invoice_id}_row $class_settings'>";
 
 	foreach ( $columns as $column_name => $column_display_name ) {
-	$class = "class=\"$column_name column-$column_name\"";
+		$class = "class=\"$column_name column-$column_name\"";
 
-		$style = '';
-	if ( in_array($column_name, $hidden) )
-		$style = ' style="display:none;"';
+			$style = '';
+		if ( in_array($column_name, $hidden) )
+			$style = ' style="display:none;"';
 
-	$attributes = "$class$style";
+		$attributes = "$class$style";
 
-	switch ( $column_name ) {
-		case 'cb':
-			$r .= "<th scope='row' class='check-column'><input type='checkbox' name='multiple_invoices[]' value='$invoice_id'></th>";
-			break;
-		case 'subject':
-			$r .= "<td $attributes><a class='row-title' href='$invoice_send_pay_link' title='Edit $subject'>{$invoice->post_title}</a>";
-			$r .= $row_actions;
-			$r .= "</td>";
+		switch ( $column_name ) {
+			case 'cb':
+				$r .= "<th scope='row' class='check-column'><input type='checkbox' name='multiple_invoices[]' value='$invoice_id'></th>";
+				break;
+			case 'subject':
+				$r .= "<td $attributes><a class='row-title' href='$invoice_send_pay_link' title='Edit $invoice->post_title'>{$invoice->post_title}</a>";
+				$r .= $row_actions;
+				$r .= "</td>";
+				break;
+			case 'balance':
+				$r .= "<td $attributes>{$invoice->display_amount}</td>";
+				break;
+			case 'status':
+				$r .= "<td $attributes>". ($days_since ? " $days_since " : "-")."</td>";
+				break;
+			case 'date_sent':
+				$date_sent_string = strtotime(pp_invoice_meta($invoice_id,'sent_date')); 
+				if(!empty($date_sent_string))
+					$r .= "<td $attributes sortvalue='".date("Y-m-d", $date_sent_string)."'>". date("M d, Y", $date_sent_string). "</td>";
+				else 
+					$r .= "<td $attributes>&nbsp;</td>";
+				break;		
+			case 'invoice_id':
+				$r .= "<td $attributes>{$invoice->id}</td>";
+				break;			
+			case 'user_email':
+				$r .= "<td $attributes><a href='mailto:{{$user_class->user_email}'>{$user_class->user_email}</a></td>";
+				break;			
+			case 'display_name':
+				$r .= "<td $attributes>{$user_class->display_name}</td>";
+				break;	
+			case 'company_name':
+				$r .= "<td $attributes>{$user_class->company_name}&nbsp;</td>";
+				break;			
+			case 'due_date':
+				$due_date_string = strtotime($invoice->due_date_day . "-" . $invoice->due_date_month . "-" . $invoice->due_date_year);
+				if(!empty($due_date_string))
+					$r .= "<td $attributes sortvalue='".date(get_option('date_format'), $due_date_string)."'>" . date(get_option('date_format'), $due_date_string). "</td>";
+				else 
+					$r .= "<td $attributes>&nbsp;</td>";
+				break;			
+			default:
+				$r .= "<td $attributes>";
+					$r .= "$column_name";
+				$r .= "</td>";
 
-			break;
-		case 'balance':
-			$r .= "<td $attributes>{$invoice->display_amount}</td>";
-		break;			
-
-		case 'status':
-			$r .= "<td $attributes>". ($days_since ? " $days_since " : "-")."</td>";
-		break;		
-
-		case 'date_sent':
-			$date_sent_string = strtotime(pp_invoice_meta($invoice_id,'sent_date')); 
-			if(!empty($date_sent_string))
-				$r .= "<td $attributes sortvalue='".date("Y-m-d", $date_sent_string)."'>". date("M d, Y", $date_sent_string). "</td>";
-			else 
-				$r .= "<td $attributes>&nbsp;</td>";
-
-		break;		
-
-		case 'invoice_id':
-			$r .= "<td $attributes>{$invoice->id}</td>";
-		break;			
-
-		case 'user_email':
-			$r .= "<td $attributes><a href='mailto:{{$user_class->user_email}'>{$user_class->user_email}</a></td>";
-		break;			
-
-		case 'display_name':
-			$r .= "<td $attributes>{$user_class->display_name}</td>";
-		break;	
-
-		case 'company_name':
-			$r .= "<td $attributes>{$user_class->company_name}&nbsp;</td>";
-		break;			
-
-		case 'due_date':
-
-			$due_date_string = strtotime($invoice->due_date_day . "-" . $invoice->due_date_month . "-" . $invoice->due_date_year);
-			if(!empty($due_date_string))
-				$r .= "<td $attributes sortvalue='".date(get_option('date_format'), $due_date_string)."'>" . date(get_option('date_format'), $due_date_string). "</td>";
-			else 
-				$r .= "<td $attributes>&nbsp;</td>";
-		break;			
-
-		default:
-			$r .= "<td $attributes>";
-				$r .= "$column_name";
-			$r .= "</td>";
-
-	}
+		}
 	}
 	$r .= '</tr>';
 
@@ -198,114 +189,13 @@ function pp_invoice_user_selection_screen() {
 
 }
 
-function pp_invoice_show_welcome_message() {
-	global $wpdb; ?>
-
-<h2>Prospress Payments Setup Steps</h2>
-
-	<ol style="list-style-type:decimal;padding-left: 20px;" id="pp_invoice_first_time_setup">
-<?php 
-	$pp_invoice_web_invoice_page = get_option("pp_invoice_web_invoice_page");
-	$pp_invoice_paypal_address = get_option("pp_invoice_paypal_address");
-	$pp_invoice_moneybookers_address = get_option("pp_invoice_moneybookers_address");
-	$pp_invoice_googlecheckout_address = get_option("pp_invoice_googlecheckout_address");
-	$pp_invoice_gateway_username = get_option("pp_invoice_gateway_username");
-	$pp_invoice_payment_method = get_option("pp_invoice_payment_method");
-
-?>
-	<form action="admin.php?page=new_invoice" method='POST'>
-	<input type="hidden" name="pp_invoice_action" value="first_setup">
-<?php if(empty($pp_invoice_web_invoice_page) ) { ?>
-	<li><a class="pp_invoice_tooltip"  title="Your clients will have to follow their secure link to this page to see their invoice. Opening this page without following a link will result in the standard page content begin shown.">Select a page to display your web invoices</a>:  
-		<select name='pp_invoice_web_invoice_page'>
-		<option></option>
-		<?php $list_pages = $wpdb->get_results("SELECT ID, post_title, post_name, guid FROM ". $wpdb->prefix ."posts WHERE post_status = 'publish' AND post_type = 'page' ORDER BY post_title");
-		foreach ($list_pages as $page)
-		{ 
-		echo "<option  style='padding-right: 10px;'";
-		if(isset($pp_invoice_web_invoice_page) && $pp_invoice_web_invoice_page == $page->ID) echo " SELECTED ";
-		echo " value=\"".$page->ID."\">". $page->post_title . "</option>\n"; 
-		} ?>
-		</select>
-	</li>
-<?php } ?>
-
-<?php if(empty($pp_invoice_payment_method)) { ?>
-	<li>Select how you want to accept money: 
-		<select id="pp_invoice_payment_method" name="pp_invoice_payment_method">
-		<option></option>
-		<option value="paypal" style="padding-right: 10px;"<?php if(get_option('pp_invoice_payment_method') == 'paypal') echo 'selected="yes"';?>>PayPal</option>
-		<option value="cc" style="padding-right: 10px;"<?php if(get_option('pp_invoice_payment_method') == 'cc') echo 'selected="yes"';?>>Credit Card</option>
-		</select> 
-
-		<li class="paypal_info payment_info">Your PayPal username: <input id='pp_invoice_paypal_address' name="pp_invoice_paypal_address" class="search-input input_field"  type="text" value="<?php echo stripslashes(get_option('pp_invoice_paypal_address')); ?>"></li>
-
-		<li class="gateway_info payment_info">
-		<a class="pp_invoice_tooltip"  title="Your credit card processor will provide you with a gateway username.">Gateway Username</a>
-		<input AUTOCOMPLETE="off" name="pp_invoice_gateway_username" class="input_field search-input" type="text" value="<?php echo stripslashes(get_option('pp_invoice_gateway_username')); ?>">
-		</li>
-
-		<li class="gateway_info payment_info">
-		<a class="pp_invoice_tooltip"  title="You will be able to generate this in our credit card processor's control panel.">Gateway Transaction Key</a>
-		<input AUTOCOMPLETE="off" name="pp_invoice_gateway_tran_key" class="input_field search-input" type="text" value="<?php echo stripslashes(get_option('pp_invoice_gateway_tran_key')); ?>">
-		</li>
-
-		<li class="gateway_info payment_info">
-		Gateway URL
-		<input name="pp_invoice_gateway_url" class="input_field search-input" type="text" value="<?php echo stripslashes(get_option('pp_invoice_gateway_url')); ?>">
-		<span class="pp_invoice_click_me" onclick="jQuery('#pp_invoice_gateway_url').val('https://gateway.merchantplus.com/cgi-bin/PAWebClient.cgi');">MerchantPlus</span> |
-		<span class="pp_invoice_click_me" onclick="jQuery('#pp_invoice_gateway_url').val('https://secure.authorize.net/gateway/transact.dll');">Authorize.Net</span> |
-		<span class="pp_invoice_click_me" onclick="jQuery('#pp_invoice_gateway_url').val('https://test.authorize.net/gateway/transact.dll');">Authorize.Net Developer</span> 
-		</li>
-
-<?php } ?>
-
-	<li>Send an invoice:
-		<select name='user_id' class='user_selection'>
-		<option ></option>
-		<?php
-		$get_all_users = $wpdb->get_results("SELECT * FROM ". $wpdb->prefix . "users LEFT JOIN ". $wpdb->prefix . "usermeta on ". $wpdb->prefix . "users.id=". $wpdb->prefix . "usermeta.user_id and ". $wpdb->prefix . "usermeta.meta_key='last_name' ORDER BY ". $wpdb->prefix . "usermeta.meta_value");
-		foreach ($get_all_users as $user)
-		{ 
-		$profileuser = @get_user_to_edit($user->ID);
-		echo "<option ";
-		if(isset($user_id) && $user_id == $user->ID) echo " SELECTED ";
-		if(!empty($profileuser->last_name) && !empty($profileuser->first_name)) { echo " value=\"".$user->ID."\">". $profileuser->last_name. ", " . $profileuser->first_name . " (".$profileuser->user_email.")</option>\n";  }
-		else 
-		{
-		echo " value=\"".$user->ID."\">". $profileuser->user_login. " (".$profileuser->user_email.")</option>\n"; 
-		}
-		}
-		?>
-		</select>
-	</li>
-	</ol>
-
-	<input type='submit' class='button' value='Save Settings and Create Invoice'>
-	</form>
-	<?php  if(pp_invoice_is_not_merchant()) pp_invoice_cc_setup(false); ?>
-
-<?php
-}
-
-function pp_invoice_cc_setup($show_title = TRUE) {
-if($show_title) { ?> 	<div id="pp_invoice_need_mm" style="border-top: 1px solid #DFDFDF; ">Do you need to accept credit cards?</div> <?php } ?>
-
-<div class="wrap">
-<div class="pp_invoice_credit_card_processors pp_invoice_rounded_box">
-<p>Prospress Payments users are eligible for special credit card processing rates from <a href="http://twincitiestech.com/links/MerchantPlus.php">MerchantPlus</a> (800-546-1997) and <a href="http://twincitiestech.com/links/MerchantExpress.php">MerchantExpress.com</a> (888-845-9457). <a href="http://twincitiestech.com/links/MerchantWarehouse.php">MerchantWarehouse</a> (866-345-5959) was unable to offer us special rates due to their unique pricing structure. However, they are one of the most respected credit card processing companies and have our recommendation.
-</p>
-</div>
-</div>
-<?php
-}
-
 function pp_invoice_show_email($invoice_id, $force_original = false) {
 	global $pp_invoice_email_variables;
+
 	$pp_invoice_email_variables = pp_invoice_email_variables($invoice_id);
 
-	if(!$force_original && pp_invoice_meta($invoice_id, 'pp_invoice_email_message_content') != "") return str_replace("<br />", "\n",pp_invoice_meta($invoice_id, 'pp_invoice_email_message_content'));
-	return str_replace("<br />", "\n",preg_replace_callback('/(%([a-z_]+)%)/',  'pp_invoice_email_apply_variables', get_option('pp_invoice_email_send_invoice_content')));
+	if(!$force_original && pp_invoice_meta($invoice_id, 'pp_invoice_email_message_content') != "") return str_replace("<br />", "\n",pp_invoice_meta($invoice_id, 'pp_invoice_email_message_content') );
+		return str_replace("<br />", "\n",preg_replace_callback('/(%([a-z_]+)%)/',  'pp_invoice_email_apply_variables', get_option('pp_invoice_email_send_invoice_content')));
 
 }
 
@@ -438,33 +328,33 @@ function pp_invoice_user_profile_fields(){
 
 	<tr>
 	<th><label for="company_name"><?php _e( 'Company Name', 'prospress' ); ?></label></th>
-	<td><input type="text" name="company_name" id="company_name" class="regular-text" value="<?php echo get_usermeta($user_id,'company_name'); ?>" /></td>
+	<td><input type="text" name="company_name" id="company_name" class="regular-text" value="<?php echo get_user_meta($user_id,'company_name',true); ?>" /></td>
 	</tr>
 
 	<tr>
 	<th><label for="streetaddress"><?php _e( 'Street Address', 'prospress' ); ?></label></th>
-	<td><input type="text" name="streetaddress" id="streetaddress" class="regular-text" value="<?php echo get_usermeta($user_id,'streetaddress'); ?>" /></td>
+	<td><input type="text" name="streetaddress" id="streetaddress" class="regular-text" value="<?php echo get_user_meta($user_id,'streetaddress',true); ?>" /></td>
 	</tr>
 
 	<tr>
 	<th><label for="city"><?php _e( 'City', 'prospress' ); ?></label></th>
-	<td><input type="text" name="city" id="city" class="regular-text" value="<?php echo get_usermeta($user_id,'city'); ?>" /></td>
+	<td><input type="text" name="city" id="city" class="regular-text" value="<?php echo get_user_meta($user_id,'city',true); ?>" /></td>
 	</tr>
 
 	<tr>
 	<th><label for="state"><?php _e( 'State', 'prospress' ); ?></label></th>
-	<td><input type="text" name="state" id="state" class="regular-text" value="<?php echo get_usermeta($user_id,'state'); ?>" /><br />
+	<td><input type="text" name="state" id="state" class="regular-text" value="<?php echo get_user_meta($user_id,'state',true); ?>" /><br />
 	<p class="note"><?php _e( 'Use two-letter state codes for safe credit card processing.', 'prospress' ); ?></p></td>
 	</tr>
 
 	<tr>
 	<th><label for="streetaddress"><?php _e( 'ZIP Code', 'prospress' ); ?></label></th>
-	<td><input type="text" name="zip" id="zip" class="regular-text" value="<?php echo get_usermeta($user_id,'zip'); ?>" /></td>
+	<td><input type="text" name="zip" id="zip" class="regular-text" value="<?php echo get_user_meta($user_id,'zip',true); ?>" /></td>
 	</tr>
 
 	<tr>
 	<th><label for="phonenumber"><?php _e( 'Phone Number', 'prospress' ); ?></label></th>
-	<td><input type="text" name="phonenumber" id="phonenumber" class="regular-text" value="<?php echo get_usermeta($user_id,'phonenumber'); ?>" />
+	<td><input type="text" name="phonenumber" id="phonenumber" class="regular-text" value="<?php echo get_user_meta($user_id,'phonenumber',true); ?>" />
 	<p class="note"><?php _e( 'Enforce 555-555-5555 format if you are using PayPal.', 'prospress' ); ?></p></td>
 	</tr>
 
@@ -483,8 +373,8 @@ function pp_invoice_show_paypal_reciept($invoice_id) {
 
 	$invoice = new PP_Invoice_GetInfo($invoice_id);
 
-	if(isset($_POST['first_name'])) update_usermeta($invoice->recipient('user_id'), 'first_name', $_POST['first_name']);
-	if(isset($_POST['last_name'])) update_usermeta($invoice->recipient('user_id'), 'last_name', $_POST['last_name']);
+	if(isset($_POST['first_name'])) update_user_meta($invoice->recipient('user_id'), 'first_name', $_POST['first_name']);
+	if(isset($_POST['last_name'])) update_user_meta($invoice->recipient('user_id'), 'last_name', $_POST['last_name']);
 
 	if(get_option('pp_invoice_send_thank_you_email') == 'yes') pp_invoice_send_email_receipt($invoice_id);
 
@@ -651,11 +541,10 @@ function pp_invoice_draw_user_selection_form($user_id) {
 }
 
 /*
-	Function from WPI Premium
 	Shorthand function for drawing input fields
 */
-function wpi_input($args = '') {
-	$defaults = array('name' => '', 'group' => '','special' => '','value' => '', 'type' => '', 'hidden' => false, 'style' => false, 'readonly' => false, 'label' => false);
+function wpi_input( $args = '' ) {
+	$defaults = array('name' => '', 'class' => '', 'group' => '','special' => '','value' => '', 'type' => '', 'hidden' => false, 'style' => false, 'readonly' => false, 'label' => false, 'title' => '');
 	extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
 
 	// if [ character is present, we do not use the name in class and id field
@@ -664,15 +553,20 @@ function wpi_input($args = '') {
 		$class_from_name = $name;
 	}
 
-	if($label) $return .= "<label for='$name'>";
-	$return .= "<input ".($type ?  "type=\"$type\" " : '')." ".($style ?  "style=\"$style\" " : '')." id=\"$id\" class=\"".($type ?  "" : "input_field")." $class_from_name $class ".($hidden ?  " hidden " : '').""  .($group ? "group_$group" : ''). " \"  	name=\"" .($group ? $group."[".$name."]" : $name). "\" 	value=\"".stripslashes($value)."\" 	title=\"$title\" $special ".($type == 'forget' ?  " autocomplete='off'" : '')." ".($readonly ?  " readonly=\"readonly\" " : "")." />";		
-	if($label) $return .= "$label </label>";
+	$return = '';
+
+	if( $label ) 
+		$return .= "<label for='$name'>";
+	
+	$return .= "<input ".( $type ?  "type=\"$type\" " : '')." ".( $style ?  "style=\"$style\" " : '')." id=\"$id\" class=\"".( $type ?  "" : "input_field")." $class_from_name $class ".( $hidden ?  " hidden " : '').""  .( $group ? "group_$group" : ''). " \"  	name=\"" .( $group ? $group."[".$name."]" : $name). "\" 	value=\"".stripslashes($value)."\" 	title=\"$title\" $special ".($type == 'forget' ?  " autocomplete='off'" : '')." ".($readonly ?  " readonly=\"readonly\" " : "")." />";		
+
+	if( $label )
+		$return .= "$label </label>";
 
 	return $return;
 }
 
 /*
-	Function from WPI Premium
 	Shorthand function for drawing select boxes
 */
 function select($args = '') {
@@ -738,7 +632,6 @@ function select($args = '') {
 }
 
 /*
-	Function from WPI Premium
 	Shorthand function for drawing checkbox fields
 */	
 function wpi_checkbox($args = '', $checked = false) {
@@ -800,8 +693,11 @@ function wpi_checkbox($args = '', $checked = false) {
 			break;
 	}
 
+	$return = '';
+
 	// Print label if one is set
-	if($label) $return .= "<label for='$id'>";
+	if( $label ) 
+		$return .= "<label for='$id'>";
 
 	// Print hidden checkbox
 	$return .= "<input type='hidden' value='$opposite_value' $insert_name />";
