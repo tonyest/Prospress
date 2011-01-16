@@ -20,7 +20,6 @@
 abstract class PP_Market_System {
 
 	protected $name;					// Internal name of the market system, probably plural e.g. "auctions".
-	public $bid_form_heading;		// Text to output as the heading in the bid form
 	public $label;					// Label to display the market system publicly, e.g. "Auction".
 	public $labels;					// Array of labels used to represent market system elements publicly, includes name & singular_name
 	public $post;					// Hold the custom PP_Post object for this market system.
@@ -43,7 +42,6 @@ abstract class PP_Market_System {
 		$this->name = sanitize_user( $name, true );
 
 		$defaults = array(
-						'bid_form_heading' => __( 'Place Bid', 'prospress' ),
 						'description' => '',
 						'label' => ucfirst( $this->name ),
 						'labels' => array(
@@ -69,7 +67,6 @@ abstract class PP_Market_System {
 
 		$args = wp_parse_args( $args, $defaults );
 
-		$this->bid_form_heading		= $args[ 'bid_form_heading' ];
 		$this->label 				= $args[ 'label' ];
 		$this->labels 				= $args[ 'labels' ];
 		$this->post_table_columns 	= $args[ 'post_table_columns' ];
@@ -166,7 +163,6 @@ abstract class PP_Market_System {
 
 		if ( $this->is_post_valid( $post_id ) ) {
 			$form = '<form id="bid_form-' . $post_id . '" class="bid-form" method="post" action="">';
-			$form .= '<h6>' . $this->bid_form_heading . '</h6>';
 			$form .= '<div class="bid-updated bid_msg" >' . $this->get_message() . '</div><div>';
 			$form .= $this->bid_form_fields( $post_id );
 			$form .= wp_nonce_field( __FILE__, 'bid_nonce', false, false );
