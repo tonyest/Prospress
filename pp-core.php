@@ -214,7 +214,7 @@ function pp_welcome_notice(){
 	if( get_option( 'pp_show_welcome' ) == 'false' ){
 		return;
 	} elseif(( isset( $_GET[ 'pp_hide_wel' ] ) && $_GET[ 'pp_hide_wel' ] == 1 ) || 
-			( isset( $_GET[ 'post_type' ] ) && $_GET[ 'post_type' ] == 'auctions' ) ) || 
+			( isset( $_GET[ 'post_type' ] ) && $_GET[ 'post_type' ] == 'auctions' ) || 
 			( isset( $_GET[ 'page' ] ) && ( $_GET[ 'page' ] == 'Prospress' || $_GET[ 'page' ] == $index_id ) ) ) {
 		update_option( 'pp_show_welcome', 'false' );
 		return;
