@@ -725,7 +725,7 @@ abstract class PP_Market_System {
 				$actions = apply_filters( 'bid_table_actions', array(), $bid->post_parent, $bid );
 				if( is_array( $actions ) && !empty( $actions ) ) {
 					$action_count = count( $actions );
-					$edit .= '<div class="row-actions">';
+					$edit = '<div class="row-actions">';
 					$i = 0;
 					foreach ( $actions as $action => $attributes ) {
 						++$i;
@@ -869,7 +869,7 @@ abstract class PP_Market_System {
 		do_action( 'market_system_controller' );
 		do_action( $this->name . '-controller' );
 
-		// If a bid is not being sumbited, exist asap to avoid wasting user's time
+		// If a bid is not being submitted
 		if( !isset( $_REQUEST[ 'bid_submit' ] ) )
 			return;
 
@@ -915,7 +915,6 @@ abstract class PP_Market_System {
 
 		// If someone enters a URL with a bid_msg but they didn't make that bid
 		if( isset( $_GET[ 'bid_msg' ] ) && isset( $_GET[ 'bid_nonce' ] ) && !wp_verify_nonce( $_GET[ 'bid_nonce' ], __FILE__ ) ){
-
 			$redirect = remove_query_arg( 'bid_nonce' );
 			$redirect = remove_query_arg( 'bid_msg', $redirect );
 			wp_safe_redirect( $redirect );
