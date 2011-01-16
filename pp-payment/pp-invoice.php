@@ -390,7 +390,7 @@ class PP_Invoice {
 	function user_settings_page() {
 		global $user_ID;
 
-		$user_settings = pp_invoice_user_settings( 'all', $user_ID);
+		$user_settings = pp_invoice_user_settings( 'all', $user_ID );
 
 		// Save settings
 		if( count( @$_REQUEST[ 'pp_invoice_user_settings' ] ) > 1 ) {
@@ -412,9 +412,6 @@ class PP_Invoice {
 				$user_settings = pp_invoice_load_default_user_settings( $user_ID );
 			}
 		}
-
-		// The pp_invoice_user_settings() needs to be ran, it converts certain text values into bool values
-		$user_settings = pp_invoice_user_settings( 'all', $user_ID);
 
 		include( PP_INVOICE_UI_PATH . 'user_settings_page.php' );
 	}

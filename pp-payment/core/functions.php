@@ -80,13 +80,8 @@ function pp_invoice_user_settings( $what, $user_id = false ) {
 	$default_settings = pp_invoice_load_default_user_settings( $user_id );
 	$user_settings = array_merge( $default_settings, $user_settings );
 
-	// If there are no settings found, load defaults
- 	if( !is_array( $user_settings ) || count( $user_settings ) < 1 )	{
-		$user_settings = pp_invoice_load_default_user_settings( $user_id );
-	}
-
 	// Remove slashes from entire array
-	$user_settings = stripslashes_deep( $user_settings);
+	$user_settings = stripslashes_deep( $user_settings );
 
 	// Replace "false" and "true" strings with boolean values
 	if( is_array( $user_settings ) ) {
@@ -125,6 +120,16 @@ function pp_invoice_load_default_user_settings( $user_id ) {
 	$settings[ 'user_email' ] 					= $user_data->user_email;
 	$settings[ 'reminder_message' ] 			= "This is a reminder to pay your invoice.";
 	$settings[ 'tax_label' ] 					= "Tax";
+
+	$settings[ 'paypal_address' ] 				= '';
+	$settings[ 'gateway_username' ] 			= '';
+	$settings[ 'gateway_tran_key' ] 			= '';
+	$settings[ 'gateway_url' ] 				= '';
+	$settings[ 'gateway_delim_char' ] 			= '';
+	$settings[ 'gateway_encap_char' ] 			= '';
+	$settings[ 'gateway_MD5Hash' ] 				= '';
+	$settings[ 'gateway_delim_data' ] 			= '';
+	$settings[ 'draft_text' ] 					= '';
 
 	return $settings;
 }
