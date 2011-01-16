@@ -400,7 +400,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 
 		$button = 'buy';
 		$class = 'buy-form';
-		$form_extras = '<h6 class="buy-title">' . __( 'Buy Now', 'prospress' ) . '</h6>';
+		$form_extras = '<h4 class="buy-title">' . __( 'Buy Now', 'prospress' ) . '</h4>';
 		if( in_array( @$this->message_id, array( 15, 16 ) ) )
 			$form_extras .= '<div class="bid-updated bid_msg" >' . $this->get_message() . '</div>';
 		$form_extras .= '<div class="buy-price">';

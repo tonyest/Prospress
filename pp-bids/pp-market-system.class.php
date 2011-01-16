@@ -19,7 +19,7 @@
 
 abstract class PP_Market_System {
 
-	protected $name;					// Internal name of the market system, probably plural e.g. "auctions".
+	protected $name;				// Internal name of the market system, probably plural e.g. "auctions".
 	public $label;					// Label to display the market system publicly, e.g. "Auction".
 	public $labels;					// Array of labels used to represent market system elements publicly, includes name & singular_name
 	public $post;					// Hold the custom PP_Post object for this market system.
@@ -27,6 +27,7 @@ abstract class PP_Market_System {
 	public $post_table_columns;		// Array of arrays, each array is used to create a column in the post tables. By default it adds two columns, 
 									// one for number of bids on the post and the other for the current winning bid on the post 
 									// e.g. 'current_bid' => array( 'title' => 'Winning Bid', 'function' => 'get_winning_bid' ), 'bid_count' => array( 'title => 'Number of Bids', 'function' => 'get_bid_count' )
+	public $bid_form_heading;		// Text to output as the heading in the bid form
 	public $bid_table_headings;		// Array of name/value pairs to be used as column headings when printing table of bids. 
 									// e.g. 'bid_id' => 'Bid ID', 'post_id' => 'Post', 'bid_value' => 'Amount', 'bid_date' => 'Date'
 	public $taxonomy;				// A PP_Taxonomy object for this post type
@@ -42,6 +43,7 @@ abstract class PP_Market_System {
 		$this->name = sanitize_user( $name, true );
 
 		$defaults = array(
+						'bid_form_heading' => __( 'Place Bid', 'prospress' ),
 						'description' => '',
 						'label' => ucfirst( $this->name ),
 						'labels' => array(
@@ -70,6 +72,7 @@ abstract class PP_Market_System {
 		$this->label 				= $args[ 'label' ];
 		$this->labels 				= $args[ 'labels' ];
 		$this->post_table_columns 	= $args[ 'post_table_columns' ];
+		$this->bid_form_heading    = $args[ 'bid_form_heading' ];
 		$this->bid_table_headings 	= $args[ 'bid_table_headings' ];
 		$this->adds_post_fields 	= $args[ 'adds_post_fields' ];
 		$this->capability 			= $args[ 'capability' ];
@@ -163,6 +166,7 @@ abstract class PP_Market_System {
 
 		if ( $this->is_post_valid( $post_id ) ) {
 			$form = '<form id="bid_form-' . $post_id . '" class="bid-form" method="post" action="">';
+			$form .= '<h4>' . $this->bid_form_heading . '</h4>';
 			$form .= '<div class="bid-updated bid_msg" >' . $this->get_message() . '</div><div>';
 			$form .= $this->bid_form_fields( $post_id );
 			$form .= wp_nonce_field( __FILE__, 'bid_nonce', false, false );
