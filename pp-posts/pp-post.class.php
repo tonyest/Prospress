@@ -70,8 +70,6 @@ class PP_Post {
 			$index_page[ 'post_status' ] = 'publish';
 
 			wp_update_post( $index_page );
-
-			update_option( 'pp_show_welcome', 'false' );
 		}
 
 		$this->add_sidebars_widgets();

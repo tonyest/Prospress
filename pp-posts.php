@@ -197,7 +197,6 @@ function pp_post_save_postdata( $post_id, $post ) {
 			do_action( 'publish_end_date_change', $post->post_status, $post_end_date );
 		}
 	}
-	update_option( 'pp_show_welcome', 'false' );
 }
 add_action( 'save_post', 'pp_post_save_postdata', 10, 2 );
 
