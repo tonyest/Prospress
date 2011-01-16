@@ -10,6 +10,8 @@ require_once( PP_PAYMENT_DIR . '/core/functions.php' );
 require_once( PP_PAYMENT_DIR . '/core/display.php' );
 require_once( PP_PAYMENT_DIR . '/core/frontend.php' );
 require_once( PP_PAYMENT_DIR . '/core/invoice_class.php' );
+//A Prospress addition
+require_once( PP_PAYMENT_DIR . '/core/gateways/paypal-ipn.php' );
 
 $PP_Invoice = new PP_Invoice();	
 
@@ -221,26 +223,28 @@ class PP_Invoice {
 		global $user_ID, $wpdb, $page_now, $pp_invoice_page_names, $screen_layout_columns;
 		
 		$invoice_id = $_REQUEST[ 'invoice_id' ];
-		$has_invoice_permissions = pp_invoice_user_has_permissions( $invoice_id, $user_id);
+		$has_invoice_permissions = pp_invoice_user_has_permissions( $invoice_id, $user_ID);
 
 		if( $has_invoice_permissions) {
 
 			// Invoice Update Actions:
 
 			// Draft Message
-			if (wp_verify_nonce( $_REQUEST[ 'pp_invoice_process_cc' ], 'pp_invoice_process_cc_' . $invoice_id) ) {
+			if ( isset( $_REQUEST[ 'pp_invoice_process_cc' ] ) && wp_verify_nonce( $_REQUEST[ 'pp_invoice_process_cc' ], 'pp_invoice_process_cc_' . $invoice_id) ) {
 				$draft_message = nl2br( $_REQUEST[ 'draft_message' ]);
 				pp_invoice_update_status( $invoice_id, 'paid' );
 				pp_invoice_update_log( $invoice_id,'paid', sprintf( __( "Invoice paid via bank transfer. Message from payer: %s", 'prospress' ), $draft_message ) );
 			}
 
 			// PayPal return
-			if( $_REQUEST[ 'return_info' ] == 'cancel' ) {
-				$errors[] = __( "Your PayPal payment has not been processed.", 'prospress' );
-			} elseif( $_REQUEST[ 'return_info' ] == 'success' ) {
-				pp_invoice_update_status( $invoice_id, 'paid' );
-				pp_invoice_update_log( $invoice_id, 'paid', __( 'Invoice paid via PayPal.', 'prospress' ) );
- 			}
+			if( isset( $_REQUEST[ 'return_info' ] ) ) {
+				if( $_REQUEST[ 'return_info' ] == 'cancel' ) {
+					$errors[] = __( "Your PayPal payment has not been processed.", 'prospress' );
+				} elseif( $_REQUEST[ 'return_info' ] == 'success' ) {
+					pp_invoice_update_status( $invoice_id, 'paid' );
+					pp_invoice_update_log( $invoice_id, 'paid', __( 'Invoice paid via PayPal.', 'prospress' ) );
+	 			}
+			}
 
 			// Load invoice
 			$invoice_class = new pp_invoice_get( $invoice_id);
@@ -390,14 +394,14 @@ class PP_Invoice {
 
 		// Save settings
 		if( count( @$_REQUEST[ 'pp_invoice_user_settings' ] ) > 1 ) {
-			$user_settings = $_REQUEST[ 'pp_invoice_user_settings' ];
+			$user_settings = wp_parse_args( $_REQUEST[ 'pp_invoice_user_settings' ], $user_settings );
 
-			if( $user_settings[ 'paypal_allow'] == 'true' ){
-				$user_settings[ 'default_payment_venue' ] = 'paypal';
-			} elseif( $user_settings[ 'cc_allow'] == 'true' ){
+			if( $user_settings[ 'cc_allow'] == 'true' ){
 				$user_settings[ 'default_payment_venue' ] = 'cc';
 			} elseif( $user_settings[ 'draft_allow'] == 'true' ){
 				$user_settings[ 'default_payment_venue' ] = 'draft';
+			} elseif( $user_settings[ 'paypal_allow'] == 'true' ){
+				$user_settings[ 'default_payment_venue' ] = 'paypal';
 			} else {
 				$user_settings[ 'default_payment_venue' ] = '';
 			}
