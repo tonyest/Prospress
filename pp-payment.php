@@ -33,8 +33,6 @@ if ( !isset($wpdb->payments_log) || empty($wpdb->payments_log))
  */
 require_once( PP_PAYMENT_DIR . '/pp-invoice.php' );
 
-require_once( PP_PAYMENT_DIR . '/core/gateways/paypal-ipn.php' );
-
 include_once( PP_PAYMENT_DIR . '/pp-payment-templatetags.php' );
 
 
