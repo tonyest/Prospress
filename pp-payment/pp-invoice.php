@@ -390,12 +390,11 @@ class PP_Invoice {
 	function user_settings_page() {
 		global $user_ID;
 
-		$user_settings = pp_invoice_user_settings( 'all', $user_ID );
+		$user_settings = pp_invoice_user_settings( 'all' );
 
 		// Save settings
-		if( count( @$_REQUEST[ 'pp_invoice_user_settings' ] ) > 1 ) {
-			$user_settings = wp_parse_args( $_REQUEST[ 'pp_invoice_user_settings' ], $user_settings );
-
+		if( isset( $_POST[ 'pp_invoice_user_settings' ] ) ) {
+			$user_settings = wp_parse_args( $_POST[ 'pp_invoice_user_settings' ], $user_settings );
 			if( $user_settings[ 'cc_allow'] == 'true' ){
 				$user_settings[ 'default_payment_venue' ] = 'cc';
 			} elseif( $user_settings[ 'draft_allow'] == 'true' ){
@@ -476,7 +475,7 @@ class PP_Invoice {
 		// Load default user settings if none exist
 		if( !get_user_meta( $user_ID, 'pp_invoice_settings', true ) && $user_ID != 0 ) {
 			$settings = pp_invoice_load_default_user_settings( $user_ID );
-			update_user_meta( $user_id, 'pp_invoice_settings', $settings );
+			update_user_meta( $user_ID, 'pp_invoice_settings', $settings );
 		}
 
 		// Load these variables early

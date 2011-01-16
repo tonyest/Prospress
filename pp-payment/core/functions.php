@@ -72,27 +72,25 @@ function pp_invoice_payment_nicename( $slug) {
 function pp_invoice_user_settings( $what, $user_id = false ) {
 	global $user_ID;
 
-	if(!$user_id )
+	if( $user_id === false )
 		$user_id = $user_ID;
 
 	// Load user settings
 	$user_settings = get_user_meta( $user_id, 'pp_invoice_settings' );
-	$default_settings = pp_invoice_load_default_user_settings( $user_id );
-	$user_settings = array_merge( $default_settings, $user_settings );
+	$default_settings[0] = pp_invoice_load_default_user_settings( $user_id );
+	$user_settings = wp_parse_args( $user_settings[0], $default_settings[0] );
 
 	// Remove slashes from entire array
 	$user_settings = stripslashes_deep( $user_settings );
 
 	// Replace "false" and "true" strings with boolean values
-	if( is_array( $user_settings ) ) {
-		foreach( $user_settings as $setting_name => $setting_value ) {
+	foreach( $user_settings as $setting_name => $setting_value ) {
 
-			if( $setting_value == 'true' )
-				$user_settings[ $setting_name ] = true;
+		if( $setting_value == 'true' )
+			$user_settings[ $setting_name ] = true;
 
-			if( $setting_value == 'false' )
-				$user_settings[ $setting_name ] = false;
-		}
+		if( $setting_value == 'false' )
+			$user_settings[ $setting_name ] = false;
 	}
 
 	if( $what != 'all' ) 
@@ -124,7 +122,7 @@ function pp_invoice_load_default_user_settings( $user_id ) {
 	$settings[ 'paypal_address' ] 				= '';
 	$settings[ 'gateway_username' ] 			= '';
 	$settings[ 'gateway_tran_key' ] 			= '';
-	$settings[ 'gateway_url' ] 				= '';
+	$settings[ 'gateway_url' ] 					= '';
 	$settings[ 'gateway_delim_char' ] 			= '';
 	$settings[ 'gateway_encap_char' ] 			= '';
 	$settings[ 'gateway_MD5Hash' ] 				= '';

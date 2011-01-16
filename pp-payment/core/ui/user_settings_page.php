@@ -1,6 +1,6 @@
 <?php global $currency; ?>
 <div class="wrap">
-<form method='POST'>
+<form method='POST' action=''>
 <h2><?php _e("Payment Settings", 'prospress') ?></h2>
 <style>
 	<?php if( $user_settings[ 'paypal_allow' ] != 'true' ) : ?>
