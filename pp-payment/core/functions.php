@@ -1148,136 +1148,6 @@ function pp_invoice_process_cc_transaction( $cc_data = false ) {
 	die();
 }
 
-function pp_invoice_process_invoice_update( $invoice_id ) {
-
-	global $wpdb;
-
-	if( $_REQUEST['user_id'] == 'create_new_user' ) {
-
-		$user_info = array();
-		$user_info['pp_invoice_first_name'] = $_REQUEST['pp_invoice_first_name'];
-		$user_info['pp_invoice_last_name'] = $_REQUEST['pp_invoice_last_name'];
-		$user_info['pp_invoice_new_user_username'] = $_REQUEST['pp_invoice_new_user_username'];
-		$user_info['pp_invoice_new_user_email_address'] = $_REQUEST['pp_invoice_new_user_email_address'];
-
-		$user_id = pp_invoice_create_wp_user( $user_info);
-
-	} else {
-		$user_id = $_REQUEST['user_id'];
-	}
-
-	//Update User Information
-	$profileuser = get_user_to_edit( $_POST['user_id']);
-	$description = $_REQUEST['description'];
-	$subject = $_REQUEST['subject'];
-	$amount = $_REQUEST['amount'];
-
-	//Update User Information
-	if(!empty( $_REQUEST['pp_invoice_first_name'])) update_user_meta( $user_id, 'first_name', $_REQUEST['pp_invoice_first_name']);
-	if(!empty( $_REQUEST['pp_invoice_last_name'])) update_user_meta( $user_id, 'last_name', $_REQUEST['pp_invoice_last_name']);
-	if(!empty( $_REQUEST['pp_invoice_streetaddress'])) update_user_meta( $user_id, 'streetaddress', $_REQUEST['pp_invoice_streetaddress']);
-	if(!empty( $_REQUEST['pp_invoice_company_name'])) update_user_meta( $user_id, 'company_name',$_REQUEST['pp_invoice_company_name']);
-	if(!empty( $_REQUEST['pp_invoice_city'])) update_user_meta( $user_id, 'city',$_REQUEST['pp_invoice_city']);
-	if(!empty( $_REQUEST['pp_invoice_state'])) update_user_meta( $user_id, 'state', $_REQUEST['pp_invoice_state']);
-	if(!empty( $_REQUEST['pp_invoice_zip'])) update_user_meta( $user_id, 'zip', $_REQUEST['pp_invoice_zip']);
-
-	// Itemized List
-	$itemized_list = $_REQUEST['itemized_list'];
-	//remove items from itemized list that are missing a title, they are most likely deleted
-	if(is_array( $itemized_list)) {
-		$counter = 1;
-		foreach( $itemized_list as $itemized_item){
-			if(empty( $itemized_item[name])) {
-				unset( $itemized_list[$counter]); 
-			}
-		$counter++;
-		}
-	array_values( $itemized_list);
-	}
-	$itemized = urlencode(serialize( $itemized_list));
-
-	// Check if this is new invoice creation, or an update
-
-	if(pp_invoice_does_invoice_exist( $invoice_id )) {
-		// Updating Old Invoice
-
-		if(pp_invoice_get_invoice_attrib( $invoice_id,'subject' ) != $subject) { $wpdb->query("UPDATE ".$wpdb->payments." SET subject = '$subject' WHERE id = $invoice_id" ); 			pp_invoice_update_log( $invoice_id, 'updated', ' Item Updated ' ); $message .= "Item updated. ";}
-		if(pp_invoice_get_invoice_attrib( $invoice_id,'description' ) != $description) { $wpdb->query("UPDATE ".$wpdb->payments." SET description = '$description' WHERE id = $invoice_id" ); 			pp_invoice_update_log( $invoice_id, 'updated', ' Description Updated ' ); $message .= "Description updated. ";}
-		if(pp_invoice_get_invoice_attrib( $invoice_id,'amount' ) != $amount) { $wpdb->query("UPDATE ".$wpdb->payments." SET amount = '$amount' WHERE id = $invoice_id" ); 			pp_invoice_update_log( $invoice_id, 'updated', ' Amount Updated ' ); $message .= "Amount updated. ";}
-		if(pp_invoice_get_invoice_attrib( $invoice_id,'itemized' ) != $itemized ) { $wpdb->query("UPDATE ".$wpdb->payments." SET itemized = '$itemized' WHERE id = $invoice_id" ); 			pp_invoice_update_log( $invoice_id, 'updated', ' Itemized List Updated ' ); $message .= "Itemized List updated. ";}
-	}
-	else {
-		// Create New Invoice
-
-		if( $wpdb->query("INSERT INTO ".$wpdb->payments." (amount,description,id,user_id,subject,itemized,status)	VALUES ('$amount','$description','$invoice_id','$user_id','$subject','$itemized','0' )" )) {
-			$message = __("New Invoice saved.", 'prospress' );
-			pp_invoice_update_log( $invoice_id, 'created', ' Created ' );;
-		} 
-		else { 
-			$error = true; $message = __("There was a problem saving invoice.  Try deactivating and reactivating plugin.", 'prospress' ); 
-		}
-	}
-
-	// See if invoice is recurring
-	if(!empty( $_REQUEST['pp_invoice_subscription_name']) &&	!empty( $_REQUEST['pp_invoice_subscription_unit']) && !empty( $_REQUEST['pp_invoice_subscription_total_occurances'])) {
-		$pp_invoice_recurring_status = true;
-		pp_invoice_update_invoice_meta( $invoice_id, "recurring_billing", true );
-		$message .= __(" Recurring invoice saved.  This invoice may be viewed under <b>Recurring Billing</b>. ", 'prospress' );
-	}
-
-	$basic_invoice_settings = array(
-	"pp_invoice_custom_invoice_id",
-	"pp_invoice_tax",
-	"pp_invoice_currency_code",
-	"pp_invoice_due_date_day",
-	"pp_invoice_due_date_month",
-	"pp_invoice_due_date_year" );
-
-	pp_invoice_process_updates( $basic_invoice_settings, 'pp_invoice_update_invoice_meta', $invoice_id );
-
-	$payment_and_billing_settings_array = array(
-	"pp_invoice_payment_method",
-	"pp_invoice_client_change_payment_method",
-
-	"pp_invoice_paypal_allow",
-	"pp_invoice_paypal_address",
-
-	"pp_invoice_cc_allow",
-	"pp_invoice_gateway_url",
-	"pp_invoice_gateway_username",
-	"pp_invoice_gateway_tran_key",
-	"pp_invoice_gateway_merchant_email",
-	"pp_invoice_gateway_delim_data",
-	"pp_invoice_gateway_delim_char",
-	"pp_invoice_gateway_encap_char",
-	"pp_invoice_gateway_MD5Hash",
-	"pp_invoice_gateway_test_mode",
-	"pp_invoice_gateway_relay_response",
-	"pp_invoice_gateway_email_customer",
-	"pp_invoice_recurring_gateway_url",
-
-	"pp_invoice_gateway_email_customer",
-
-	"pp_invoice_subscription_name",
-	"pp_invoice_subscription_unit",
-	"pp_invoice_subscription_length",
-	"pp_invoice_subscription_start_month",
-	"pp_invoice_subscription_start_day",
-	"pp_invoice_subscription_start_year",
-	"pp_invoice_subscription_total_occurances" );
-
-	pp_invoice_process_updates( $payment_and_billing_settings_array, 'pp_invoice_update_invoice_meta', $invoice_id );
-
-	//If there is a message, append it with the web invoice link
-	if( $message && $invoice_id ) {
-	$invoice_info = new PP_Invoice_GetInfo( $invoice_id ); 
-	$message .= " <a href='".$invoice_info->display('link' )."'>".__("View Web Invoice", 'prospress' )."</a>.";
-	}
-
-	if(!$error) return $message;
-	if( $error) return "An error occured: $message.";
-
-}
 
 function pp_invoice_show_message( $content, $type = "updated fade" ) {
 	if( $content) 
@@ -1318,8 +1188,10 @@ function pp_invoice_process_updates( $array, $type = "update_option", $invoice_i
 			if( isset( $_POST[ $item_name ] ) )
 				update_option( $item_name, $_POST[ $item_name ] );
 
-	if( $type == "pp_invoice_update_invoice_meta" ) foreach( $array as $item_name ) { 
-		if(isset( $_POST[$item_name])) pp_invoice_update_invoice_meta( $invoice_id, $item_name, $_POST[$item_name]); }
+	if( $type == "pp_invoice_update_invoice_meta" )
+		foreach( $array as $item_name )
+			if( isset( $_POST[ $item_name ] ) )
+				pp_invoice_update_invoice_meta( $invoice_id, $item_name, $_POST[$item_name] ); 
 }
 
 function pp_invoice_md5_to_invoice( $md5) {
