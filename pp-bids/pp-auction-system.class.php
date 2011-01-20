@@ -108,7 +108,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 	 * This is called manually in the "buy_now_return" function and also hooked to 
 	 * the PayPal IPN listener.
 	 **/
-	protected function buy_form_submit() {
+	public function buy_form_submit() {
 		global $currency;
 
 		$buy_now_price = get_post_meta( $_POST['item_number'], 'buy_now_price', true );
