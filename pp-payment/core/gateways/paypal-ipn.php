@@ -41,6 +41,9 @@ function pp_paypal_ipn_listener(){
 	$fp_url	= 'ssl://www.' . ( $paypal_sandbox == 'true' ) ? "sandbox." : '';
 	$fp_url	.= 'paypal.com';
 	$fp 	= fsockopen( $fp_url, 443, $errno, $errstr, 30 );
+	error_log( 'After fsockopen, $fp = ' . print_r( $fp, true ) );
+	error_log( 'After fsockopen, $errno = ' . print_r( $errno, true ) );
+	error_log( 'After fsockopen, $errstr = ' . print_r( $errstr, true ) );
 
 	if ( !$fp ) {
 		// HTTP ERROR
