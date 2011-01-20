@@ -17,8 +17,6 @@ function pp_paypal_ipn_listener(){
 	global $wpdb;
 
 	error_log( 'in paypal ipn listener' );
-	//error_log( 'POST = ' . print_r( $_POST, true ) );
-	//error_log( 'GET = ' . print_r( $_GET, true ) );
 
 	// read the post from PayPal system and add 'cmd'
 	$req = 'cmd=_notify-validate';
@@ -41,7 +39,7 @@ function pp_paypal_ipn_listener(){
 	$fp_url	= 'ssl://www.';
 	$fp_url	.= ( $paypal_sandbox != 'false' ) ? "sandbox." : ''; // default to sandbox
 	$fp_url	.= 'paypal.com';
-	error_log( 'IN PPIPN = fp_url = ' . print_r( $fp_url, true ) );
+
 	$fp 	= fsockopen( $fp_url, 443, $errno, $errstr, 30 );
 
 	if ( !$fp ) {
@@ -52,7 +50,6 @@ function pp_paypal_ipn_listener(){
 		fputs( $fp, $header . $req );
 		while( !feof( $fp ) ) {
 			$res = fgets( $fp, 1024 );
-			error_log( 'in while of paypal IPN listener, $res = ' . print_r( $res, true ) );
 			if ( strcmp( $res, "VERIFIED" ) == 0 ) {
 				error_log( 'VERIFIED  response in paypal ipn listener' );
 				do_action( 'paypal_ipn_verified', $_POST );
