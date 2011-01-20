@@ -52,12 +52,12 @@ function pp_paypal_ipn_listener(){
 			$res = fgets( $fp, 1024 );
 			if ( strcmp( $res, "VERIFIED" ) == 0 ) {
 				error_log( 'VERIFIED  response in paypal ipn listener' );
+				add_post_meta( $_POST['item_number'], 'paypal_ipn_valid', $_POST, false );
 				do_action( 'paypal_ipn_verified', $_POST );
-				add_post_meta( $_POST['item_number'], 'paypal_ipn_valid', $_POST );
 			} else if ( strcmp ( $res, "INVALID" ) == 0 ) {
 				error_log( 'INVALID  response in paypal ipn listener' );
 				// log for manual investigation
-				add_post_meta( $_POST['item_number'], 'paypal_ipn_invalid', $_POST );
+				add_post_meta( $_POST['item_number'], 'paypal_ipn_invalid', $_POST, false );
 				do_action( 'paypal_ipn_invalid', $_POST );
 			}
 		}
