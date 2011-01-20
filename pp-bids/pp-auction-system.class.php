@@ -37,6 +37,8 @@ class PP_Auction_Bid_System extends PP_Market_System {
 
 		add_filter( 'bid_message_unknown', array( &$this, 'buy_now_messages' ), 10, 2 );
 
+		do_action( 'bid_on_completed_post', array( &$this, 'fix_buy_now_msg' ) );
+
 		do_action( 'auction_init', $args );
 
 		parent::__construct( 'auctions', $args );
@@ -486,7 +488,20 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		if( $message_id == 15 )
 			$message = __( 'Purchase Cancelled.', 'prospress' );
 		elseif( $message_id == 16 )
-			$message = __( 'Purchase successful, congratulations. The seller has been notified of your payment & will be in contact shortly.', 'prospress' );
+			$message = __( 'Purchase successful, congratulations. The seller has been notified & will be in contact shortly.', 'prospress' );
 		return $message;
 	}
+	
+	/**
+	 * When a user returns to the site from PayPal, if the IPN has fired already, 
+	 * the post will have completed and they will receive the message "Auction Finished". 
+	 *
+	 * The message needs to be set to show purchase success.
+	 **/
+	public function fix_buy_now_msg( $post_id ){
+
+		if( $this->is_winning_bidder( '', $post_id ) || ( isset( $_POST[ 'payment_status' ] ) && isset( $_POST[ 'payment_status' ] ) != 'Completed' ) )
+			$this->message_id = 16;
+	}
+	
 }
