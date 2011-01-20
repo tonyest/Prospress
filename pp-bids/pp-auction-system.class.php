@@ -133,7 +133,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		} elseif( $_POST[ 'mc_currency' ] != $currency ) { // Check that payment currency is correct
 			error_log( 'Currency incorrect, mc_gross = ' . print_r( $_POST['mc_currency'], true ) );
 			wp_die( 'PayPal transaction used in correct currency incorrect.' );
-		} elseif( !wp_verify_nonce( $_POST[ 'invoice' ], $_POST[ 'item_number' ] ) ){
+		} elseif( !wp_verify_nonce( $_POST[ 'invoice' ], $_POST[ 'item_number' ] + NONCE_SALT ) ){
 			wp_die( 'Buy Now Nonce Verification Fail' );
 		} elseif( !$this->is_post_valid( $_POST[ 'item_number' ] ) ) {
 			wp_die( 'This post is not valid for buy now.' );
@@ -441,7 +441,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		$invoice->post_title = $post_details->post_title;
 		$invoice->pay_link 	= add_query_arg( array( 'buy_now' => 'paypal' ), get_permalink( $post_id ) );
 		$invoice->post_id 	= $post_id; // no invoice yet
-		$invoice->id 		= wp_create_nonce( $post_id ); // no invoice yet
+		$invoice->id 		= wp_create_nonce( $post_id + NONCE_SALT ); // no invoice yet
 		$invoice->currency_code = $currency;
 
 		$button = 'buy';

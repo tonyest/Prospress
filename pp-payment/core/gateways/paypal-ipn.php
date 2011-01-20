@@ -52,6 +52,7 @@ function pp_paypal_ipn_listener(){
 		while( !feof( $fp ) ) {
 			error_log( 'in while of paypal IPN listener, $fp = ' . print_r( $fp, true ) );
 			$res = fgets( $fp, 1024 );
+			error_log( 'in while of paypal IPN listener, $res = ' . print_r( $res, true ) );
 			if ( strcmp( $res, "VERIFIED" ) == 0 ) {
 				error_log( 'VERIFIED  response in paypal ipn listener' );
 				do_action( 'paypal_ipn_verified', $_POST );
