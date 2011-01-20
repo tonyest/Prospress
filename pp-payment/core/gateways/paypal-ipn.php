@@ -47,13 +47,17 @@ function pp_paypal_ipn_listener(){
 		error_log('There has been a HTTP error with PayPal IPN: $req = ' . print_r( $req, true ) );
 		error_log('There has been a HTTP error with PayPal IPN: $_POST = ' . print_r( $_POST, true ) );
 	} else {
-		fputs ( $fp, $header . $req );
-		while ( !feof( $fp ) ) {
+		fputs( $fp, $header . $req );
+		error_log( 'fputs complete in paypal IPN listener' );
+		while( !feof( $fp ) ) {
+			error_log( 'in while of paypal IPN listener, $fp = ' . print_r( $fp, true ) );
 			$res = fgets( $fp, 1024 );
 			if ( strcmp( $res, "VERIFIED" ) == 0 ) {
+				error_log( 'VERIFIED  response in paypal ipn listener' );
 				do_action( 'paypal_ipn_verified', $_POST );
-				add_post_meta( $_POST['item_number'], 'paypal_ipn_invalid', $_POST );
+				add_post_meta( $_POST['item_number'], 'paypal_ipn_valid', $_POST );
 			} else if ( strcmp ( $res, "INVALID" ) == 0 ) {
+				error_log( 'INVALID  response in paypal ipn listener' );
 				// log for manual investigation
 				add_post_meta( $_POST['item_number'], 'paypal_ipn_invalid', $_POST );
 				do_action( 'paypal_ipn_invalid', $_POST );
