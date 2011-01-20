@@ -161,7 +161,7 @@ abstract class PP_Market_System {
 	public function bid_form( $post_id = NULL ) {
 		global $post;
 
-		$post_id = ( $post_id === NULL ) ? $post->ID : (int)$post_id;
+		$post_id = ( $post_id === NULL ) ? $post->ID : $post_id;
 		$the_post = ( empty ( $post ) ) ? get_post( $post_id) : $post;
 
 		if ( $this->is_post_valid( $post_id ) ) {
@@ -182,7 +182,7 @@ abstract class PP_Market_System {
 		$form = apply_filters( 'bid_form', $form );
 		$form = apply_filters( $this->name . '-bid_form', $form );
 
-		return $form;		
+		return $form;
 	}
 	
 	public function the_bid_form( $post_id = NULL ) {
@@ -222,24 +222,25 @@ abstract class PP_Market_System {
 		if( empty( $post_id ))
 			$post_id = $post->ID;
 
-		$post_status = get_post( $post_id )->post_status;
+		// Need to be done manually to account for changes during request as wp caches post status
+		$post_status = $wpdb->get_var( $wpdb->prepare( "SELECT post_status FROM $wpdb->posts WHERE ID = %d LIMIT 1", $post_id ) );
 
 		if ( $post_status == 'completed' ){
+			if( !isset( $this->message_id ) )
+				$this->message_id = 12;
 			do_action( 'bid_on_completed_post', $post_id );
-			$this->message_id = 12;
-		} elseif ( $post_status === NULL ) {
-			do_action( 'bid_post_not_found', $post_id );
-			$this->message_id = 13;
-			$post_status = 'invalid';
 		} elseif ( in_array( $post_status, array( 'draft', 'pending', 'future' ) ) ) {
-			do_action( 'bid_on_draft', $post_id);
 			$this->message_id = 14;
 			$post_status = 'invalid';
+			do_action( 'bid_on_draft_scheduled', $post_id );
+		} elseif ( $post_status === NULL ) {
+			$this->message_id = 13;
+			$post_status = 'invalid';
+			do_action( 'bid_post_not_found', $post_id );
 		} else {
 			$post_status = 'valid';
 		}
 
-		apply_filters( 'pp_validate_post', $post_status );
 		apply_filters( 'pp_validate_post', $post_status );
 		return $post_status;
 	}
@@ -248,7 +249,7 @@ abstract class PP_Market_System {
 	protected function update_bid( $bid ){
 		global $wpdb;
 
-		if ( $this->bid_status == 'invalid' ) // nothing to update
+		if( $this->bid_status == 'invalid' ) // nothing to update
 			return $this->get_winning_bid_value( $bid[ 'post_id' ] );
 
 		$bid_post[ 'post_parent' ]	= $bid[ 'post_id' ];
@@ -257,7 +258,6 @@ abstract class PP_Market_System {
 		$bid_post[ 'post_status' ]	= $bid[ 'bid_status' ];
 		$bid_post[ 'post_type' ]	= $this->bid_object_name;
 
-		error_log( 'bid_post = ' . print_r( $bid_post, true ) );
 		wp_insert_post( $bid_post );
 
 		return $bid[ 'bid_value' ];
@@ -317,13 +317,6 @@ abstract class PP_Market_System {
 
 	/**
 	 * Gets the value of the current winning bid for a post, optionally specified with $post_id.
-	 *
-	 * The value of the winning bid is not necessarily equal to the bid's value. The winning bid
-	 * value is calculated with the bid increment over the current second highest bid. It is then
-	 * stored in the bidsmeta table. This function pulls the value from this table. 
-	 * 
-	 * If no winning value is stored in the bidsmeta table, then the function uses the winning bids
-	 * value, which is equal to the maximum bid for that user on this post.
 	 */
 	public function get_winning_bid_value( $post_id = '' ) {
 		global $post, $wpdb;
@@ -464,10 +457,6 @@ abstract class PP_Market_System {
 	 */
 	protected function get_message(){
 
-		// Avoid showing messages passed in latent url parameters
-		if ( !is_user_logged_in() && !isset( $_GET[ 'buy_now' ] ) )
-			return;
-
 		if ( isset( $this->message_id ) )
 			$message_id = $this->message_id;
 		elseif ( isset( $_GET[ 'bid_msg' ] ) )
@@ -512,7 +501,7 @@ abstract class PP_Market_System {
 					$message = sprintf( __( 'You cannot bid on your own %s.', 'prospress' ), $this->labels[ 'singular_name' ] );
 					break;
 				case 12:
-					$message = sprintf( __( 'This %s has completed, bids cannot be accepted.', 'prospress' ), $this->labels[ 'singular_name' ] );
+					$message = sprintf( __( 'This %s has finished, bids cannot be accepted.', 'prospress' ), $this->labels[ 'singular_name' ] );
 					break;
 				case 13:
 					$message = sprintf( __( 'This %s can not be found.', 'prospress' ), $this->labels[ 'singular_name' ] );
@@ -524,6 +513,7 @@ abstract class PP_Market_System {
 					$message = apply_filters( 'bid_message_unknown', sprintf( __( "Error: %d"), $message_id ), $message_id );
 					break;
 			}
+
 			$message = apply_filters( 'bid_message', $message, $message_id );
 			$message = apply_filters( $this->name . '-bid_message', $message, $message_id );
 
