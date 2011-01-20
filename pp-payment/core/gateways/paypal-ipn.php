@@ -38,9 +38,10 @@ function pp_paypal_ipn_listener(){
 	$pp_invoice_settings = get_usermeta( $user_id, 'pp_invoice_settings' );
 	$paypal_sandbox = $pp_invoice_settings[ 'paypal_sandbox' ];
 
-	$fp_url	= 'ssl://www.' . ( $paypal_sandbox == 'true' ) ? "sandbox." : '';
+	$fp_url	= 'ssl://www.';
+	$fp_url	.= ( $paypal_sandbox == 'true' ) ? "sandbox." : '';
 	$fp_url	.= 'paypal.com';
-	error_log( 'IN PPIPN = fp_url' . print_r( $fp_url, true ) );
+	error_log( 'IN PPIPN = fp_url = ' . print_r( $fp_url, true ) );
 	$fp 	= fsockopen( $fp_url, 443, $errno, $errstr, 30 );
 	error_log( 'After fsockopen, $fp = ' . print_r( $fp, true ) );
 	error_log( 'After fsockopen, $errno = ' . print_r( $errno, true ) );
