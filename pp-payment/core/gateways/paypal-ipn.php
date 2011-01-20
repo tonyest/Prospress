@@ -40,6 +40,7 @@ function pp_paypal_ipn_listener(){
 
 	$fp_url	= 'ssl://www.' . ( $paypal_sandbox == 'true' ) ? "sandbox." : '';
 	$fp_url	.= 'paypal.com';
+	error_log( 'IN PPIPN = fp_url' . print_r( $fp_url, true ) );
 	$fp 	= fsockopen( $fp_url, 443, $errno, $errstr, 30 );
 	error_log( 'After fsockopen, $fp = ' . print_r( $fp, true ) );
 	error_log( 'After fsockopen, $errno = ' . print_r( $errno, true ) );
@@ -50,6 +51,8 @@ function pp_paypal_ipn_listener(){
 		error_log('There has been a HTTP error with PayPal IPN: $req = ' . print_r( $req, true ) );
 		error_log('There has been a HTTP error with PayPal IPN: $_POST = ' . print_r( $_POST, true ) );
 	} else {
+		error_log( 'IN PPIPN = header' . print_r( $header, true ) );
+		error_log( 'IN PPIPN = req' . print_r( $req, true ) );
 		fputs( $fp, $header . $req );
 		error_log( 'fputs complete in paypal IPN listener' );
 		while( !feof( $fp ) ) {
