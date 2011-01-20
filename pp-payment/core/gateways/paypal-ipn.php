@@ -51,7 +51,6 @@ function pp_paypal_ipn_listener(){
 	} else {
 		fputs( $fp, $header . $req );
 		while( !feof( $fp ) ) {
-			error_log( 'in while of paypal IPN listener, $fp = ' . print_r( $fp, true ) );
 			$res = fgets( $fp, 1024 );
 			error_log( 'in while of paypal IPN listener, $res = ' . print_r( $res, true ) );
 			if ( strcmp( $res, "VERIFIED" ) == 0 ) {
