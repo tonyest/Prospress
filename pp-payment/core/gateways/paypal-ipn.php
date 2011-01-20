@@ -17,8 +17,8 @@ function pp_paypal_ipn_listener(){
 	global $wpdb;
 
 	error_log( 'in paypal ipn listener' );
-	error_log( 'POST = ' . print_r( $_POST, true ) );
-	error_log( 'GET = ' . print_r( $_GET, true ) );
+	//error_log( 'POST = ' . print_r( $_POST, true ) );
+	//error_log( 'GET = ' . print_r( $_GET, true ) );
 
 	// read the post from PayPal system and add 'cmd'
 	$req = 'cmd=_notify-validate';
