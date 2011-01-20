@@ -233,10 +233,11 @@ function pp_end_post( $post_id ) {
 	if( wp_is_post_revision( $post_id ) )
 		$post_id = wp_is_post_revision( $post_id );
 
+	$post = get_post( $post_id );
 	$post_status = apply_filters( 'post_end_status', 'completed' );
-
+	//wp_transition_post_status( $post_status, $post->post_status, $post ); // must be dont manually
 	$wpdb->update( $wpdb->posts, array( 'post_status' => $post_status ), array( 'ID' => $post_id ) );
-
+	
 	do_action( 'post_completed', $post_id );
 }
 add_action( 'schedule_end_post', 'pp_end_post', 10, 1 );
