@@ -171,6 +171,8 @@ add_action( 'init', 'pp_set_currency' );
 function pp_money_format( $number, $decimals = '', $currency = '' ){
 	global $currencies, $currency_symbol;
 
+	$number = floatval( $number );
+
 	if( empty( $decimals ) && $number > 1000 )
 		$decimals = 0;
 	else

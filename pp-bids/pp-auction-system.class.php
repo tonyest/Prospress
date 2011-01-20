@@ -275,8 +275,8 @@ class PP_Auction_Bid_System extends PP_Market_System {
 	public function post_fields(){
 		global $post_ID, $currency_symbol, $user_ID;
 
-		$start_price = get_post_meta( $post_ID, 'start_price', true );
-		$buy_now_price = get_post_meta( $post_ID, 'buy_now_price', true );
+		$start_price = floatval( get_post_meta( $post_ID, 'start_price', true ) );
+		$buy_now_price = floatval( get_post_meta( $post_ID, 'buy_now_price', true ) );
 
 		$disabled = '';
 		$disabled_msg = '';
