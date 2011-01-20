@@ -44,8 +44,10 @@ function pp_paypal_ipn_listener(){
 
 	if ( !$fp ) {
 		// HTTP ERROR
-		error_log('There has been a HTTP error with PayPal IPN: $req = ' . print_r( $req, true ) );
 		error_log('There has been a HTTP error with PayPal IPN: $_POST = ' . print_r( $_POST, true ) );
+		error_log('There has been a HTTP error with PayPal IPN: $header = ' . print_r( $header, true ) );
+		error_log('There has been a HTTP error with PayPal IPN: $fp_url = ' . print_r( $fp_url, true ) );
+		wp_die( 'PayPal IPN Error: There has been a HTTP error with PayPal IPN.' );
 	} else {
 		fputs( $fp, $header . $req );
 		while( !feof( $fp ) ) {
