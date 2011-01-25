@@ -101,7 +101,8 @@ function pp_generate_invoice( $post_id ) {
 	$status		= 'pending';
 
 	$args = compact( 'post_id', 'payer_id', 'payee_id', 'amount', 'status', 'type' );
-
+	do_action('generate_invoice',$args);
+	
 	return pp_invoice_create( $args );
 }
 add_action( 'post_completed', 'pp_generate_invoice' );

@@ -33,6 +33,17 @@ $market_systems[ $market_system->name() ] = $market_system;
 
 $market_systems = apply_filters( 'add_market_system', $market_systems );
 
+/**
+ * Register Prospress bid options
+ *
+ * @package Prospress
+ * @since 1.01
+ */
+function register_pp_bid_options(){
+	register_setting( 'pp_core_options' , 'bid_factor' , 'floatVal' );
+	register_setting( 'pp_core_options' , 'bid_function' );
+}
+add_action( 'admin_init', 'register_pp_bid_options' );
 
 /**
  * To save updating/installing the bids tables when they already exist and are up-to-date, check 
@@ -94,8 +105,10 @@ function pp_bids_install( $blog_id = 0 ) {
 		//for another day
 		//$wpdb->query( "DROP TABLE IF EXISTS $wpdb->bidsmeta" );
 	}
-
 	update_option( 'pp_bids_db_version', PP_BIDS_DB_VERSION );
+	//initialise bid increment settings
+	update_option('bid_function', 'percentage');
+	update_option('bid_factor' , 0.05);
 }
 
 
