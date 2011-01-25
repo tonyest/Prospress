@@ -19,8 +19,7 @@
 
 abstract class PP_Market_System {
 
-	protected $name;					// Internal name of the market system, probably plural e.g. "auctions".
-	public $bid_form_heading;		// Text to output as the heading in the bid form
+	protected $name;				// Internal name of the market system, probably plural e.g. "auctions".
 	public $label;					// Label to display the market system publicly, e.g. "Auction".
 	public $labels;					// Array of labels used to represent market system elements publicly, includes name & singular_name
 	public $post;					// Hold the custom PP_Post object for this market system.
@@ -28,6 +27,7 @@ abstract class PP_Market_System {
 	public $post_table_columns;		// Array of arrays, each array is used to create a column in the post tables. By default it adds two columns, 
 									// one for number of bids on the post and the other for the current winning bid on the post 
 									// e.g. 'current_bid' => array( 'title' => 'Winning Bid', 'function' => 'get_winning_bid' ), 'bid_count' => array( 'title => 'Number of Bids', 'function' => 'get_bid_count' )
+	public $bid_form_heading;		// Text to output as the heading in the bid form
 	public $bid_table_headings;		// Array of name/value pairs to be used as column headings when printing table of bids. 
 									// e.g. 'bid_id' => 'Bid ID', 'post_id' => 'Post', 'bid_value' => 'Amount', 'bid_date' => 'Date'
 	public $taxonomy;				// A PP_Taxonomy object for this post type
@@ -69,10 +69,10 @@ abstract class PP_Market_System {
 
 		$args = wp_parse_args( $args, $defaults );
 
-		$this->bid_form_heading		= $args[ 'bid_form_heading' ];
 		$this->label 				= $args[ 'label' ];
 		$this->labels 				= $args[ 'labels' ];
 		$this->post_table_columns 	= $args[ 'post_table_columns' ];
+		$this->bid_form_heading    = $args[ 'bid_form_heading' ];
 		$this->bid_table_headings 	= $args[ 'bid_table_headings' ];
 		$this->adds_post_fields 	= $args[ 'adds_post_fields' ];
 		$this->capability 			= $args[ 'capability' ];
@@ -161,12 +161,12 @@ abstract class PP_Market_System {
 	public function bid_form( $post_id = NULL ) {
 		global $post;
 
-		$post_id = ( $post_id === NULL ) ? $post->ID : (int)$post_id;
+		$post_id = ( $post_id === NULL ) ? $post->ID : $post_id;
 		$the_post = ( empty ( $post ) ) ? get_post( $post_id) : $post;
 
 		if ( $this->is_post_valid( $post_id ) ) {
 			$form = '<form id="bid_form-' . $post_id . '" class="bid-form" method="post" action="">';
-			$form .= '<h6>' . $this->bid_form_heading . '</h6>';
+			$form .= '<h4>' . $this->bid_form_heading . '</h4>';
 			$form .= '<div class="bid-updated bid_msg" >' . $this->get_message() . '</div><div>';
 			$form .= $this->bid_form_fields( $post_id );
 			$form .= wp_nonce_field( __FILE__, 'bid_nonce', false, false );
@@ -182,7 +182,7 @@ abstract class PP_Market_System {
 		$form = apply_filters( 'bid_form', $form );
 		$form = apply_filters( $this->name . '-bid_form', $form );
 
-		return $form;		
+		return $form;
 	}
 	
 	public function the_bid_form( $post_id = NULL ) {
@@ -222,24 +222,25 @@ abstract class PP_Market_System {
 		if( empty( $post_id ))
 			$post_id = $post->ID;
 
-		$post_status = get_post( $post_id )->post_status;
+		// Need to be done manually to account for changes during request as wp caches post status
+		$post_status = $wpdb->get_var( $wpdb->prepare( "SELECT post_status FROM $wpdb->posts WHERE ID = %d LIMIT 1", $post_id ) );
 
 		if ( $post_status == 'completed' ){
+			if( !isset( $this->message_id ) )
+				$this->message_id = 12;
 			do_action( 'bid_on_completed_post', $post_id );
-			$this->message_id = 12;
-		} elseif ( $post_status === NULL ) {
-			do_action( 'bid_post_not_found', $post_id );
-			$this->message_id = 13;
-			$post_status = 'invalid';
 		} elseif ( in_array( $post_status, array( 'draft', 'pending', 'future' ) ) ) {
-			do_action( 'bid_on_draft', $post_id);
 			$this->message_id = 14;
 			$post_status = 'invalid';
+			do_action( 'bid_on_draft_scheduled', $post_id );
+		} elseif ( $post_status === NULL ) {
+			$this->message_id = 13;
+			$post_status = 'invalid';
+			do_action( 'bid_post_not_found', $post_id );
 		} else {
 			$post_status = 'valid';
 		}
 
-		apply_filters( 'pp_validate_post', $post_status );
 		apply_filters( 'pp_validate_post', $post_status );
 		return $post_status;
 	}
@@ -248,7 +249,7 @@ abstract class PP_Market_System {
 	protected function update_bid( $bid ){
 		global $wpdb;
 
-		if ( $this->bid_status == 'invalid' ) // nothing to update
+		if( $this->bid_status == 'invalid' ) // nothing to update
 			return $this->get_winning_bid_value( $bid[ 'post_id' ] );
 
 		$bid_post[ 'post_parent' ]	= $bid[ 'post_id' ];
@@ -257,7 +258,6 @@ abstract class PP_Market_System {
 		$bid_post[ 'post_status' ]	= $bid[ 'bid_status' ];
 		$bid_post[ 'post_type' ]	= $this->bid_object_name;
 
-		error_log( 'bid_post = ' . print_r( $bid_post, true ) );
 		wp_insert_post( $bid_post );
 
 		return $bid[ 'bid_value' ];
@@ -317,13 +317,6 @@ abstract class PP_Market_System {
 
 	/**
 	 * Gets the value of the current winning bid for a post, optionally specified with $post_id.
-	 *
-	 * The value of the winning bid is not necessarily equal to the bid's value. The winning bid
-	 * value is calculated with the bid increment over the current second highest bid. It is then
-	 * stored in the bidsmeta table. This function pulls the value from this table. 
-	 * 
-	 * If no winning value is stored in the bidsmeta table, then the function uses the winning bids
-	 * value, which is equal to the maximum bid for that user on this post.
 	 */
 	public function get_winning_bid_value( $post_id = '' ) {
 		global $post, $wpdb;
@@ -464,10 +457,6 @@ abstract class PP_Market_System {
 	 */
 	protected function get_message(){
 
-		// Avoid showing messages passed in latent url parameters
-		if ( !is_user_logged_in() && !isset( $_GET[ 'buy_now' ] ) )
-			return;
-
 		if ( isset( $this->message_id ) )
 			$message_id = $this->message_id;
 		elseif ( isset( $_GET[ 'bid_msg' ] ) )
@@ -512,7 +501,7 @@ abstract class PP_Market_System {
 					$message = sprintf( __( 'You cannot bid on your own %s.', 'prospress' ), $this->labels[ 'singular_name' ] );
 					break;
 				case 12:
-					$message = sprintf( __( 'This %s has completed, bids cannot be accepted.', 'prospress' ), $this->labels[ 'singular_name' ] );
+					$message = sprintf( __( 'This %s has finished, bids cannot be accepted.', 'prospress' ), $this->labels[ 'singular_name' ] );
 					break;
 				case 13:
 					$message = sprintf( __( 'This %s can not be found.', 'prospress' ), $this->labels[ 'singular_name' ] );
@@ -524,6 +513,7 @@ abstract class PP_Market_System {
 					$message = apply_filters( 'bid_message_unknown', sprintf( __( "Error: %d"), $message_id ), $message_id );
 					break;
 			}
+
 			$message = apply_filters( 'bid_message', $message, $message_id );
 			$message = apply_filters( $this->name . '-bid_message', $message, $message_id );
 

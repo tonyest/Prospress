@@ -85,12 +85,15 @@ add_filter( 'bid_table_actions', 'pp_add_payment_action', 10, 2 );
 
 // Generate invoice for a post of this market system type. 
 // Automatically hooked on post completion.
-function pp_generate_invoice( $post_id ) { //receive post ID from hook
+function pp_generate_invoice( $post_id ) {
 	global $wpdb, $market_systems;
 
-	$type = get_post_type( $post_id );
+	$market = $market_systems[ get_post_type( $post_id ) ];
+	
+	if( $market->get_bid_count( $post_id ) == 0 )
+		return;
 
-	$winning_bid = $market_systems[ $type ]->get_winning_bid( $post_id );
+	$winning_bid = $market->get_winning_bid( $post_id );
 
 	$payer_id 	= $winning_bid->post_author;
 	$payee_id	= get_post( $post_id )->post_author;

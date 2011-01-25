@@ -33,9 +33,11 @@ class PP_Auction_Bid_System extends PP_Market_System {
 
 		add_action( 'post-auctions-bid_form', array( &$this, 'add_buy_now_form' ) );
 
-		add_action( 'paypal_ipn_verified', array( &$this, 'buy_now_paypal_ipn' ) );
+		add_action( 'paypal_ipn_verified', array( &$this, 'buy_form_submit' ) );
 
 		add_filter( 'bid_message_unknown', array( &$this, 'buy_now_messages' ), 10, 2 );
+
+		do_action( 'bid_on_completed_post', array( &$this, 'fix_buy_now_msg' ) );
 
 		do_action( 'auction_init', $args );
 
@@ -103,20 +105,70 @@ class PP_Auction_Bid_System extends PP_Market_System {
 	}
 
 	/**
-	 *  
+	 * Process a transaction when returning from PayPal. 
+	 *
+	 * This is called manually in the "buy_now_return" function and also hooked to 
+	 * the PayPal IPN listener.
 	 **/
-	protected function buy_form_submit( $post_id = NULL, $bidder_id = NULL ) {
-		global $user_ID;
+	public function buy_form_submit() {
+		global $currency;
 
-		if( $post_id == NULL || empty( $post_id ) )
-			$post_id = ( isset( $_REQUEST[ 'item_number' ] ) ) ? intval( $_REQUEST[ 'item_number' ] ) : 0;
+		$buy_now_price = get_post_meta( $_POST['item_number'], 'buy_now_price', true );
 
-		if( $bidder_id == NULL || empty( $bidder_id ) ) // Allow anonymous buyers
-			$bidder_id = ( is_user_logged_in() ) ? $user_ID : 0;
+		// Payment not completed
+		if( $_POST[ 'payment_status' ] != 'Completed' && $_GET[ 'return_info'] != 'success' ) {
+			error_log( 'PayPal IPN Error: PayPal Payment status not completed, status = ' . print_r( $_POST['payment_status'], true ) );
+			return;
+		// Transaction already processed
+		} elseif( $_POST[ 'txn_id' ] == get_post_meta( $_POST['item_number'], 'paypal_txn_id', true ) ) {
+			error_log( 'PayPal IPN Error: PayPal Transaction already processed, txn_id = ' . print_r( $_POST[ 'txn_id' ], true ) );
+			return;
+		} elseif( !isset( $_POST[ 'item_number' ] ) ){
+			error_log( 'PayPal IPN Error: No post supplied for buy now form submission. ' );
+			wp_die( 'PayPal IPN Error: No post supplied for buy now form submission.' );
+		// Check that receiver_email is the PayPal email of the payee/post author
+		} elseif( $_POST['receiver_email'] != pp_invoice_user_settings( 'paypal_address', get_post( $_POST[ 'item_number' ] )->post_author ) ) {
+			error_log( 'PayPal IPN Error: PayPal Email not payees, receiver_email = ' . print_r( $_POST['receiver_email'], true ) );
+			wp_die( 'PayPal IPN Error: PayPal Email not the same as Payee\'s email.' );
+		} elseif( $_POST[ 'mc_gross' ] != $buy_now_price ) { // Check that payment_amount matches buy now price
+			error_log( 'PayPal IPN Error: Buy now price incorrect, mc_gross = ' . print_r( $_POST['mc_gross'], true ) );
+			wp_die( 'PayPal IPN Error: Buy now price incorrect.' );
+		} elseif( $_POST[ 'mc_currency' ] != $currency ) { // Check that payment currency is correct
+			error_log( 'PayPal IPN Error: Currency incorrect, mc_currency = ' . print_r( $_POST['mc_currency'], true ) );
+			wp_die( 'PayPal IPN Error: PayPal transaction is using an incorrect currency incorrect.' );
+		} elseif( !wp_verify_nonce( $_POST[ 'invoice' ], $_POST[ 'item_number' ] + 5 ) ){
+			wp_die( 'PayPal IPN Error: Buy Now Nonce Verification Fail' );
+		} elseif( !$this->is_post_valid( $_POST[ 'item_number' ] ) ) {
+			wp_die( 'PayPal IPN Error: This post is not valid for buy now.' );
+		}
 
-		$bid_value = get_post_meta( $post_id, 'buy_now_price', true );
+		// Check if a user account exists for payer email, if so use that account as payer on invoice, if not, create a new user
+		if( email_exists( $_POST[ 'payer_email' ] ) ){
+			$user_id = get_user_by_email( $_POST[ 'payer_email' ] )->ID;
+		} else {
+			$user_name	= explode( '@', $_POST[ 'payer_email' ] );
+			// need the register_new_user function, but don't wnat to output the login page html
+			ob_start();
+			@require_once( ABSPATH . 'wp-login.php' );
+			ob_get_clean();
+			$user_id = register_new_user( $user_name[0], $_POST[ 'payer_email' ] );
+		}
 
-		return $this->bid_form_submit( $post_id, $bid_value, $bidder_id );
+		update_post_meta( $_POST[ 'item_number' ], 'paypal_txn_id', $_POST[ 'txn_id' ] );
+
+		$buy_bid = array( 'post_id' => $_POST[ 'item_number' ], 
+					'bidder_id' => $user_id, 
+					'bid_value' => $buy_now_price, 
+					'bid_status' => 'winning',
+					'bid_date' => current_time( 'mysql' ),
+					'bid_date_gmt' => current_time( 'mysql', 1 ) );
+		$this->bid_status = 'winning';
+		$this->message_id = 16;
+		$this->update_bid( $buy_bid );
+
+		pp_end_post( $_POST[ 'item_number' ] ); // also generates invoice with pending status
+		$invoice_id = pp_get_invoice_id( $_POST[ 'item_number' ] );
+		pp_invoice_paid( $invoice_id, 'PayPal' );
 	}
 
 	protected function validate_bid( $post_id, $bid_value, $bidder_id ){
@@ -124,10 +176,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		$post_max_bid		= $this->get_max_bid( $post_id );
 		$bidders_max_bid	= $this->get_users_max_bid( $bidder_id, $post_id );
 
-		if( isset( $_GET[ 'buy_now' ] ) && $_GET[ 'buy_now' ] == 'paypal' ){
-			$this->message_id = 16;
-			$this->bid_status = 'winning';
-		} elseif ( $bidder_id == get_post( $post_id )->post_author ) {
+		if ( $bidder_id == get_post( $post_id )->post_author ) {
 			$this->message_id = 11;
 			$this->bid_status = 'invalid';
 		} elseif ( empty( $bid_value ) || $bid_value === NULL || !preg_match( '/^[0-9]*\.?[0-9]*$/', $bid_value ) ) {
@@ -229,8 +278,8 @@ class PP_Auction_Bid_System extends PP_Market_System {
 	public function post_fields(){
 		global $post_ID, $currency_symbol, $user_ID;
 
-		$start_price = get_post_meta( $post_ID, 'start_price', true );
-		$buy_now_price = get_post_meta( $post_ID, 'buy_now_price', true );
+		$start_price = floatval( get_post_meta( $post_ID, 'start_price', true ) );
+		$buy_now_price = floatval( get_post_meta( $post_ID, 'buy_now_price', true ) );
 
 		$disabled = '';
 		$disabled_msg = '';
@@ -355,7 +404,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		if ( $this->get_bid_count( $post_id ) == 0 ){
 			$winning_bid_value = get_post_meta( $post_id, 'start_price', true );
 		} else {
-			// Need to do this manually as get_winning_bid() call this function
+			// Need to do this manually as get_winning_bid() calls this function
 			$winning_bid = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $wpdb->posts WHERE post_type = %s AND post_parent = %d AND post_status = %s", $this->bid_object_name, $post_id, 'winning' ) );
 
 			$winning_bid_value = get_post_meta( $winning_bid->ID, 'winning_bid_value', true );
@@ -395,12 +444,12 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		$invoice->post_title = $post_details->post_title;
 		$invoice->pay_link 	= add_query_arg( array( 'buy_now' => 'paypal' ), get_permalink( $post_id ) );
 		$invoice->post_id 	= $post_id; // no invoice yet
-		$invoice->id 		= wp_create_nonce( $post_id ); // no invoice yet
+		$invoice->id 		= wp_create_nonce( $post_id + 5 ); // no invoice yet
 		$invoice->currency_code = $currency;
 
 		$button = 'buy';
 		$class = 'buy-form';
-		$form_extras = '<h6 class="buy-title">' . __( 'Buy Now', 'prospress' ) . '</h6>';
+		$form_extras = '<h4 class="buy-title">' . __( 'Buy Now', 'prospress' ) . '</h4>';
 		if( in_array( @$this->message_id, array( 15, 16 ) ) )
 			$form_extras .= '<div class="bid-updated bid_msg" >' . $this->get_message() . '</div>';
 		$form_extras .= '<div class="buy-price">';
@@ -418,7 +467,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 	public function buy_now_return() {
 
 		// Return from make payment form
-		if( !isset( $_GET[ 'buy_now' ] ) || $_GET[ 'buy_now' ] != 'paypal' )
+		if( !isset( $_GET[ 'buy_now' ] ) || !isset( $_POST[ 'payment_status' ] ) )
 			return;
 
 		if( isset( $_GET[ 'return_info'] ) )
@@ -430,68 +479,29 @@ class PP_Auction_Bid_System extends PP_Market_System {
 					pp_paypal_ipn_listener(); // check response, fire paypal_ipn_$status hook for buy_now_paypal_ipn function
 					break;
 				case 'success':
-					if ( !wp_verify_nonce( $nonce, $_POST[ 'invoice' ] ) )
-						die( 'Buy Now Nonce Verification Fail' );
-					$post_id =  intval( $_POST[ 'item_number' ] );
-					$output = $this->buy_form_submit( $post_id );
-					pp_end_post( $post_id ); // also generates invoice with pending status
-					$invoice_id = pp_get_invoice_id( $post_id );
-					pp_invoice_paid( $invoice_id, 'PayPal' );
+					$this->buy_form_submit();
 					break;
 			}
-	}
-
-	/**
-	 * If Prospress receives a PayPal IPN message with the valid status, the paypal_ipn_verified
-	 * action is fired. This function hooks to that to validate and process a buy now transaction 
-	 * on an auction.
-	 **/
-	public function buy_now_paypal_ipn( $args ) {
-		global $currency;
-
-		// Payment not completed
-		if( $args['payment_status'] != 'completed' ) {
-			error_log( 'Payment status now completed, status = ' . print_r( $args['payment_status'], true ) );
-			return;
-		// Transaction already processed
-		} elseif( pp_invoice_meta( $args['item_number'], 'paypal_txn_id' ) == $args['txn_id'] ) {
-			error_log( 'Transaction already processed, txn_id = ' . print_r( $args['txn_id'], true ) );
-			return;
-		// Check that receiver_email is the PayPal email of the payee/post author
-		} elseif( $args['receiver_email'] != pp_invoice_user_settings( 'paypal_address', get_post( $args[ 'item_number' ] )->post_author ) ) {
-			error_log( 'Email not payees, receiver_email = ' . print_r( $args['receiver_email'], true ) );
-			return;
-		} elseif( $args[ 'mc_gross' ] != get_post_meta( $args['item_number'], 'buy_now_price', true ) ) { // Check that payment_amount matches buy now price
-			error_log( 'Buy now price incorrect, mc_gross = ' . print_r( $args['mc_gross'], true ) );
-			return;
-		} elseif( $args[ 'mc_currency' ] != $currency ) { // Check that payment currency is correct
-			error_log( 'Currency incorrect, mc_gross = ' . print_r( $args['mc_currency'], true ) );
-			return;
-		}
-
-		// Check if a user account exists for payer email, if so use that account as payer on invoice, if not, create a new user
-		if( email_exists( $args[ 'payer_email' ] ) ){
-			$user_id = get_user_by_email( $args[ 'payer_email' ] );
-		} else {
-			$user_name	= explode( '@', $args[ 'payer_email' ] );
-			$user_name	= $user_name[1];
-			$user_id = register_new_user( $user_login, $user_email );
-		}
-
-		$output = $this->buy_form_submit( $args[ 'item_number' ], $user_id );
-		pp_end_post( $args['item_number'] ); // also generates invoice with pending status
-		$invoice_id = pp_get_invoice_id( $args['item_number'] );
-		pp_invoice_paid( $invoice_id, 'PayPal' );
-		
-		return $invoice_id;
 	}
 
 	public function buy_now_messages( $message, $message_id ) {
 		if( $message_id == 15 )
 			$message = __( 'Purchase Cancelled.', 'prospress' );
 		elseif( $message_id == 16 )
-			$message = __( 'Purchase successful, congratulations.', 'prospress' );
+			$message = __( 'Purchase successful, congratulations. The seller has been notified & will be in contact shortly.', 'prospress' );
 		return $message;
 	}
+	
+	/**
+	 * When a user returns to the site from PayPal, if the IPN has fired already, 
+	 * the post will have completed and they will receive the message "Auction Finished". 
+	 *
+	 * The message needs to be set to show purchase success.
+	 **/
+	public function fix_buy_now_msg( $post_id ){
 
+		if( $this->is_winning_bidder( '', $post_id ) || ( isset( $_POST[ 'payment_status' ] ) && isset( $_POST[ 'payment_status' ] ) != 'Completed' ) )
+			$this->message_id = 16;
+	}
+	
 }

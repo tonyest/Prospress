@@ -296,7 +296,7 @@ class PP_Invoice {
 			 	if (!wp_verify_nonce( $nonce, 'pp_invoice_update_single_' . $invoice_id) ) die( 'Security check' );
 
 				foreach( $_REQUEST[ 'pp_invoice' ] as $updated_item_key => $updated_item_value)
-					pp_invoice_update_invoice_meta( $invoice_id, $updated_item_key, $updated_item_value);
+					pp_update_invoice_meta( $invoice_id, $updated_item_key, $updated_item_value);
 			}
 
 			$invoice_class = new pp_invoice_get( $invoice_id);
@@ -373,7 +373,7 @@ class PP_Invoice {
 		if( isset( $_REQUEST[ 'action' ] ) && $_REQUEST[ 'action' ] == 'post_save_and_preview' ) {
 			$invoice_id = $_REQUEST[ 'invoice_id' ];
  			if( $_REQUEST[ 'pp_invoice_action' ] == 'Email to Client' ) {
-				pp_invoice_update_invoice_meta( $invoice_id, 'email_payment_request', $_REQUEST[ 'pp_invoice_payment_request' ][ 'email_message_content' ]);
+				pp_update_invoice_meta( $invoice_id, 'email_payment_request', $_REQUEST[ 'pp_invoice_payment_request' ][ 'email_message_content' ]);
 				$message = pp_send_single_invoice( $invoice_id);
 			}			
 
@@ -390,12 +390,11 @@ class PP_Invoice {
 	function user_settings_page() {
 		global $user_ID;
 
-		$user_settings = pp_invoice_user_settings( 'all', $user_ID);
+		$user_settings = pp_invoice_user_settings( 'all' );
 
 		// Save settings
-		if( count( @$_REQUEST[ 'pp_invoice_user_settings' ] ) > 1 ) {
-			$user_settings = wp_parse_args( $_REQUEST[ 'pp_invoice_user_settings' ], $user_settings );
-
+		if( isset( $_POST[ 'pp_invoice_user_settings' ] ) ) {
+			$user_settings = wp_parse_args( $_POST[ 'pp_invoice_user_settings' ], $user_settings );
 			if( $user_settings[ 'cc_allow'] == 'true' ){
 				$user_settings[ 'default_payment_venue' ] = 'cc';
 			} elseif( $user_settings[ 'draft_allow'] == 'true' ){
@@ -412,9 +411,6 @@ class PP_Invoice {
 				$user_settings = pp_invoice_load_default_user_settings( $user_ID );
 			}
 		}
-
-		// The pp_invoice_user_settings() needs to be ran, it converts certain text values into bool values
-		$user_settings = pp_invoice_user_settings( 'all', $user_ID);
 
 		include( PP_INVOICE_UI_PATH . 'user_settings_page.php' );
 	}
@@ -479,7 +475,7 @@ class PP_Invoice {
 		// Load default user settings if none exist
 		if( !get_user_meta( $user_ID, 'pp_invoice_settings', true ) && $user_ID != 0 ) {
 			$settings = pp_invoice_load_default_user_settings( $user_ID );
-			update_user_meta( $user_id, 'pp_invoice_settings', $settings );
+			update_user_meta( $user_ID, 'pp_invoice_settings', $settings );
 		}
 
 		// Load these variables early

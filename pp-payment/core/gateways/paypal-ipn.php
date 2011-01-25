@@ -17,8 +17,6 @@ function pp_paypal_ipn_listener(){
 	global $wpdb;
 
 	error_log( 'in paypal ipn listener' );
-	error_log( 'POST = ' . print_r( $_POST, true ) );
-	error_log( 'GET = ' . print_r( $_GET, true ) );
 
 	// read the post from PayPal system and add 'cmd'
 	$req = 'cmd=_notify-validate';
@@ -38,24 +36,30 @@ function pp_paypal_ipn_listener(){
 	$pp_invoice_settings = get_usermeta( $user_id, 'pp_invoice_settings' );
 	$paypal_sandbox = $pp_invoice_settings[ 'paypal_sandbox' ];
 
-	$fp_url	= 'ssl://www.' . ( $paypal_sandbox == 'true' ) ? "sandbox." : '';
+	$fp_url	= 'ssl://www.';
+	$fp_url	.= ( $paypal_sandbox != 'false' ) ? "sandbox." : ''; // default to sandbox
 	$fp_url	.= 'paypal.com';
+
 	$fp 	= fsockopen( $fp_url, 443, $errno, $errstr, 30 );
 
 	if ( !$fp ) {
 		// HTTP ERROR
-		error_log('There has been a HTTP error with PayPal IPN: $req = ' . print_r( $req, true ) );
 		error_log('There has been a HTTP error with PayPal IPN: $_POST = ' . print_r( $_POST, true ) );
+		error_log('There has been a HTTP error with PayPal IPN: $header = ' . print_r( $header, true ) );
+		error_log('There has been a HTTP error with PayPal IPN: $fp_url = ' . print_r( $fp_url, true ) );
+		wp_die( 'PayPal IPN Error: There has been a HTTP error with PayPal IPN.' );
 	} else {
-		fputs ( $fp, $header . $req );
-		while ( !feof( $fp ) ) {
+		fputs( $fp, $header . $req );
+		while( !feof( $fp ) ) {
 			$res = fgets( $fp, 1024 );
 			if ( strcmp( $res, "VERIFIED" ) == 0 ) {
+				error_log( 'VERIFIED  response in paypal ipn listener' );
+				add_post_meta( $_POST['item_number'], 'paypal_ipn_valid', $_POST, false );
 				do_action( 'paypal_ipn_verified', $_POST );
-				add_post_meta( $_POST['item_number'], 'paypal_ipn_invalid', $_POST );
 			} else if ( strcmp ( $res, "INVALID" ) == 0 ) {
+				error_log( 'INVALID  response in paypal ipn listener' );
 				// log for manual investigation
-				add_post_meta( $_POST['item_number'], 'paypal_ipn_invalid', $_POST );
+				add_post_meta( $_POST['item_number'], 'paypal_ipn_invalid', $_POST, false );
 				do_action( 'paypal_ipn_invalid', $_POST );
 			}
 		}

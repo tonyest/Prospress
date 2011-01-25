@@ -171,6 +171,8 @@ add_action( 'init', 'pp_set_currency' );
 function pp_money_format( $number, $decimals = '', $currency = '' ){
 	global $currencies, $currency_symbol;
 
+	$number = floatval( $number );
+
 	if( empty( $decimals ) && $number > 1000 )
 		$decimals = 0;
 	else
@@ -208,15 +210,17 @@ add_action('admin_menu', 'pp_core_admin_head');
  */
 function pp_welcome_notice(){
 	global $market_systems;
-	
+
+	$index_id = $market_systems['auctions']->post->get_index_id();
+
 	if( get_option( 'pp_show_welcome' ) == 'false' ){
 		return;
-	}elseif( isset( $_GET[ 'pp_hide_wel' ] ) && $_GET[ 'pp_hide_wel' ] == 1 ) {
+	} elseif(( isset( $_GET[ 'pp_hide_wel' ] ) && $_GET[ 'pp_hide_wel' ] == 1 ) || 
+			( isset( $_GET[ 'post_type' ] ) && $_GET[ 'post_type' ] == 'auctions' ) || 
+			( isset( $_GET[ 'page' ] ) && ( $_GET[ 'page' ] == 'Prospress' || $_GET[ 'page' ] == $index_id ) ) ) {
 		update_option( 'pp_show_welcome', 'false' );
 		return;
 	}
-
-	$index_id = $market_systems['auctions']->post->get_index_id();
 
 	echo "<div id='prospress-welcome' class='updated fade'><p><strong>".__('Congratulations.', 'prospress')."</strong> ".
 	sprintf( __('Your WordPress is prosperous. You can add your first <a href="%1$s">auction</a>, '), "post-new.php?post_type=auctions").
