@@ -2,7 +2,7 @@ jQuery(document).ready(function($) {
 	final_countdown();
 });
 /*
-we're heading to venus...
+We're heading to venus...
 Reads through document object for elements with class pp-end or countdown, reads id(Unix timestamp in seconds)
 writes to element in html the remaining time updating every second
 */
@@ -11,7 +11,7 @@ function final_countdown(){
 			$(".pp-end,.countdown").each( function () {
 				var post_end = new Date();
 				var now = new Date();
-						//extract end date
+			//extract end date
 				post_end.setTime($(this).attr('id')*1000);	//format to UTC(miliseconds)
 			//calculate time difference
 				var td=post_end-now;
@@ -41,19 +41,22 @@ function final_countdown(){
 				var m=(months>0&&months<2)?months+' month ':(months>0)?months+' months ':'';
 				var w=(weeks>0&&weeks<2)?weeks+' week ':(weeks!=0)?weeks+' weeks ':'';
 				var dlw=(days_lw>0&&days_lw<2)?days_lw+' day':(days_lw!=0)?days_lw+' days ':'';
-				
+
 				var d=(days>0&&days<2&&td>one_day)?days+' day':(days!=0&&td>one_day)?days+' days':'';
-				function _0(i){if (i<10)i="0"+i;return i;}//add leading zero
-				var hms=(td<one_day)?_0(hours)+":"+_0(mins)+":"+_0(secs):'';
-			//output string
-//				$(this).html((post_end-now<=0)?"Auction has ended":(weeks>0)? y+m+w+dlw+' remaining': y+m+d+hms+' remaining');
+				function _s(i){if(i>1) i='s'; else i='';return i;} // add plural
+				var hms='';
+				if(td<one_day&&hours>=1)
+					var hms=hours+' hour'+_s(hours)+' '+mins+' minute'+_s(mins);
+				else if(td<one_day&&hours<1)
+					var hms=mins+' minute'+_s(mins)+' '+secs+' second'+_s(secs);
+				//output string
 				if (post_end-now<=0)
-					$(this).html("Auction has ended");
-				else if (days<=1)
-					$(this).html(d+hms+" remaining");
+					$(this).html('Auction has ended');
+				else if(days<1)
+					$(this).html(hms+' remaining');
 				return;
 		});	
 	});
-				//refresh every second
+
 	setTimeout('final_countdown()',1000);			
 };
