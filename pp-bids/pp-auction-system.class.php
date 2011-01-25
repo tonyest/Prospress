@@ -423,6 +423,9 @@ class PP_Auction_Bid_System extends PP_Market_System {
 			// Need to do this manually as get_winning_bid() calls this function
 			$winning_bid = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $wpdb->posts WHERE post_type = %s AND post_parent = %d AND post_status = %s", $this->bid_object_name, $post_id, 'winning' ) );
 
+			if( !is_object( $winning_bid ) )
+				return false;
+
 			$winning_bid_value = get_post_meta( $winning_bid->ID, 'winning_bid_value', true );
 
 			if( empty( $winning_bid_value ) )
