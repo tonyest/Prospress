@@ -57,6 +57,16 @@ function pp_add_core_admin_menu() {
 }
 add_action( 'admin_menu', 'pp_add_core_admin_menu' );
 
+/**
+ * Register pp core opitons settings 
+ *
+ * @package Prospress
+ * @since 1.01
+ */
+function register_pp_core_options(){
+	register_setting( 'pp_core_options', 'currency_type');
+}
+add_action( 'admin_init', 'register_pp_core_options' );
 
 /**
  * The core component only knows about a few settings required for Prospress to run. This functions outputs those settings as a
@@ -71,44 +81,21 @@ add_action( 'admin_menu', 'pp_add_core_admin_menu' );
  */
 function pp_settings_page(){
 	global $currencies, $currency;
-
-	if( isset( $_POST[ 'submit' ] ) && $_POST[ 'submit' ] == 'Save' ){
-
-		$pp_options_whitelist = apply_filters( 'pp_options_whitelist', array( 'general' => array( 'currency_type' ) ) );
-
-		foreach ( $pp_options_whitelist[ 'general' ] as $option ) {
-			$option = trim($option);
-			$value = null;
-			if ( isset( $_POST[ $option ] ) )
-				$value = $_POST[ $option ];
-			if ( !is_array( $value ) )
-				$value = trim( $value );
-			$value = stripslashes_deep( $value );
-			
-			update_option( $option, $value );
-			
-			if( $option == 'currency_type' )
-				$currency = $value;
-		}
-		update_option( 'pp_show_welcome', 'false' );
-		$updated_message = __( 'Settings Updated.' );
-	}
+	settings_errors();
 	?>
 	<div class="wrap">
-		<?php screen_icon( 'prospress' ); ?>
-		<h2><?php _e( 'Prospress Settings', 'prospress' ) ?></h2>
-		<?php if( isset( $updated_message ) ) { ?>
-			<div id='message' class='updated fade'>
-				<p><?php echo $updated_message; ?></p>
-			</div>
-		<?php } ?>
-		<form action="" method="post">
+		<form action="options.php" method="post">
+			<?php 
+			settings_fields( 'pp_core_options' );//settings fields pp_core_options
+			screen_icon( 'prospress' ); 
+			?>
+			<h2><?php _e( 'Prospress Settings', 'prospress' ) ?></h2>
+
 			<h3><?php _e( 'Currency', 'prospress' )?></h3>
 			<p><?php _e( 'Please choose a default currency for all transactions in your marketplace.', 'prospress' ); ?></p>
-
 			<label for='currency_type'>
 				<?php _e('Currency:' , 'prospress' );?>
-				<select id='currency_type' name='currency_type'>
+				<select id='currency_type' name="currency_type">
 				<?php foreach( $currencies as $code => $details ) { ?>
 					<option value='<?php echo $code; ?>' <?php selected( $currency, $code ); ?> >
 						<?php echo $details[ 'currency_name' ]; ?> (<?php echo $code . ', ' . $details[ 'symbol' ]; ?>)
@@ -132,7 +119,7 @@ function pp_settings_page(){
  * 
  * To make a new currency available, add an array to the global $currencies variable. The key for this array must be the currency's 
  * ISO 4217 code. The array must contain the currency name and symbol. 
- * e.g. $currencies['CAD'] = array( 'currency' => __('Canadian Dollar'), 'symbol' => '&#36;' ).
+ * e.g. $currencies['CAD'] = array( 'currency_name' => __('Canadian Dollar'), 'symbol' => '&#36;' ).
  * 
  * Once added, the currency will be available for selection from the admin page.
  * 
@@ -146,12 +133,12 @@ function pp_settings_page(){
 function pp_set_currency(){
 	global $currencies, $currency, $currency_symbol;
 
-	$currencies = array(
+	$currencies = apply_filters('pp_set_currency',array(
 		'AUD' => array( 'currency_name' => __('Australian Dollar', 'prospress' ), 'symbol' => '&#36;' ),
 		'GBP' => array( 'currency_name' => __('British Pound', 'prospress' ), 'symbol' => '&#163;' ),
 		'EUR' => array( 'currency_name' => __('Euro', 'prospress' ), 'symbol' => '&#8364;' ),
 		'USD' => array( 'currency_name' => __('United States Dollar', 'prospress' ), 'symbol' => '&#36;' )
-		);
+		));
 
 	$currency = get_option( 'currency_type', 'USD' );
 
@@ -182,10 +169,13 @@ function pp_money_format( $number, $decimals = '', $currency = '' ){
 		$currency_sym = $currency_symbol;
 	else
 		$currency_sym = $currencies[ $currency ][ 'symbol' ];
-
-	return $currency_sym . number_format_i18n( $number, $decimals );
+		return implode('', apply_filters('pp_money_format', array($currency_sym , number_format_i18n( $number, $decimals ))));
 }
-
+//switch euro to after currency
+function euro_format($currency){
+	return (get_option( 'currency_type' )=='EUR')?array($currency[1],$currency[0]):$currency;
+}
+add_filter('pp_money_format','euro_format');
 
 /** 
  * Add admin style and scripts that are required by more than one component. 
@@ -223,7 +213,7 @@ function pp_welcome_notice(){
 	}
 
 	echo "<div id='prospress-welcome' class='updated fade'><p><strong>".__('Congratulations.', 'prospress')."</strong> ".
-	sprintf( __('Your WordPress is prosperous. You can add your first <a href="%1$s">auction</a>, '), "post-new.php?post_type=auctions").
+	sprintf( __('Your WordPress site is now prosperous. You can add your first <a href="%1$s">auction</a>, '), "post-new.php?post_type=auctions").
 	sprintf( __('modify your auctions\' <a href="%1$s">index page</a> or '), "post.php?post=$index_id&action=edit").
 	sprintf( __('configure your marketplace <a href="%1$s">settings</a>. '), "admin.php?page=Prospress").
 	sprintf( __('<a href="%1$s">&laquo; Hide &raquo;</a>'), add_query_arg( 'pp_hide_wel', '1', $_SERVER['REQUEST_URI'] ))."</p></div>";

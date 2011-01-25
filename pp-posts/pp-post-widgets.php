@@ -67,8 +67,7 @@ class PP_Tag_Cloud_Widget extends WP_Widget {
 			return $instance['taxonomy'];
 	}
 }
-if( is_using_custom_taxonomies() )
-	add_action( 'widgets_init', create_function( '', 'return register_widget("PP_Tag_Cloud_Widget");' ) );
+add_action( 'widgets_init', create_function( '', 'return register_widget("PP_Tag_Cloud_Widget");' ) );
 
 /**
  * A list of the taxonomy items that apply to the current Prospress post
@@ -122,8 +121,7 @@ class PP_Taxonomies_List_Widget extends WP_Widget {
 		return $instance;
 	}
 }
-if( is_using_custom_taxonomies() )
-	add_action( 'widgets_init', create_function( '', 'return register_widget("PP_Taxonomies_List_Widget");' ) );
+add_action( 'widgets_init', create_function( '', 'return register_widget("PP_Taxonomies_List_Widget");' ) );
 
 
 /**
@@ -152,8 +150,7 @@ class PP_Countdown_Widget extends WP_Widget {
 		echo $before_title;
 		echo ( $instance['title'] ) ? $instance['title'] : __( 'Ending:', 'prospress' );
 		echo $after_title;
-
-		echo '<div class="countdown">';
+		echo "<div class=\"countdown\" id=\"".get_post_end_time( $the_ID, 'timestamp', 'gmt' )."\">";
 		the_post_end_time();
 		echo '</div>';
 

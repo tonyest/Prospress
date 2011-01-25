@@ -9,6 +9,7 @@ Template Name: Auctions Taxonomy Index
  * @subpackage Theme
  * @since 0.1
  */
+error_log('marketplaces by tax');
 wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 
 ?>
