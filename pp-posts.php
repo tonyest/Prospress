@@ -100,18 +100,12 @@ function pp_add_default_caps(){
 
 		if( $role->name == 'administrator' || $role->name == 'editor' ) {
 			$role->add_cap( 'edit_others_prospress_posts' );
-		} else {
-			$role->remove_cap( 'edit_others_prospress_posts' );
-		}
-
-		if( $role->name == 'administrator' || $role->name == 'editor' || $role->name == 'author' ) {
 			$role->add_cap( 'edit_published_prospress_posts' );
 			$role->add_cap( 'edit_private_prospress_posts' );
 			$role->add_cap( 'delete_prospress_post' );
 			$role->add_cap( 'delete_published_prospress_posts' );
 		} else {
-			$role->remove_cap( 'publish_prospress_posts' );
-			$role->remove_cap( 'edit_prospress_posts' );
+			$role->remove_cap( 'edit_others_prospress_posts' );
 			$role->remove_cap( 'edit_published_prospress_posts' );
 			$role->remove_cap( 'edit_private_prospress_posts' );
 			$role->remove_cap( 'delete_prospress_post' );
@@ -536,7 +530,6 @@ function pp_posts_uninstall(){
 	foreach ( $wp_roles->get_names() as $key => $role ) {
 
 		$role = get_role( $key );
-
 		$role->remove_cap( 'edit_others_prospress_posts' );
 		$role->remove_cap( 'publish_prospress_posts' );
 		$role->remove_cap( 'edit_prospress_posts' );
