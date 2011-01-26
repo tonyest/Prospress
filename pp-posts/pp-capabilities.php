@@ -19,6 +19,8 @@ function pp_capabilities_options() {
 	register_setting( 'pp_core_options' , 'pp_capabilities' , 'pp_capabilities_roleset' );
 }
 add_action('admin_init' , 'pp_capabilities_options' );
+
+
 /** 
  * Allow site admins to choose which roles can do what to marketplace posts.
  * 
@@ -52,9 +54,9 @@ function pp_capabilities_settings_page() {
 		
 		<div class="prospress-capability">
 			<h4><?php printf( __( "Publish %s", 'prospress' ), $post_type ); ?></h4>
-			<?php foreach ( $roles as $role ): ?>
+			<?php foreach( $roles as $role ): ?>
 			<label for="<?php echo $role->name; ?>-publish">
-				<input type="checkbox" id="<?php echo $role->name; ?>-publish" name="<?php echo $role->name; ?>-publish"<?php checked( $role->capabilities[ 'publish_prospress_posts' ], 1 ); ?> />
+				<input type="checkbox" id="<?php echo $role->name; ?>-publish" name="<?php echo $role->name; ?>-publish"<?php checked( @$role->capabilities[ 'publish_prospress_posts' ], 1 ); ?> />
 
 				<?php echo $role->display_name; ?>
 			</label>
@@ -66,7 +68,7 @@ function pp_capabilities_settings_page() {
 			<label for="<?php echo $role->name; ?>-private">
 				<input type="checkbox" id="<?php echo $role->name; ?>-private" 
 					name="pp_capabilities[private][<?php echo $role->name; ?>]"
-					<?php checked( $role->capabilities[ 'read_private_prospress_posts' ], 1 ); ?> />
+					<?php checked( @$role->capabilities[ 'read_private_prospress_posts' ], 1 ); ?> />
 				<?php echo $role->display_name; ?>
 			</label>
 			<?php endforeach; ?>
@@ -77,7 +79,7 @@ function pp_capabilities_settings_page() {
 			<label for="<?php echo $role->name; ?>-media">
 				<input type="checkbox" id="<?php echo $role->name; ?>-media" 
 					name="pp_capabilities[media][<?php echo $role->name; ?>]"
-					<?php checked( $role->capabilities[ 'upload_files' ], 1 ); ?> />
+					<?php checked( @$role->capabilities[ 'upload_files' ], 1 ); ?> />
 				<?php echo $role->display_name; ?>
 			</label>
 			<?php endforeach; ?>
