@@ -18,7 +18,7 @@
 function pp_capabilities_options() {
 	register_setting( 'pp_core_options' , 'pp_capabilities' , 'pp_capabilities_roleset' );
 }
-add_action('admin_init' , 'pp_capabilities_options' );
+add_action( 'admin_init' , 'pp_capabilities_options' );
 
 
 /** 
@@ -50,14 +50,15 @@ function pp_capabilities_settings_page() {
 
 	<div class="prospress-capabilities">
 		<h3><?php _e( 'Capabilities', 'prospress' ); ?></h3>
-		<p><?php printf( __( 'All registered users can make bids, but you can control which users are able to publish and edit %s.', 'prospress' ), $post_type ); ?></p>
-		
+		<p><?php printf( __( 'All registered users can make bids and only Administrators can edit and delete %s, but you can control which users are able to publish and edit %s.', 'prospress' ), $post_type, $post_type ); ?></p>
+
 		<div class="prospress-capability">
 			<h4><?php printf( __( "Publish %s", 'prospress' ), $post_type ); ?></h4>
 			<?php foreach( $roles as $role ): ?>
 			<label for="<?php echo $role->name; ?>-publish">
-				<input type="checkbox" id="<?php echo $role->name; ?>-publish" name="<?php echo $role->name; ?>-publish"<?php checked( @$role->capabilities[ 'publish_prospress_posts' ], 1 ); ?> />
-
+				<input type="checkbox" id="<?php echo $role->name; ?>-publish" 
+					name="pp_capabilities[publish][<?php echo $role->name; ?>]"
+					<?php checked( @$role->capabilities[ 'publish_prospress_posts' ], 1 ); ?> />
 				<?php echo $role->display_name; ?>
 			</label>
 			<?php endforeach; ?>
@@ -90,32 +91,31 @@ function pp_capabilities_settings_page() {
 }
 add_action( 'pp_core_settings_page', 'pp_capabilities_settings_page' );
 
+
 /** 
- * Save capabilities settings when the admin page is submitted page. As the settings don't need to be stored in 
- * the options table of the database, they're not added to the whitelist as is expected by this filter, instead 
- * they're added to the appropriate roles.
+ * Save capabilities when the admin page is submitted. As the settings don't need to be stored in 
+ * the options table of the database, they're not added to the whitelist as is typically done with
+ * this filter, instead they're added to the appropriate roles.
  * 
  * @package Prospress
  * @subpackage Posts
  * @since 0.1
  */
-function pp_capabilities_roleset($pp_capabilities) {
+function pp_capabilities_roleset( $pp_capabilities ) {
 	global $wp_roles;
-	//for the unlikely event that all permissions are disabled create empty array to iterate.
-	if( isset($pp_capabilities) && empty($pp_capabilities) )
+
+	if( isset( $pp_capabilities ) && empty( $pp_capabilities ) )
 		$pp_capabilities = array();
-		
-		$roles = $wp_roles->get_names();
+
+	$roles = $wp_roles->get_names();
 
 	foreach ( $roles as $role => $value ):
 		//Publish Auctions
 		if ( isset( $pp_capabilities['publish'][$role] ) ) {
 			$wp_roles->add_cap( $role , 'edit_prospress_posts');
 			$wp_roles->add_cap( $role , 'publish_prospress_posts');
-			$wp_roles->add_cap( $role , 'delete_prospress_posts');	
 		} else {
 			$wp_roles->remove_cap( $role , 'publish_prospress_posts' );
-			$wp_roles->remove_cap( $role , 'delete_prospress_posts' );	
 			$wp_roles->remove_cap( $role , 'edit_prospress_posts' );
 		}
 
