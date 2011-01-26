@@ -13,7 +13,14 @@ require_once( PP_PAYMENT_DIR . '/core/invoice_class.php' );
 //A Prospress addition
 require_once( PP_PAYMENT_DIR . '/core/gateways/paypal-ipn.php' );
 
-$PP_Invoice = new PP_Invoice();	
+/**
+ * Instantiate the PP_Invoice class late on the init hook so Prospress
+ * core functions can be fired first. 
+ **/
+function pp_invoice_init(){
+	$PP_Invoice = new PP_Invoice();
+}
+add_action( 'init', 'pp_invoice_init', 20 );
 
 class PP_Invoice {
 
@@ -482,7 +489,7 @@ class PP_Invoice {
 		$this->incoming_invoices = $wpdb->get_col("SELECT id FROM ".$wpdb->payments." WHERE payer_id = '$user_ID'");
 		$this->outgoing_invoices = $wpdb->get_col("SELECT id FROM ".$wpdb->payments." WHERE payee_id = '$user_ID'");
 
-		foreach( $this->incoming_invoices as $incoming_id) {
+		foreach( $this->incoming_invoices as $incoming_id ) {
 			$invoice_class = new pp_invoice_get( $incoming_id);
 
 			// Don't include archived invoices in the counts
