@@ -94,11 +94,11 @@ function pp_post_hello_world(){
 function pp_add_default_caps(){
 	global $wp_roles;
 
-	foreach ( $wp_roles->get_names() as $key => $role ) {
+	foreach( $wp_roles->get_names() as $key => $role ) {
 
 		$role = get_role( $key );
 
-		if( $role->name == 'administrator' || $role->name == 'editor' ) {
+		if( $role->name == 'administrator' ) {
 			$role->add_cap( 'edit_others_prospress_posts' );
 			$role->add_cap( 'edit_published_prospress_posts' );
 			$role->add_cap( 'edit_private_prospress_posts' );
