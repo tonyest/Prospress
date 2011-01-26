@@ -3,7 +3,7 @@ Contributors: Prospress, thenbrent, tonyest
 Tags: marketplace, prospress, auction, ecommerce, e-commerce
 Requires at least: 3.0
 Tested up to: 3.0.1
-Stable tag: 1.0.2
+Stable tag: 1.1
 
 Add an auction marketplace to your WordPress site.
 
