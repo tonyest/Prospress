@@ -56,9 +56,7 @@ function pp_capabilities_settings_page() {
 			<h4><?php printf( __( "Publish %s", 'prospress' ), $post_type ); ?></h4>
 			<?php foreach( $roles as $role ): ?>
 			<label for="<?php echo $role->name; ?>-publish">
-				<input type="checkbox" id="<?php echo $role->name; ?>-publish" 
-					name="pp_capabilities[publish][<?php echo $role->name; ?>]"
-					<?php checked( @$role->capabilities[ 'publish_prospress_posts' ], 1 ); ?> />
+				<input type="checkbox" id="<?php echo $role->name; ?>-publish" name="pp_capabilities[publish][<?php echo $role->name; ?>]" <?php checked( @$role->capabilities[ 'publish_prospress_posts' ], 1 ); ?> />
 				<?php echo $role->display_name; ?>
 			</label>
 			<?php endforeach; ?>
@@ -67,9 +65,7 @@ function pp_capabilities_settings_page() {
 			<h4><?php printf( __( "View Private %s", 'prospress' ), $post_type ); ?></h4>
 			<?php foreach ( $roles as $role ): ?>
 			<label for="<?php echo $role->name; ?>-private">
-				<input type="checkbox" id="<?php echo $role->name; ?>-private" 
-					name="pp_capabilities[private][<?php echo $role->name; ?>]"
-					<?php checked( @$role->capabilities[ 'read_private_prospress_posts' ], 1 ); ?> />
+				<input type="checkbox" id="<?php echo $role->name; ?>-private" name="pp_capabilities[private][<?php echo $role->name; ?>]" <?php checked( @$role->capabilities[ 'read_private_prospress_posts' ], 1 ); ?> />
 				<?php echo $role->display_name; ?>
 			</label>
 			<?php endforeach; ?>
@@ -78,9 +74,7 @@ function pp_capabilities_settings_page() {
 			<h4><?php printf( __( "Upload Media", 'prospress' ) ); ?></h4>
 			<?php foreach ( $roles as $role ): ?>
 			<label for="<?php echo $role->name; ?>-media">
-				<input type="checkbox" id="<?php echo $role->name; ?>-media" 
-					name="pp_capabilities[media][<?php echo $role->name; ?>]"
-					<?php checked( @$role->capabilities[ 'upload_files' ], 1 ); ?> />
+				<input type="checkbox" id="<?php echo $role->name; ?>-media" name="pp_capabilities[media][<?php echo $role->name; ?>]" <?php checked( @$role->capabilities[ 'upload_files' ], 1 ); ?> />
 				<?php echo $role->display_name; ?>
 			</label>
 			<?php endforeach; ?>
