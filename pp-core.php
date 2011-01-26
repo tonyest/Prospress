@@ -155,8 +155,8 @@ add_action( 'init', 'pp_set_currency' );
  * @param string optional $currency ISO 4217 code representing the currency. eg. for Japanese Yen, $currency == 'JPY'.
  * @return string The formatted value with currency symbol.
  **/
-function pp_money_format( $number, $decimals = '', $currency = '' ){
-	global $currencies, $currency_symbol;
+function pp_money_format( $number, $decimals = '', $currency_type = '' ){
+	global $currencies, $currency_symbol, $currency;
 
 	$number = floatval( $number );
 
@@ -165,17 +165,20 @@ function pp_money_format( $number, $decimals = '', $currency = '' ){
 	else
 		$decimals = 2;
 
-	if( empty( $currency ) || !array_key_exists( strtoupper( $currency ), $currencies ) )
+	if( empty( $currency_type ) )
+		$currency_type = $currency;
+
+	if( !array_key_exists( strtoupper( $currency_type ), $currencies ) )
 		$currency_sym = $currency_symbol;
 	else
-		$currency_sym = $currencies[ $currency ][ 'symbol' ];
-		return implode('', apply_filters('pp_money_format', array($currency_sym , number_format_i18n( $number, $decimals ))));
+		$currency_sym = $currencies[ $currency_type ][ 'symbol' ];
+
+	if( $currency_type =='EUR' )
+		return implode( '', apply_filters( 'pp_money_format', array( number_format_i18n( $number, $decimals ), $currency_sym ) ) );
+	else
+		return implode( '', apply_filters( 'pp_money_format', array( $currency_sym, number_format_i18n( $number, $decimals ) ) ) );
 }
-//switch euro to after currency
-function euro_format($currency){
-	return (get_option( 'currency_type' )=='EUR')?array($currency[1],$currency[0]):$currency;
-}
-add_filter('pp_money_format','euro_format');
+
 
 /** 
  * Add admin style and scripts that are required by more than one component. 
