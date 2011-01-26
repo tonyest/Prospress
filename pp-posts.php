@@ -51,27 +51,7 @@ function pp_posts_install(){
 		pp_add_default_caps();
 }
 add_action( 'pp_activation', 'pp_posts_install' );
-/**
- * Sets up Prospress environment with taxonomies enabled and a default taxonomy installed
- *
- * @uses add_option() declare & initialise taxonomies option
- *
- */
-function pp_taxonomies_install() {
-	global $market_systems;
-	$market = $market_systems[ $this->name ];
-	add_option( 'pp_use_custom_taxonomies' , true );
-}
-/**
- * Register Prospress custom taxonomies settings
- *
- * @package Prospress
- * @since 1.01
- */
-function pp_taxonomies_options() {
-	register_setting( 'pp_core_options' , 'pp_use_custom_taxonomies' );
-}
-add_action('admin_init' , 'pp_taxonomies_options' );
+
 
 /** 
  * Create first prospress auction-type post "Hello World"
