@@ -332,7 +332,7 @@ class PP_Post {
 	 */
 	public function is_index() {
 		global $post;
-		return ( $post->ID; == get_option( 'pp_index_page') )? true : false ;
+		return ( $post->ID == get_option( 'pp_index_page') )? true : false ;
 	}
 
 
