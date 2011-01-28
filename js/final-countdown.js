@@ -1,4 +1,5 @@
 jQuery(document).ready(function($) {
+	//initiate final_countdown
 	final_countdown();
 });
 /*
@@ -7,12 +8,16 @@ Reads through document object for elements with class pp-end or countdown, reads
 writes to element in html the remaining time updating every second
 */
 function final_countdown(){
+		var exists = false;	// flag for finding timedata in div.ppend's id
 		jQuery(document).ready(function($) {
-			$(".pp-end,.countdown").each( function () {
+				exists = $(".pp-end,.countdown").each( function() {
+				var id = $(this).attr('id');
+				if ( id == "" )
+					return false;
 				var post_end = new Date();
 				var now = new Date();
 			//extract end date
-				post_end.setTime($(this).attr('id')*1000);	//format to UTC(miliseconds)
+				post_end.setTime(id*1000);	//format to UTC(miliseconds)
 			//calculate time difference
 				var td=post_end-now;
 			//convert time difference to groups: Years, Months, Weeks, Days, Hours, Minutes, Seconds remaining
@@ -54,9 +59,9 @@ function final_countdown(){
 					$(this).html('Auction has ended');
 				else if(days<1)
 					$(this).html(hms+' remaining');
-				return;
+				return true;
 		});	
 	});
-
-	setTimeout('final_countdown()',1000);			
+if ( exists )
+	setTimeout('final_countdown()',1000); //re-iterate		
 };

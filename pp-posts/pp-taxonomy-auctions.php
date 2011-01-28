@@ -31,7 +31,8 @@ wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 
 			<div class="pp-post">
 				<div class="pp-post-content">
-					<div class="pp-end"><?php the_post_end_time( $the_ID, 2, '<br/>' ); ?></div>
+
+						<div class='pp-end' <?php echo "id='" . get_post_end_time( $post_id, 'timestamp', 'gmt' ) . "'>"; the_post_end_time( '', 2, '<br/>' );?></div>
 					<div class="pp-price"><?php $market->the_winning_bid_value(); ?></div>
 					<h2 class="pp-title entry-title">
 						<a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>">
