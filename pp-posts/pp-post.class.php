@@ -331,9 +331,8 @@ class PP_Post {
 	 * Template tag - is the current page/post the index for this market system's posts.
 	 */
 	public function is_index() {
-		global $wp_query;
-		$thePostID = $wp_query->post->ID;
-		return ( $thePostID == get_option( 'pp_index_page') )? true : false ;
+		global $post;
+		return ( $post->ID; == get_option( 'pp_index_page') )? true : false ;
 	}
 
 
