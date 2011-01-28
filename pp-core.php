@@ -167,8 +167,6 @@ function pp_money_format( $number, $decimals = '', $custom_currency = '' ){
 
 	if( empty( $custom_currency ) )
 		$custom_currency = $currency;
-		
-		error_log('currencies = ' . print_r( $currencies, true ) );
 
 	if( !array_key_exists( strtoupper( $custom_currency ), $currencies ) )
 		$currency_sym = $currency_symbol;

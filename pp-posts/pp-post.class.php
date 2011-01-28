@@ -233,7 +233,7 @@ class PP_Post {
 
 
 	/** 
-	 * Add the Sort and Filter widgets to the default Prospress sidebar. This function is called on 
+	 * Add the Sort and Filter widgets to the default Prospress Index sidebar. This function is called on 
 	 * Prospress' activation to help get everything working with one-click.
 	 * 
 	 * @package Prospress
@@ -280,6 +280,35 @@ class PP_Post {
 
 			update_option( 'widget_bid-filter', $filter_widget );
 			array_push( $sidebars_widgets[ $this->name . '-index-sidebar' ], 'bid-filter-' . $filter_id );
+		}
+
+		if( !isset( $sidebars_widgets[ $this->name . '-single-sidebar' ] ) )
+			$sidebars_widgets[ $this->name . '-single-sidebar' ] = array();
+
+		$countdown_widget = get_option( 'widget_pp_countdown' );
+		if( empty( $countdown_widget ) ){ //filter_widget widget not added to any sidebars yet
+
+			$countdown_widget['_multiwidget'] = 1;
+
+			$countdown_widget[] = array( 'title' => __( 'Ending:', 'prospress' ) );
+
+			$countdown_id = end( array_keys( $countdown_widget ) );
+
+			update_option( 'widget_pp_countdown', $countdown_widget );
+			array_push( $sidebars_widgets[ $this->name . '-single-sidebar' ], 'pp_countdown-' . $countdown_id );
+		}
+
+		$single_tax_widget = get_option( 'widget_pp_single_tax' );
+		if( empty( $single_tax_widget ) ){ //filter_widget widget not added to any sidebars yet
+
+			$single_tax_widget['_multiwidget'] = 1;
+
+			$single_tax_widget[] = array( 'title' => __( 'Ending:', 'prospress' ) );
+
+			$single_tax_id = end( array_keys( $single_tax_widget ) );
+
+			update_option( 'widget_pp_single_tax', $single_tax_widget );
+			array_push( $sidebars_widgets[ $this->name . '-single-sidebar' ], 'pp_single_tax-' . $single_tax_id );
 		}
 
 		wp_set_sidebars_widgets( $sidebars_widgets );
@@ -331,9 +360,12 @@ class PP_Post {
 	 * Template tag - is the current page/post the index for this market system's posts.
 	 */
 	public function is_index() {
-		global $wp_query;
-		$thePostID = $wp_query->post->ID;
-		return ( $thePostID == get_option( 'pp_index_page') )? true : false ;
+		global $post;
+
+		if( isset( $post->ID ) && $post->ID == get_option( 'pp_index_page') )
+			return true;
+		else
+			return false;
 	}
 
 
