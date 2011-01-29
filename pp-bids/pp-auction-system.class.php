@@ -224,7 +224,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 			<label for="start_price"><?php echo __( "Starting Price: ", 'prospress' ) . $currency_symbol; ?></label>
 		</td>
 		<td>
-	 		<input type="text" name="start_price" value="<?php echo number_format_i18n( $start_price, 2 ); ?>" size="20" <?php echo $disabled; ?>/>
+	 		<input type="text" name="start_price" value="<?php echo number_format_i18n( floatval($start_price), 2 ); ?>" size="20" <?php echo $disabled; ?>/>
 			<?php if( $disabled != '' ) echo '<span>' . __( 'Bids have been made on your auction, you cannot change the start price.', 'prospress' ) . '</span>'; ?>
 		</td>
 		<?php if( true == $accepted_payments[ 'paypal_allow' ] ) {?>
@@ -234,7 +234,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 			<label for="buy_now_price"><?php echo __( "Buy Now Price: ", 'prospress' ) . $currency_symbol; ?></label>
 		</td>
 		<td>
-	 		<input type="text" name="buy_now_price" value="<?php echo number_format_i18n( $buy_now_price, 2 ); ?>" size="20" <?php echo $disable_buy; ?>/>
+	 		<input type="text" name="buy_now_price" value="<?php echo number_format_i18n( floatval($buy_now_price), 2 ); ?>" size="20" <?php echo $disable_buy; ?>/>
 			<?php if( $disable_buy != '' ) echo '<span>' . __( 'The bidding price now exceeds your Buy Now price.', 'prospress' ) . '</span>'; ?>
 		</td>
 		<?php } ?>

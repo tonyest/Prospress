@@ -174,9 +174,9 @@ function pp_money_format( $number, $decimals = '', $custom_currency = '' ){
 		$currency_sym = $currencies[ $custom_currency ][ 'symbol' ];
 
 	if( $custom_currency =='EUR' )
-		return implode( '', apply_filters( 'pp_money_format', array( number_format_i18n( $number, $decimals ), $currency_sym ) ) );
+		return implode( '', apply_filters( 'pp_money_format', array( number_format_i18n( floatval($number), $decimals ), $currency_sym ) ) );
 	else
-		return implode( '', apply_filters( 'pp_money_format', array( $currency_sym, number_format_i18n( $number, $decimals ) ) ) );
+		return implode( '', apply_filters( 'pp_money_format', array( $currency_sym, number_format_i18n( floatval($number), $decimals ) ) ) );
 }
 
 

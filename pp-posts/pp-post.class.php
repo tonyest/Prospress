@@ -57,23 +57,28 @@ class PP_Post {
 
 		global $wpdb;
 
-		$index_id = $this->get_index_id(); //get ID from wp_postmeta
-		$index_page = get_post( $this->get_index_id(), ARRAY_A ); // get $post array from wp_posts
-		
-		if ( !empty( $index_page ) && isset( $index_id ) ) { // page exists with prospress _index meta
-			//make sure it's published as it get's trashed on plugin deactivation
+		$meta_index_id = $this->get_index_id(); //get ID from wp_postmeta
+		$index_page = get_post( $meta_index_id, ARRAY_A ); // get $post array from wp_posts
+
+		if ( !empty( $index_page ) && isset( $meta_index_id ) ) { // page exists with prospress _index meta
+			//make sure page is published as it get's trashed on plugin deactivation
 			$index_page[ 'post_status' ] = 'publish';
 			wp_update_post( $index_page );
-		} else {
-			//search for index page in prospress 1.0 method
-			$index_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '". $this->name. "'" );
-			if ( !isset($index) && !empty($index_id) ) { // page exists without prospress _index meta
-				// add meta to existing page
-				add_post_meta( $index_id, 'pp_'. $this->name. '_index', 'is_index' , true );	
-			} else { // page does not exist
 
-				if ( isset($index) ) // meta exists without page
-					delete_post_meta( $index_id, 'pp_'. $this->name. '_index', 'is_index' ); // clean up meta
+		} else {
+			// search for index page in prospress 1.0 method
+			$index_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '". $this->name. "'" );
+
+			if ( isset( $meta_index_id ) && !isset($index_id) ) // meta exists without page
+				delete_post_meta( $meta_index_id, 'pp_'. $this->name. '_index' ); // clean up old meta
+
+			if ( !isset($index_page) && !empty($index_id) ) { // page exists without prospress _index meta
+				add_post_meta( $index_id, 'pp_'. $this->name. '_index', 'is_index' , true ); // add meta to existing page
+				$index_page = get_post( $index_id, ARRAY_A ); // get $post array from wp_posts
+				$index_page[ 'post_status' ] = 'publish';
+				wp_update_post( $index_page );	
+
+			} else { // page does not exist
 
 				//create new page & meta
 				$index_page = array();
@@ -86,7 +91,7 @@ class PP_Post {
 				$index_id = wp_insert_post( $index_page );
 				add_post_meta( $index_id, 'pp_'. $this->name. '_index', 'is_index', true );	
 			}
-		}		
+		}
 
 		$this->add_sidebars_widgets();
 
@@ -491,9 +496,9 @@ class PP_Post {
 
 		if ( !current_user_can( 'edit_plugins' ) || !function_exists( 'delete_site_option' ) )
 			return false;
-
+		
 		wp_delete_post( $this->get_index_id() );
-		delete_option('pp_index_page');
+		delete_option('pp_index_page'); // clean up for some versions of beta ( to be removed post 1.1 )
 
 		flush_rewrite_rules();
 	}
@@ -513,7 +518,7 @@ class PP_Post {
 			return false;
 
 		wp_delete_post( $this->get_index_id() );
-
+		delete_option('pp_index_page'); // clean up for some versions of beta ( to be removed post 1.1 )
 		// Don't delete auctions
 	}
 }
