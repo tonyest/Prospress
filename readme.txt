@@ -126,6 +126,7 @@ Nope. There are a few surprises but you'll have to download & explore Prospress 
 * Added Hello-world auction item on first install.
 * Fixed bug in sorting taxonomies.
 * Fixed link-tree for Taxonomies so as not to display empty Taxonomies.
+* Changed Prospress settings to use Wordpress standard register_settings() format. New method is simpler and more extensible.
 * Other minor bug fixes.
 
 = 1.0.2 =

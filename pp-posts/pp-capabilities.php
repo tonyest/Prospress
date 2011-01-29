@@ -32,6 +32,7 @@ add_action( 'admin_init' , 'pp_capabilities_options' );
  * 
  * @package Prospress
  * @subpackage Posts
+ * @version 1.1
  * @since 0.1
  */
 function pp_capabilities_settings_page() { 
@@ -134,12 +135,13 @@ function pp_capabilities_roleset( $pp_capabilities ) {
  * 
  * @package Prospress
  * @subpackage Posts
+ * @version 1.1
  * @since 0.1
  */
-function pp_map_meta_cap( $caps, $cap, $user_id, $args ){
+function pp_map_meta_cap( $caps, $cap, $user_id, $args ) {
 
 	if( $cap == 'edit_prospress_post' ) {
-
+		
 		$author_data = get_userdata( $user_id );
 
 		$post = get_post( $args[0] );
@@ -151,25 +153,25 @@ function pp_map_meta_cap( $caps, $cap, $user_id, $args ){
 		if ( is_object( $post_author_data ) && $user_id == $post_author_data->ID ) {
 
 			if ( 'publish' == $post->post_status ) {
-				$caps[0] = 'edit_published_prospress_posts';
+				$caps[0] = 'edit_prospress_posts';
 			} elseif ( 'private' == $post->post_status ) {
-				$caps[0] = 'edit_private_prospress_posts';
+				$caps[0] = 'read_private_prospress_posts';
 			} elseif ( 'trash' == $post->post_status ) {
 				if ('publish' == get_post_meta($post->ID, '_wp_trash_meta_status', true) )
-					$caps[0] = 'edit_published_prospress_posts';
+					$caps[0] = 'edit_prospress_posts';
 			} elseif ( 'completed' == $post->post_status ) {
-				$caps[0] = 'edit_completed_prospress_posts';
+				$caps[0] = 'edit_prospress_posts';
 			} else {
 				$caps[0] = 'edit_prospress_posts';
 				$caps[] = 'publish_prospress_posts';
 			}
 		} else {
-			$caps[0] = 'edit_others_prospress_posts';
+			$caps[0] = 'edit_prospress_posts';
 
 			if ( 'publish' == $post->post_status )
-				$caps[] = 'edit_published_prospress_posts';
+				$caps[] = 'edit_prospress_posts';
 			elseif ( 'private' == $post->post_status )
-				$caps[] = 'edit_private_prospress_posts';
+				$caps[] = 'read_private_prospress_posts';
 		}
 	} elseif( $cap == 'delete_prospress_post' ) {
 		$author_data = get_userdata( $user_id );
@@ -185,20 +187,20 @@ function pp_map_meta_cap( $caps, $cap, $user_id, $args ){
 		if ( is_object( $post_author_data ) && $user_id == $post_author_data->ID ) {
 
 			if ( 'publish' == $post->post_status ) {
-				$caps[0] = 'delete_published_prospress_posts';
+				$caps[0] = 'edit_prospress_posts';
 			} elseif ( 'trash' == $post->post_status ) {
 				if ('publish' == get_post_meta($post->ID, '_wp_trash_meta_status', true) )
-					$caps[0] = 'delete_published_prospress_posts';
+					$caps[0] = 'edit_prospress_posts';
 			} else {
-				$caps[0] = 'delete_prospress_posts';
+				$caps[0] = 'edit_prospress_posts';
 			}
 		} else {
-			$caps[0] = 'edit_others_prospress_posts';
+			$caps[0] = 'edit_prospress_posts';
 
 			if ( 'publish' == $post->post_status || 'private' == $post->post_status )
-				$caps[] = 'delete_published_prospress_posts';
+				$caps[] = 'edit_prospress_posts';
 		}
-	} elseif( $cap == 'read_prospress_post' ) {
+	} elseif( $cap == 'publish_prospress_posts' ) {
 		$post = get_post( $args[0] );
 
 		if ( 'private' != $post->post_status ) {
