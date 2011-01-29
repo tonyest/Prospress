@@ -118,6 +118,15 @@ Nope. There are a few surprises but you'll have to download & explore Prospress 
 = 1.1 =
 * Bids are now a custom post type
 * PayPal Buy Now option available
+* Live countdown in final 24 hours.
+* Hooks added in preparation for Cubepoints and other plugins to interface.
+* Changed the way prospress redirects the index template to fix problems with pre-existing pages with the same slug.
+* Simplified Prospress capabilities.
+* Taxonomies are now enabled by default.
+* Added Hello-world auction item on first install.
+* Fixed bug in sorting taxonomies.
+* Fixed link-tree for Taxonomies so as not to display empty Taxonomies.
+* Other minor bug fixes.
 
 = 1.0.2 =
 * Fixed bug causing Price & Winning Bidder columns to display on the admin page for all custom post type
