@@ -47,30 +47,46 @@ class PP_Post {
 	 * @uses is_site_admin() returns true if the current user is a site admin, false if not.
 	 * @uses add_submenu_page() WP function to add a submenu item.
 	 * @uses get_role() WP function to get the administrator role object and add capabilities to it.
+	 * @uses add_post_meta
 	 *
 	 * @global wpdb $wpdb WordPress DB access object.
 	 * @global PP_Market_System $market_system Prospress market system object for this marketplace.
 	 * @global WP_Rewrite $wp_rewrite WordPress Rewrite Component.
 	 */
 	public function activate(){
+
 		global $wpdb;
-		if( $this->get_index_id() == false ){ // Need an index page for this post type
-			$index_page = array();
-			$index_page['post_title'] = $this->labels[ 'name' ];
-			$index_page['post_name'] = $this->name;
-			$index_page['post_status'] = 'publish';
-			$index_page['post_content'] = __( 'This is the index for your ' . $this->labels[ 'name' ] . '. Your ' . $this->labels[ 'name' ] . ' will automatically show up here, but you change this text to provide an introduction or instructions.', 'prospress' );
-			$index_page['post_type'] = 'page';
 
-			$post_id = wp_insert_post( $index_page );
-			add_option( 'pp_index_page' , $post_id );
-
-		} else { // Index page exists, make sure it's published as it get's trashed on plugin deactivation
-			$index_page = get_post( $this->get_index_id(), ARRAY_A );
+		$index_id = $this->get_index_id(); //get ID from wp_postmeta
+		$index_page = get_post( $this->get_index_id(), ARRAY_A ); // get $post array from wp_posts
+		
+		if ( !empty( $index_page ) && isset( $index_id ) ) { // page exists with prospress _index meta
+			//make sure it's published as it get's trashed on plugin deactivation
 			$index_page[ 'post_status' ] = 'publish';
-
 			wp_update_post( $index_page );
-		}
+		} else {
+			//search for index page in prospress 1.0 method
+			$index_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '". $this->name. "'" );
+			if ( !isset($index) && !empty($index_id) ) { // page exists without prospress _index meta
+				// add meta to existing page
+				add_post_meta( $index_id, 'pp_'. $this->name. '_index', 'is_index' , true );	
+			} else { // page does not exist
+
+				if ( isset($index) ) // meta exists without page
+					delete_post_meta( $index_id, 'pp_'. $this->name. '_index', 'is_index' ); // clean up meta
+
+				//create new page & meta
+				$index_page = array();
+				$index_page['post_title']	=	$this->labels[ 'name' ];
+				$index_page['post_name']	=	$this->name;
+				$index_page['post_type']	=	'page';
+				$index_page['post_status']	=	'publish';
+				$index_page['post_content']	=	__( 'This is the index for your '. $this->labels[ 'name' ]. '. Your '. $this->labels[ 'name' ]. ' will automatically show up here, but you change this text to provide an introduction or instructions.', 'prospress' );
+
+				$index_id = wp_insert_post( $index_page );
+				add_post_meta( $index_id, 'pp_'. $this->name. '_index', 'is_index', true );	
+			}
+		}		
 
 		$this->add_sidebars_widgets();
 
@@ -78,7 +94,6 @@ class PP_Post {
 		$this->register_post_type();
 		flush_rewrite_rules();
 	}
-
 
 	/** 
 	 * Prospress posts are not your vanilla WordPress post, they have special meta which needs to
@@ -98,7 +113,6 @@ class PP_Post {
 		global $post, $market_systems, $wp_query, $paged;
 
 		$market = $market_systems[ $this->name ];
-
 		if ( is_pp_multitax() ) {
 
 			$taxonomy = esc_attr( get_query_var( 'taxonomy' ) );
@@ -332,7 +346,8 @@ class PP_Post {
 	 */
 	public function is_index() {
 		global $post;
-		return ( $post->ID == get_option( 'pp_index_page') )? true : false ;
+		$pp_index_page = get_post_meta( $post->ID, 'pp_'. $this->name. '_index', true );
+		return ( $pp_index_page == "is_index" )? true : false ;
 	}
 
 
@@ -349,10 +364,14 @@ class PP_Post {
 	}
 
 	/*
-	 *	Retrieves stored index page ID, returns false by default if option does not yet exist.
+	 *	Retrieves stored index page ID, returns null by default if option does not yet exist.
 	 */
 	public function get_index_id() {
-		return get_option( 'pp_index_page' );
+		global $wpdb;
+		$meta_key = 'pp_'. $this->name. '_index';
+		$meta_value = "is_index";
+		$index_id = $wpdb->get_var($wpdb->prepare("SELECT post_id FROM $wpdb->postmeta WHERE meta_key = %s AND meta_value = %s", $meta_key, $meta_value ));
+		return $index_id;
 	}
 
 	public function get_index_permalink() {
