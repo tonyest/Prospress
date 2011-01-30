@@ -10,9 +10,6 @@
  * @version 0.1
  */
 
-if ( !defined( 'PP_PAYMENTS_DB_VERSION'))
-	define ( 'PP_PAYMENTS_DB_VERSION', '0003' );
-
 if( !defined( 'PP_PAYMENT_DIR' ) )
 	define( 'PP_PAYMENT_DIR', PP_PLUGIN_DIR . '/pp-payment' );
 if( !defined( 'PP_PAYMENT_URL' ) )
@@ -34,6 +31,67 @@ if ( !isset($wpdb->payments_log) || empty($wpdb->payments_log))
 require_once( PP_PAYMENT_DIR . '/pp-invoice.php' );
 
 include_once( PP_PAYMENT_DIR . '/pp-payment-templatetags.php' );
+
+/**
+ * Setup payment database tables. 
+ **/
+function pp_payment_install() {
+	global $wpdb;
+
+	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+
+	if ( !empty( $wpdb->charset ) )
+		$charset_collate = "DEFAULT CHARACTER SET $wpdb->charset";
+
+	if( $wpdb->get_var("SHOW TABLES LIKE '". $wpdb->payments ."'") != $wpdb->payments ) {
+		$sql_main = "CREATE TABLE $wpdb->payments (
+				id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+				post_id bigint(20) NOT NULL,
+				payer_id bigint(20) NOT NULL,
+				payee_id bigint(20) NOT NULL,
+				amount float(16,6) default '0',
+				status varchar(20) NOT NULL,
+				type varchar(255) NOT NULL,
+				blog_id int(11) NOT NULL,
+		    	KEY post_id (post_id),
+		    	KEY payer_id (payer_id),
+	    		KEY payee_id (payee_id)
+				) {$charset_collate};";
+		dbDelta( $sql_main);
+	}
+
+	if( $wpdb->get_var("SHOW TABLES LIKE '". $wpdb->paymentsmeta ."'") != $wpdb->paymentsmeta ) {
+		$sql_meta= "CREATE TABLE $wpdb->paymentsmeta (
+			meta_id bigint(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+			invoice_id bigint(20) NOT NULL default '0',
+			meta_key varchar(255) default NULL,
+			meta_value longtext,
+    		KEY invoice_id ( invoice_id)
+			) {$charset_collate};";
+		dbDelta( $sql_meta);
+	}
+
+	if( $wpdb->get_var("SHOW TABLES LIKE '". $wpdb->payments_log ."'") != $wpdb->payments_log ) {
+		$sql_log = "CREATE TABLE $wpdb->payments_log (
+			id bigint(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+			invoice_id int(11) NOT NULL default '0',
+			action_type varchar(255) NOT NULL,
+			value longtext NOT NULL,
+			time_stamp timestamp NOT NULL,
+    		KEY invoice_id ( invoice_id)
+			) {$charset_collate};";
+		dbDelta( $sql_log);
+	}
+
+	// Localization Labels
+	if( false == get_option( 'pp_invoice_custom_label_tax' ) )
+		add_option( 'pp_invoice_custom_label_tax', "Tax" );
+	if( false == get_option( 'pp_invoice_force_https' ) )
+		add_option( 'pp_invoice_force_https','false' );
+
+	pp_invoice_add_email_template_content();
+}
+add_action( 'pp_activation', 'pp_payment_install' );
 
 
 /** 
@@ -83,8 +141,9 @@ add_filter( 'completed_post_actions', 'pp_add_payment_action', 10, 2 );
 add_filter( 'bid_table_actions', 'pp_add_payment_action', 10, 2 );
 
 
-// Generate invoice for a post of this market system type. 
-// Automatically hooked on post completion.
+/**
+ * Generate an invoice for a post. Hooked to post completion.
+ **/
 function pp_generate_invoice( $post_id ) {
 	global $wpdb, $market_systems;
 
@@ -101,7 +160,7 @@ function pp_generate_invoice( $post_id ) {
 	$status		= 'pending';
 
 	$args = compact( 'post_id', 'payer_id', 'payee_id', 'amount', 'status', 'type' );
-	do_action('generate_invoice',$args);
+	do_action( 'generate_invoice', $args );
 	
 	return pp_invoice_create( $args );
 }

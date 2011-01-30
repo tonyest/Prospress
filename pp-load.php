@@ -38,6 +38,7 @@ function pp_activate(){
 		else
 			wp_die(__( "Sorry, but you can not run Prospress. It requires PHP 5.0 or newer. Please <a href='http://www.php.net/manual/en/migration5.php'>migrate</a> your PHP installation to run Prospress.<br/><a href=" . admin_url( 'plugins.php' ) . ">Return to Plugins Admin page &raquo;</a>"), 'prospress' );
 	}
+
 	do_action( 'pp_activation' );
 }
 register_activation_hook( __FILE__, 'pp_activate' );
@@ -77,9 +78,8 @@ add_filter( 'plugin_row_meta', 'pp_register_plugin_links', 10, 2 );
  * @since 1.1
  */
 function pp_update() {
-	// Admin settings option for taxonomies deprecated v1.1
+	// Deprecated Options as of v1.1
 	delete_option( 'pp_use_custom_taxonomies' );
+	delete_option( 'PP_PAYMENTS_DB_VERSION' );
 }
 add_action( 'pp_activation', 'pp_update' );
-
-?>

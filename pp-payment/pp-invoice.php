@@ -47,8 +47,6 @@ class PP_Invoice {
 
 		$version = get_option( 'pp_invoice_version' );
 
-		add_action( 'pp_activation', array( &$this, 'install' ) );
-
 		$this->process_payment_cc = PP_BASE_CAP;
 		$this->path = dirname(__FILE__);
 		$this->file = basename(__FILE__);
@@ -148,9 +146,9 @@ class PP_Invoice {
 		) );		
  	}
 
-/*
-	Add columns to invoice editing page
-*/
+	/**
+	 * Add columns to invoice editing page
+	 **/
 	function on_screen_layout_columns( $columns, $screen) {
 		global $pp_invoice_page_names;
 
@@ -456,9 +454,13 @@ class PP_Invoice {
 			$updated_message = __( 'Settings Updated.' );
 		}
 
-		if(!$wpdb->query("SHOW TABLES LIKE '".$wpdb->paymentsmeta."';") || !$wpdb->query("SHOW TABLES LIKE '".$wpdb->payments."';") || !$wpdb->query("SHOW TABLES LIKE '".$wpdb->payments_log."';") ) { $warning_message = "The plugin database tables are gone, deactivate and reactivate plugin to re-create them."; }if( $warning_message) echo "<div id=\"message\" class='error' ><p>$warning_message</p></div>";
+		if( !$wpdb->query( "SHOW TABLES LIKE '" . $wpdb->paymentsmeta . "';") || !$wpdb->query( "SHOW TABLES LIKE '".$wpdb->payments."';") || !$wpdb->query("SHOW TABLES LIKE '".$wpdb->payments_log."';") ) { 
+			echo '<div id="message" class="error" ><p>';
+			_e( 'The payment tables have been removed, please deactivate and reactivate Prospress to re-create them.', 'prospress' );
+			echo '</p></div>';
+		}
 
-		include PP_INVOICE_UI_PATH . 'settings_page.php';
+		include( PP_INVOICE_UI_PATH . 'settings_page.php' );
 	}
 
 	function admin_init() {
@@ -558,68 +560,9 @@ class PP_Invoice {
 				if(pp_invoice_does_invoice_exist( $invoice_id) ) { pp_invoice_process_cc_transaction( $_POST); exit; }
 				}				
 
-		if(empty( $_GET[ 'invoice_id' ] ) ) unset( $_GET[ 'invoice_id' ]);
+		if( empty( $_GET[ 'invoice_id' ] ) ) 
+			unset( $_GET[ 'invoice_id' ] );
 		}
-
-		function install() {
-			global $wpdb;
-
-			$current_db_version = get_option( 'PP_PAYMENTS_DB_VERSION' );
-
-			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-
-			if ( !empty( $wpdb->charset ) )
-				$charset_collate = "DEFAULT CHARACTER SET $wpdb->charset";
-
-			if( $wpdb->get_var("SHOW TABLES LIKE '". $wpdb->payments ."'") != $wpdb->payments || $current_db_version < PP_PAYMENTS_DB_VERSION ) {
-				$sql_main = "CREATE TABLE $wpdb->payments (
-						id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-						post_id bigint(20) NOT NULL,
-						payer_id bigint(20) NOT NULL,
-						payee_id bigint(20) NOT NULL,
-						amount float(16,6) default '0',
-						status varchar(20) NOT NULL,
-						type varchar(255) NOT NULL,
-						blog_id int(11) NOT NULL,
-				    	KEY post_id (post_id),
-				    	KEY payer_id (payer_id),
-			    		KEY payee_id (payee_id)
-						) {$charset_collate};";
-				dbDelta( $sql_main);
-			}
-
-			if( $wpdb->get_var("SHOW TABLES LIKE '". $wpdb->paymentsmeta ."'") != $wpdb->paymentsmeta || $current_db_version < PP_PAYMENTS_DB_VERSION ) {
-				$sql_meta= "CREATE TABLE $wpdb->paymentsmeta (
-					meta_id bigint(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-					invoice_id bigint(20) NOT NULL default '0',
-					meta_key varchar(255) default NULL,
-					meta_value longtext,
-		    		KEY invoice_id ( invoice_id)
-					) {$charset_collate};";
-				dbDelta( $sql_meta);
-			}
-
-			if( $wpdb->get_var("SHOW TABLES LIKE '". $wpdb->payments_log ."'") != $wpdb->payments_log || $current_db_version < PP_PAYMENTS_DB_VERSION ) {
-				$sql_log = "CREATE TABLE $wpdb->payments_log (
-					id bigint(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-					invoice_id int(11) NOT NULL default '0',
-					action_type varchar(255) NOT NULL,
-					value longtext NOT NULL,
-					time_stamp timestamp NOT NULL,
-		    		KEY invoice_id ( invoice_id)
-					) {$charset_collate};";
-				dbDelta( $sql_log);
-			}
-
-			update_option( 'PP_PAYMENTS_DB_VERSION', PP_PAYMENTS_DB_VERSION );
-
-			// Localization Labels
-			add_option( 'pp_invoice_custom_label_tax', "Tax");
-
-			add_option( 'pp_invoice_force_https','false' );
-
-			pp_invoice_add_email_template_content();
-	}
 }
 
 global $_pp_invoice_getinfo;
