@@ -63,7 +63,6 @@ class PP_Post {
 			$index_page['post_type'] = 'page';
 
 			$post_id = wp_insert_post( $index_page );
-			add_option( 'pp_index_page' , $post_id );
 
 		} else { // Index page exists, make sure it's published as it get's trashed on plugin deactivation
 			$index_page = get_post( $this->get_index_id(), ARRAY_A );
@@ -286,7 +285,7 @@ class PP_Post {
 			$sidebars_widgets[ $this->name . '-single-sidebar' ] = array();
 
 		$countdown_widget = get_option( 'widget_pp_countdown' );
-		if( empty( $countdown_widget ) ){ //filter_widget widget not added to any sidebars yet
+		if( empty( $countdown_widget ) ){ // countdown widget not added to any sidebars yet
 
 			$countdown_widget['_multiwidget'] = 1;
 
@@ -299,11 +298,11 @@ class PP_Post {
 		}
 
 		$single_tax_widget = get_option( 'widget_pp_single_tax' );
-		if( empty( $single_tax_widget ) ){ //filter_widget widget not added to any sidebars yet
+		if( empty( $single_tax_widget ) ){ // single taxonomy widget not added to any sidebars yet
 
 			$single_tax_widget['_multiwidget'] = 1;
 
-			$single_tax_widget[] = array( 'title' => __( 'Ending:', 'prospress' ) );
+			$single_tax_widget[] = array( 'title' => __( 'Details:', 'prospress' ) );
 
 			$single_tax_id = end( array_keys( $single_tax_widget ) );
 
@@ -362,7 +361,7 @@ class PP_Post {
 	public function is_index() {
 		global $post;
 
-		if( isset( $post->ID ) && $post->ID == get_option( 'pp_index_page') )
+		if( isset( $post->ID ) && $post->ID == $this->get_index_id() )
 			return true;
 		else
 			return false;
@@ -385,7 +384,14 @@ class PP_Post {
 	 *	Retrieves stored index page ID, returns false by default if option does not yet exist.
 	 */
 	public function get_index_id() {
-		return get_option( 'pp_index_page' );
+		global $wpdb;
+
+		$index_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . $this->name . "'" );
+
+		if( $index_id == NULL)
+			return false; 
+		else 
+			return $index_id;
 	}
 
 	public function get_index_permalink() {
