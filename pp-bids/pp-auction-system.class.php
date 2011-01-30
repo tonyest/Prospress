@@ -25,8 +25,6 @@ class PP_Auction_Bid_System extends PP_Market_System {
 				'description' => 'The Default Prospress Standard Auction System.',
 				'adds_post_fields' => true
 				);
-				
-		$args = apply_filters( 'auction_args', $args );
 
 		do_action( 'auction_init', $args );
 
@@ -252,7 +250,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		if( wp_is_post_revision( $post_id ) )
 			$post_id = wp_is_post_revision( $post_id );
 
-		if ( isset( $_POST[ 'post_type' ] ) && 'page' == $_POST[ 'post_type' ] )
+		if ( 'page' == $_POST[ 'post_type' ] )
 			return $post_id;
 		elseif( !current_user_can( 'edit_post', $post_id ) )
 			return $post_id;
