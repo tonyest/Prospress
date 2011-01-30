@@ -72,7 +72,7 @@ abstract class PP_Market_System {
 		$this->label 				= $args[ 'label' ];
 		$this->labels 				= $args[ 'labels' ];
 		$this->post_table_columns 	= $args[ 'post_table_columns' ];
-		$this->bid_form_heading    = $args[ 'bid_form_heading' ];
+		$this->bid_form_heading  	= $args[ 'bid_form_heading' ];
 		$this->bid_table_headings 	= $args[ 'bid_table_headings' ];
 		$this->adds_post_fields 	= $args[ 'adds_post_fields' ];
 		$this->capability 			= $args[ 'capability' ];
