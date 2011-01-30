@@ -130,39 +130,47 @@ class PP_Post {
 
 			do_action( 'pp_taxonomy_template_redirect' );
 
-			if( file_exists( TEMPLATEPATH . '/taxonomy-' . $this->name . '.php' ) )
-				include( TEMPLATEPATH . '/taxonomy-' . $this->name . '.php' );
-			elseif( file_exists( TEMPLATEPATH . '/pp-taxonomy-' . $this->name . '.php' ) )
-				include( TEMPLATEPATH . '/pp-taxonomy-' . $this->name . '.php' );
-			else
-				include( PP_POSTS_DIR . '/pp-taxonomy-' . $this->name . '.php' );
-			exit;
+				if( file_exists( TEMPLATEPATH . '/taxonomy-' . $this->name . '.php' ) )
+					include( TEMPLATEPATH . '/taxonomy-' . $this->name . '.php' );
+				elseif( file_exists( STYLESHEETPATH . '/taxonomy-' . $this->name . '.php' ) ) // Child Theme supports Prospress
+					include( STYLESHEETPATH . '/taxonomy-' . $this->name . '.php' );
+				elseif( file_exists( TEMPLATEPATH . '/pp-taxonomy-' . $this->name . '.php' ) )
+					include( TEMPLATEPATH . '/pp-taxonomy-' . $this->name . '.php' );
+				else
+					include( PP_POSTS_DIR . '/pp-taxonomy-' . $this->name . '.php' );
+				exit;
 
-		} elseif( $this->is_index() && TEMPLATEPATH . '/page.php' == get_page_template() ){ // No template set for default Prospress index
-			wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
+			} elseif( $this->is_index() && TEMPLATEPATH . '/page.php' == get_page_template() ){ // No template set for default Prospress index
 
-			do_action( 'pp_index_template_redirect' );
+				wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 
-			if( file_exists( TEMPLATEPATH . '/index-' . $this->name . '.php' ) ) // Theme supports Prospress
-				include( TEMPLATEPATH . '/index-' . $this->name . '.php' );
-			elseif( file_exists( TEMPLATEPATH . '/pp-index-' . $this->name . '.php' ) )	// Copied the default template to the theme directory before customising?
-				include( TEMPLATEPATH . '/pp-index-' . $this->name . '.php' );
-			else   																// Default template
-				include( PP_POSTS_DIR . '/pp-index-' . $this->name . '.php' );
-			exit;
+				do_action( 'pp_index_template_redirect' );
 
-		} elseif ( $this->is_single() && is_single() && !isset( $_GET[ 's' ] ) ) {
-			wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
+				if( file_exists( TEMPLATEPATH . '/index-' . $this->name . '.php' ) ) // Theme supports Prospress
+					include( TEMPLATEPATH . '/index-' . $this->name . '.php' );
+				elseif( file_exists( STYLESHEETPATH . '/index-' . $this->name . '.php' ) ) // Child Theme supports Prospress
+					include( STYLESHEETPATH . '/index-' . $this->name . '.php' );
+				elseif( file_exists( TEMPLATEPATH . '/pp-index-' . $this->name . '.php' ) )	// Copied the default template to the theme directory before customising?
+					include( TEMPLATEPATH . '/pp-index-' . $this->name . '.php' );
+				else															// Default template
+					include( PP_POSTS_DIR . '/pp-index-' . $this->name . '.php' );
+				exit;
 
-			do_action( 'pp_single_template_redirect' );
+			} elseif ( $this->is_single() && is_single() && !isset( $_GET[ 's' ] ) ) {
 
-			if( file_exists( TEMPLATEPATH . '/single-' . $this->name . '.php' ) )
-				include( TEMPLATEPATH . '/single-' . $this->name . '.php' );
-			elseif( file_exists( TEMPLATEPATH . '/pp-single-' . $this->name . '.php' ) )
-				include( TEMPLATEPATH . '/pp-single-' . $this->name . '.php' );
-			else
-				include( PP_POSTS_DIR . '/pp-single-' . $this->name . '.php' );
-			exit;
+				wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
+
+				do_action( 'pp_single_template_redirect' );
+
+				if( file_exists( TEMPLATEPATH . '/single-' . $this->name . '.php' ) )
+					include( TEMPLATEPATH . '/single-' . $this->name . '.php' );
+				elseif( file_exists( STYLESHEETPATH . '/single-' . $this->name . '.php' ) ) // Child Theme supports Prospress
+					include( STYLESHEETPATH . '/single-' . $this->name . '.php' );
+				elseif( file_exists( TEMPLATEPATH . '/ppsingle-' . $this->name . '.php' ) )
+					include( TEMPLATEPATH . '/pp-single-' . $this->name . '.php' );
+				else
+					include( PP_POSTS_DIR . '/pp-single-' . $this->name . '.php' );
+				exit;
 		}
 	}
 
