@@ -506,7 +506,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 	 **/
 	public function buy_now_return() {
 
-		if( !isset( $_GET[ 'buy_now' ] ) || !isset( $_POST[ 'payment_status' ] )
+		if( !isset( $_GET[ 'buy_now' ] ) || !isset( $_POST[ 'payment_status' ] ) )
 			return;
 
 		if( isset( $_GET[ 'return_info'] ) )
