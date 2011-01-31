@@ -775,7 +775,7 @@ abstract class PP_Market_System {
 
 		$filter_name = $this->name . "-status";
 
-		if( !current_user_can( 'edit_prospress_posts' ) )
+		if( !current_user_can( 'edit_others_prospress_posts' ) )
 	    	$where .= $wpdb->prepare( " AND post_author= %d", $user_ID );
 
 		if( isset( $_GET[ $filter_name ] ) ) {
@@ -829,7 +829,7 @@ abstract class PP_Market_System {
 
 		if( isset( $current_screen->post_type ) && $current_screen->post_type == $this->bid_object_name ){
 			echo '<style type="text/css">.add-new-h2,.actions select:first-child,#doaction,#doaction2';
-			echo ( !current_user_can( 'edit_prospress_posts' ) ) ? ',.count' : '';
+			echo ( !current_user_can( 'edit_others_prospress_posts' ) ) ? ',.count' : '';
 			echo '{display: none;}</style>';  
 		}
 	}
