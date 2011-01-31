@@ -83,5 +83,6 @@ function pp_update() {
 	delete_option( 'PP_PAYMENTS_DB_VERSION' );
 	delete_option( 'pp_feedback_db_version' );
 	delete_option( 'pp_bids_db_version' );
+	delete_option( 'pp_index_page' ); // Clean up site that installed the 1.1 pre-beta
 }
 add_action( 'pp_activation', 'pp_update' );
