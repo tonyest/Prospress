@@ -90,6 +90,8 @@ class PP_Post {
 			}
 		}
 
+		$this->add_sidebars_widgets();
+
 		// Update rewrites to account for this post type
 		$this->register_post_type();
 		flush_rewrite_rules();
@@ -434,6 +436,58 @@ class PP_Post {
 		}
 	}
 
+
+	/** 
+	 * Add the Sort and Filter widgets to the default Prospress Index sidebar. This function is called on 
+	 * Prospress' activation to help get everything working with one-click.
+	 * 
+	 * @package Prospress
+	 * @subpackage Posts
+	 * @since 0.1
+	 **/
+	public function add_sidebars_widgets(){
+
+		$sidebars_widgets = wp_get_sidebars_widgets();
+
+		if( !isset( $sidebars_widgets[ $this->name . '-index-sidebar' ] ) )
+			$sidebars_widgets[ $this->name . '-index-sidebar' ] = array();
+
+		$sort_widget = get_option( 'widget_pp-sort' );
+		if( empty( $sort_widget ) ){ //sort widget not added to any sidebars yet
+
+			$sort_widget['_multiwidget'] = 1;
+
+			$sort_widget[] = array(
+								'title' => __( 'Sort by:', 'prospress' ),
+								'post-desc' => 'on',
+								'post-asc' => 'on',
+								'end-asc' => 'on',
+								'end-desc' => 'on',
+								'price-asc' => 'on',
+								'price-desc' => 'on'
+								);
+
+			$widget_id = end( array_keys( $sort_widget ) );
+
+			update_option( 'widget_pp-sort', $sort_widget );
+			array_push( $sidebars_widgets[ $this->name . '-index-sidebar' ], 'pp-sort-' . $widget_id );
+		}
+
+		$filter_widget = get_option( 'widget_bid-filter' );
+		if( empty( $filter_widget ) ){ //filter_widget widget not added to any sidebars yet
+
+			$filter_widget['_multiwidget'] = 1;
+
+			$filter_widget[] = array( 'title' => __( 'Price:', 'prospress' ) );
+
+			$filter_id = end( array_keys( $filter_widget ) );
+
+			update_option( 'widget_bid-filter', $filter_widget );
+			array_push( $sidebars_widgets[ $this->name . '-index-sidebar' ], 'bid-filter-' . $filter_id );
+		}
+
+		wp_set_sidebars_widgets( $sidebars_widgets );
+	}
 
 
 	/** 
