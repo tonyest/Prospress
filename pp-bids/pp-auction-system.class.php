@@ -346,7 +346,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		</td>
 		<td>
 	 		<input type="text" name="start_price" value="<?php echo number_format_i18n( $start_price, 2 ); ?>" size="20" <?php echo $disabled; ?>/>
-		<?php if( $disabled != '' ) echo '<span>' . $disabled_msg . '</span>'; ?>
+			<?php if( $disabled != '' ) echo '<span>' . $disabled_msg . '</span>'; ?>
 		</td>
 	</tr>
 	<tr>
@@ -355,7 +355,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		</td>
 		<td>
 	 		<input type="text" name="buy_now_price" value="<?php echo number_format_i18n( $buy_now_price, 2 ); ?>" size="20" <?php echo $disable_buy; ?>/>
-		<?php if( $disable_buy != '' ) echo '<span>' . $disabled_buy_msg . '</span>'; ?>
+			<?php if( $disable_buy != '' ) echo '<span>' . $disabled_buy_msg . '</span>'; ?>
 		</td>
 	</tr>
 </tbody>

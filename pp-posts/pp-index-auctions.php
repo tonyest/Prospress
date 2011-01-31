@@ -9,6 +9,7 @@ Template Name: Prospress Index
  * @subpackage Theme
  * @since 0.1
  */
+
 ?>
 <?php get_header(); ?>
 	<div id="container" class="prospress-container">

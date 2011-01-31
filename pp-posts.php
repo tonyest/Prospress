@@ -46,8 +46,10 @@ function pp_posts_install(){
 	if( !$wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $wpdb->posts WHERE post_type = 'auctions'" ) ) )
 		pp_post_hello_world();
 
+	if (  current_user_can( 'read_prospress_posts' ) )
+		pp_clean_old_caps();
 	// assign default capabiltiies only if prospress caps haven't been assigned before
-	if( !current_user_can( 'read_prospress_posts' ) || !current_user_can( 'edit_prospress_posts' ) )
+	if( !current_user_can( 'publish_prospress_posts' ) )
 		pp_add_default_caps();
 }
 add_action( 'pp_activation', 'pp_posts_install' );
@@ -89,6 +91,7 @@ function pp_post_hello_world(){
  * 
  * @package Prospress
  * @subpackage Posts
+ * @version 1.1
  * @since 0.1
  */
 function pp_add_default_caps(){
@@ -97,21 +100,8 @@ function pp_add_default_caps(){
 	foreach( $wp_roles->get_names() as $key => $role ) {
 
 		$role = get_role( $key );
-
-		if( $role->name == 'administrator' ) {
-			$role->add_cap( 'edit_others_prospress_posts' );
-			$role->add_cap( 'edit_published_prospress_posts' );
-			$role->add_cap( 'edit_private_prospress_posts' );
-			$role->add_cap( 'delete_prospress_post' );
-			$role->add_cap( 'delete_published_prospress_posts' );
-		} else {
-			$role->remove_cap( 'edit_others_prospress_posts' );
-			$role->remove_cap( 'edit_published_prospress_posts' );
-			$role->remove_cap( 'edit_private_prospress_posts' );
-			$role->remove_cap( 'delete_prospress_post' );
-			$role->remove_cap( 'delete_published_prospress_posts' );
-		}
-
+		if ( $role->name == 'administrator' )
+			$role->add_cap( 'upload_media' );
 		if( $role->name == 'administrator' || $role->name == 'editor' || $role->name == 'author' || $role->name == 'contributor' ) {
 			$role->add_cap( 'publish_prospress_posts' );
 			$role->add_cap( 'edit_prospress_posts' );
@@ -121,7 +111,32 @@ function pp_add_default_caps(){
 		}
 
 		$role->add_cap( 'read_private_prospress_posts' );
-		$role->add_cap( 'read_prospress_posts' );
+	}
+}
+/** 
+ * Clean up capabilities now deprecated in 1.1
+ * 
+ * @package Prospress
+ * @subpackage Posts
+ * @version 1.1
+ * @since 0.1
+ */
+function pp_clean_old_caps() {
+	foreach ( $wp_roles->get_names() as $key => $role ) {
+
+		$role = get_role( $key );
+
+		$role->remove_cap( 'edit_others_prospress_posts' );
+		$role->remove_cap( 'publish_prospress_posts' );
+		$role->remove_cap( 'edit_prospress_posts' );
+		$role->remove_cap( 'edit_published_prospress_posts' );
+		$role->remove_cap( 'edit_private_prospress_posts' );
+		$role->remove_cap( 'delete_prospress_post' );
+		$role->remove_cap( 'delete_published_prospress_posts' );
+		$role->remove_cap( 'publish_prospress_posts' );
+		$role->remove_cap( 'edit_prospress_posts' );
+		$role->remove_cap( 'read_private_prospress_posts' );
+		$role->remove_cap( 'read_prospress_posts' );
 	}
 }
 

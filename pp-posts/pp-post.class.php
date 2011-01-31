@@ -47,27 +47,47 @@ class PP_Post {
 	 * @uses is_site_admin() returns true if the current user is a site admin, false if not.
 	 * @uses add_submenu_page() WP function to add a submenu item.
 	 * @uses get_role() WP function to get the administrator role object and add capabilities to it.
+	 * @uses add_post_meta
 	 *
 	 * @global wpdb $wpdb WordPress DB access object.
 	 */
 	public function activate(){
 		global $wpdb;
-		
-		if( $this->get_index_id() == false ){ // Need an index page for this post type
-			$index_page = array();
-			$index_page['post_title'] = $this->labels[ 'name' ];
-			$index_page['post_name'] = $this->name;
-			$index_page['post_status'] = 'publish';
-			$index_page['post_content'] = __( 'This is the index for your ' . $this->labels[ 'name' ] . '. Your ' . $this->labels[ 'name' ] . ' will automatically show up here, but you change this text to provide an introduction or instructions.', 'prospress' );
-			$index_page['post_type'] = 'page';
 
-			$post_id = wp_insert_post( $index_page );
+		$meta_index_id = $this->get_index_id(); //get ID from wp_postmeta
+		$index_page = get_post( $meta_index_id, ARRAY_A ); // get $post array from wp_posts
 
-		} else { // Index page exists, make sure it's published as it get's trashed on plugin deactivation
-			$index_page = get_post( $this->get_index_id(), ARRAY_A );
+		if ( !empty( $index_page ) && isset( $meta_index_id ) ) { // page exists with prospress _index meta
+			//make sure page is published as it get's trashed on plugin deactivation
 			$index_page[ 'post_status' ] = 'publish';
-
 			wp_update_post( $index_page );
+
+		} else {
+			// search for index page in prospress 1.0 method
+			$index_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '". $this->name. "'" );
+
+			if ( isset( $meta_index_id ) && !isset($index_id) ) // meta exists without page
+				delete_post_meta( $meta_index_id, 'pp_'. $this->name. '_index' ); // clean up old meta
+
+			if ( !isset($index_page) && !empty($index_id) ) { // page exists without prospress _index meta
+				add_post_meta( $index_id, 'pp_'. $this->name. '_index', 'is_index' , true ); // add meta to existing page
+				$index_page = get_post( $index_id, ARRAY_A ); // get $post array from wp_posts
+				$index_page[ 'post_status' ] = 'publish';
+				wp_update_post( $index_page );	
+
+			} else { // page does not exist
+
+				//create new page & meta
+				$index_page = array();
+				$index_page['post_title']	=	$this->labels[ 'name' ];
+				$index_page['post_name']	=	$this->name;
+				$index_page['post_type']	=	'page';
+				$index_page['post_status']	=	'publish';
+				$index_page['post_content']	=	__( 'This is the index for your '. $this->labels[ 'name' ]. '. Your '. $this->labels[ 'name' ]. ' will automatically show up here, but you change this text to provide an introduction or instructions.', 'prospress' );
+
+				$index_id = wp_insert_post( $index_page );
+				add_post_meta( $index_id, 'pp_'. $this->name. '_index', 'is_index', true );	
+			}
 		}
 
 		$this->add_sidebars_widgets();
@@ -76,7 +96,6 @@ class PP_Post {
 		$this->register_post_type();
 		flush_rewrite_rules();
 	}
-
 
 	/** 
 	 * Prospress posts are not your vanilla WordPress post, they have special meta which needs to
@@ -96,7 +115,6 @@ class PP_Post {
 		global $post, $market_systems, $wp_query, $paged;
 
 		$market = $market_systems[ $this->name ];
-
 		if ( is_pp_multitax() ) {
 
 			$taxonomy = esc_attr( get_query_var( 'taxonomy' ) );
@@ -109,39 +127,47 @@ class PP_Post {
 
 			do_action( 'pp_taxonomy_template_redirect' );
 
-			if( file_exists( TEMPLATEPATH . '/taxonomy-' . $this->name . '.php' ) )
-				include( TEMPLATEPATH . '/taxonomy-' . $this->name . '.php' );
-			elseif( file_exists( TEMPLATEPATH . '/pp-taxonomy-' . $this->name . '.php' ) )
-				include( TEMPLATEPATH . '/pp-taxonomy-' . $this->name . '.php' );
-			else
-				include( PP_POSTS_DIR . '/pp-taxonomy-' . $this->name . '.php' );
-			exit;
+				if( file_exists( TEMPLATEPATH . '/taxonomy-' . $this->name . '.php' ) )
+					include( TEMPLATEPATH . '/taxonomy-' . $this->name . '.php' );
+				elseif( file_exists( STYLESHEETPATH . '/taxonomy-' . $this->name . '.php' ) ) // Child Theme supports Prospress
+					include( STYLESHEETPATH . '/taxonomy-' . $this->name . '.php' );
+				elseif( file_exists( TEMPLATEPATH . '/pp-taxonomy-' . $this->name . '.php' ) )
+					include( TEMPLATEPATH . '/pp-taxonomy-' . $this->name . '.php' );
+				else
+					include( PP_POSTS_DIR . '/pp-taxonomy-' . $this->name . '.php' );
+				exit;
 
-		} elseif( $this->is_index() && TEMPLATEPATH . '/page.php' == get_page_template() ){ // No template set for default Prospress index
-			wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
+			} elseif( $this->is_index() && TEMPLATEPATH . '/page.php' == get_page_template() ){ // No template set for default Prospress index
 
-			do_action( 'pp_index_template_redirect' );
+				wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 
-			if( file_exists( TEMPLATEPATH . '/index-' . $this->name . '.php' ) ) // Theme supports Prospress
-				include( TEMPLATEPATH . '/index-' . $this->name . '.php' );
-			elseif( file_exists( TEMPLATEPATH . '/pp-index-' . $this->name . '.php' ) )	// Copied the default template to the theme directory before customising?
-				include( TEMPLATEPATH . '/pp-index-' . $this->name . '.php' );
-			else   																// Default template
-				include( PP_POSTS_DIR . '/pp-index-' . $this->name . '.php' );
-			exit;
+				do_action( 'pp_index_template_redirect' );
 
-		} elseif ( $this->is_single() && is_single() && !isset( $_GET[ 's' ] ) ) {
-			wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
+				if( file_exists( TEMPLATEPATH . '/index-' . $this->name . '.php' ) ) // Theme supports Prospress
+					include( TEMPLATEPATH . '/index-' . $this->name . '.php' );
+				elseif( file_exists( STYLESHEETPATH . '/index-' . $this->name . '.php' ) ) // Child Theme supports Prospress
+					include( STYLESHEETPATH . '/index-' . $this->name . '.php' );
+				elseif( file_exists( TEMPLATEPATH . '/pp-index-' . $this->name . '.php' ) )	// Copied the default template to the theme directory before customising?
+					include( TEMPLATEPATH . '/pp-index-' . $this->name . '.php' );
+				else															// Default template
+					include( PP_POSTS_DIR . '/pp-index-' . $this->name . '.php' );
+				exit;
 
-			do_action( 'pp_single_template_redirect' );
+			} elseif ( $this->is_single() && is_single() && !isset( $_GET[ 's' ] ) ) {
 
-			if( file_exists( TEMPLATEPATH . '/single-' . $this->name . '.php' ) )
-				include( TEMPLATEPATH . '/single-' . $this->name . '.php' );
-			elseif( file_exists( TEMPLATEPATH . '/pp-single-' . $this->name . '.php' ) )
-				include( TEMPLATEPATH . '/pp-single-' . $this->name . '.php' );
-			else
-				include( PP_POSTS_DIR . '/pp-single-' . $this->name . '.php' );
-			exit;
+				wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
+
+				do_action( 'pp_single_template_redirect' );
+
+				if( file_exists( TEMPLATEPATH . '/single-' . $this->name . '.php' ) )
+					include( TEMPLATEPATH . '/single-' . $this->name . '.php' );
+				elseif( file_exists( STYLESHEETPATH . '/single-' . $this->name . '.php' ) ) // Child Theme supports Prospress
+					include( STYLESHEETPATH . '/single-' . $this->name . '.php' );
+				elseif( file_exists( TEMPLATEPATH . '/ppsingle-' . $this->name . '.php' ) )
+					include( TEMPLATEPATH . '/pp-single-' . $this->name . '.php' );
+				else
+					include( PP_POSTS_DIR . '/pp-single-' . $this->name . '.php' );
+				exit;
 		}
 	}
 
@@ -358,10 +384,9 @@ class PP_Post {
 	public function is_index() {
 		global $post;
 
-		if( isset( $post->ID ) && $post->ID == $this->get_index_id() )
-			return true;
-		else
-			return false;
+		$pp_index_page = get_post_meta( $post->ID, 'pp_'. $this->name. '_index', true );
+
+		return ( $pp_index_page == "is_index" ) ? true : false;
 	}
 
 
@@ -378,17 +403,16 @@ class PP_Post {
 	}
 
 	/*
-	 *	Retrieves stored index page ID, returns false by default if option does not yet exist.
+	 *	Retrieves stored index page ID, returns null by default if option does not yet exist.
 	 */
 	public function get_index_id() {
 		global $wpdb;
 
-		$index_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '" . $this->name . "'" );
+		$meta_key = 'pp_'. $this->name. '_index';
+		$meta_value = "is_index";
+		$index_id = $wpdb->get_var($wpdb->prepare("SELECT post_id FROM $wpdb->postmeta WHERE meta_key = %s AND meta_value = %s", $meta_key, $meta_value ));
 
-		if( $index_id == NULL)
-			return false; 
-		else 
-			return $index_id;
+		return $index_id;
 	}
 
 	public function get_index_permalink() {
@@ -508,9 +532,9 @@ class PP_Post {
 
 		if ( !current_user_can( 'edit_plugins' ) || !function_exists( 'delete_site_option' ) )
 			return false;
-
+		
 		wp_delete_post( $this->get_index_id() );
-		delete_option('pp_index_page');
+		delete_option('pp_index_page'); // clean up for some versions of beta ( to be removed post 1.1 )
 
 		flush_rewrite_rules();
 	}
@@ -530,7 +554,7 @@ class PP_Post {
 			return false;
 
 		wp_delete_post( $this->get_index_id() );
-
+		delete_option('pp_index_page'); // clean up for some versions of beta ( to be removed post 1.1 )
 		// Don't delete auctions
 	}
 }
