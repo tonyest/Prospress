@@ -64,7 +64,7 @@ add_action( 'admin_menu', 'pp_add_core_admin_menu' );
  * @since 1.01
  */
 function register_pp_core_options(){
-	register_setting( 'pp_core_options', 'currency_type');
+	register_setting( 'pp_core_options', 'currency_type' );
 }
 add_action( 'admin_init', 'register_pp_core_options' );
 
