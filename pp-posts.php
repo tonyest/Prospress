@@ -75,7 +75,7 @@ add_action( 'pp_activation', 'pp_posts_install' );
  * 
  * @package Prospress
  * @subpackage Posts
- * @since 1.1
+ * @since 1.0.1
  */
 function pp_post_hello_world(){
 	
@@ -136,7 +136,7 @@ function pp_add_default_caps(){
  * @package Prospress
  * @subpackage Posts
  * @version 1.1
- * @since 0.1
+ * @since 1.1
  */
 function pp_clean_old_caps() {
 	global $wp_roles;
