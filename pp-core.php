@@ -15,14 +15,6 @@ if ( !defined( 'PP_BASE_CAP' ) )
 
 include_once( PP_CORE_DIR . '/core-widgets.php' );
 
-/** 
- * Create first prospress auction-type post "Hello World"
- * 
- * @package Prospress
- * @subpackage Posts
- * @since 1.01
- */
-
 
 /**
  * Sets up Prospress environment with any settings required and/or shared across the 
@@ -95,7 +87,7 @@ function pp_settings_page(){
 			<p><?php _e( 'Please choose a default currency for all transactions in your marketplace.', 'prospress' ); ?></p>
 			<label for='currency_type'>
 				<?php _e('Currency:' , 'prospress' );?>
-				<select id='currency_type' name="currency_type">
+				<select id='currency_type' name='currency_type'>
 				<?php foreach( $currencies as $code => $details ) { ?>
 					<option value='<?php echo $code; ?>' <?php selected( $currency, $code ); ?> >
 						<?php echo $details[ 'currency_name' ]; ?> (<?php echo $code . ', ' . $details[ 'symbol' ]; ?>)
@@ -133,7 +125,7 @@ function pp_settings_page(){
 function pp_set_currency(){
 	global $currencies, $currency, $currency_symbol;
 
-	$currencies = apply_filters('pp_set_currency',array(
+	$currencies = apply_filters( 'pp_set_currency', array(
 		'AUD' => array( 'currency_name' => __('Australian Dollar', 'prospress' ), 'symbol' => '&#36;' ),
 		'GBP' => array( 'currency_name' => __('British Pound', 'prospress' ), 'symbol' => '&#163;' ),
 		'EUR' => array( 'currency_name' => __('Euro', 'prospress' ), 'symbol' => '&#8364;' ),
