@@ -205,11 +205,11 @@ class PP_Taxonomy {
 			return;
 		}
 
-		$new_tax[ 'label' ] 		= ( !$_POST[ 'label' ] ) ? $tax_name : strip_tags( $_POST[ 'label' ] );
 		$new_tax[ 'object_type' ] 	= $this->market_type;
 		$new_tax[ 'capabilities' ] 	= array( 'assign_terms' => 'edit_prospress_posts' );
+		$new_tax[ 'label' ] 		= ( empty( $_POST[ 'label' ] ) ) ? $tax_name : strip_tags( $_POST[ 'label' ] );
 		$new_tax[ 'labels' ] 		= array();
-		$new_tax[ 'labels' ][ 'singular_label' ]	= ( !$_POST[ 'singular_label' ] ) ? $tax_name : strip_tags( $_POST[ 'singular_label' ] );
+		$new_tax[ 'labels' ][ 'singular_label' ] = ( empty( $_POST[ 'singular_label' ] ) ) ? $tax_name :  strip_tags( $_POST[ 'singular_label' ] );
 		//other taxonomy properties are defined dynamically for future proofing
 
 		$taxonomies = get_option( $this->name );
@@ -277,7 +277,7 @@ class PP_Taxonomy {
 			$tax_type[ 'labels' ][ 'edit_item' ]		= sprintf( __( 'Edit %s', 'prospress' ), $tax_type[ 'labels' ][ 'singular_label' ] );
 			$tax_type[ 'labels' ][ 'update_item' ]		= sprintf( __( 'Update %s', 'prospress' ), $tax_type[ 'labels' ][ 'singular_label' ] );
 			$tax_type[ 'labels' ][ 'add_new_item' ]		= sprintf( __( 'Add New %s', 'prospress' ), $tax_type[ 'labels' ][ 'singular_label' ] );
-			$tax_type[ 'labels' ][ 'new_item_name' ]	=sprintf(  __( 'New %s', 'prospress' ), $tax_type[ 'labels' ][ 'singular_label' ] );
+			$tax_type[ 'labels' ][ 'new_item_name' ]	= sprintf(  __( 'New %s', 'prospress' ), $tax_type[ 'labels' ][ 'singular_label' ] );
 
 			register_taxonomy( $tax_name, $object_type, $tax_type );
 		}
