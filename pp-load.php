@@ -81,5 +81,7 @@ function pp_update() {
 	// Deprecated Options as of v1.1
 	delete_option( 'pp_use_custom_taxonomies' );
 	delete_option( 'PP_PAYMENTS_DB_VERSION' );
+	delete_option( 'pp_feedback_db_version' );
+	delete_option( 'pp_bids_db_version' );
 }
 add_action( 'pp_activation', 'pp_update' );

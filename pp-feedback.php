@@ -9,8 +9,6 @@
  * @version 0.1
  */
 
-if ( !defined( 'PP_FEEDBACK_DB_VERSION' ))
-	define ( 'PP_FEEDBACK_DB_VERSION', '0016' );
 if ( !defined( 'PP_FEEDBACK_DIR' ))
 	define( 'PP_FEEDBACK_DIR', PP_PLUGIN_DIR . '/pp-feedback' );
 if ( !defined( 'PP_FEEDBACK_URL' ))
@@ -22,23 +20,6 @@ require_once( PP_FEEDBACK_DIR . '/pp-feedback-templatetags.php' );
 
 include_once( PP_FEEDBACK_DIR . '/pp-feedback-widgets.php' );
 
-/**
- * To save updating/installing the feedback tables when they already exist and are up-to-date, check 
- * the current feedback database version exists and is not of a prior version.
- * 
- * @uses pp_feedback_install to create the database table if it is not up to date
- **/
-function pp_feedback_install() {
-	global $wpdb;
-
-	if ( !current_user_can( 'edit_plugins' ) )
-		return false;
-
-	if ( !get_site_option( 'pp_feedback_db_version' ) || get_site_option( 'pp_feedback_db_version' ) < PP_FEEDBACK_DB_VERSION ){
-		update_site_option( 'pp_feedback_db_version', PP_FEEDBACK_DB_VERSION );
-	}
-}
-add_action( 'pp_activation', 'pp_feedback_install' );
 
 /**
  * Register Prospress feedback options
@@ -50,6 +31,7 @@ function pp_feedback_options() {
 	register_setting( 'pp_core_options' , 'edit_feedback' );
 }
 add_action('admin_init' , 'pp_feedback_options' );
+
 
 /**
  * Registers the feedback post type with WordPress
@@ -72,7 +54,6 @@ function pp_register_feedback_post_type(){
 			'hierarchical' => true, // post parent is the post for which the feedback relates
 			'supports' 	=> array(
 							'title',
-//							'excerpt',
 							'editor',
 							'revisions' ),
 			'labels'	=> array( 'name'	=> __( 'Feedback', 'prospress' ),
@@ -503,8 +484,6 @@ function pp_feedback_uninstall() {
 
 	if ( !current_user_can( 'edit_plugins' ) || !function_exists( 'delete_site_option' ) )
 		return false;
-
-	delete_site_option( 'pp_feedback_db_version' );
 
 	// beta backward compatibility
 	$wpdb->query( "DROP TABLE IF EXISTS $wpdb->feedback" );
