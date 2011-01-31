@@ -33,10 +33,19 @@ Template Name: Single Prospress Post
 		<?php endwhile; // end of the loop. ?>
 		</div>
 	</div>
-
 	<div id="sidebar" class="prospress-sidebar">
 		<ul class="xoxo">
-			<?php dynamic_sidebar( $market->name() . '-single-sidebar' ); ?>
+			
+			<!-- Add default countdown widget if no widgets currently registered in single auctions sidebar -->
+			<?php if (!function_exists('dynamic_sidebar') || !dynamic_sidebar( $market->name(). '-single-sidebar' ) && function_exists( 'the_post_end_time' ) ) : // begin primary sidebar widgets ?>
+				<li id="pp_countdown-default" class="widget-container widget_pp_countdown">
+					<h3 class="widget-title">Ending:</h3>
+					<div class="countdown" id="' . get_post_end_time( '', 'timestamp', 'gmt' ) . '">
+						<?php the_post_end_time(); ?>
+					<div>
+				</li>
+			<?php endif;?>
+			
 		</ul>
 	</div>
 <?php get_footer(); ?>
