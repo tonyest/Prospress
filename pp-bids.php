@@ -9,8 +9,6 @@
  * @version 0.1
  */
 
-if ( !defined( 'PP_BIDS_DB_VERSION' ) )
-	define ( 'PP_BIDS_DB_VERSION', '0024' );
 if ( !defined( 'PP_BIDS_DIR' ) )
 	define( 'PP_BIDS_DIR', PP_PLUGIN_DIR . '/pp-bids' );
 if ( !defined( 'PP_BIDS_URL' ) )
@@ -24,32 +22,13 @@ include_once( PP_BIDS_DIR . '/bids-filter.php' );
 require_once( PP_BIDS_DIR . '/pp-auction-system.class.php' );
 
 /**
- * @global PP_Auction_Bid_System $market_system Stores the market system object, defaults to PP_Auction_Bid_System.
+ * @global Array $market_systems Stores a named array of all the market system objects.
  */
-global $market_system, $market_systems;
+global $market_systems;
 
-$market_system = new PP_Auction_Bid_System(); // for legacy
-$market_systems[ $market_system->name() ] = $market_system;
-
+$auction_system = new PP_Auction_Bid_System(); // Core System
+$market_systems[ $auction_system->name() ] = $auction_system;
 $market_systems = apply_filters( 'add_market_system', $market_systems );
-
-
-/**
- * To save updating/installing the bids tables when they already exist and are up-to-date, check 
- * the current bids database version both exists and is not of a prior version.
- * 
- * @uses pp_bids_install to create the database tables if they are not up to date
- **/
-function pp_bids_maybe_install() {
-	global $wpdb;
-
-	if ( !current_user_can( 'edit_plugins' ) )
-		return false;
-
-	if ( !get_option( 'pp_bids_db_version' ) || get_option( 'pp_bids_db_version' ) < PP_BIDS_DB_VERSION )
-		pp_bids_install();
-}
-add_action( 'pp_activation', 'pp_bids_maybe_install' );
 
 
 /**
@@ -58,6 +37,9 @@ add_action( 'pp_activation', 'pp_bids_maybe_install' );
 function pp_bids_install( $blog_id = 0 ) {
 	global $wpdb;
 
+	if ( !current_user_can( 'edit_plugins' ) )
+		return false;
+
 	if ( !isset($wpdb->bids) || empty($wpdb->bids))
 		$wpdb->bids = $wpdb->prefix . 'bids';
 	if ( !isset($wpdb->bidsmeta) || empty($wpdb->bidsmeta))
@@ -65,7 +47,7 @@ function pp_bids_install( $blog_id = 0 ) {
 
 	$id_transition = array();
 
-	// Upgrade from previous versions of PP which used a custom bids table
+	// Upgrade from previous versions of PP prior to 1.0 which used a custom bids table
 	if( $wpdb->get_var("SHOW TABLES LIKE '$wpdb->bids'") == $wpdb->bids ) {
 		$bids = $wpdb->get_results( "SELECT * FROM $wpdb->bids", ARRAY_A );
 
@@ -81,7 +63,7 @@ function pp_bids_install( $blog_id = 0 ) {
 			$id_transition[ $bid[ 'bid_id' ] ] = wp_insert_post( $bid_post );
 		}
 
-		//for another day
+		// For another day
 		//$wpdb->query( "DROP TABLE IF EXISTS $wpdb->bids" );
 	}
 
@@ -91,11 +73,11 @@ function pp_bids_install( $blog_id = 0 ) {
 		foreach( $bidsmeta as $meta_item )
 			add_post_meta( $id_transition[ $meta_item[ 'bid_id' ] ], $meta_item[ 'meta_key' ], $meta_item[ 'meta_value' ], true );
 
-		//for another day
+		// For another day
 		//$wpdb->query( "DROP TABLE IF EXISTS $wpdb->bidsmeta" );
 	}
-	update_option( 'pp_bids_db_version', PP_BIDS_DB_VERSION );
 }
+add_action( 'pp_activation', 'pp_bids_install' );
 
 
 /**
