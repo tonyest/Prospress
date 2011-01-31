@@ -46,10 +46,25 @@ function pp_posts_install(){
 	if( !$wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $wpdb->posts WHERE post_type = 'auctions'" ) ) )
 		pp_post_hello_world();
 
-	if (  current_user_can( 'read_prospress_posts' ) )
-		pp_clean_old_caps();
-	// assign default capabiltiies only if prospress caps haven't been assigned before
-	if( !current_user_can( 'publish_prospress_posts' ) )
+	// Assign default capabiltiies only if prospress caps haven't been assigned before
+	foreach( get_users() as $user ){
+
+		if( is_super_admin( $user->ID ) ){
+			continue;
+		} elseif( user_can( $user->ID, 'read_prospress_posts' ) ) {
+			$defaults_set = true;
+			$upgrading = true;
+			break;
+		} elseif( user_can( $user->ID, 'publish_prospress_posts' ) || user_can( $user->ID, 'read_private_prospress_posts' ) ){
+			$defaults_set = true;
+			break;
+		}
+	}
+
+	if( $upgrading == true )
+		pp_clean_old_caps(); // for v1.1 upgrade
+
+	if( $defaults_set != true )
 		pp_add_default_caps();
 }
 add_action( 'pp_activation', 'pp_posts_install' );
@@ -100,8 +115,10 @@ function pp_add_default_caps(){
 	foreach( $wp_roles->get_names() as $key => $role ) {
 
 		$role = get_role( $key );
+
 		if ( $role->name == 'administrator' )
 			$role->add_cap( 'upload_media' );
+
 		if( $role->name == 'administrator' || $role->name == 'editor' || $role->name == 'author' || $role->name == 'contributor' ) {
 			$role->add_cap( 'publish_prospress_posts' );
 			$role->add_cap( 'edit_prospress_posts' );
@@ -122,6 +139,8 @@ function pp_add_default_caps(){
  * @since 0.1
  */
 function pp_clean_old_caps() {
+	global $wp_roles;
+
 	foreach ( $wp_roles->get_names() as $key => $role ) {
 
 		$role = get_role( $key );
