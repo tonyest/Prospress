@@ -49,11 +49,10 @@ class PP_Post {
 	 * @uses get_role() WP function to get the administrator role object and add capabilities to it.
 	 *
 	 * @global wpdb $wpdb WordPress DB access object.
-	 * @global PP_Market_System $market_system Prospress market system object for this marketplace.
-	 * @global WP_Rewrite $wp_rewrite WordPress Rewrite Component.
 	 */
 	public function activate(){
 		global $wpdb;
+		
 		if( $this->get_index_id() == false ){ // Need an index page for this post type
 			$index_page = array();
 			$index_page['post_title'] = $this->labels[ 'name' ];
@@ -155,8 +154,6 @@ class PP_Post {
 	 * 
 	 * @package Prospress
 	 * @since 0.1
-	 * 
-	 * @global PP_Market_System $market_system Prospress market system object for this marketplace.
 	 */
 	public function register_post_type() {
 
@@ -297,17 +294,17 @@ class PP_Post {
 			array_push( $sidebars_widgets[ $this->name . '-single-sidebar' ], 'pp_countdown-' . $countdown_id );
 		}
 
-		$single_tax_widget = get_option( 'widget_pp_single_tax' );
-		if( empty( $single_tax_widget ) ){ // single taxonomy widget not added to any sidebars yet
+		$single_feedback_widget = get_option( 'widget_pp-feedback-score' );
+		if( empty( $single_feedback_widget ) ){ // single taxonomy widget not added to any sidebars yet
 
-			$single_tax_widget['_multiwidget'] = 1;
+			$single_feedback_widget['_multiwidget'] = 1;
 
-			$single_tax_widget[] = array( 'title' => __( 'Details:', 'prospress' ) );
+			$single_feedback_widget[] = array( 'title' => __( 'Feedback Score:', 'prospress' ) );
 
-			$single_tax_id = end( array_keys( $single_tax_widget ) );
+			$single_feedback_id = end( array_keys( $single_feedback_widget ) );
 
-			update_option( 'widget_pp_single_tax', $single_tax_widget );
-			array_push( $sidebars_widgets[ $this->name . '-single-sidebar' ], 'pp_single_tax-' . $single_tax_id );
+			update_option( 'widget_pp-feedback-score', $single_feedback_widget );
+			array_push( $sidebars_widgets[ $this->name . '-single-sidebar' ], 'pp-feedback-score-' . $single_feedback_id );
 		}
 
 		wp_set_sidebars_widgets( $sidebars_widgets );
