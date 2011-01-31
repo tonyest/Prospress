@@ -61,7 +61,7 @@ class PP_Taxonomy {
 			screen_icon( 'prospress' );
 			$add_url = add_query_arg( 'action', 'add_new', $this->admin_url );
 			?>
-			<h2><?php printf( __( '%s Taxonomies', 'prospress' ), $this->labels[ 'singular_name' ] ) ?></h2>
+			<h2><?php printf( __( '%s Taxonomies', 'prospress' ), $this->labels[ 'singular_name' ] ) ?><a href="<?php echo $add_url; ?>" class="button add-new-h2"><?php _e( "Add New", 'prospress' ); ?></a></h2>
 			<?php 
 			$taxonomy_types = get_option( $this->name );
 			if( !empty( $taxonomy_types ) ) { ?>
