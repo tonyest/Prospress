@@ -114,7 +114,7 @@ abstract class PP_Market_System {
 		add_action( 'load-edit.php', array( &$this, 'add_admin_filters' ) );
 
 		// For Ajax & other scripts
-		add_action( 'wp_print_scripts', array( &$this, 'enqueue_auction_scripts' ) );
+		add_action( 'wp_print_scripts', array( &$this, 'enqueue_bid_form_scripts' ) );
 
 		add_action( 'admin_menu', array( &$this, 'enqueue_bid_admin_scripts' ) );
 		add_action( 'admin_head', array( &$this, 'admin_css' ) );
@@ -812,14 +812,12 @@ abstract class PP_Market_System {
 		}
 	}
 
-	public function enqueue_auction_scripts(){
+	public function enqueue_bid_form_scripts(){
 		if( is_admin() || ( !$this->is_index() && !$this->is_single() ) )
 			return;
 
   		wp_enqueue_script( 'bid-form-ajax', PP_BIDS_URL . '/bid-form-ajax.js', array( 'jquery' ) );
 		wp_localize_script( 'bid-form-ajax', 'bidi18n', array( 'siteUrl' => get_bloginfo('wpurl') ) );
-		wp_enqueue_script( 'final-countdown', PP_PLUGIN_URL . '/js/final-countdown.js', array( 'jquery' ) );
-		wp_localize_script( 'final-countdown', 'bidi18n', array( 'siteUrl' => get_bloginfo('wpurl') ) );
 	}
 
 	public function enqueue_bid_admin_scripts(){
