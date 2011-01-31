@@ -90,8 +90,6 @@ class PP_Post {
 			}
 		}
 
-		$this->add_sidebars_widgets();
-
 		// Update rewrites to account for this post type
 		$this->register_post_type();
 		flush_rewrite_rules();
@@ -251,89 +249,6 @@ class PP_Post {
 				'after_title' => '</h3>'
 			) );
 		}
-	}
-
-
-	/** 
-	 * Add the Sort and Filter widgets to the default Prospress Index sidebar. This function is called on 
-	 * Prospress' activation to help get everything working with one-click.
-	 * 
-	 * @package Prospress
-	 * @subpackage Posts
-	 * @since 0.1
-	 */
-	public function add_sidebars_widgets(){
-
-		$sidebars_widgets = wp_get_sidebars_widgets();
-
-		if( !isset( $sidebars_widgets[ $this->name . '-index-sidebar' ] ) )
-			$sidebars_widgets[ $this->name . '-index-sidebar' ] = array();
-
-		$sort_widget = get_option( 'widget_pp-sort' );
-		if( empty( $sort_widget ) ){ //sort widget not added to any sidebars yet
-
-			$sort_widget['_multiwidget'] = 1;
-
-			$sort_widget[] = array(
-								'title' => __( 'Sort by:', 'prospress' ),
-								'post-desc' => 'on',
-								'post-asc' => 'on',
-								'end-asc' => 'on',
-								'end-desc' => 'on',
-								'price-asc' => 'on',
-								'price-desc' => 'on'
-								);
-
-			$widget_id = end( array_keys( $sort_widget ) );
-
-			update_option( 'widget_pp-sort', $sort_widget );
-
-			array_push( $sidebars_widgets[ $this->name . '-index-sidebar' ], 'pp-sort-' . $widget_id );
-		}
-
-		$filter_widget = get_option( 'widget_bid-filter' );
-		if( empty( $filter_widget ) ){ //filter_widget widget not added to any sidebars yet
-
-			$filter_widget['_multiwidget'] = 1;
-
-			$filter_widget[] = array( 'title' => __( 'Price:', 'prospress' ) );
-
-			$filter_id = end( array_keys( $filter_widget ) );
-
-			update_option( 'widget_bid-filter', $filter_widget );
-			array_push( $sidebars_widgets[ $this->name . '-index-sidebar' ], 'bid-filter-' . $filter_id );
-		}
-
-		if( !isset( $sidebars_widgets[ $this->name . '-single-sidebar' ] ) )
-			$sidebars_widgets[ $this->name . '-single-sidebar' ] = array();
-
-		$countdown_widget = get_option( 'widget_pp_countdown' );
-		if( empty( $countdown_widget ) ){ // countdown widget not added to any sidebars yet
-
-			$countdown_widget['_multiwidget'] = 1;
-
-			$countdown_widget[] = array( 'title' => __( 'Ending:', 'prospress' ) );
-
-			$countdown_id = end( array_keys( $countdown_widget ) );
-
-			update_option( 'widget_pp_countdown', $countdown_widget );
-			array_push( $sidebars_widgets[ $this->name . '-single-sidebar' ], 'pp_countdown-' . $countdown_id );
-		}
-
-		$single_feedback_widget = get_option( 'widget_pp-feedback-score' );
-		if( empty( $single_feedback_widget ) ){ // single taxonomy widget not added to any sidebars yet
-
-			$single_feedback_widget['_multiwidget'] = 1;
-
-			$single_feedback_widget[] = array( 'title' => __( 'Feedback Score:', 'prospress' ) );
-
-			$single_feedback_id = end( array_keys( $single_feedback_widget ) );
-
-			update_option( 'widget_pp-feedback-score', $single_feedback_widget );
-			array_push( $sidebars_widgets[ $this->name . '-single-sidebar' ], 'pp-feedback-score-' . $single_feedback_id );
-		}
-
-		wp_set_sidebars_widgets( $sidebars_widgets );
 	}
 
 
@@ -534,7 +449,6 @@ class PP_Post {
 			return false;
 		
 		wp_delete_post( $this->get_index_id() );
-		delete_option('pp_index_page'); // clean up for some versions of beta ( to be removed post 1.1 )
 
 		flush_rewrite_rules();
 	}
@@ -554,7 +468,5 @@ class PP_Post {
 			return false;
 
 		wp_delete_post( $this->get_index_id() );
-		delete_option('pp_index_page'); // clean up for some versions of beta ( to be removed post 1.1 )
-		// Don't delete auctions
 	}
 }
