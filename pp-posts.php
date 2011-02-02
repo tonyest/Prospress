@@ -52,15 +52,12 @@ function pp_posts_install(){
 		if ( is_super_admin( $user->ID ) ) {
 			continue;
 		} else {
-			$args = array_slice( func_get_args(), 2 );
-			$args_read = array_merge( array( 'read_prospress_posts' ), $args );
-			$args_publish = array_merge( array( 'publish_prospress_posts' ), $args );
-			$args_read_private = array_merge( array( 'read_private_prospress_posts' ), $args );
-			if ( call_user_func_array( array( &$user, 'has_cap' ), $args_read ) ) {
+			$wp_user = new WP_User( $user->ID );
+			if ( $wp_user->has_cap( 'read_prospress_posts' ) ) {
 				$defaults_set = true;
 				$upgrading = true;
 				break;
-			} elseif ( call_user_func_array( array( &$user, 'has_cap' ), $args_publish ) || call_user_func_array( array( &$user, 'has_cap' ), $args_read_private ) ) {
+			} elseif ( $wp_user->has_cap( 'publish_prospress_posts' ) || $wp_user->has_cap( 'read_private_prospress_posts' ) ) {
 				$defaults_set = true;
 				break;
 			}
