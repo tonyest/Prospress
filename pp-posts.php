@@ -121,6 +121,7 @@ function pp_add_default_caps(){
 			$role->add_cap( 'edit_private_prospress_posts' );
 			$role->add_cap( 'edit_others_prospress_posts' );
 			$role->add_cap( 'delete_prospress_post' );
+			$role->add_cap( 'delete_prospress_posts' );
 			$role->add_cap( 'delete_published_prospress_posts' );
 		}
 
@@ -150,17 +151,19 @@ function pp_clean_old_caps() {
 
 		$role = get_role( $key );
 
-		$role->remove_cap( 'edit_others_prospress_posts' );
-		$role->remove_cap( 'publish_prospress_posts' );
-		$role->remove_cap( 'edit_prospress_posts' );
-		$role->remove_cap( 'edit_published_prospress_posts' );
-		$role->remove_cap( 'edit_private_prospress_posts' );
-		$role->remove_cap( 'delete_prospress_post' );
-		$role->remove_cap( 'delete_published_prospress_posts' );
-		$role->remove_cap( 'publish_prospress_posts' );
-		$role->remove_cap( 'edit_prospress_posts' );
-		$role->remove_cap( 'read_private_prospress_posts' );
-		$role->remove_cap( 'read_prospress_posts' );
+		if ( $role->name != 'administrator' ){ // Give Admin full capabilities
+			$role->remove_cap( 'edit_others_prospress_posts' );
+			$role->remove_cap( 'publish_prospress_posts' );
+			$role->remove_cap( 'edit_prospress_posts' );
+			$role->remove_cap( 'edit_published_prospress_posts' );
+			$role->remove_cap( 'edit_private_prospress_posts' );
+			$role->remove_cap( 'delete_prospress_post' );
+			$role->remove_cap( 'delete_published_prospress_posts' );
+			$role->remove_cap( 'publish_prospress_posts' );
+			$role->remove_cap( 'edit_prospress_posts' );
+			$role->remove_cap( 'read_private_prospress_posts' );
+			$role->remove_cap( 'read_prospress_posts' );
+		}
 	}
 }
 
