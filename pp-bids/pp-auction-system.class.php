@@ -258,14 +258,14 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		switch( $this->message_id ){
 			case 0 : // First bid
 				$start_price = get_post_meta( $bid[ 'post_id' ], 'start_price', true );
-				$new_winning_bid_value = ( (float)$start_price != 0 ) ? $start_price : $this->bid_increment( $bid[ 'bid_value' ] );
+				$new_winning_bid_value = ( (float)$start_price != 0 ) ? $start_price : $this->get_bid_increment( $bid[ 'bid_value' ] );
 				break;
 			case 1 : // Bid value is over max bid & bidder different to current winning bidder
-				$bid_value_incremented = $posts_max_bid->post_content + $this->bid_increment( $posts_max_bid->post_content );
+				$bid_value_incremented = $posts_max_bid->post_content + $this->get_bid_increment( $posts_max_bid->post_content );
 				$new_winning_bid_value = ( $bid[ 'bid_value' ] > $bid_value_incremented ) ? $bid_value_incremented : $bid[ 'bid_value' ];
 				break;
 			case 2 :
-				$bid_value_incremented = $bid[ 'bid_value' ] + $this->bid_increment( $bid[ 'bid_value' ] );
+				$bid_value_incremented = $bid[ 'bid_value' ] + $this->get_bid_increment( $bid[ 'bid_value' ] );
 				$new_winning_bid_value = ( $posts_max_bid->post_content > $bid_value_incremented ) ? $bid_value_incremented : $posts_max_bid->post_content;
 				break;
 			case 4 : // Bidder increasing max bid, set their previous bid as 'outbid'

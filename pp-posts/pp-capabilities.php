@@ -125,7 +125,7 @@ function pp_capabilities_roleset( $pp_capabilities ) {
 			$wp_roles->add_cap( $role , 'upload_files' );
 		} else {
 			$wp_roles->remove_cap( $role , 'upload_files' );
-		}	
+		}
 	endforeach;
 }
 
@@ -199,6 +199,8 @@ function pp_map_meta_cap( $caps, $cap, $user_id, $args ){
 
 			if ( 'publish' == $post->post_status || 'private' == $post->post_status )
 				$caps[] = 'delete_published_prospress_posts';
+			else 
+				$caps[] = 'delete_prospress_posts';
 		}
 	} elseif( $cap == 'read_prospress_post' ) {
 		$post = get_post( $args[0] );

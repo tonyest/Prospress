@@ -143,8 +143,14 @@ function pp_add_default_caps(){
 
 		$role = get_role( $key );
 
-		if ( $role->name == 'administrator' )
-			$role->add_cap( 'upload_media' );
+		if ( $role->name == 'administrator' ){ // Give Admin full capabilities
+			$role->add_cap( 'edit_published_prospress_posts' );
+			$role->add_cap( 'edit_private_prospress_posts' );
+			$role->add_cap( 'edit_others_prospress_posts' );
+			$role->add_cap( 'delete_prospress_post' );
+			$role->add_cap( 'delete_prospress_posts' );
+			$role->add_cap( 'delete_published_prospress_posts' );
+		}
 
 		if( $role->name == 'administrator' || $role->name == 'editor' || $role->name == 'author' || $role->name == 'contributor' ) {
 			$role->add_cap( 'publish_prospress_posts' );
@@ -172,17 +178,19 @@ function pp_clean_old_caps() {
 
 		$role = get_role( $key );
 
-		$role->remove_cap( 'edit_others_prospress_posts' );
-		$role->remove_cap( 'publish_prospress_posts' );
-		$role->remove_cap( 'edit_prospress_posts' );
-		$role->remove_cap( 'edit_published_prospress_posts' );
-		$role->remove_cap( 'edit_private_prospress_posts' );
-		$role->remove_cap( 'delete_prospress_post' );
-		$role->remove_cap( 'delete_published_prospress_posts' );
-		$role->remove_cap( 'publish_prospress_posts' );
-		$role->remove_cap( 'edit_prospress_posts' );
-		$role->remove_cap( 'read_private_prospress_posts' );
-		$role->remove_cap( 'read_prospress_posts' );
+		if ( $role->name != 'administrator' ){ // Give Admin full capabilities
+			$role->remove_cap( 'edit_others_prospress_posts' );
+			$role->remove_cap( 'publish_prospress_posts' );
+			$role->remove_cap( 'edit_prospress_posts' );
+			$role->remove_cap( 'edit_published_prospress_posts' );
+			$role->remove_cap( 'edit_private_prospress_posts' );
+			$role->remove_cap( 'delete_prospress_post' );
+			$role->remove_cap( 'delete_published_prospress_posts' );
+			$role->remove_cap( 'publish_prospress_posts' );
+			$role->remove_cap( 'edit_prospress_posts' );
+			$role->remove_cap( 'read_private_prospress_posts' );
+			$role->remove_cap( 'read_prospress_posts' );
+		}
 	}
 }
 
@@ -521,6 +529,7 @@ function pp_post_sort_options( $pp_sort_options ){
 }
 add_filter( 'pp_sort_options', 'pp_post_sort_options' );
 
+
 /**
  * A boolean function to centralise the logic for whether the current page is an admin page for this post type.
  *
@@ -539,6 +548,7 @@ function is_pp_post_admin_page(){
 			return true;
 	return false;
 }
+
 
 /** 
  * Check is a query is for multiple Prospress taxonomies. A wrapper for
@@ -567,7 +577,7 @@ function is_pp_multitax(){
  * @subpackage Posts
  * @since 1.0
  */
-function pp_post_save_access_denied_redirect() {
+function pp_post_access_denied_redirect() {
 	global $pagenow;
 
 	if( $pagenow == 'edit.php' ) { // @TODO find a way to determine this with better specificity
@@ -575,7 +585,7 @@ function pp_post_save_access_denied_redirect() {
 		exit;
 	}
 }
-add_action( 'admin_page_access_denied', 'pp_post_save_access_denied_redirect', 20 ); //run after other functions
+add_action( 'admin_page_access_denied', 'pp_post_access_denied_redirect', 20 ); //run after other functions
 
 
 /** 
