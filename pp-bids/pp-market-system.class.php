@@ -493,7 +493,7 @@ abstract class PP_Market_System {
 					$message = __( 'Invalid bid. Bid nonce did not validate.', 'prospress' );
 					break;
 				case 9:
-					$message = __( 'Invalid bid. Please enter a bid greater than the starting price.', 'prospress' );
+					$message = __( 'Invalid bid. Please enter a bid higher than the starting price.', 'prospress' );
 					break;
 				case 10:
 					$message = __( 'Bid submitted.', 'prospress' );
