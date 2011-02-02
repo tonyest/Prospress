@@ -1,7 +1,7 @@
 
 <div class="wrap">
 <?php screen_icon( 'prospress' ); ?>
-<h2><?php _e( 'Payment Settings', 'prospress') ?></h2>
+<h2><?php _e( 'Payment Settings', 'prospress'); ?></h2>
 <?php if( isset( $updated_message ) ) { ?>
 	<div id='message' class='updated fade'>
 		<p><?php echo $updated_message; ?></p>
@@ -17,7 +17,7 @@
 		</td>
 	</tr>		
 	<tr>
-		<th>Using Godaddy Hosting</th>
+		<th><?php _e( 'Using Godaddy Hosting', 'prospress'); ?></th>
 		<td>
 			<input type="checkbox" name="pp_invoice_using_godaddy" id="pp_invoice_using_godaddy" value="true" <?php checked( get_option('pp_invoice_using_godaddy'), 'true' );?> />
 			<?php _e( 'A special proxy must be used for credit card transactions on GoDaddy servers.', 'prospress'); ?>
@@ -32,7 +32,7 @@
 		</td>
 	</tr>
 </table>
-<h3>Email Templates</h3>
+<h3><?php _e( 'Email Templates', 'prospress'); ?></h3>
 <table class="form-table pp_invoice_email_templates">
 	<tr>
 		<th><?php _e("<b>Invoice Notification</b> Item", 'prospress') ?></th>
