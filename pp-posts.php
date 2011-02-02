@@ -42,12 +42,12 @@ include_once( PP_POSTS_DIR . '/qmt/query-multiple-taxonomies.php' );
  */
 function pp_posts_install(){
 	global $wpdb;
-
+	// install hello world post if not already present
 	if( !$wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $wpdb->posts WHERE post_type = 'auctions'" ) ) )
 		pp_post_hello_world();
 
 	// Assign default capabiltiies only if prospress caps haven't been assigned before
-	foreach( get_users() as $user ){
+ 	foreach( get_users_of_blog() as $user ){
 
 		if( is_super_admin( $user->ID ) ){
 			continue;
