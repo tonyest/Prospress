@@ -41,26 +41,52 @@ include_once( PP_POSTS_DIR . '/qmt/query-multiple-taxonomies.php' );
  * @global WP_Rewrite $wp_rewrite WordPress Rewrite Component.
  */
 function pp_posts_install(){
-	global $wpdb;
-	// install hello world post if not already present
-	if( !$wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $wpdb->posts WHERE post_type = 'auctions'" ) ) )
-		pp_post_hello_world();
+	global $wpdb, $wp_version;
 
-	// Assign default capabiltiies only if prospress caps haven't been assigned before
- 	foreach( get_users_of_blog() as $user ){
+	if ( version_compare( $wp_version, '3.1', '>=' ) ) { // wordpress 3.1 ready functions
+		// install hello world post if not already present
+		if( !$wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $wpdb->posts WHERE post_type = 'auctions'" ) ) )
+			pp_post_hello_world();
 
-		if( is_super_admin( $user->ID ) ){
-			continue;
-		} elseif( user_can( $user->ID, 'read_prospress_posts' ) ) {
-			$defaults_set = true;
-			$upgrading = true;
-			break;
-		} elseif( user_can( $user->ID, 'publish_prospress_posts' ) || user_can( $user->ID, 'read_private_prospress_posts' ) ){
-			$defaults_set = true;
-			break;
+		// Assign default capabiltiies only if prospress caps haven't been assigned before
+	 	foreach( get_users() as $user ){
+
+			if( is_super_admin( $user->ID ) ){
+				continue;
+			} elseif( user_can( $user->ID, 'read_prospress_posts' ) ) {
+				$defaults_set = true;
+				$upgrading = true;
+				break;
+			} elseif( user_can( $user->ID, 'publish_prospress_posts' ) || user_can( $user->ID, 'read_private_prospress_posts' ) ){
+				$defaults_set = true;
+				break;
+			}
 		}
-	}
 
+	} else { // pre wordpres 3.1
+		// Assign default capabiltiies only if prospress caps haven't been assigned before
+		foreach( get_users_of_blog() as $user ) {
+
+			if ( is_super_admin( $user->ID ) ) {
+				continue;
+			} else {
+				$args = array_slice( func_get_args(), 2 );
+				$args_read = array_merge( array( 'read_prospress_posts' ), $args );
+				$args_publish = array_merge( array( 'publish_prospress_posts' ), $args );
+				$args_read_private = array_merge( array( 'read_private_prospress_posts' ), $args );
+				if ( call_user_func_array( array( &$user, 'has_cap' ), $args_read ) ) {
+					$defaults_set = true;
+					$upgrading = true;
+					break;
+				} elseif ( call_user_func_array( array( &$user, 'has_cap' ), $args_publish ) || call_user_func_array( array( &$user, 'has_cap' ), $args_read_private ) ) {
+					$defaults_set = true;
+					break;
+				}
+			}
+		}
+
+	}
+	
 	if( $upgrading == true )
 		pp_clean_old_caps(); // for v1.1 upgrade
 
