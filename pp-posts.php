@@ -43,10 +43,11 @@ include_once( PP_POSTS_DIR . '/qmt/query-multiple-taxonomies.php' );
 function pp_posts_install(){
 	global $wpdb, $wp_version;
 
+	// install hello world post if not already present
+	if( !$wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $wpdb->posts WHERE post_type = 'auctions'" ) ) )
+		pp_post_hello_world();
+		
 	if ( version_compare( $wp_version, '3.1', '>=' ) ) { // wordpress 3.1 ready functions
-		// install hello world post if not already present
-		if( !$wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $wpdb->posts WHERE post_type = 'auctions'" ) ) )
-			pp_post_hello_world();
 
 		// Assign default capabiltiies only if prospress caps haven't been assigned before
 	 	foreach( get_users() as $user ){
