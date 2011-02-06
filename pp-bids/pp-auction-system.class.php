@@ -551,6 +551,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 			return;
 
 		wp_enqueue_script( 'final-countdown', PP_PLUGIN_URL . '/js/final-countdown.js', array( 'jquery' ) );
-		wp_localize_script( 'final-countdown', 'bidi18n', array( 'siteUrl' => get_bloginfo('wpurl') ) );
+		// wp_localize_script( 'final-countdown', 'bidi18n', array( 'siteUrl' => get_bloginfo('wpurl') ) );
+		wp_enqueue_script( 'tzineclock', PP_PLUGIN_URL . '/js/jquery.tzineClock.js', array( 'jquery' ) );
 	}	
 }

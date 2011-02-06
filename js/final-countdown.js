@@ -1,6 +1,9 @@
 jQuery(document).ready(function($) {
 	//initiate final_countdown
-	final_countdown();
+	// final_countdown();
+	$(".pp-end,.countdown").each( function() {
+		$(this).tzineClock();
+	});
 });
 /*
 We're heading to venus...
@@ -54,7 +57,7 @@ function final_countdown(){
 					var hms=hours+' hour'+_s(hours)+' '+mins+' minute'+_s(mins);
 				else if(td<one_day&&hours<1)
 					var hms=mins+' minute'+_s(mins)+' '+secs+' second'+_s(secs);
-				//output string
+				// output string
 				if (post_end-now<=0)
 					$(this).html('Auction has ended');
 				else if(days<1)

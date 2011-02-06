@@ -140,6 +140,7 @@ class PP_Post {
 			} elseif( $this->is_index() && TEMPLATEPATH . '/page.php' == get_page_template() ){ // No template set for default Prospress index
 
 				wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
+				wp_enqueue_style( 'tzineclock',  PP_PLUGIN_URL . '/js/jquery.tzineClock.css' );
 
 				do_action( 'pp_index_template_redirect' );
 
@@ -156,6 +157,7 @@ class PP_Post {
 			} elseif ( $this->is_single() && is_single() && !isset( $_GET[ 's' ] ) ) {
 
 				wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
+				wp_enqueue_style( 'tzineclock',  PP_PLUGIN_URL . '/js/jquery.tzineClock.css' );
 
 				do_action( 'pp_single_template_redirect' );
 
