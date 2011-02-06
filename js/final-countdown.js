@@ -57,8 +57,8 @@ function final_countdown(){
 				//output string
 				if (post_end-now<=0)
 					$(this).html('Auction has ended');
-				else if(days<1)
-					$(this).html(hms+' remaining');
+				else if( td <= one_day )
+					$(this).html(hms);
 				return true;
 		});	
 	});
