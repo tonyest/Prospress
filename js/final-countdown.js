@@ -1,6 +1,7 @@
 jQuery(document).ready(function($) {
 	//initiate final_countdown
 	// final_countdown();
+	//tzine fancy final countdown
 	$(".pp-end,.countdown").each( function() {
 		$(this).tzineClock();
 	});
