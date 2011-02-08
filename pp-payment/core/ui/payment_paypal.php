@@ -21,9 +21,9 @@
 	<div id="major-publishing-actions" class="major-publishing-actions">
 		<img alt="" style="display: none;" id="ajax-loading" src="<?php echo admin_url('images/wpspin_light.gif');?>">
 		<?php if( isset( $button ) && $button == 'buy' ) { ?>
-			<input type="image" src="https://www.paypal.com/en_US/i/btn/btn_buynow_LG.gif" accesskey="p" id="process_payment" name="process_payment" class="paypal-button" alt="<?php _e( 'Proceed to PayPal', 'prospress' ); ?>">	
+			<input type="image" src="https://www.paypal.com/en_US/i/btn/btn_buynow_LG.gif" accesskey="p" id="process_payment" name="process_payment" class="paypal-button" alt="<?php _e( 'Proceed to PayPal', 'prospress' ); ?> &raquo;">
 		<?php } else { ?>
-			<input type="image" src="https://www.paypal.com/en_US/i/btn/btn_paynow_LG.gif" accesskey="p" id="process_payment" name="process_payment" class="paypal-button" alt="<?php _e( 'Proceed to PayPal', 'prospress' ); ?>">	
+			<input type="image" src="https://www.paypal.com/en_US/i/btn/btn_paynow_LG.gif" accesskey="p" id="process_payment" name="process_payment" class="paypal-button" alt="<?php _e( 'Proceed to PayPal', 'prospress' ); ?> &raquo;">
 		<?php } ?>
 	</div>
 </form>
