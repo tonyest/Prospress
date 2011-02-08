@@ -47,7 +47,12 @@ function pp_posts_install(){
 		pp_post_hello_world();
 
 	// Assign default capabiltiies only if prospress caps haven't been assigned before
-	foreach( get_users_of_blog() as $user ) {
+	if( function_exists( 'get_users' ) )
+		$users = get_users(); // WP 3.1
+	else
+		$users = get_users_of_blog();
+
+	foreach( $users as $user ) {
 
 		if ( is_super_admin( $user->ID ) ) {
 			continue;
