@@ -47,17 +47,20 @@ function pp_posts_install(){
 		pp_post_hello_world();
 
 	// Assign default capabiltiies only if prospress caps haven't been assigned before
-	foreach( get_users() as $user ){
+	foreach( get_users_of_blog() as $user ) {
 
-		if( is_super_admin( $user->ID ) ){
+		if ( is_super_admin( $user->ID ) ) {
 			continue;
-		} elseif( user_can( $user->ID, 'read_prospress_posts' ) ) {
-			$defaults_set = true;
-			$upgrading = true;
-			break;
-		} elseif( user_can( $user->ID, 'publish_prospress_posts' ) || user_can( $user->ID, 'read_private_prospress_posts' ) ){
-			$defaults_set = true;
-			break;
+		} else {
+			$wp_user = new WP_User( $user->ID );
+			if ( $wp_user->has_cap( 'read_prospress_posts' ) ) {
+				$defaults_set = true;
+				$upgrading = true;
+				break;
+			} elseif ( $wp_user->has_cap( 'publish_prospress_posts' ) || $wp_user->has_cap( 'read_private_prospress_posts' ) ) {
+				$defaults_set = true;
+				break;
+			}
 		}
 	}
 
