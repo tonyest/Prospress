@@ -41,11 +41,12 @@ include_once( PP_POSTS_DIR . '/qmt/query-multiple-taxonomies.php' );
  * @global WP_Rewrite $wp_rewrite WordPress Rewrite Component.
  */
 function pp_posts_install(){
-	global $wpdb;
+	global $wpdb, $wp_version;
 
+	// install hello world post if not already present
 	if( !$wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $wpdb->posts WHERE post_type = 'auctions'" ) ) )
 		pp_post_hello_world();
-
+		
 	// Assign default capabiltiies only if prospress caps haven't been assigned before
 	if( function_exists( 'get_users' ) )
 		$users = get_users(); // WP 3.1
@@ -65,10 +66,12 @@ function pp_posts_install(){
 			} elseif ( $wp_user->has_cap( 'publish_prospress_posts' ) || $wp_user->has_cap( 'read_private_prospress_posts' ) ) {
 				$defaults_set = true;
 				break;
+
 			}
 		}
-	}
 
+	}
+	
 	if( $upgrading == true )
 		pp_clean_old_caps(); // for v1.1 upgrade
 
