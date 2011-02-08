@@ -1,4 +1,4 @@
-<form action="https://www<?php if( $invoice->payee_class->pp_invoice_settings[ 'paypal_sandbox' ] == 'true' ) echo ".sandbox"; ?>.paypal.com/cgi-bin/webscr" method="post" class="clearfix <?php if( isset( $class ) ) echo $class ?>">
+<form <?php if( isset( $id ) ) echo 'id="' . $id . '"'; ?> action="https://www<?php if( $invoice->payee_class->pp_invoice_settings[ 'paypal_sandbox' ] == 'true' ) echo ".sandbox"; ?>.paypal.com/cgi-bin/webscr" method="post" class="clearfix <?php if( isset( $class ) ) echo $class ?>">
 	<input type="hidden" name="cmd" value="_xclick">
  	<input type="hidden" name="business" value="<?php echo $invoice->payee_class->pp_invoice_settings[ 'paypal_address' ]; ?>">
 	<input type="hidden" name="item_name" value="<?php echo $invoice->post_title; ?>">	

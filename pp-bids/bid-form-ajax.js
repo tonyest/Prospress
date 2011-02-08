@@ -25,9 +25,15 @@ jQuery(document).ready(function($) {
 					}
 			});
 		});
+		var buyFormId = '#buy_form-'+$("#post_ID").val();
+		if($(buyFormId+" [name='amount']").val() <= $('#bid_value',this).val()){
+			$(buyFormId).fadeTo(500,0,function(){
+				$(buyFormId).remove();
+			});
+		}
 		return false;
 	});
-
+	
 	function fadeBidMsg(context){
 		$(".bid_msg",context).fadeTo(500,0.5);
 		$(".bid_msg",context).fadeTo(500,1);

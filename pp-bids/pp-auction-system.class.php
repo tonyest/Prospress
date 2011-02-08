@@ -482,14 +482,15 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		if( $invoice->amount == 0 || $invoice->amount < $this->get_winning_bid_value( $post_id ) || true != $accepted_payments[ 'paypal_allow' ] || !is_email( $invoice->payee_class->pp_invoice_settings[ 'paypal_address' ] ) )
 			return;
 
-		$invoice->post_title = $post_details->post_title;
-		$invoice->pay_link   = add_query_arg( array( 'buy_now' => 'paypal' ), get_permalink( $post_id ) );
+		$invoice->post_title= $post_details->post_title;
+		$invoice->pay_link	= add_query_arg( array( 'buy_now' => 'paypal' ), get_permalink( $post_id ) );
 		$invoice->post_id   = $post_id; // no invoice yet
-		$invoice->id     = wp_create_nonce( $post_id + 5 ); // no invoice yet
+		$invoice->id		= wp_create_nonce( $post_id + 5 ); // no invoice yet
 		$invoice->currency_code = $currency;
 
 		$button = 'buy';
-		$class = 'buy-form';
+		$id		= 'buy_form-' . $post_id;
+		$class 	= 'buy-form';
 		$form_extras = '<h4 class="buy-title">' . __( 'Buy Now', 'prospress' ) . '</h4>';
 		if( in_array( @$this->message_id, array( 15, 16 ) ) )
 			$form_extras .= '<div class="bid-updated bid_msg" >' . $this->get_message() . '</div>';
