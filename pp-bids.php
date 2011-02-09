@@ -26,9 +26,12 @@ require_once( PP_BIDS_DIR . '/pp-auction-system.class.php' );
  */
 global $market_systems;
 
-$auction_system = new PP_Auction_Bid_System(); // Core System
-$market_systems[ $auction_system->name() ] = $auction_system;
-$market_systems = apply_filters( 'add_market_system', $market_systems );
+$market_systems = apply_filters( 'add_market_system', array() );
+
+if( empty( $market_systems ) ) {
+	$auction_system = new PP_Auction_Bid_System(); // Core System
+	$market_systems[ $auction_system->name() ] = $auction_system;
+}
 
 
 /**
