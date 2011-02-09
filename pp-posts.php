@@ -65,8 +65,12 @@ function pp_posts_install(){
 				break;
 			} elseif ( $wp_user->has_cap( 'publish_prospress_posts' ) || $wp_user->has_cap( 'read_private_prospress_posts' ) ) {
 				$defaults_set = true;
+				$upgrading = false;
 				break;
-
+			} else {
+				$defaults_set = false;
+				$upgrading = false;
+				break;
 			}
 		}
 
