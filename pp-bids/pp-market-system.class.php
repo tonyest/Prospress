@@ -610,9 +610,9 @@ abstract class PP_Market_System {
 	 * Registers the feedback post type with WordPress
 	 * 
 	 **/
-	public function register_bid_post_type(){
+	public function register_bid_post_type( $args ){
 
-		$args = array(
+		$defaults = array(
 				'label' 	=> sprintf( __( '%s Bids'), $this->labels[ 'name' ] ),
 				'public' 	=> true,
 				'show_ui' 	=> true,
@@ -642,6 +642,8 @@ abstract class PP_Market_System {
 								'not_found_in_trash' => __( 'No Bids Found in Trash', 'prospress' ),
 								'parent_item_colon' => __( 'Bid on post:' ) )
 					);
+
+			$args = wp_parse_args( $args, $defaults );
 
 			register_post_type( $this->bid_object_name, $args );
 
