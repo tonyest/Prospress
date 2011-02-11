@@ -43,7 +43,7 @@ function the_most_recent_feedback( $user_id = '' ){
 
 	if( $latest !== NULL ) {
 		echo '<blockquote class="feedback-comment">' . $latest->post_content . '</blockquote>';
-		echo '<div "feedback-author">';
+		echo '<div class="feedback-author">';
 		printf( __( 'From: %s', 'prospress' ), get_userdata( $latest->post_author )->display_name );
 		echo '</div>';
 	} else {
