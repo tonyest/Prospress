@@ -75,7 +75,7 @@ function pp_posts_install(){
 		}
 
 	}
-	
+
 	if( $upgrading == true )
 		pp_clean_old_caps(); // for v1.1 upgrade
 
@@ -192,7 +192,6 @@ function pp_clean_old_caps() {
  * @since 0.1
  */
 function pp_post_save_postdata( $post_id, $post ) {
-	global $wpdb;
 
 	if( wp_is_post_revision( $post_id ) )
 		$post_id = wp_is_post_revision( $post_id );
@@ -387,7 +386,7 @@ function pp_post_submit_meta_box() {
 		</div>
 	</div><?php
 }
-add_action('post_submitbox_misc_actions', 'pp_post_submit_meta_box' );
+add_action( 'post_submitbox_misc_actions', 'pp_post_submit_meta_box' );
 
 
 /**
