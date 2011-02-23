@@ -561,7 +561,10 @@ abstract class PP_Market_System {
 	 * Creates an anchor tag linking to the user's payments, optionally prints.
 	 * 
 	 */
-	function the_bids_url( $desc = "Your Bids", $echo = '' ) {
+	function the_bids_url( $desc = '', $echo = '' ) {
+		
+		if( empty( $desc ) )
+			$desc = __( 'Your Bids', 'prospress' );
 
 		$bids_tag = "<a href='" . $this->get_bids_url() . "' title='$desc'>$desc</a>";
 

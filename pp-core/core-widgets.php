@@ -46,9 +46,9 @@ class PP_Admin_Widget extends WP_Widget {
 		}
 		echo '<li>' . $market_systems[ 'auctions' ]->the_bids_url() . '</li>';
 		if( function_exists( 'pp_the_payments_url' ) )
-			echo '<li>' . pp_the_payments_url( 'Your Payments' ) . '</li>';
+			echo '<li>' . pp_the_payments_url( __( 'Your Payments', 'prospress' ) ) . '</li>';
 		if( function_exists( 'pp_the_feedback_url' ) )
-			echo '<li>' . pp_the_feedback_url( 'Your Feedback' ) . '</li>';
+			echo '<li>' . pp_the_feedback_url( __( 'Your Feedback', 'prospress' ) ) . '</li>';
 		echo '</ul>';
 		echo "</div>\n";
 		echo $after_widget;
@@ -62,7 +62,7 @@ class PP_Admin_Widget extends WP_Widget {
 
 	function form( $instance ) {
 		?>
-		<p><?php _e( 'Make it easy for traders to get into the backend by including links to add a new auction and view payment/bid/feedback history.', 'prospress' ); ?></p>
+		<p><?php _e( 'Make it easy for traders to add a new auction and view their payments, bids & feedback.', 'prospress' ); ?></p>
 		<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:') ?></label>
 		<input type="text" class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" value="<?php if (isset ( $instance['title'])) {echo esc_attr( $instance['title'] );} ?>" /></p>
 		<?php
