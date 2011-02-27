@@ -150,6 +150,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		}
 
 		// Check if a user account exists for payer email, if so use that account as payer on invoice, if not, create a new user
+		require_once( ABSPATH . WPINC . '/registration.php' ); // need email_exists()
 		if( email_exists( $_POST[ 'payer_email' ] ) ){
 			$user_id = get_user_by_email( $_POST[ 'payer_email' ] )->ID;
 		} else {
