@@ -43,18 +43,18 @@ abstract class PP_Market_System {
 		$this->name = sanitize_user( $name, true );
 
 		$defaults = array(
-						'bid_form_heading' => __( 'Place Bid', 'prospress' ),
-						'description' => '',
-						'label' => ucfirst( $this->name ),
-						'labels' => array(
-							'name' => ucfirst( $this->name ),
+						'bid_form_heading' 	=> __( 'Place Bid', 'prospress' ),
+						'description'		=> '',
+						'label' 			=> ucfirst( $this->name ),
+						'labels' 			=> array(
+							'name' 			=> ucfirst( $this->name ),
 							'singular_name' => ucfirst( substr( $this->name, 0, -1 ) ), // Remove 's' - certainly not a catch all default!
-							'bid_button' => __( 'Bid Now!', 'prospress' ) ),
-						'adds_post_fields' => null,
-						'post_table_columns' => array (
+							'bid_button' 	=> __( 'Bid Now!', 'prospress' ) ),
+						'adds_post_fields' 	=> null,
+						'post_table_columns'=> array (
 											'current_bid' => array( 'title' => __( 'Price', 'prospress' ), 'function' => 'the_winning_bid_value' ),
 											'winning_bidder' => array( 'title' => __( 'Winning Bidder', 'prospress' ), 'function' => 'the_winning_bidder' ) ),
-						'bid_table_headings' => array( 
+						'bid_table_headings'=> array( 
 											'post_id' => __( 'Bid On', 'prospress' ),
 											'author' => __( 'Bidder', 'prospress' ),
 											'bid_status' => __( 'Status', 'prospress' ),
@@ -63,8 +63,9 @@ abstract class PP_Market_System {
 											'date' => __( 'Bid Date', 'prospress' ), 
 											'post_end' => __( 'Post End Date', 'prospress' )
 											),
-						'capability' => PP_BASE_CAP,
-						'bid_object_name' => $this->name . '-bids'
+						'capability' 		=> PP_BASE_CAP,
+						'bid_object_name' 	=> $this->name . '-bids',
+						'post_object_type' 	=> 'PP_Post'
 						);
 
 		$args = wp_parse_args( $args, $defaults );
@@ -77,8 +78,9 @@ abstract class PP_Market_System {
 		$this->adds_post_fields 	= $args[ 'adds_post_fields' ];
 		$this->capability 			= $args[ 'capability' ];
 		$this->bid_object_name 		= $args[ 'bid_object_name' ];
+		$this->post_object_type		= $args[ 'post_object_type' ];
 
-		$this->post	= new PP_Post( $this->name, array( 'labels' => $this->labels ) );
+		$this->post	= new $this->post_object_type( $this->name, array( 'labels' => $this->labels ) );
 
 		if( class_exists( 'PP_Taxonomy' ) )
 			$this->taxonomy = new PP_Taxonomy( $this->name, array( 'labels' => $this->labels ) );
@@ -432,7 +434,7 @@ abstract class PP_Market_System {
 			$post_id = $post->ID;
 
 		$bid_count = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $wpdb->posts WHERE post_type = %s AND post_parent = %d", $this->bid_object_name, $post_id ) );
-
+		
 		return $bid_count;
 	}
 
@@ -440,9 +442,10 @@ abstract class PP_Market_System {
 	 * Prints the number of bids on a post, optionally specified with $post_id.
 	 */
 	public function the_bid_count( $post_id = '', $echo = true ) {
-		$bid_count = ( empty( $post_id ) ) ? $this->get_bid_count() : $this->get_bid_count( $post_id );
+
+		$bid_count = $this->get_bid_count( $post_id );
 		
-		$bid_count = ( $bid_count ) ? $bid_count : __( 'No Bids', 'prospress' );
+		$bid_count = ( $bid_count > 0 ) ? $bid_count : __( 'No Bids', 'prospress' );
 
 		if ( $echo ) 
 			echo $bid_count;
@@ -558,7 +561,10 @@ abstract class PP_Market_System {
 	 * Creates an anchor tag linking to the user's payments, optionally prints.
 	 * 
 	 */
-	function the_bids_url( $desc = "Your Bids", $echo = '' ) {
+	function the_bids_url( $desc = '', $echo = '' ) {
+		
+		if( empty( $desc ) )
+			$desc = __( 'Your Bids', 'prospress' );
 
 		$bids_tag = "<a href='" . $this->get_bids_url() . "' title='$desc'>$desc</a>";
 
@@ -610,9 +616,9 @@ abstract class PP_Market_System {
 	 * Registers the feedback post type with WordPress
 	 * 
 	 **/
-	public function register_bid_post_type(){
+	public function register_bid_post_type( $args ){
 
-		$args = array(
+		$defaults = array(
 				'label' 	=> sprintf( __( '%s Bids'), $this->labels[ 'name' ] ),
 				'public' 	=> true,
 				'show_ui' 	=> true,
@@ -642,6 +648,8 @@ abstract class PP_Market_System {
 								'not_found_in_trash' => __( 'No Bids Found in Trash', 'prospress' ),
 								'parent_item_colon' => __( 'Bid on post:' ) )
 					);
+
+			$args = wp_parse_args( $args, $defaults );
 
 			register_post_type( $this->bid_object_name, $args );
 

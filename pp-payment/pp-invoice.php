@@ -98,7 +98,7 @@ class PP_Invoice {
 		$pp_invoice_page_names[ 'global_settings' ] 	= add_submenu_page( 'Prospress',  __( 'Payment Settings', 'prospress' ),  __( 'Payment Settings', 'prospress' ), 'manage_options', 'invoice_settings', array( &$this,'settings_page' ) );
 
 		// Invoice Pages
-		$pp_invoice_page_names[ 'web_invoice' ] 		= add_menu_page( __( 'Payments', 'prospress' ), __( 'Payments', 'prospress' ), $this->process_payment_cc,'outgoing_invoices', array( &$this,'outgoing_invoices' ), $this->uri."/core/images/payments16.png", $_wp_last_object_menu );
+		$pp_invoice_page_names[ 'web_invoice' ] 		= add_menu_page( __( 'Payments', 'prospress' ), __( 'Payments', 'prospress' ), $this->process_payment_cc,'outgoing_invoices', array( &$this,'outgoing_invoices' ), PP_PLUGIN_URL . '/images/payments16.png', $_wp_last_object_menu );
 		$pp_invoice_page_names[ 'outgoing_invoices' ] 	= add_submenu_page( 'outgoing_invoices', __( "Incoming Payments $unsent_invoices", 'prospress' ), __( "Incoming $unsent_invoices", 'prospress' ), $this->process_payment_cc, 'outgoing_invoices', array( &$this,'outgoing_invoices' ) );
 		$pp_invoice_page_names[ 'incoming_invoices' ] 	= add_submenu_page( 'outgoing_invoices', __( "Outgoing Payments $unpaid_invoices", 'prospress' ), __( "Outgoing $unpaid_invoices", 'prospress' ), $this->process_payment_cc, 'incoming_invoices', array( &$this,'incoming_invoices' ) );
 		$pp_invoice_page_names[ 'user_settings' ] 		= add_submenu_page( 'outgoing_invoices', __( 'Settings', 'prospress' ),  __( 'Settings', 'prospress' ), $this->process_payment_cc, 'user_settings_page', array( &$this,'user_settings_page' ) );

@@ -150,9 +150,10 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		}
 
 		// Check if a user account exists for payer email, if so use that account as payer on invoice, if not, create a new user
-		if( email_exists( $_POST[ 'payer_email' ] ) ){
-			$user_id = get_user_by_email( $_POST[ 'payer_email' ] )->ID;
-		} else {
+		$user = get_user_by_email( $_POST[ 'payer_email' ] );
+		$user_id = empty( $user ) ? 0 : $user->ID;
+
+		if( $user_id != 0 ){
 			$user_name = explode( '@', $_POST[ 'payer_email' ] );
 			// Need the register_new_user() function, but don't want to output the login page HTML
 			ob_start();

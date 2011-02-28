@@ -62,11 +62,15 @@ There are many great shopping cart plugins for WordPress; Prospress isn’t one 
 
 With Prospress, registered users can post their own auctions, place bids on the auctions of others, provide feedback and make payments. It creates a many-to-many exchange that differs to the one-to-many exchange of an online store.
 
+= Why doesn't a user need to be logged in to Buy Now? =
+
+When a user returns from PayPal after having paid the buy now price for an auction, a user account is automatically created using their PayPal email address. This makes it super easy for anyone to buy and auction, while still creating an invoice and other records associated with the successful completion of an auction.
+
 = Do I need a special theme to use Prospress? =
 
 Prospress attempts to work with your existing theme. It's a primary goal of the Prospress project to support existing WordPress themes rather than require a new one.
 
-Due to the gamut of themes, it's likely the built-in templates will display with quirks. If this happens on your site, not to worry, it's really quite easy to make your own templates. 
+Prospress is guaranteed to work with TwentyTen and TwentyEleven themes, but due to the variation in themes, it's likely the built-in templates will display with quirks on other themes. If this happens on your site, not to worry, it's really quite easy to make your own templates. 
 
 If you're comfortable with HTML/CSS, check out the `pp-index-auctions.php` and `pp-single-auction.php` in the *Prospress/pp-posts* folder. These provide a guide for making your own templates. Just add two custom template files, named `index-auctions.php` and `single-auction.php`, to your theme's directory and Prospress will use them automatically.
 

@@ -133,8 +133,10 @@ class PP_Post {
 					include( STYLESHEETPATH . '/taxonomy-' . $this->name . '.php' );
 				elseif( file_exists( TEMPLATEPATH . '/pp-taxonomy-' . $this->name . '.php' ) )
 					include( TEMPLATEPATH . '/pp-taxonomy-' . $this->name . '.php' );
-				else
+				elseif( file_exists( PP_POSTS_DIR . '/pp-taxonomy-' . $this->name . '.php' ) )
 					include( PP_POSTS_DIR . '/pp-taxonomy-' . $this->name . '.php' );
+				else
+					return;
 				exit;
 
 			} elseif( $this->is_index() && TEMPLATEPATH . '/page.php' == get_page_template() ){ // No template set for default Prospress index
@@ -149,8 +151,10 @@ class PP_Post {
 					include( STYLESHEETPATH . '/index-' . $this->name . '.php' );
 				elseif( file_exists( TEMPLATEPATH . '/pp-index-' . $this->name . '.php' ) )	// Copied the default template to the theme directory before customising?
 					include( TEMPLATEPATH . '/pp-index-' . $this->name . '.php' );
-				else															// Default template
+				elseif( file_exists( PP_POSTS_DIR . '/pp-index-' . $this->name . '.php' ) )// Default template
 					include( PP_POSTS_DIR . '/pp-index-' . $this->name . '.php' );
+				else
+					return;
 				exit;
 
 			} elseif ( $this->is_single() && is_single() && !isset( $_GET[ 's' ] ) ) {
@@ -163,10 +167,12 @@ class PP_Post {
 					include( TEMPLATEPATH . '/single-' . $this->name . '.php' );
 				elseif( file_exists( STYLESHEETPATH . '/single-' . $this->name . '.php' ) ) // Child Theme supports Prospress
 					include( STYLESHEETPATH . '/single-' . $this->name . '.php' );
-				elseif( file_exists( TEMPLATEPATH . '/ppsingle-' . $this->name . '.php' ) )
+				elseif( file_exists( TEMPLATEPATH . '/pp-single-' . $this->name . '.php' ) )
 					include( TEMPLATEPATH . '/pp-single-' . $this->name . '.php' );
-				else
+				elseif( file_exists( PP_POSTS_DIR . '/pp-single-' . $this->name . '.php' ) )
 					include( PP_POSTS_DIR . '/pp-single-' . $this->name . '.php' );
+				else
+					return;
 				exit;
 		}
 	}
