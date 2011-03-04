@@ -20,6 +20,22 @@ function pp_capabilities_options() {
 }
 add_action( 'admin_init' , 'pp_capabilities_options' );
 
+/**
+ * Initialise Prospress capabilities options
+ * can be left null as values are stored in roles, must be declared for use with register_setting()
+ *
+ * @package Prospress
+ * @since 1.1
+ */
+function pp_capabilities_init() {
+	add_option( 'pp_capabilities', array(
+			'publish' => array(),
+			'private' => array(),
+			'media' => array()
+		)
+	);
+}
+add_action( 'pp_activation', 'pp_capabilities_init' );
 
 /** 
  * Allow site admins to choose which roles can do what to marketplace posts.
