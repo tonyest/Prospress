@@ -81,6 +81,7 @@ Index & Single Page Layouts
 /* Navigation
 -------------------------------------------------------------- */
 .navigation {
+	clear:left;
 	font-size:  0.8em;
 	line-height: 1.5em;
 	overflow: hidden;
