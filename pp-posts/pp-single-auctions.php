@@ -41,7 +41,7 @@ Template Name: Single Prospress Post
 				<?php if ( function_exists( 'the_post_end_time' ) ): ?>
 					<li id="pp_countdown-default" class="widget-container widget_pp_countdown">
 						<h3 class="widget-title"><?php _e( 'Ending:', 'prospress' ); ?></h3>
-						<div class="countdown" id="' . get_post_end_time( '', 'timestamp', 'gmt' ) . '">
+						<div class="countdown" id="<?php echo get_post_end_time( '', 'timestamp', 'gmt' ) ?>">
 							<?php the_post_end_time(); ?>
 						<div>
 					</li>
