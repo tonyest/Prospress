@@ -21,7 +21,6 @@ function pp_get_invoice_id( $post_id ) {
 function pp_send_single_invoice( $invoice_id, $message = false ) {
 	$invoice_class = new pp_invoice_get( $invoice_id );
 	$invoice = $invoice_class->data;
-
 	if( wp_mail( $invoice->payer_class->user_email, "Invoice: {$invoice->post_title}", $invoice_class->data->email_payment_request, "From: {$invoice->payee_class->display_name} <{$invoice->payee_class->user_email}>\r\n" ) ) {
 		pp_update_invoice_meta( $invoice_id, "sent_date", date("Y-m-d", time()));
 		pp_invoice_update_log( $invoice_id,'contact',"Invoice emailed to {$invoice->payer_class->user_email}" ); 
@@ -287,12 +286,12 @@ function pp_invoice_update_status( $invoice_id, $status ) {
 
 function pp_update_invoice_meta( $invoice_id, $meta_key, $meta_value = '' ) {
 	global $wpdb;
-
+	error_log('invoice_meta_update');
 	if( empty( $meta_value ) ) {
 		// Delete meta_key if no value is set
 		$wpdb->query( "DELETE FROM ".$wpdb->paymentsmeta." WHERE  invoice_id = '$invoice_id' AND meta_key = '$meta_key'" ); 
 	} else {
-		$wpdb->update( $wpdb->paymentsmeta, array( 'meta_key' => $meta_value ), array( 'invoice_id' => $invoice_id, 'meta_key' => $meta_key ) );
+		$wpdb->update( $wpdb->paymentsmeta, array( 'meta_value' => $meta_value ), array( 'invoice_id' => $invoice_id, 'meta_key' => $meta_key ) );
 	}
 }
 
