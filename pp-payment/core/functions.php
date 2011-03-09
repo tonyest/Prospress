@@ -133,7 +133,8 @@ function pp_invoice_create( $args, $meta = '' ) {
 	$meta_defaults = array(
 		'due_date_day' => date('j'),
 		'due_date_month' => date('n'),
-		'due_date_year' => date('Y')
+		'due_date_year' => date('Y'),
+		'sent_date' => date( 'Y-m-d' )
 		);
 
 	$args = wp_parse_args( $args, $defaults );
