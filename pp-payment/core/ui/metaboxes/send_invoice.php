@@ -83,6 +83,7 @@ function pp_invoice_metabox_publish( $ic ) { ?>
 <?php }
 
 function pp_invoice_metabox_invoice_details( $ic ) { ?>
+
 	<table class="form-table" id="pp_invoice_main_info">
 
 	<tr class="invoice_main">
@@ -91,7 +92,7 @@ function pp_invoice_metabox_invoice_details( $ic ) { ?>
 	</tr>
 	<tr class="invoice_main">
 		<th><?php _e("Post Content", 'prospress') ?></th>
-		<td><?php echo $ic->post_content; ?></td>	
+		<td><?php echo $ic->email_payment_request; ?></td>	
 	</tr>
 	<tr class="invoice_main">
 		<th><?php _e("Total Amount", 'prospress') ?></th>

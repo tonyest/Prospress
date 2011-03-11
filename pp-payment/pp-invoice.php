@@ -376,14 +376,17 @@ class PP_Invoice {
 		}
 
 		if( isset( $_REQUEST[ 'action' ] ) && $_REQUEST[ 'action' ] == 'post_save_and_preview' ) {
+
 			$invoice_id = $_REQUEST[ 'invoice_id' ];
  			if( $_REQUEST[ 'pp_invoice_action' ] == 'Email to Client' ) {
 				pp_update_invoice_meta( $invoice_id, 'email_payment_request', $_REQUEST[ 'pp_invoice_payment_request' ][ 'email_message_content' ]);
+				pp_update_invoice_meta( $invoice_id, 'draft_payment_request', null );	//delete saved draft if exists
 				$message = pp_send_single_invoice( $invoice_id);
 			}			
 
-			if( $_REQUEST[ 'pp_invoice_action' ] == 'Save for Later' ) {			
-				// Do nothing, invoice was already saved by visiting the save_and_preview page
+			if( $_REQUEST[ 'pp_invoice_action' ] == 'Save for Later' ) {
+				//store current draft in meta
+				pp_update_invoice_meta( $invoice_id, 'draft_payment_request', $_REQUEST[ 'pp_invoice_payment_request' ][ 'email_message_content' ]);
 			}
 		}
 
