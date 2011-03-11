@@ -511,45 +511,43 @@ class PP_Post {
 		if( !isset( $sidebars_widgets[ $this->name . '-single-sidebar' ] ) )
 			$sidebars_widgets[ $this->name . '-single-sidebar' ] = array();
 
-		$sort_widget = get_option( 'widget_pp_single_tax' );
-		if( empty( $sort_widget ) ){ //sort widget not added to any sidebars yet
+		$widget = get_option( 'widget_pp_countdown' );
+		if( empty( $widget ) ){ //countdown widget not added to any sidebars yet
 
-			$sort_widget['_multiwidget'] = 1;
+			$widget['_multiwidget'] = 1;
 
-			$sort_widget[] = array(
-								'title' => __( 'Details:', 'prospress' )
-								);
+			$widget[] = array( 'title' => __( 'Ending:', 'prospress' ) );
 
-			$widget_id = end( array_keys( $sort_widget ) );
+			$widget_id = end( array_keys( $widget ) );
 
-			update_option( 'widget_pp_single_tax', $sort_widget );
+			update_option( 'widget_pp_countdown', $widget );
+			array_push( $sidebars_widgets[ $this->name . '-single-sidebar' ], 'pp_countdown-' . $widget_id );
+		}
+		
+		$widget = get_option( 'widget_pp_single_tax' );
+		if( empty( $widget ) ){ //taxonomy lists widget not added to any sidebars yet
+
+			$widget['_multiwidget'] = 1;
+
+			$widget[] = array( 'title' => __( 'Details:', 'prospress' ) );
+
+			$widget_id = end( array_keys( $widget ) );
+
+			update_option( 'widget_pp_single_tax', $widget );
 			array_push( $sidebars_widgets[ $this->name . '-single-sidebar' ], 'pp_single_tax-' . $widget_id );
 		}
 
-		$filter_widget = get_option( 'widget_pp_countdown' );
-		if( empty( $filter_widget ) ){ //filter_widget widget not added to any sidebars yet
+		$widget = get_option( 'widget_pp-feedback-latest' );
+		if( empty( $widget ) ){ //latest feedback widget not added to any sidebars yet
 
-			$filter_widget['_multiwidget'] = 1;
+			$widget['_multiwidget'] = 1;
 
-			$filter_widget[] = array( 'title' => __( 'Ending:', 'prospress' ) );
+			$widget[] = array( 'title' => __( 'Latest Feedback:', 'prospress' ) );
 
-			$filter_id = end( array_keys( $filter_widget ) );
+			$widget_id = end( array_keys( $widget ) );
 
-			update_option( 'widget_pp_countdown', $filter_widget );
-			array_push( $sidebars_widgets[ $this->name . '-single-sidebar' ], 'pp_countdown-' . $filter_id );
-		}
-
-		$filter_widget = get_option( 'widget_pp-feedback-latest' );
-		if( empty( $filter_widget ) ){ //filter_widget widget not added to any sidebars yet
-
-			$filter_widget['_multiwidget'] = 1;
-
-			$filter_widget[] = array( 'title' => __( 'Latest Feedback:', 'prospress' ) );
-
-			$filter_id = end( array_keys( $filter_widget ) );
-
-			update_option( 'widget_pp-feedback-latest', $filter_widget );
-			array_push( $sidebars_widgets[ $this->name . '-single-sidebar' ], 'pp-feedback-latest-' . $filter_id );
+			update_option( 'widget_pp-feedback-latest', $widget );
+			array_push( $sidebars_widgets[ $this->name . '-single-sidebar' ], 'pp-feedback-latest-' . $widget_id );
 		}
 		wp_set_sidebars_widgets( $sidebars_widgets );
 	}
