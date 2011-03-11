@@ -22,9 +22,12 @@ Template Name: Prospress Index
 			<div class="price-header"><?php _e( 'Price', 'prospress' ); ?></div>
 
 		<?php endwhile; ?>
-
-		<?php $pp_loop = new WP_Query( array( 'post_type' => $market->name(), 'post_status' => 'publish') ); ?>
-
+		<?php global $wp_query,$paged; ?>
+		<?php $wp_query->is_single = 0; ?>
+		<?php $store_query = $wp_query; ?>
+		<?php $pp_loop = new WP_Query( array( 'post_type' => $market->name(), 'post_status' => 'publish', 'paged' => $paged ) ); ?>
+		<?php $wp_query = $pp_loop;?>
+		<?php posts_nav_link();?>
 		<?php if ( $pp_loop->have_posts() ) : while ( $pp_loop->have_posts() ) : $pp_loop->the_post(); ?>
 
 			<div class="pp-post">
@@ -54,6 +57,7 @@ Template Name: Prospress Index
 				<p>No <?php echo $market->label; ?>.</p>
 
 			<?php endif; ?>
+			<?php $wp_query = $store_query; unset($store_query); ?>
 		</div>
 	</div>
 

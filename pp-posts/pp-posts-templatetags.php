@@ -153,5 +153,4 @@ function pp_human_interval( $time_period, $units = 3, $separator = ' ' ) {
 
 	return $output;
 }
-
 ?>
