@@ -23,8 +23,8 @@ Template Name: Prospress Index
 
 		<?php endwhile; ?>
 		<?php global $wp_query,$paged; ?>
-		<?php $wp_query->is_single = 0; ?>
 		<?php $store_query = $wp_query; ?>
+		<?php $wp_query->is_single = 0; ?>
 		<?php $pp_loop = new WP_Query( array( 'post_type' => $market->name(), 'post_status' => 'publish', 'paged' => $paged ) ); ?>
 		<?php $wp_query = $pp_loop;?>
 		<?php posts_nav_link();?>
