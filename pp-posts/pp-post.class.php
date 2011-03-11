@@ -551,7 +551,6 @@ class PP_Post {
 			update_option( 'widget_pp-feedback-latest', $filter_widget );
 			array_push( $sidebars_widgets[ $this->name . '-single-sidebar' ], 'pp-feedback-latest-' . $filter_id );
 		}
-
 		wp_set_sidebars_widgets( $sidebars_widgets );
 	}
 
