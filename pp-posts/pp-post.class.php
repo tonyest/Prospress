@@ -91,6 +91,7 @@ class PP_Post {
 		}
 
 		$this->add_sidebars_widgets();
+		$this->add_single_sidebars_widgets();
 
 		// Update rewrites to account for this post type
 		$this->register_post_type();
@@ -256,7 +257,7 @@ class PP_Post {
 				'before_title' => '<h3 class="widget-title">',
 				'after_title' => '</h3>'
 			) );
-		}
+		}			
 	}
 
 
@@ -495,6 +496,51 @@ class PP_Post {
 		wp_set_sidebars_widgets( $sidebars_widgets );
 	}
 
+	/** 
+	 * Add the Taxonomy Widgets to single-auctions.This function is called on 
+	 * Prospress' activation to help get everything working with one-click.
+	 * 
+	 * @package Prospress
+	 * @subpackage Posts
+	 * @since 1.1
+	 **/
+	public function add_single_sidebars_widgets(){
+
+		$sidebars_widgets = wp_get_sidebars_widgets();
+
+		if( !isset( $sidebars_widgets[ $this->name . '-single-sidebar' ] ) )
+			$sidebars_widgets[ $this->name . '-single-sidebar' ] = array();
+
+		$sort_widget = get_option( 'widget_pp_single_tax' );
+		if( empty( $sort_widget ) ){ //sort widget not added to any sidebars yet
+
+			$sort_widget['_multiwidget'] = 1;
+
+			$sort_widget[] = array(
+								'title' => __( 'Details:', 'prospress' )
+								);
+
+			$widget_id = end( array_keys( $sort_widget ) );
+
+			update_option( 'widget_pp_single_tax', $sort_widget );
+			array_push( $sidebars_widgets[ $this->name . '-single-sidebar' ], 'pp_single_tax-' . $widget_id );
+		}
+
+		$filter_widget = get_option( 'widget_pp_countdown' );
+		if( empty( $filter_widget ) ){ //filter_widget widget not added to any sidebars yet
+
+			$filter_widget['_multiwidget'] = 1;
+
+			$filter_widget[] = array( 'title' => __( 'Ending:', 'prospress' ) );
+
+			$filter_id = end( array_keys( $filter_widget ) );
+
+			update_option( 'widget_pp_countdown', $filter_widget );
+			array_push( $sidebars_widgets[ $this->name . '-single-sidebar' ], 'pp_countdown-' . $filter_id );
+		}
+		error_log(print_r($sidebars_widgets,true));
+		wp_set_sidebars_widgets( $sidebars_widgets );
+	}
 
 	/** 
 	 * Clean up anything added on activation, including the index page. 

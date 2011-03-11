@@ -3,10 +3,10 @@
 /**
  * Print the details of an individual post, including custom taxonomies.  
  * 
- * @param string $echo Optional, default 'echo'. If set to "echo" the function echo's the permalink, else, returns the permalink as a string. 
- * @return returns false if no index page set, true if echod the permalink or a string representing the permalink if 'echo' not set.
+ * @param string $echo Optional, default return string. If set to "echo" the function echo's the permalink, else, returns the permalink as a string. 
+ * @return returns false if no index page set, true if echoed the permalink or a string representing the permalink if 'echo' not set.
  */
-function pp_get_the_term_list( $post_id = '' ){
+function pp_get_the_term_list( $post_id = '', $echo = '' ){
 	global $post, $market_systems;
 	
 	if( empty( $post_id ) )
@@ -16,12 +16,25 @@ function pp_get_the_term_list( $post_id = '' ){
 
 	if ( empty( $tax_types ) )
 		return;
-
+		
+	$permalink = "";
+	
 	foreach( $tax_types as $tax_name => $tax_type ){
-		echo '<div class="pp-tax">';
-		echo get_the_term_list( $post->ID, $tax_name, $tax_type[ 'labels' ][ 'singular_label' ] . ': ', ', ', '' );
-		echo '</div>';
+		$term = get_the_term_list( $post->ID, $tax_name, $tax_type[ 'labels' ][ 'singular_label' ] . ': ', ', ', '' );
+		if (empty($term) )
+			continue; //avoid echo empty div structure
+			
+		if ( 'echo' == $echo ) { //echo term
+			echo '<div class="pp-tax">';
+			echo $term;
+			echo '</div>';
+		} else { //append term to output string
+			$permalink .= '<div class="pp-tax">';
+			$permalink .= $term;
+			$permalink .= '</div>';		
+		}
 	}
+	return $permalink;
 }
 
 
