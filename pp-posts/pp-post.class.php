@@ -538,7 +538,20 @@ class PP_Post {
 			update_option( 'widget_pp_countdown', $filter_widget );
 			array_push( $sidebars_widgets[ $this->name . '-single-sidebar' ], 'pp_countdown-' . $filter_id );
 		}
-		error_log(print_r($sidebars_widgets,true));
+
+		$filter_widget = get_option( 'widget_pp-feedback-latest' );
+		if( empty( $filter_widget ) ){ //filter_widget widget not added to any sidebars yet
+
+			$filter_widget['_multiwidget'] = 1;
+
+			$filter_widget[] = array( 'title' => __( 'Latest Feedback:', 'prospress' ) );
+
+			$filter_id = end( array_keys( $filter_widget ) );
+
+			update_option( 'widget_pp-feedback-latest', $filter_widget );
+			array_push( $sidebars_widgets[ $this->name . '-single-sidebar' ], 'pp-feedback-latest-' . $filter_id );
+		}
+
 		wp_set_sidebars_widgets( $sidebars_widgets );
 	}
 
