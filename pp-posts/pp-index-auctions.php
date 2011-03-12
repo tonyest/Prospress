@@ -4,6 +4,8 @@ Template Name: Prospress Index
 */
 /**
  * The main template file for marketplace listings.
+ * Uses a substitution method to run a wp_query for prospress posts and use native 'the loop' functions
+ * 
  *
  * @package Prospress
  * @subpackage Theme
@@ -22,13 +24,13 @@ Template Name: Prospress Index
 			<div class="price-header"><?php _e( 'Price', 'prospress' ); ?></div>
 
 		<?php endwhile; ?>
+
 		<?php global $wp_query,$paged; ?>
-		<?php $store_query = $wp_query; ?>
-		<?php $wp_query->is_single = 0; ?>
+		<?php $_query = $wp_query; //store current query ?>
+		<?php wp_reset_query(); //wp-pagination functions will not function pages with is_single ?>
 		<?php $pp_loop = new WP_Query( array( 'post_type' => $market->name(), 'post_status' => 'publish', 'paged' => $paged ) ); ?>
-		<?php $wp_query = $pp_loop;?>
-		<?php posts_nav_link();?>
-		<?php if ( $pp_loop->have_posts() ) : while ( $pp_loop->have_posts() ) : $pp_loop->the_post(); ?>
+		<?php $wp_query = $pp_loop; //substitute prospress query ?>
+		<?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
 
 			<div class="pp-post">
 				<div class="pp-post-content">
@@ -59,7 +61,11 @@ Template Name: Prospress Index
 				<p>No <?php echo $market->label; ?>.</p>
 
 			<?php endif; ?>
-			<?php $wp_query = $store_query; unset($store_query); ?>
+			<div class="navigation">
+				<div class="alignleft"><?php previous_posts_link('&laquo; '.__( 'Previous Items', 'prospress' )) ?></div>
+				<div class="alignright"><?php next_posts_link( __( 'Next Items', 'prospress' ).' &raquo;','') ?></div>
+			</div>
+			<?php wp_reset_query(); $wp_query = $_query; unset($_query); //restore previous query and unset transient variable ?>
 		</div>
 	</div>
 
