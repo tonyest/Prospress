@@ -7,7 +7,7 @@
  **/
 
 /**
- * I sit and lookout at PayPal notifications. If the page request is from PayPal
+ * I sit and lookout for PayPal notifications. If the page request is from PayPal
  * return the parameters sent with the request to confirm the transaction as required by
  * PayPal's IPN.  
  *
@@ -16,7 +16,7 @@
 function pp_paypal_ipn_listener(){
 	global $wpdb;
 
-	// read the post from PayPal system and add 'cmd'
+	// Read the post from PayPal system and add 'cmd'
 	$req = 'cmd=_notify-validate';
 
 	foreach ( $_POST as $key => $value ) {
@@ -42,9 +42,9 @@ function pp_paypal_ipn_listener(){
 
 	if ( !$fp ) {
 		// HTTP ERROR
-		error_log('There has been a HTTP error with PayPal IPN: $_POST = ' . print_r( $_POST, true ) );
-		error_log('There has been a HTTP error with PayPal IPN: $header = ' . print_r( $header, true ) );
-		error_log('There has been a HTTP error with PayPal IPN: $fp_url = ' . print_r( $fp_url, true ) );
+		error_log('HTTP error with PayPal IPN: $_POST = ' . print_r( $_POST, true ) );
+		error_log('HTTP error with PayPal IPN: $header = ' . print_r( $header, true ) );
+		error_log('HTTP error with PayPal IPN: $fp_url = ' . print_r( $fp_url, true ) );
 		wp_die( 'PayPal IPN Error: There has been a HTTP error with PayPal IPN.' );
 	} else {
 		fputs( $fp, $header . $req );
