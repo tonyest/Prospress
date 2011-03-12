@@ -27,7 +27,7 @@ Template Name: Prospress Index
 
 		<?php global $wp_query,$paged; ?>
 		<?php $_query = $wp_query; //store current query ?>
-		<?php wp_reset_query(); //wp-pagination functions will not function pages with is_single ?>
+		<?php wp_reset_query(); //reset query to allow pagination and avoid possible conflicts ?>
 		<?php $pp_loop = new WP_Query( array( 'post_type' => $market->name(), 'post_status' => 'publish', 'paged' => $paged ) ); ?>
 		<?php $wp_query = $pp_loop; //substitute prospress query ?>
 		<?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
@@ -65,7 +65,7 @@ Template Name: Prospress Index
 				<div class="alignleft"><?php previous_posts_link('&laquo; '.__( 'Previous Items', 'prospress' )) ?></div>
 				<div class="alignright"><?php next_posts_link( __( 'Next Items', 'prospress' ).' &raquo;','') ?></div>
 			</div>
-			<?php wp_reset_query(); $wp_query = $_query; unset($_query); //restore previous query and unset transient variable ?>
+			<?php wp_reset_query(); $wp_query = $_query; unset($_query); //restore original query and unset transient variable ?>
 		</div>
 	</div>
 
