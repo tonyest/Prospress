@@ -43,7 +43,10 @@ abstract class PP_Market_System {
 		$this->name = sanitize_user( $name, true );
 
 		$defaults = array(
-						'bid_form_heading' 	=> __( 'Place Bid', 'prospress' ),
+						'bid_form_heading' 	=> array( 
+											'general' => __( 'Place Bid', 'prospress' ), 
+											'publisher' => __( 'Your Listing', 'prospress' ) 
+											),
 						'description'		=> '',
 						'label' 			=> ucfirst( $this->name ),
 						'labels' 			=> array(
@@ -67,7 +70,7 @@ abstract class PP_Market_System {
 						'bid_object_name' 	=> $this->name . '-bids',
 						'post_object_type' 	=> 'PP_Post'
 						);
-
+			
 		$args = wp_parse_args( $args, $defaults );
 
 		$this->label 				= $args[ 'label' ];
@@ -162,19 +165,21 @@ abstract class PP_Market_System {
 
 	// The function that brings all the bid form elements together.
 	public function bid_form( $post_id = NULL ) {
-		global $post;
+		global $post, $user_ID;
 
 		$post_id = ( $post_id === NULL ) ? $post->ID : $post_id;
 		$the_post = ( empty ( $post ) ) ? get_post( $post_id) : $post;
 
 		if ( $this->is_post_valid( $post_id ) ) {
 			$form = '<form id="bid_form-' . $post_id . '" class="bid-form" method="post" action="">';
-			$form .= '<h4>' . $this->bid_form_heading . '</h4>';
+			if ( $post->post_author == $user_ID )
+				$form .= '<h4>' . $this->bid_form_heading[publisher] . '</h4>';
+			else
+				$form .= '<h4>' . $this->bid_form_heading[general] . '</h4>';
 			$form .= '<div class="bid-updated bid_msg" >' . $this->get_message() . '</div><div>';
 			$form .= $this->bid_form_fields( $post_id );
 			$form .= wp_nonce_field( __FILE__, 'bid_nonce', false, false );
 			$form .= '<input type="hidden" name="post_ID" value="' . $post_id . '" id="post_ID" /> ';
-			$form .= '<input name="bid_submit" type="submit" id="bid_submit" value="' . $this->labels[ 'bid_button' ] .'" />';
 			$form .= '</div></form>';
 		} else {
 			$form = '<div id="bid_form-' . $post_id . '" class="bid-form">';
