@@ -84,9 +84,12 @@ function pp_settings_page(){
 			screen_icon( 'prospress' ); 
 			?>
 			<h2><?php _e( 'Prospress Settings', 'prospress' ) ?></h2>
+			
 			<h3><?php _e( 'Prospress Index', 'prospress' )?></h3>
+			<p><?php _e( 'Select the maximum number of posts to show on Prospress index page before pagination.', 'prospress' ); ?></p>
 			<label for="pp_posts_per_page"><?php _e( 'Prospress index shows at most' ); ?></label>
 			<input name="pp_posts_per_page" type="text" id="pp_posts_per_page" value="<?php form_option( 'pp_posts_per_page' ); ?>" style="width:3em;" /> <?php _e( 'auction items' ); ?>
+			
 			<h3><?php _e( 'Currency', 'prospress' )?></h3>
 			<p><?php _e( 'Please choose a default currency for all transactions in your marketplace.', 'prospress' ); ?></p>
 			<label for='currency_type'><?php _e('Currency:' , 'prospress' );?></label>
@@ -97,10 +100,12 @@ function pp_settings_page(){
 				</option>
 			<?php } ?>
 			</select>
+			
 		<?php do_action( 'pp_core_settings_page' ); ?>
-		<p class="submit">
+		
+		<div class="submit">
 			<input type="submit" value="Save" class="button-primary" name="submit">
-		</p>
+		</div>
 		</form>
 	</div>
 	<?php
