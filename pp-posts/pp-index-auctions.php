@@ -11,7 +11,6 @@ Template Name: Prospress Index
  * @subpackage Theme
  * @since 0.1
  */
-
 ?>
 <?php get_header(); ?>
 	<div id="container" class="prospress-container">
@@ -38,11 +37,19 @@ Template Name: Prospress Index
 						<?php the_post_end_time( '', 2, '<br/>' ); ?>
 					</div>
 					<div class="pp-price"><?php the_winning_bid_value(); ?></div>
+
 					<h2 class="pp-title entry-title">
 						<a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>">
 							<?php the_title(); ?>
 						</a>
 					</h2>
+					<?php if ( has_post_thumbnail() && get_option('pp_thumbnail')) : ?>
+						<div class="pp-thumbnail">
+						   <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" >
+						   <?php the_post_thumbnail( array( 100,100 )); ?>
+						   </a>
+						</div>
+					 <?php endif; ?>
 					<div class="pp-excerpt">
 						<?php the_excerpt(); ?>
 						<a href="<?php the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php the_title_attribute(); ?>">
@@ -53,6 +60,7 @@ Template Name: Prospress Index
 						<?php  _e( 'Published: ', 'prospress' ); the_time('F jS, Y'); ?>
 						<?php _e( 'by ', 'prospress'); the_author(); ?>
 					</div>
+
 				</div>
 			</div>
 

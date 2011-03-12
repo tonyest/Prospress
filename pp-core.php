@@ -26,6 +26,7 @@ include_once( PP_CORE_DIR . '/core-widgets.php' );
 function pp_core_install(){
 	add_option( 'currency_type', 'USD' ); //default to the mighty green back
 	add_option( 'pp_posts_per_page', 10 ); //default 10 posts per page on prospress index
+	add_option( 'pp_thumbnail', false ); //default don't display thumbnails on index page
 }
 add_action( 'pp_activation', 'pp_core_install' );
 
@@ -59,6 +60,8 @@ add_action( 'admin_menu', 'pp_add_core_admin_menu' );
 function register_pp_core_options(){
 	register_setting( 'pp_core_options', 'currency_type' );
 	register_setting( 'pp_core_options', 'pp_posts_per_page' );
+	register_setting( 'pp_core_options', 'pp_thumbnail' );
+
 }
 add_action( 'admin_init', 'register_pp_core_options' );
 
@@ -86,10 +89,15 @@ function pp_settings_page(){
 			<h2><?php _e( 'Prospress Settings', 'prospress' ) ?></h2>
 			
 			<h3><?php _e( 'Prospress Index', 'prospress' )?></h3>
-			<p><?php _e( 'Select the maximum number of posts to show on Prospress index page before pagination.', 'prospress' ); ?></p>
+			
+			<h4><?php _e( 'Posts Per Page', 'prospress' )?></h4>
 			<label for="pp_posts_per_page"><?php _e( 'Prospress index shows at most' ); ?></label>
 			<input name="pp_posts_per_page" type="text" id="pp_posts_per_page" value="<?php form_option( 'pp_posts_per_page' ); ?>" style="width:3em;" /> <?php _e( 'auction items' ); ?>
 			
+			<h4><?php _e( 'Thumbnail', 'prospress' )?></h4>
+			<input name="pp_thumbnail" type="checkbox" id="pp_thumbnail" value="true" <?php checked( (bool)get_option( 'pp_thumbnail' ) ); ?> />
+			<label for="pp_thumbnail"><?php _e( 'Items display featured image on prospress index page if set.', 'prospress' ); ?></label>
+
 			<h3><?php _e( 'Currency', 'prospress' )?></h3>
 			<p><?php _e( 'Please choose a default currency for all transactions in your marketplace.', 'prospress' ); ?></p>
 			<label for='currency_type'><?php _e('Currency:' , 'prospress' );?></label>

@@ -31,6 +31,14 @@ Index & Single Page Layouts
 .prospress-content{
 	clear:both;
 }
+.pp-thumbnail{
+	float:left;
+	clear:none;
+	padding:7px;
+}
+.pp-excerpt{
+	width:70%;
+}
 .pp-price,.pp-end{
 	float:right;
 	margin:2px;
