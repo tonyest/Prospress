@@ -58,7 +58,8 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		$bid_count = $this->get_bid_count( $post_id );
 		$bid_bid_form_fields = '';
 		$dont_echo = false;
-
+		$disabled = "";
+		
 		if( $bid_count == 0 ){
 			$bid_bid_form_fields .= '<div id="current_bid_val">' . __("Starting Price: ", 'prospress' ) . pp_money_format( get_post_meta( $post_id, 'start_price', true ) ) . '</div>';
 		} else {
@@ -66,14 +67,13 @@ class PP_Auction_Bid_System extends PP_Market_System {
 			$bid_bid_form_fields .= '<div id="winning_bidder">' . __("Winning Bidder: ", 'prospress' ) . $this->the_winning_bidder( $post_id, $dont_echo ) . '</div>';
 			$bid_bid_form_fields .= '<div id="current_bid_val">' . __("Current Bid: ", 'prospress' ) . $this->the_winning_bid_value( $post_id, $dont_echo ) . '</div>';
 		}
-		$disabled = "";
-		if (  $post->post_author == $user_ID || $post->post_status == 'private' ) { 
-			// viewer is publisher "cannot bid on own auction" or auction status is 'private' and non-functional hide bid form elements
+
+		if (  $post->post_author == $user_ID || $post->post_status == 'private' )
 			$disabled = "disabled";
-		}
-			$bid_bid_form_fields .= '<label for="bid_value" class="bid-label" '.$disabled.'>' . __( 'Enter max bid: ', 'prospress' ) . $currency_symbol . ' </label>';
-			$bid_bid_form_fields .= '<input type="text" aria-required="true" tabindex="1" size="8" value="" id="bid_value" name="bid_value" '.$disabled.' />';
-			$bid_bid_form_fields .= '<input name="bid_submit" type="submit" id="bid_submit" value="' . $this->labels[ 'bid_button' ] .'" '.$disabled.' />';
+
+		$bid_bid_form_fields .= '<label for="bid_value" class="bid-label" '.$disabled.'>' . __( 'Enter max bid: ', 'prospress' ) . $currency_symbol . ' </label>';
+		$bid_bid_form_fields .= '<input type="text" aria-required="true" tabindex="1" size="8" value="" id="bid_value" name="bid_value" '.$disabled.' />';
+		$bid_bid_form_fields .= '<input name="bid_submit" type="submit" id="bid_submit" value="' . $this->labels[ 'bid_button' ] .'" '.$disabled.' />';
 
 		return $bid_bid_form_fields;
 	}
