@@ -125,40 +125,61 @@ class PP_Auction_Bid_System extends PP_Market_System {
 
 		$buy_now_price = get_post_meta( $_POST['item_number'], 'buy_now_price', true );
 
-		// Payment not completed
 		if( $_POST[ 'payment_status' ] != 'Completed' && $_GET[ 'return_info'] != 'success' ) {
 			error_log( 'PayPal IPN Error: PayPal Payment status not completed, status = ' . print_r( $_POST[ 'payment_status' ], true ) );
 			return;
-		// Transaction already processed
-		} elseif( $_POST[ 'txn_id' ] == get_post_meta( $_POST['item_number'], 'paypal_txn_id', true ) ) {
+		}
+
+		if( $_POST[ 'txn_id' ] == get_post_meta( $_POST['item_number'], 'paypal_txn_id', true ) ) {
 			error_log( 'PayPal IPN Error: PayPal Transaction already processed, txn_id = ' . print_r( $_POST[ 'txn_id' ], true ) );
 			return;
-		} elseif( !isset( $_POST[ 'item_number' ] ) ){
+		}
+
+		if( !isset( $_POST[ 'item_number' ] ) ){
 			error_log( 'PayPal IPN Error: No post supplied for buy now form submission. ' );
 			wp_die( 'PayPal IPN Error: No post supplied for buy now form submission.' );
-		// Check that receiver_email is the PayPal email of the payee/post author
-		} elseif( $_POST['receiver_email'] != pp_invoice_user_settings( 'paypal_address', get_post( $_POST[ 'item_number' ] )->post_author ) ) {
+		}
+
+		if( $_POST['receiver_email'] != pp_invoice_user_settings( 'paypal_address', get_post( $_POST[ 'item_number' ] )->post_author ) ) {
 			error_log( 'PayPal IPN Error: PayPal Email not payees, receiver_email = '. print_r( $_POST[ 'receiver_email' ], true ) );
 			wp_die( 'PayPal IPN Error: PayPal Email not the same as Payee\'s email.' );
-		} elseif( $_POST[ 'mc_gross' ] != $buy_now_price ) { // Check that payment_amount matches buy now price
+		}
+
+		if( $_POST[ 'mc_gross' ] != $buy_now_price ) { 
 			error_log( 'PayPal IPN Error: Buy now price incorrect, mc_gross = ' . print_r( $_POST['mc_gross'], true ) );
 			wp_die( 'PayPal IPN Error: Buy now price incorrect.' );
-		} elseif( $_POST[ 'mc_currency' ] != $currency ) { // Check that payment currency is correct
+		}
+
+		if( $_POST[ 'mc_currency' ] != $currency ) {
 			error_log( 'PayPal IPN Error: Currency incorrect, mc_currency = ' . print_r( $_POST['mc_currency'], true ) );
 			wp_die( 'PayPal IPN Error: PayPal transaction is using an incorrect currency incorrect.' );
-		} elseif( !wp_verify_nonce( $_POST[ 'invoice' ], $_POST[ 'item_number' ] + 5 ) ){
+		}
+
+		if( !wp_verify_nonce( $_POST[ 'invoice' ], $_POST[ 'item_number' ] + 5 ) ){
 			wp_die( 'PayPal IPN Error: Buy Now Nonce Verification Fail' );
-		} elseif( !$this->is_post_valid( $_POST[ 'item_number' ] ) ) {
+		}
+
+		if( !$this->is_post_valid( $_POST[ 'item_number' ] ) ) {
 			wp_die( 'PayPal IPN Error: This post is not valid for buy now.' );
 		}
 
 		// Check if a user account exists for payer email, if so use that account as payer on invoice, if not, create a new user
-		$user = get_user_by_email( $_POST[ 'payer_email' ] );
-		$user_id = empty( $user ) ? 0 : $user->ID;
+		// email_exists() & username_exists() not loaded by default in < WP3.1
+		if( !function_exists( 'email_exists' ) || !function_exists( 'username_exists' ) )
+			require_once( ABSPATH . WPINC . '/registration.php' ); 
 
-		if( $user_id != 0 ){
+		if( email_exists( $_POST[ 'payer_email' ] ) ){
+			$user_id = get_user_by_email( $_POST[ 'payer_email' ] )->ID;
+		} else {
 			$user_name = explode( '@', $_POST[ 'payer_email' ] );
-			// Need the register_new_user() function, but don't want to output the login page HTML
+
+			$inc = 1;
+			while( username_exists( $user_name ) ){
+				$user_name .= $inc;
+				$inc++;
+			}
+
+			// Need the register_new_user() function to send an email notification & generate a password, but don't want to output the login page HTML
 			ob_start();
 			@require_once( ABSPATH . 'wp-login.php' );
 			ob_get_clean();
