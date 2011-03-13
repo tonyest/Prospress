@@ -128,9 +128,6 @@ Index & Single Page Layouts
 	clear:both;
 	width:60%;
 }
-.bid-form [disabled] {
-	opacity:.5;
-}
 .buy-form{
 	float:right;
 	width:30%;
