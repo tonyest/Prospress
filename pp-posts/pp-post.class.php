@@ -99,14 +99,17 @@ class PP_Post {
 	}
 
 	/** 
-	 * Prospress posts are not your vanilla WordPress post, they have special meta which needs to
-	 * be presented in a special way. They also need to be sorted and filtered to make them easier to
-	 * browse and compare. That's why this function redirects individual Prospress posts to a default
-	 * template for single posts - pp-single.php - and the auto-generated Prospress index page to a 
-	 * special index template - pp-index.php.
+	 * Prospress posts are not your vanilla WordPress post, they have special meta that needs to
+	 * be presented displayed. They also need to be sorted and filtered to make them easier to
+	 * browse and compare. 
+	 *
+	 * This function firstly checks the theme's directory for suitable templates, which must be 
+	 * named single-auctions.php, for displaying a single auction, index-auctions.php, for displaying
+	 * the list of all auctions, and taxonomy-auctions.php, for displaying a list of items that
+	 * are of a certain taxonomy. 
 	 * 
-	 * However, before doing so, it provides a hook for overriding the templates and also checks if the 
-	 * current theme has Prospress compatible templates.
+	 * If no templates are found in the theme's directory, this function redirects to default
+	 * templates that ship with Prospress.
 	 * 
 	 * @package Prospress
 	 * @subpackage Posts
