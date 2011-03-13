@@ -120,7 +120,7 @@ class PP_Post {
 
 		$market = $market_systems[ $this->name ];
 		if ( is_pp_multitax() ) {
-
+			
 			$taxonomy = esc_attr( get_query_var( 'taxonomy' ) );
 			$tax = get_taxonomy( $taxonomy );
 			$term = esc_attr( get_query_var( 'term' ) );
@@ -128,7 +128,9 @@ class PP_Post {
 			$term_description = term_description( $term->term_id, $taxonomy );
 			$term = $term->name;
 			$tax_title = sprintf( '%s &raquo; %s', $tax->labels->name, $term );
-
+			
+			wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
+			
 			do_action( 'pp_taxonomy_template_redirect' );
 
 				if( file_exists( TEMPLATEPATH . '/taxonomy-' . $this->name . '.php' ) )
