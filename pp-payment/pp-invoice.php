@@ -412,7 +412,12 @@ class PP_Invoice {
 			} else {
 				$user_settings[ 'default_payment_venue' ] = '';
 			}
-			$updated_message = __( 'Settings Updated.' );
+			if ( isset($user_settings[paypal_address]) && empty($user_settings[paypal_address]) ) {
+				$error_message = __( 'Paypal username is a required field.');
+				unset($user_settings[paypal_address]);
+			} else {
+				$updated_message = __( 'Settings Updated.' );
+			}
 			update_user_meta( $user_ID, 'pp_invoice_settings', $user_settings );
 		} else {
 			if( !$user_settings ) {

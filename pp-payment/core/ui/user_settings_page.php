@@ -10,6 +10,12 @@
 		</div>
 	<?php } ?>
 	
+	<?php if( isset( $error_message ) ) { ?>
+		<div id='message' class='error fade'>
+			<p><?php echo $error_message; ?></p>
+		</div>
+	<?php } ?>
+	
 	<form method='POST' action=''>
 		<style>
 			<?php if( $user_settings[ 'paypal_allow' ] != 'true' ) : ?>
