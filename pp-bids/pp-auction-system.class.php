@@ -122,43 +122,36 @@ class PP_Auction_Bid_System extends PP_Market_System {
 
 		$buy_now_price = get_post_meta( $_POST['item_number'], 'buy_now_price', true );
 
-		// Payment not completed
 		if( $_POST[ 'payment_status' ] != 'Completed' && $_GET[ 'return_info'] != 'success' ) {
 			error_log( 'PayPal IPN Error: PayPal Payment status not completed, status = ' . print_r( $_POST[ 'payment_status' ], true ) );
 			return;
 		}
 
-		// Transaction already processed
 		if( $_POST[ 'txn_id' ] == get_post_meta( $_POST['item_number'], 'paypal_txn_id', true ) ) {
 			error_log( 'PayPal IPN Error: PayPal Transaction already processed, txn_id = ' . print_r( $_POST[ 'txn_id' ], true ) );
 			return;
 		}
 
-		// Incomplete callback?
 		if( !isset( $_POST[ 'item_number' ] ) ){
 			error_log( 'PayPal IPN Error: No post supplied for buy now form submission. ' );
 			wp_die( 'PayPal IPN Error: No post supplied for buy now form submission.' );
 		}
 
-		// Check that receiver_email is the PayPal email of the payee/post author
 		if( $_POST['receiver_email'] != pp_invoice_user_settings( 'paypal_address', get_post( $_POST[ 'item_number' ] )->post_author ) ) {
 			error_log( 'PayPal IPN Error: PayPal Email not payees, receiver_email = '. print_r( $_POST[ 'receiver_email' ], true ) );
 			wp_die( 'PayPal IPN Error: PayPal Email not the same as Payee\'s email.' );
 		}
 
-		// Payment amount equal to buy now price?
 		if( $_POST[ 'mc_gross' ] != $buy_now_price ) { 
 			error_log( 'PayPal IPN Error: Buy now price incorrect, mc_gross = ' . print_r( $_POST['mc_gross'], true ) );
 			wp_die( 'PayPal IPN Error: Buy now price incorrect.' );
 		}
 
-		// Payment currency correct?
 		if( $_POST[ 'mc_currency' ] != $currency ) {
 			error_log( 'PayPal IPN Error: Currency incorrect, mc_currency = ' . print_r( $_POST['mc_currency'], true ) );
 			wp_die( 'PayPal IPN Error: PayPal transaction is using an incorrect currency incorrect.' );
 		}
 
-		// Payment currency correct?
 		if( !wp_verify_nonce( $_POST[ 'invoice' ], $_POST[ 'item_number' ] + 5 ) ){
 			wp_die( 'PayPal IPN Error: Buy Now Nonce Verification Fail' );
 		}
