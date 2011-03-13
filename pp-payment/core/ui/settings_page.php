@@ -1,4 +1,3 @@
-
 <div class="wrap">
 <?php screen_icon( 'prospress' ); ?>
 <h2><?php _e( 'Payment Settings', 'prospress'); ?></h2>
