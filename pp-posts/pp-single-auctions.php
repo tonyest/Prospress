@@ -33,7 +33,7 @@ Template Name: Single Prospress Post
 			</div>
 
 			<div id="nav-below" class="navigation">
-				<div class="nav-index"><a href="<?php echo $market->get_index_permalink(); ?>"><?php printf( __("&larr; Return to %s Index", 'Prospress'), $market->name() ); ?></a></div>
+				<div class="nav-index"><a href="<?php echo $market->get_index_permalink(); ?>"><?php printf( __("&larr; Return to %s Index", 'Prospress'), $market->label ); ?></a></div>
 			</div>
 
 			<?php comments_template( '', true ); ?>
