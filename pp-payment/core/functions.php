@@ -1022,7 +1022,6 @@ function pp_invoice_add_email_template_content() {
 
 %subject%
 
-%description%
 
 You may pay, view and print the invoice online by visiting the following link: 
 %link%
@@ -1038,8 +1037,6 @@ Best regards,
 %business_name% has sent you a reminder for the invoice in the amount of %amount% for:
 
 %subject%
-
-%description%
 
 You may pay, view and print the invoice online by visiting the following link: 
 %link%.

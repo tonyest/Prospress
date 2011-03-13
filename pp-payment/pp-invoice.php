@@ -403,11 +403,11 @@ class PP_Invoice {
 		// Save settings
 		if( isset( $_POST[ 'pp_invoice_user_settings' ] ) ) {
 			$user_settings = wp_parse_args( $_POST[ 'pp_invoice_user_settings' ], $user_settings );
-			
-			if ( isset($user_settings[paypal_address]) && empty($user_settings[paypal_address]) ) {
+;
+			if ( "true" == $user_settings[paypal_allow] && empty($user_settings[paypal_address]) ) {			
 				$error_message = __( 'Paypal username is a required field.');
 				unset($user_settings[paypal_address]);
-				$user_settings[paypal_allow] = false;
+				$user_settings[paypal_allow] = "false";
 			} else {
 				$updated_message = __( 'Settings Updated.' );
 			}

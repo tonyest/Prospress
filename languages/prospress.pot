@@ -1,735 +1,16 @@
-# Translation of the WordPress plugin Prospres by Brent Shepherd.
 # Copyright (C) 2010 
-# This file is distributed under the same license as the Prospress package.
-# Brent Shepherd <brent@prospress.org>, 2010.
-#
-#, fuzzy
+# This file is distributed under the same license as the  package.
 msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/prospress\n"
-"POT-Creation-Date: 2010-11-14 06:31+0000\n"
+"POT-Creation-Date: 2011-03-13 18:42:10+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 "PO-Revision-Date: 2010-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
-
-#: pp-bids/bids-filter.php:8
-#, php-format
-msgid "Filter %s by price."
-msgstr ""
-
-#: pp-bids/bids-filter.php:9
-msgid "Prospress Price Filter"
-msgstr ""
-
-#: pp-bids/bids-filter.php:34
-msgid "to"
-msgstr ""
-
-#: pp-bids/bids-filter.php:36
-msgid "Filter"
-msgstr ""
-
-#: pp-bids/bids-filter.php:48 pp-posts/pp-post.class.php:277
-msgid "Price:"
-msgstr ""
-
-#: pp-bids/bids-filter.php:50 pp-core/core-widgets.php:64
-#: pp-feedback/pp-feedback-widgets.php:44
-#: pp-feedback/pp-feedback-widgets.php:97 pp-posts/pp-post-sort.php:61
-#: pp-posts/pp-post-widgets.php:53 pp-posts/pp-post-widgets.php:111
-#: pp-posts/pp-post-widgets.php:167 pp-posts/qmt/widget.php:27
-msgid "Title:"
-msgstr ""
-
-#: pp-bids/pp-auction-system.class.php:23
-#: pp-bids/pp-auction-system.class.php:25
-msgid "Auctions"
-msgstr ""
-
-#: pp-bids/pp-auction-system.class.php:26
-msgid "Auction"
-msgstr ""
-
-#: pp-bids/pp-auction-system.class.php:27
-msgid "Bid!"
-msgstr ""
-
-#: pp-bids/pp-auction-system.class.php:46
-#: pp-bids/pp-auction-system.class.php:194
-msgid "Starting Price: "
-msgstr ""
-
-#: pp-bids/pp-auction-system.class.php:48
-msgid "Number of Bids: "
-msgstr ""
-
-#: pp-bids/pp-auction-system.class.php:49
-msgid "Winning Bidder: "
-msgstr ""
-
-#: pp-bids/pp-auction-system.class.php:50
-msgid "Current Bid: "
-msgstr ""
-
-#: pp-bids/pp-auction-system.class.php:52
-msgid "Enter max bid: "
-msgstr ""
-
-#: pp-bids/pp-auction-system.class.php:198
-msgid "Bids have been made on your auction, you cannot change the start price."
-msgstr ""
-
-#: pp-bids/pp-auction-system.class.php:241
-msgid "Increase Bid"
-msgstr ""
-
-#: pp-bids/pp-auction-system.class.php:249
-msgid "Price: low to high"
-msgstr ""
-
-#: pp-bids/pp-auction-system.class.php:250
-msgid "Price: high to low"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:50
-msgid "Bid Now!"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:53 pp-posts/pp-index-auctions.php:22
-#: pp-posts/pp-taxonomy-auctions.php:27
-msgid "Price"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:54
-msgid "Winning Bidder"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:56
-msgid "Bid On"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:57
-#: pp-bids/pp-market-system.class.php:591
-msgid "Bidder"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:58 pp-payment/pp-invoice.php:119
-#: pp-payment/pp-invoice.php:130
-msgid "Status"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:59
-msgid "Bid Amount"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:60
-msgid "Current Price"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:61
-msgid "Bid Date"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:62
-msgid "Post End Date"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:278
-#: pp-bids/pp-market-system.class.php:324
-#: pp-bids/pp-market-system.class.php:439
-msgid "No Bids"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:339
-msgid "No bids."
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:358
-msgid "You"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:413
-msgid "No Bids."
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:470
-msgid "Congratulations, you are the winning bidder."
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:473
-msgid "You have been outbid."
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:476
-msgid "You must bid more than the winning bid."
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:479
-msgid "Your maximum bid has been increased."
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:482
-msgid "You can not decrease your maximum bid."
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:485
-msgid "You have entered a bid equal to your current maximum bid."
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:488
-msgid "Invalid bid. Please enter a valid number. e.g. 11.23 or 58"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:491
-msgid "Invalid bid. Bid nonce did not validate."
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:494
-msgid "Invalid bid. Please enter a bid greater than the starting price."
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:497
-msgid "Bid submitted."
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:500
-#, php-format
-msgid "You cannot bid on your own %s."
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:503
-#, php-format
-msgid "This %s has completed, bids cannot be accepted."
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:506
-#, php-format
-msgid "This %s can not be found."
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:509
-#, php-format
-msgid "You cannot bid on a draft, scheduled or pending %s."
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:589
-msgid "Post Author"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:608
-#: pp-bids/pp-market-system.class.php:626
-#, php-format
-msgid "%s Bids"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:627
-#, php-format
-msgid "%s Bid"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:628
-msgid "Place Bid"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:629
-msgid "Edit Bid"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:630
-msgid "New Bid"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:631
-msgid "View Bid"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:632
-msgid "Search Bids"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:633
-msgid "No Bids Found"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:634
-msgid "No Bids Found in Trash"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:635
-msgid "Bid on post:"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:642
-msgctxt "post status"
-msgid "Outbid"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:643
-#, php-format
-msgid "Outbid <span class=\"count\">(%s)</span>"
-msgid_plural "Outbid <span class=\"count\">(%s)</span>"
-msgstr[0] ""
-msgstr[1] ""
-
-#: pp-bids/pp-market-system.class.php:654
-msgid "Winning"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:655
-#, php-format
-msgid "Winning <span class=\"count\">(%s)</span>"
-msgid_plural "Winning <span class=\"count\">(%s)</span>"
-msgstr[0] ""
-msgstr[1] ""
-
-#: pp-bids/pp-market-system.class.php:734
-msgid "g:ia d M Y"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:755
-#, php-format
-msgid "All %s"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:756
-#, php-format
-msgid "Completed %s"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:757
-#, php-format
-msgid "Published %s"
-msgstr ""
-
-#: pp-bids/pp-market-system.class.php:836
-#, php-format
-msgid "%s Options"
-msgstr ""
-
-#: pp-core.php:40
-msgid "Prospress"
-msgstr ""
-
-#: pp-core.php:41 pp-core.php:84
-msgid "Prospress Settings"
-msgstr ""
-
-#: pp-core.php:41
-msgid "General Settings"
-msgstr ""
-
-#: pp-core.php:79 pp-payment/pp-invoice.php:443
-msgid "Settings Updated."
-msgstr ""
-
-#: pp-core.php:91
-msgid "Currency"
-msgstr ""
-
-#: pp-core.php:92
-msgid ""
-"Please choose a default currency for all transactions in your marketplace."
-msgstr ""
-
-#: pp-core.php:95
-msgid "Currency:"
-msgstr ""
-
-#: pp-core.php:135
-msgid "Australian Dollar"
-msgstr ""
-
-#: pp-core.php:136
-msgid "British Pound"
-msgstr ""
-
-#: pp-core.php:137
-msgid "Euro"
-msgstr ""
-
-#: pp-core.php:138
-msgid "United States Dollar"
-msgstr ""
-
-#: pp-core.php:208
-msgid "Congratulations."
-msgstr ""
-
-#: pp-core.php:209
-#, php-format
-msgid ""
-"Your WordPress is prosperous. You can add your first <a href=\"%1$s"
-"\">auction</a>, "
-msgstr ""
-
-#: pp-core.php:210
-#, php-format
-msgid "modify your auctions' <a href=\"%1$s\">index page</a> or "
-msgstr ""
-
-#: pp-core.php:211
-#, php-format
-msgid "configure your marketplace <a href=\"%1$s\">settings</a>. "
-msgstr ""
-
-#: pp-core.php:212
-#, php-format
-msgid "<a href=\"%1$s\">&laquo; Hide &raquo;</a>"
-msgstr ""
-
-#: pp-core/core-widgets.php:18
-msgid "Links to signup, post auctions, view payments & bid history."
-msgstr ""
-
-#: pp-core/core-widgets.php:19
-msgid "Prospress Admin Links"
-msgstr ""
-
-#: pp-core/core-widgets.php:30
-msgid "Your Prospress"
-msgstr ""
-
-#: pp-core/core-widgets.php:63
-msgid ""
-"Make it easy for traders to get into the backend by including links to add a "
-"new auction and view payment/bid/feedback history."
-msgstr ""
-
-#: pp-feedback.php:50 pp-feedback.php:68 pp-feedback.php:69
-#: pp-feedback.php:174 pp-feedback.php:193 pp-feedback.php:461
-msgid "Feedback"
-msgstr ""
-
-#: pp-feedback.php:70
-msgid "Provide Feedback"
-msgstr ""
-
-#: pp-feedback.php:71 pp-feedback.php:195 pp-feedback.php:400
-msgid "Edit Feedback"
-msgstr ""
-
-#: pp-feedback.php:72
-msgid "New Feedback Item"
-msgstr ""
-
-#: pp-feedback.php:73 pp-feedback.php:393 pp-feedback.php:403
-msgid "View Feedback"
-msgstr ""
-
-#: pp-feedback.php:74
-msgid "Seach Feedback"
-msgstr ""
-
-#: pp-feedback.php:75
-msgid "No Feedback found"
-msgstr ""
-
-#: pp-feedback.php:76
-msgid "No Feedback found in Trash"
-msgstr ""
-
-#: pp-feedback.php:77
-msgid "Feedback for post:"
-msgstr ""
-
-#: pp-feedback.php:116
-msgid "For"
-msgstr ""
-
-#: pp-feedback.php:117
-msgid "Receipient's Role"
-msgstr ""
-
-#: pp-feedback.php:119 pp-payment/pp-invoice.php:128
-msgid "From"
-msgstr ""
-
-#: pp-feedback.php:120
-msgid "Your Role"
-msgstr ""
-
-#: pp-feedback.php:124
-msgid "Score"
-msgstr ""
-
-#: pp-feedback.php:125 pp-feedback/pp-feedback-form-view.php:38
-msgid "Comment"
-msgstr ""
-
-#: pp-feedback.php:126
-msgid "Date"
-msgstr ""
-
-#: pp-feedback.php:127
-msgid "Post"
-msgstr ""
-
-#: pp-feedback.php:150 pp-feedback/pp-feedback-form-view.php:54
-msgid "Positive"
-msgstr ""
-
-#: pp-feedback.php:150 pp-feedback/pp-feedback-form-view.php:59
-msgid "Neutral"
-msgstr ""
-
-#: pp-feedback.php:150 pp-feedback/pp-feedback-form-view.php:64
-msgid "Negative"
-msgstr ""
-
-#: pp-feedback.php:152
-msgid "d M Y"
-msgstr ""
-
-#: pp-feedback.php:199 pp-feedback.php:397
-msgid "Give Feedback"
-msgstr ""
-
-#: pp-feedback.php:239
-msgid "Error: could not determine winning bidder."
-msgstr ""
-
-#: pp-feedback.php:241
-msgid ""
-"You can not leave feedback for yourself, in fact, you should not have been "
-"able to win your own post!"
-msgstr ""
-
-#: pp-feedback.php:243
-msgid ""
-"You can not leave feedback for this post. It appears you are neither the "
-"author of the post nor the winning bidder."
-msgstr ""
-
-#: pp-feedback.php:245
-msgid ""
-"You can not leave feedback for this post. The post has either not completed "
-"or does not exist."
-msgstr ""
-
-#: pp-feedback.php:267 pp-feedback.php:352
-msgid "You are not allowed to edit this feedback."
-msgstr ""
-
-#: pp-feedback.php:270 pp-feedback.php:274
-msgid "Feedback Submitted."
-msgstr ""
-
-#: pp-feedback.php:339
-#, php-format
-msgid "Feedback for %s from %s "
-msgstr ""
-
-#: pp-feedback.php:429
-#, php-format
-msgid "Feedback for %1$s on Post %2$d"
-msgstr ""
-
-#: pp-feedback.php:432
-#, php-format
-msgid "Feedback Given by %s"
-msgstr ""
-
-#: pp-feedback.php:435
-#, php-format
-msgid "Feedback Received by %s"
-msgstr ""
-
-#: pp-feedback.php:440
-msgid "Feedback on Post "
-msgstr ""
-
-#: pp-feedback.php:443
-msgid "Feedback You've Given"
-msgstr ""
-
-#: pp-feedback.php:446
-msgid "Your Feedback"
-msgstr ""
-
-#: pp-feedback.php:462
-msgid ""
-"Allowing feedback to be amended helps to make it more accurate. Mistakes "
-"happen and circumstances change."
-msgstr ""
-
-#: pp-feedback.php:465
-msgid "Allow feedback to be revised."
-msgstr ""
-
-#: pp-feedback/pp-feedback-form-view.php:48
-msgid "Rating"
-msgstr ""
-
-#: pp-feedback/pp-feedback-form-view.php:70
-msgid "Submit Feedback"
-msgstr ""
-
-#: pp-feedback/pp-feedback-table-view.php:38
-#, php-format
-msgid "Received (%s)"
-msgstr ""
-
-#: pp-feedback/pp-feedback-table-view.php:39
-#, php-format
-msgid "Given (%s)"
-msgstr ""
-
-#: pp-feedback/pp-feedback-templatetags.php:21
-msgid "positive"
-msgstr ""
-
-#: pp-feedback/pp-feedback-templatetags.php:23
-msgid "neutral"
-msgstr ""
-
-#: pp-feedback/pp-feedback-templatetags.php:25
-msgid "negative"
-msgstr ""
-
-#: pp-feedback/pp-feedback-templatetags.php:47
-#, php-format
-msgid "From: %s"
-msgstr ""
-
-#: pp-feedback/pp-feedback-templatetags.php:50
-#, php-format
-msgid "%s has not yet received any feedback."
-msgstr ""
-
-#: pp-feedback/pp-feedback-widgets.php:13
-msgid "Displays an author's feedback"
-msgstr ""
-
-#: pp-feedback/pp-feedback-widgets.php:19
-msgid "Prospress Feedback"
-msgstr ""
-
-#: pp-feedback/pp-feedback-widgets.php:32
-#: pp-feedback/pp-feedback-widgets.php:42
-msgid "Feedback Score:"
-msgstr ""
-
-#: pp-feedback/pp-feedback-widgets.php:64
-msgid "The most recent feedback for a post author"
-msgstr ""
-
-#: pp-feedback/pp-feedback-widgets.php:70
-msgid "Prospress Latest Feedback"
-msgstr ""
-
-#: pp-feedback/pp-feedback-widgets.php:83
-#: pp-feedback/pp-feedback-widgets.php:95
-msgid "Latest Feedback:"
-msgstr ""
-
-#: pp-load.php:36
-msgid ""
-"Sorry, but you can not run Prospress. It requires WordPress 3.0 or newer. "
-"Consider <a href='http://codex.wordpress.org/Updating_WordPress'>upgrading</"
-"a> your WordPress installation, it's worth the effort.<br/><a href="
-msgstr ""
-
-#: pp-load.php:38
-msgid ""
-"Sorry, but you can not run Prospress. It requires PHP 5.0 or newer. Please "
-"<a href='http://www.php.net/manual/en/migration5.php'>migrate</a> your PHP "
-"installation to run Prospress.<br/><a href="
-msgstr ""
-
-#: pp-load.php:66 pp-payment/pp-invoice.php:91
-msgid "Settings"
-msgstr ""
-
-#: pp-load.php:67
-msgid "Support"
-msgstr ""
-
-#: pp-payment.php:70
-msgid "Pay Now"
-msgstr ""
-
-#: pp-payment.php:73 pp-payment/core/ui/send_invoice.php:48
-#: pp-payment/pp-invoice.php:94 pp-payment/pp-invoice.php:205
-msgid "Send Invoice"
-msgstr ""
-
-#: pp-payment.php:76 pp-payment/pp-invoice.php:93
-msgid "View Invoice"
-msgstr ""
-
-#: pp-payment/core/display.php:56
-msgid " Paid"
-msgstr ""
-
-#: pp-payment/core/display.php:64
-msgid "Sent Today. "
-msgstr ""
-
-#: pp-payment/core/display.php:65
-msgid "Sent Yesterday. "
-msgstr ""
-
-#: pp-payment/core/display.php:66
-#, php-format
-msgid "Sent %s days ago. "
-msgstr ""
-
-#: pp-payment/core/display.php:69
-msgid "Not Sent"
-msgstr ""
-
-#: pp-payment/core/display.php:435
-msgid "Billing Address"
-msgstr ""
-
-#: pp-payment/core/display.php:440
-msgid "Company Name"
-msgstr ""
-
-#: pp-payment/core/display.php:445
-msgid "Street Address"
-msgstr ""
-
-#: pp-payment/core/display.php:450 pp-payment/core/ui/payment_cc.php:118
-msgid "City"
-msgstr ""
-
-#: pp-payment/core/display.php:455 pp-payment/core/ui/payment_cc.php:123
-msgid "State"
-msgstr ""
-
-#: pp-payment/core/display.php:457
-msgid "Use two-letter state codes for safe credit card processing."
-msgstr ""
-
-#: pp-payment/core/display.php:461
-msgid "ZIP Code"
-msgstr ""
-
-#: pp-payment/core/display.php:466 pp-payment/core/ui/payment_cc.php:108
-msgid "Phone Number"
-msgstr ""
-
-#: pp-payment/core/display.php:468
-msgid "Enforce 555-555-5555 format if you are using PayPal."
-msgstr ""
-
-#: pp-payment/core/display.php:538
-msgid "Billing Information"
-msgstr ""
-
-#: pp-payment/core/display.php:700
-msgid "Yes"
-msgstr ""
-
-#: pp-payment/core/display.php:700
-msgid "No"
-msgstr ""
 
 #: pp-payment/core/frontend.php:125
 msgid "There are problems with your transaction:"
@@ -743,159 +24,195 @@ msgstr ""
 msgid "Invoice Paid!"
 msgstr ""
 
-#: pp-payment/core/functions.php:138 pp-payment/core/functions.php:1195
+#: pp-payment/core/display.php:57
+msgid " Paid"
+msgstr ""
+
+#: pp-payment/core/display.php:65
+msgid "Sent Today. "
+msgstr ""
+
+#: pp-payment/core/display.php:67
+msgid "Sent Yesterday. "
+msgstr ""
+
+#: pp-payment/core/display.php:69
+msgid "Sent %s days ago. "
+msgstr ""
+
+#: pp-payment/core/display.php:72
+msgid "Not Sent"
+msgstr ""
+
+#: pp-payment/core/display.php:82 pp-payment/core/ui/send_invoice.php:48
+#: pp-payment/pp-invoice.php:107 pp-payment/pp-invoice.php:218
+#: pp-payment.php:131
+msgid "Send Invoice"
+msgstr ""
+
+#: pp-payment/core/display.php:85 pp-payment/core/display.php:100
+#: pp-payment/core/ui/outgoing_invoices.php:25
+msgid "Un-Archive"
+msgstr ""
+
+#: pp-payment/core/display.php:88 pp-payment/core/display.php:103
+#: pp-payment/core/ui/outgoing_invoices.php:24
+msgid "Archive"
+msgstr ""
+
+#: pp-payment/core/display.php:97
+msgid "Make Payment"
+msgstr ""
+
+#: pp-payment/core/display.php:326
+msgid "Billing Address"
+msgstr ""
+
+#: pp-payment/core/display.php:331
+msgid "Company Name"
+msgstr ""
+
+#: pp-payment/core/display.php:336
+msgid "Street Address"
+msgstr ""
+
+#: pp-payment/core/display.php:341 pp-payment/core/ui/payment_cc.php:118
+msgid "City"
+msgstr ""
+
+#: pp-payment/core/display.php:346 pp-payment/core/ui/payment_cc.php:123
+msgid "State"
+msgstr ""
+
+#: pp-payment/core/display.php:348
+msgid "Use two-letter state codes for safe credit card processing."
+msgstr ""
+
+#: pp-payment/core/display.php:352
+msgid "ZIP Code"
+msgstr ""
+
+#: pp-payment/core/display.php:357 pp-payment/core/ui/payment_cc.php:108
+msgid "Phone Number"
+msgstr ""
+
+#: pp-payment/core/display.php:359
+msgid "Enforce 555-555-5555 format if you are using PayPal."
+msgstr ""
+
+#: pp-payment/core/display.php:429
+msgid "Billing Information"
+msgstr ""
+
+#: pp-payment/core/display.php:595
+msgid "Yes"
+msgstr ""
+
+#: pp-payment/core/display.php:595
+msgid "No"
+msgstr ""
+
+#: pp-payment/core/functions.php:155
 msgid ""
 "There was a problem saving invoice.  Try deactivating and reactivating "
 "plugin."
 msgstr ""
 
-#: pp-payment/core/functions.php:302
-msgid " invoice(s) successfully deleted."
-msgstr ""
-
-#: pp-payment/core/functions.php:319
-msgid "Invoice successfully deleted."
-msgstr ""
-
-#: pp-payment/core/functions.php:338
+#: pp-payment/core/functions.php:332
 msgid "Invoice successfully archived."
 msgstr ""
 
-#: pp-payment/core/functions.php:353 pp-payment/core/functions.php:358
-#, php-format
+#: pp-payment/core/functions.php:347 pp-payment/core/functions.php:351
 msgid "Invoice marked as unpaid."
 msgid_plural "%d invoices marked as unpaid."
 msgstr[0] ""
 msgstr[1] ""
 
-#: pp-payment/core/functions.php:378 pp-payment/core/functions.php:392
-#, php-format
+#: pp-payment/core/functions.php:376
 msgid "Invoice marked as paid, and thank you email sent to customer."
 msgid_plural ""
 "%d invoices marked as paid, and thank you emails sent to customers."
 msgstr[0] ""
 msgstr[1] ""
 
-#: pp-payment/core/functions.php:381 pp-payment/core/functions.php:395
-#, php-format
+#: pp-payment/core/functions.php:378
 msgid "Invoice marked as paid."
 msgid_plural "%d invoices marked as paid."
 msgstr[0] ""
 msgstr[1] ""
 
-#: pp-payment/core/functions.php:409
+#: pp-payment/core/functions.php:392
 msgid " invoice(s) unarchived."
 msgstr ""
 
-#: pp-payment/core/functions.php:412
+#: pp-payment/core/functions.php:395
 msgid "Invoice successfully unarchived"
 msgstr ""
 
-#: pp-payment/core/functions.php:427
-#, php-format
+#: pp-payment/core/functions.php:411
 msgid "Invoice marked as sent."
 msgid_plural "%d invoices marked as sent."
 msgstr[0] ""
 msgstr[1] ""
 
-#: pp-payment/core/functions.php:433
+#: pp-payment/core/functions.php:417
 msgid "Invoice market as sent."
 msgstr ""
 
-#: pp-payment/core/functions.php:469
-msgid "Logs for invoice #"
+#: pp-payment/core/functions.php:428
+msgid "Invoice paid by %s."
 msgstr ""
 
-#: pp-payment/core/functions.php:469
-msgid " cleared."
+#: pp-payment/core/functions.php:428
+msgid "Invoice paid."
 msgstr ""
 
-#: pp-payment/core/functions.php:627
-msgid "All settings and databases removed."
-msgstr ""
-
-#: pp-payment/core/functions.php:828 pp-payment/core/functions.php:933
+#: pp-payment/core/functions.php:695
 msgid "Jan"
 msgstr ""
 
-#: pp-payment/core/functions.php:829 pp-payment/core/functions.php:934
+#: pp-payment/core/functions.php:696
 msgid "Feb"
 msgstr ""
 
-#: pp-payment/core/functions.php:830 pp-payment/core/functions.php:935
+#: pp-payment/core/functions.php:697
 msgid "Mar"
 msgstr ""
 
-#: pp-payment/core/functions.php:831 pp-payment/core/functions.php:936
+#: pp-payment/core/functions.php:698
 msgid "Apr"
 msgstr ""
 
-#: pp-payment/core/functions.php:832 pp-payment/core/functions.php:937
+#: pp-payment/core/functions.php:699
 msgid "May"
 msgstr ""
 
-#: pp-payment/core/functions.php:833 pp-payment/core/functions.php:938
+#: pp-payment/core/functions.php:700
 msgid "Jun"
 msgstr ""
 
-#: pp-payment/core/functions.php:834 pp-payment/core/functions.php:939
+#: pp-payment/core/functions.php:701
 msgid "Jul"
 msgstr ""
 
-#: pp-payment/core/functions.php:835 pp-payment/core/functions.php:940
+#: pp-payment/core/functions.php:702
 msgid "Aug"
 msgstr ""
 
-#: pp-payment/core/functions.php:836 pp-payment/core/functions.php:941
+#: pp-payment/core/functions.php:703
 msgid "Sep"
 msgstr ""
 
-#: pp-payment/core/functions.php:837 pp-payment/core/functions.php:942
+#: pp-payment/core/functions.php:704
 msgid "Oct"
 msgstr ""
 
-#: pp-payment/core/functions.php:838 pp-payment/core/functions.php:943
+#: pp-payment/core/functions.php:705
 msgid "Nov"
 msgstr ""
 
-#: pp-payment/core/functions.php:839 pp-payment/core/functions.php:944
+#: pp-payment/core/functions.php:706
 msgid "Dec"
-msgstr ""
-
-#: pp-payment/core/functions.php:1191
-msgid "New Invoice saved."
-msgstr ""
-
-#: pp-payment/core/functions.php:1203
-msgid ""
-" Recurring invoice saved.  This invoice may be viewed under <b>Recurring "
-"Billing</b>. "
-msgstr ""
-
-#: pp-payment/core/functions.php:1265
-msgid "View Web Invoice"
-msgstr ""
-
-#: pp-payment/core/functions.php:1284
-msgid "Invoice page not selected. "
-msgstr ""
-
-#: pp-payment/core/functions.php:1287
-msgid "Payment method not set. "
-msgstr ""
-
-#: pp-payment/core/functions.php:1290
-msgid "Visit "
-msgstr ""
-
-#: pp-payment/core/functions.php:1290
-msgid " to configure."
-msgstr ""
-
-#: pp-payment/core/functions.php:1294
-msgid ""
-"The plugin database tables are gone, deactivate and reactivate plugin to re-"
-"create them."
 msgstr ""
 
 #: pp-payment/core/ui/incoming_invoices.php:7
@@ -932,6 +249,7 @@ msgstr ""
 
 #: pp-payment/core/ui/incoming_invoices.php:24
 #: pp-payment/core/ui/outgoing_invoices.php:38
+#: pp-payment/core/ui/metaboxes/make_payment.php:8
 msgid "Unpaid"
 msgstr ""
 
@@ -944,62 +262,8 @@ msgstr ""
 msgid "You have no invoices to pay."
 msgstr ""
 
-#: pp-payment/core/ui/make_payment.php:41
-msgid "Payment Details"
-msgstr ""
-
-#: pp-payment/core/ui/metaboxes/make_payment.php:11
-msgid "Total Due: "
-msgstr ""
-
-#: pp-payment/core/ui/metaboxes/make_payment.php:23
-#: pp-payment/core/ui/metaboxes/send_invoice.php:89
-msgid "Post Title"
-msgstr ""
-
-#: pp-payment/core/ui/metaboxes/make_payment.php:27
-#: pp-payment/core/ui/metaboxes/send_invoice.php:93
-msgid "Post Content"
-msgstr ""
-
-#: pp-payment/core/ui/metaboxes/make_payment.php:31
-#: pp-payment/core/ui/metaboxes/send_invoice.php:97
-msgid "Total Amount"
-msgstr ""
-
-#: pp-payment/core/ui/metaboxes/make_payment.php:96
-#, php-format
-msgid ""
-"%s has not provided a payment method. Please contact %s to request he/she "
-"provide at least one payment method."
-msgstr ""
-
-#: pp-payment/core/ui/metaboxes/send_invoice.php:63
-msgid "Today"
-msgstr ""
-
-#: pp-payment/core/ui/metaboxes/send_invoice.php:64
-msgid "In One Week"
-msgstr ""
-
-#: pp-payment/core/ui/metaboxes/send_invoice.php:65
-msgid "In 30 Days"
-msgstr ""
-
-#: pp-payment/core/ui/metaboxes/send_invoice.php:66
-msgid "Clear"
-msgstr ""
-
 #: pp-payment/core/ui/outgoing_invoices.php:7
 msgid "Incoming Payments"
-msgstr ""
-
-#: pp-payment/core/ui/outgoing_invoices.php:24
-msgid "Archive"
-msgstr ""
-
-#: pp-payment/core/ui/outgoing_invoices.php:25
-msgid "Un-Archive"
 msgstr ""
 
 #: pp-payment/core/ui/outgoing_invoices.php:26
@@ -1016,6 +280,174 @@ msgstr ""
 
 #: pp-payment/core/ui/outgoing_invoices.php:68
 msgid "You have no incoming payments."
+msgstr ""
+
+#: pp-payment/core/ui/user_settings_page.php:5
+#: pp-payment/core/ui/settings_page.php:4 pp-payment/pp-invoice.php:98
+msgid "Payment Settings"
+msgstr ""
+
+#: pp-payment/core/ui/user_settings_page.php:59
+msgid "Basic Settings:"
+msgstr ""
+
+#: pp-payment/core/ui/user_settings_page.php:62
+msgid "Tax Label:"
+msgstr ""
+
+#: pp-payment/core/ui/user_settings_page.php:66
+msgid "Payment Settings:"
+msgstr ""
+
+#: pp-payment/core/ui/user_settings_page.php:72
+msgid "Payment Types:"
+msgstr ""
+
+#: pp-payment/core/ui/user_settings_page.php:82
+msgid "PayPal Settings"
+msgstr ""
+
+#: pp-payment/core/ui/user_settings_page.php:85
+msgid "PayPal Username (E-mail):"
+msgstr ""
+
+#: pp-payment/core/ui/user_settings_page.php:95
+msgid "Credit Card Settings:"
+msgstr ""
+
+#: pp-payment/core/ui/user_settings_page.php:98
+#: pp-payment/core/ui/payment_processing.php:38
+msgid "Your credit card processor will provide you with a gateway username."
+msgstr ""
+
+#: pp-payment/core/ui/user_settings_page.php:98
+#: pp-payment/core/ui/payment_processing.php:38
+msgid "Gateway Username"
+msgstr ""
+
+#: pp-payment/core/ui/user_settings_page.php:102
+#: pp-payment/core/ui/payment_processing.php:44
+msgid ""
+"You will be able to generate this in your credit card processor's control "
+"panel."
+msgstr ""
+
+#: pp-payment/core/ui/user_settings_page.php:102
+#: pp-payment/core/ui/payment_processing.php:44
+msgid "Gateway Transaction Key"
+msgstr ""
+
+#: pp-payment/core/ui/user_settings_page.php:105
+#: pp-payment/core/ui/payment_processing.php:49
+msgid "This is the URL provided to you by your credit card processing company."
+msgstr ""
+
+#: pp-payment/core/ui/user_settings_page.php:105
+#: pp-payment/core/ui/payment_processing.php:49
+msgid "Gateway URL"
+msgstr ""
+
+#: pp-payment/core/ui/user_settings_page.php:112
+#: pp-payment/core/ui/payment_processing.php:72
+msgid ""
+"Get this from your credit card processor. If the transactions are not going "
+"through, this character is most likely wrong."
+msgstr ""
+
+#: pp-payment/core/ui/user_settings_page.php:112
+#: pp-payment/core/ui/payment_processing.php:72
+msgid "Delimiter Character"
+msgstr ""
+
+#: pp-payment/core/ui/user_settings_page.php:116
+#: pp-payment/core/ui/payment_processing.php:77
+msgid ""
+"Authorize.net default is blank. Otherwise, get this from your credit card "
+"processor. If the transactions are going through, but getting strange "
+"responses, this character is most likely wrong."
+msgstr ""
+
+#: pp-payment/core/ui/user_settings_page.php:116
+#: pp-payment/core/ui/payment_processing.php:77
+msgid "Encapsulation Character"
+msgstr ""
+
+#: pp-payment/core/ui/user_settings_page.php:120
+#: pp-payment/core/ui/payment_processing.php:92
+msgid "Security: MD5 Hash"
+msgstr ""
+
+#: pp-payment/core/ui/user_settings_page.php:124
+#: pp-payment/core/ui/payment_processing.php:97
+msgid "Delim Data:"
+msgstr ""
+
+#: pp-payment/core/ui/user_settings_page.php:129
+msgid "Bank Transfer"
+msgstr ""
+
+#: pp-payment/core/ui/user_settings_page.php:132
+msgid "Draft Instructions:"
+msgstr ""
+
+#: pp-payment/core/ui/make_payment.php:41
+msgid "Payment Details"
+msgstr ""
+
+#: pp-payment/core/ui/payment_processing.php:3
+msgid "PayPal"
+msgstr ""
+
+#: pp-payment/core/ui/payment_processing.php:4
+msgid "Credit Card"
+msgstr ""
+
+#: pp-payment/core/ui/payment_processing.php:10
+msgid "Accept This Payment Venue?"
+msgstr ""
+
+#: pp-payment/core/ui/payment_processing.php:15
+msgid "PayPal Username"
+msgstr ""
+
+#: pp-payment/core/ui/payment_processing.php:21
+msgid "PayPal Pay Button URL"
+msgstr ""
+
+#: pp-payment/core/ui/payment_processing.php:33
+msgid "Accept this Payment Venue?"
+msgstr ""
+
+#: pp-payment/core/ui/payment_processing.php:58
+msgid ""
+"Recurring billing gateway URL is most likely different from the Gateway URL, "
+"and will almost always be with Authorize.net. Be advised - test credit card "
+"numbers will be declined even when in test mode."
+msgstr ""
+
+#: pp-payment/core/ui/payment_processing.php:58
+msgid "Recurring Billing Gateway URL"
+msgstr ""
+
+#: pp-payment/core/ui/payment_processing.php:82
+msgid "Merchant Email"
+msgstr ""
+
+#: pp-payment/core/ui/payment_processing.php:87
+msgid "Email Customer (on success):"
+msgstr ""
+
+#: pp-payment/core/ui/payment_paypal.php:22
+msgid "Return to %s"
+msgstr ""
+
+#: pp-payment/core/ui/payment_paypal.php:28
+#: pp-payment/core/ui/payment_paypal.php:30
+msgid "Proceed to PayPal"
+msgstr ""
+
+#: pp-payment/core/ui/payment_draft.php:12
+msgid "Instructions: "
 msgstr ""
 
 #: pp-payment/core/ui/payment_cc.php:44
@@ -1066,129 +498,50 @@ msgstr ""
 msgid "Security Code"
 msgstr ""
 
-#: pp-payment/core/ui/payment_draft.php:12
-msgid "Instructions: "
+#: pp-payment/core/ui/settings_page.php:15
+msgid "Default Tax Label:"
 msgstr ""
 
-#: pp-payment/core/ui/payment_paypal.php:18
-msgid "Return to"
+#: pp-payment/core/ui/settings_page.php:18
+msgid "The name of tax in your country. eg. VAT, GST or Sales Tax."
 msgstr ""
 
-#: pp-payment/core/ui/payment_paypal.php:23
-msgid "Proceed to PayPal"
+#: pp-payment/core/ui/settings_page.php:22
+msgid "Using Godaddy Hosting"
 msgstr ""
 
-#: pp-payment/core/ui/payment_processing.php:3
-msgid "PayPal"
-msgstr ""
-
-#: pp-payment/core/ui/payment_processing.php:5
-msgid "Credit Card"
-msgstr ""
-
-#: pp-payment/core/ui/payment_processing.php:12
-msgid "Accept This Payment Venue?"
-msgstr ""
-
-#: pp-payment/core/ui/payment_processing.php:17
-msgid "PayPal Username"
-msgstr ""
-
-#: pp-payment/core/ui/payment_processing.php:23
-msgid "PayPal Pay Button URL"
-msgstr ""
-
-#: pp-payment/core/ui/payment_processing.php:35
-msgid "Accept this Payment Venue?"
-msgstr ""
-
-#: pp-payment/core/ui/payment_processing.php:40
-#: pp-payment/core/ui/user_settings_page.php:79
-msgid "Your credit card processor will provide you with a gateway username."
-msgstr ""
-
-#: pp-payment/core/ui/payment_processing.php:40
-#: pp-payment/core/ui/user_settings_page.php:79
-msgid "Gateway Username"
-msgstr ""
-
-#: pp-payment/core/ui/payment_processing.php:46
-#: pp-payment/core/ui/user_settings_page.php:83
+#: pp-payment/core/ui/settings_page.php:25
 msgid ""
-"You will be able to generate this in your credit card processor's control "
-"panel."
+"A special proxy must be used for credit card transactions on GoDaddy servers."
 msgstr ""
 
-#: pp-payment/core/ui/payment_processing.php:46
-#: pp-payment/core/ui/user_settings_page.php:83
-msgid "Gateway Transaction Key"
+#: pp-payment/core/ui/settings_page.php:29
+msgid "Use SSL:"
 msgstr ""
 
-#: pp-payment/core/ui/payment_processing.php:51
-#: pp-payment/core/ui/user_settings_page.php:86
-msgid "This is the URL provided to you by your credit card processing company."
-msgstr ""
-
-#: pp-payment/core/ui/payment_processing.php:51
-#: pp-payment/core/ui/user_settings_page.php:86
-msgid "Gateway URL"
-msgstr ""
-
-#: pp-payment/core/ui/payment_processing.php:60
+#: pp-payment/core/ui/settings_page.php:32
 msgid ""
-"Recurring billing gateway URL is most likely different from the Gateway URL, "
-"and will almost always be with Authorize.net. Be advised - test credit card "
-"numbers will be declined even when in test mode."
+"You should use SSL to secure the payment page if offering credit card as a "
+"payment option."
 msgstr ""
 
-#: pp-payment/core/ui/payment_processing.php:60
-msgid "Recurring Billing Gateway URL"
+#: pp-payment/core/ui/settings_page.php:33
+msgid "Do you need an SSL Certificate?"
 msgstr ""
 
-#: pp-payment/core/ui/payment_processing.php:74
-#: pp-payment/core/ui/user_settings_page.php:93
-msgid ""
-"Get this from your credit card processor. If the transactions are not going "
-"through, this character is most likely wrong."
+#: pp-payment/core/ui/settings_page.php:37
+msgid "Email Templates"
 msgstr ""
 
-#: pp-payment/core/ui/payment_processing.php:74
-#: pp-payment/core/ui/user_settings_page.php:93
-msgid "Delimiter Character"
+#: pp-payment/core/ui/settings_page.php:40
+msgid "<b>Invoice Notification</b> Item"
 msgstr ""
 
-#: pp-payment/core/ui/payment_processing.php:79
-#: pp-payment/core/ui/user_settings_page.php:97
-msgid ""
-"Authorize.net default is blank. Otherwise, get this from your credit card "
-"processor. If the transactions are going through, but getting strange "
-"responses, this character is most likely wrong."
+#: pp-payment/core/ui/settings_page.php:44
+msgid "<b>Invoice Notification</b> Content"
 msgstr ""
 
-#: pp-payment/core/ui/payment_processing.php:79
-#: pp-payment/core/ui/user_settings_page.php:97
-msgid "Encapsulation Character"
-msgstr ""
-
-#: pp-payment/core/ui/payment_processing.php:84
-msgid "Merchant Email"
-msgstr ""
-
-#: pp-payment/core/ui/payment_processing.php:89
-msgid "Email Customer (on success):"
-msgstr ""
-
-#: pp-payment/core/ui/payment_processing.php:94
-#: pp-payment/core/ui/user_settings_page.php:101
-msgid "Security: MD5 Hash"
-msgstr ""
-
-#: pp-payment/core/ui/payment_processing.php:99
-#: pp-payment/core/ui/user_settings_page.php:105
-msgid "Delim Data:"
-msgstr ""
-
-#: pp-payment/core/ui/save_and_preview.php:4 pp-payment/pp-invoice.php:95
+#: pp-payment/core/ui/save_and_preview.php:4 pp-payment/pp-invoice.php:108
 msgid "Save and Preview"
 msgstr ""
 
@@ -1220,332 +573,1147 @@ msgstr ""
 msgid "Email to Client"
 msgstr ""
 
-#: pp-payment/core/ui/settings_page.php:4
-#: pp-payment/core/ui/user_settings_page.php:3 pp-payment/pp-invoice.php:85
-msgid "Payment Settings"
+#: pp-payment/core/ui/metaboxes/make_payment.php:7
+msgid "Status:"
 msgstr ""
 
-#: pp-payment/core/ui/settings_page.php:13
-msgid "Default Tax Label:"
+#: pp-payment/core/ui/metaboxes/make_payment.php:11
+msgid "Total Due: "
 msgstr ""
 
-#: pp-payment/core/ui/settings_page.php:16
-msgid "The name of tax in your country. eg. VAT, GST or Sales Tax."
+#: pp-payment/core/ui/metaboxes/make_payment.php:22
+#: pp-payment/core/ui/metaboxes/send_invoice.php:90
+msgid "Title"
 msgstr ""
 
-#: pp-payment/core/ui/settings_page.php:23
+#: pp-payment/core/ui/metaboxes/make_payment.php:26
+#: pp-payment/core/ui/metaboxes/send_invoice.php:94
+msgid "Total Amount"
+msgstr ""
+
+#: pp-payment/core/ui/metaboxes/make_payment.php:72
+msgid "Select Payment Method"
+msgstr ""
+
+#: pp-payment/core/ui/metaboxes/make_payment.php:91
 msgid ""
-"A special proxy must be used for credit card transactions on GoDaddy servers."
+"%s has not provided a payment method. Please contact %s to request "
+"instructions for payment."
 msgstr ""
 
-#: pp-payment/core/ui/settings_page.php:27
-msgid "Use SSL:"
+#: pp-payment/core/ui/metaboxes/send_invoice.php:63
+msgid "Today"
 msgstr ""
 
-#: pp-payment/core/ui/settings_page.php:30
-msgid ""
-"You should use SSL to secure the payment page if offering credit card as a "
-"payment option."
+#: pp-payment/core/ui/metaboxes/send_invoice.php:64
+msgid "In One Week"
 msgstr ""
 
-#: pp-payment/core/ui/settings_page.php:31
-msgid "Do you need an SSL Certificate?"
+#: pp-payment/core/ui/metaboxes/send_invoice.php:65
+msgid "In 30 Days"
 msgstr ""
 
-#: pp-payment/core/ui/settings_page.php:38
-msgid "<b>Invoice Notification</b> Item"
+#: pp-payment/core/ui/metaboxes/send_invoice.php:66
+msgid "Clear"
 msgstr ""
 
-#: pp-payment/core/ui/settings_page.php:42
-msgid "<b>Invoice Notification</b> Content"
-msgstr ""
-
-#: pp-payment/core/ui/settings_page.php:47
-msgid "<b>Reminder</b> Item"
-msgstr ""
-
-#: pp-payment/core/ui/settings_page.php:51
-msgid "<b>Reminder</b> Content"
-msgstr ""
-
-#: pp-payment/core/ui/settings_page.php:56
-msgid "<b>Receipt</b> Item"
-msgstr ""
-
-#: pp-payment/core/ui/settings_page.php:60
-msgid "<b>Receipt</b> Content"
-msgstr ""
-
-#: pp-payment/core/ui/user_settings_page.php:43
-msgid "Basic Settings:"
-msgstr ""
-
-#: pp-payment/core/ui/user_settings_page.php:46
-msgid "Tax Label:"
-msgstr ""
-
-#: pp-payment/core/ui/user_settings_page.php:50
-msgid "Payment Settings:"
-msgstr ""
-
-#: pp-payment/core/ui/user_settings_page.php:56
-msgid "Payment Types:"
-msgstr ""
-
-#: pp-payment/core/ui/user_settings_page.php:66
-msgid "PayPal Username:"
-msgstr ""
-
-#: pp-payment/core/ui/user_settings_page.php:76
-msgid "Credit Card Settings:"
-msgstr ""
-
-#: pp-payment/core/ui/user_settings_page.php:110
-msgid "Draft Instructions:"
-msgstr ""
-
-#: pp-payment/pp-invoice.php:88
+#: pp-payment/pp-invoice.php:101
 msgid "Payments"
 msgstr ""
 
-#: pp-payment/pp-invoice.php:102 pp-payment/pp-invoice.php:108
-#: pp-payment/pp-invoice.php:205
+#: pp-payment/pp-invoice.php:104 pp-load.php:67
+msgid "Settings"
+msgstr ""
+
+#: pp-payment/pp-invoice.php:106 pp-payment.php:134
+msgid "View Invoice"
+msgstr ""
+
+#: pp-payment/pp-invoice.php:115 pp-payment/pp-invoice.php:121
+#: pp-payment/pp-invoice.php:218
 msgid "Invoice Details"
 msgstr ""
 
-#: pp-payment/pp-invoice.php:103
+#: pp-payment/pp-invoice.php:116
 msgid "Billing Details"
 msgstr ""
 
-#: pp-payment/pp-invoice.php:104
+#: pp-payment/pp-invoice.php:117
 msgid "Payment Recipient"
 msgstr ""
 
-#: pp-payment/pp-invoice.php:107
+#: pp-payment/pp-invoice.php:120
 msgid "Invoice History"
 msgstr ""
 
-#: pp-payment/pp-invoice.php:109 pp-payment/pp-invoice.php:117
+#: pp-payment/pp-invoice.php:122 pp-payment/pp-invoice.php:130
 msgid "Recipient"
 msgstr ""
 
-#: pp-payment/pp-invoice.php:115 pp-payment/pp-invoice.php:126
+#: pp-payment/pp-invoice.php:128 pp-payment/pp-invoice.php:139
 msgid "Item"
 msgstr ""
 
-#: pp-payment/pp-invoice.php:116 pp-payment/pp-invoice.php:127
+#: pp-payment/pp-invoice.php:129 pp-payment/pp-invoice.php:140
 msgid "Amount"
 msgstr ""
 
-#: pp-payment/pp-invoice.php:118 pp-payment/pp-invoice.php:129
+#: pp-payment/pp-invoice.php:131 pp-payment/pp-invoice.php:142
 msgid "User Email"
 msgstr ""
 
-#: pp-payment/pp-invoice.php:120
+#: pp-payment/pp-invoice.php:132 pp-payment/pp-invoice.php:143
+#: pp-bids/pp-market-system.class.php:63
+msgid "Status"
+msgstr ""
+
+#: pp-payment/pp-invoice.php:133
 msgid "Invoice Received"
 msgstr ""
 
-#: pp-payment/pp-invoice.php:121 pp-payment/pp-invoice.php:132
+#: pp-payment/pp-invoice.php:134 pp-payment/pp-invoice.php:145
 msgid "Payment Due"
 msgstr ""
 
-#: pp-payment/pp-invoice.php:131
+#: pp-payment/pp-invoice.php:141 pp-feedback.php:110
+msgid "From"
+msgstr ""
+
+#: pp-payment/pp-invoice.php:144
 msgid "Invoice Sent"
 msgstr ""
 
-#: pp-payment/pp-invoice.php:189
+#: pp-payment/pp-invoice.php:202
 msgid "You have not yet paid this invoice."
 msgstr ""
 
-#: pp-payment/pp-invoice.php:192 pp-payment/pp-invoice.php:254
-#, php-format
+#: pp-payment/pp-invoice.php:205 pp-payment/pp-invoice.php:269
 msgid "%s has not paid this invoice."
 msgstr ""
 
-#: pp-payment/pp-invoice.php:210 pp-payment/pp-invoice.php:270
-#: pp-payment/pp-invoice.php:300
+#: pp-payment/pp-invoice.php:223 pp-payment/pp-invoice.php:285
+#: pp-payment/pp-invoice.php:315
 msgid "You are not allowed to view this invoice."
 msgstr ""
 
-#: pp-payment/pp-invoice.php:228
-#, php-format
+#: pp-payment/pp-invoice.php:241
 msgid "Invoice paid via bank transfer. Message from payer: %s"
 msgstr ""
 
-#: pp-payment/pp-invoice.php:233
+#: pp-payment/pp-invoice.php:247
 msgid "Your PayPal payment has not been processed."
 msgstr ""
 
-#: pp-payment/pp-invoice.php:236
+#: pp-payment/pp-invoice.php:250
 msgid "Invoice paid via PayPal."
 msgstr ""
 
-#: pp-payment/pp-invoice.php:251
+#: pp-payment/pp-invoice.php:266
 msgid "You have not paid this invoice."
 msgstr ""
 
-#: pp-payment/pp-invoice.php:258
-#, php-format
+#: pp-payment/pp-invoice.php:273
 msgid "Payment processed on %s."
 msgstr ""
 
-#: pp-payment/pp-invoice.php:453
+#: pp-payment/pp-invoice.php:408
+msgid "Paypal username is a required field."
+msgstr ""
+
+#: pp-payment/pp-invoice.php:412 pp-payment/pp-invoice.php:465
+msgid "Settings Updated."
+msgstr ""
+
+#: pp-payment/pp-invoice.php:470
+msgid ""
+"The payment tables have been removed, please deactivate and reactivate "
+"Prospress to re-create them."
+msgstr ""
+
+#: pp-payment/pp-invoice.php:479
 msgid "Continue Editing"
 msgstr ""
 
-#: pp-posts.php:245
+#: pp-payment.php:128
+msgid "Pay Now"
+msgstr ""
+
+#: pp-posts.php:286
+msgid "completed"
+msgstr ""
+
+#: pp-posts.php:328
 msgctxt "post"
 msgid "Completed"
 msgstr ""
 
-#: pp-posts.php:246
-#, php-format
+#: pp-posts.php:329
 msgid "Completed <span class=\"count\">(%s)</span>"
 msgid_plural "Completed <span class=\"count\">(%s)</span>"
 msgstr[0] ""
 msgstr[1] ""
 
-#: pp-posts.php:276
+#: pp-posts.php:359
 msgid "M j, Y @ G:i"
 msgstr ""
 
-#: pp-posts.php:280
-#, php-format
+#: pp-posts.php:363
 msgid "Ended: <b>%1$s</b>"
 msgstr ""
 
-#: pp-posts.php:282
-#, php-format
+#: pp-posts.php:365
 msgid "End on: <b>%1$s</b>"
 msgstr ""
 
-#: pp-posts.php:300
+#: pp-posts.php:383
 msgid "Edit"
 msgstr ""
 
-#: pp-posts.php:300
+#: pp-posts.php:383
 msgid "Extend"
 msgstr ""
 
-#. translators: 1: month input, 2: day input, 3: year input, 4: hour input, 5: minute input
-#: pp-posts.php:362
-#, php-format
+#: pp-posts.php:445
 msgid "%1$s%2$s, %3$s @ %4$s : %5$s"
 msgstr ""
 
-#: pp-posts.php:377
+#: pp-posts.php:460
 msgid "OK"
 msgstr ""
 
-#: pp-posts.php:378
+#: pp-posts.php:461
 msgid "Cancel"
 msgstr ""
 
-#: pp-posts.php:399
+#: pp-posts.php:482
 msgid "Ended on:"
 msgstr ""
 
-#: pp-posts.php:400
+#: pp-posts.php:483
 msgid "End on:"
 msgstr ""
 
-#: pp-posts.php:401
+#: pp-posts.php:484
 msgid "End"
 msgstr ""
 
-#: pp-posts.php:402
+#: pp-posts.php:485
 msgid "Update"
 msgstr ""
 
-#: pp-posts.php:403
+#: pp-posts.php:486
 msgid "Repost"
 msgstr ""
 
-#: pp-posts.php:427
+#: pp-posts.php:510
 msgid "Time: Newly posted"
 msgstr ""
 
-#: pp-posts.php:428
+#: pp-posts.php:511
 msgid "Time: Oldest first"
 msgstr ""
 
-#: pp-posts.php:429
+#: pp-posts.php:512
 msgid "Time: Ending soonest"
 msgstr ""
 
-#: pp-posts.php:430
+#: pp-posts.php:513
 msgid "Time: Ending latest"
 msgstr ""
 
-#: pp-posts.php:449
-msgid "Custom Taxonomies"
+#: pp-feedback.php:42 pp-feedback.php:59 pp-feedback.php:60
+#: pp-feedback.php:165 pp-feedback.php:184 pp-feedback.php:451
+msgid "Feedback"
 msgstr ""
 
-#: pp-posts.php:450
-#, php-format
+#: pp-feedback.php:61
+msgid "Provide Feedback"
+msgstr ""
+
+#: pp-feedback.php:62 pp-feedback.php:186 pp-feedback.php:391
+msgid "Edit Feedback"
+msgstr ""
+
+#: pp-feedback.php:63
+msgid "New Feedback Item"
+msgstr ""
+
+#: pp-feedback.php:64 pp-feedback.php:384 pp-feedback.php:394
+msgid "View Feedback"
+msgstr ""
+
+#: pp-feedback.php:65
+msgid "Seach Feedback"
+msgstr ""
+
+#: pp-feedback.php:66
+msgid "No Feedback found"
+msgstr ""
+
+#: pp-feedback.php:67
+msgid "No Feedback found in Trash"
+msgstr ""
+
+#: pp-feedback.php:68
+msgid "Feedback for post:"
+msgstr ""
+
+#: pp-feedback.php:107
+msgid "For"
+msgstr ""
+
+#: pp-feedback.php:108
+msgid "Receipient's Role"
+msgstr ""
+
+#: pp-feedback.php:111
+msgid "Your Role"
+msgstr ""
+
+#: pp-feedback.php:115
+msgid "Score"
+msgstr ""
+
+#: pp-feedback.php:116 pp-feedback/pp-feedback-form-view.php:38
+msgid "Comment"
+msgstr ""
+
+#: pp-feedback.php:117
+msgid "Date"
+msgstr ""
+
+#: pp-feedback.php:118
+msgid "Post"
+msgstr ""
+
+#: pp-feedback.php:141 pp-feedback/pp-feedback-form-view.php:54
+msgid "Positive"
+msgstr ""
+
+#: pp-feedback.php:141 pp-feedback/pp-feedback-form-view.php:59
+msgid "Neutral"
+msgstr ""
+
+#: pp-feedback.php:141 pp-feedback/pp-feedback-form-view.php:64
+msgid "Negative"
+msgstr ""
+
+#: pp-feedback.php:143
+msgid "d M Y"
+msgstr ""
+
+#: pp-feedback.php:190 pp-feedback.php:388
+msgid "Give Feedback"
+msgstr ""
+
+#: pp-feedback.php:230
+msgid "Error: could not determine winning bidder."
+msgstr ""
+
+#: pp-feedback.php:232
 msgid ""
-"Custom taxonomies provide a way to classify %s. If your site lists more than "
-"20 %s at a time, you should use custom taxonomies."
+"You can not leave feedback for yourself, in fact, you should not have been "
+"able to win your own post!"
 msgstr ""
 
-#: pp-posts.php:454
-msgid "Use custom taxonomies"
+#: pp-feedback.php:234
+msgid ""
+"You can not leave feedback for this post. It appears you are neither the "
+"author of the post nor the winning bidder."
 msgstr ""
 
-#: pp-posts/pp-capabilities.php:42
+#: pp-feedback.php:236
+msgid ""
+"You can not leave feedback for this post. The post has either not completed "
+"or does not exist."
+msgstr ""
+
+#: pp-feedback.php:258 pp-feedback.php:343
+msgid "You are not allowed to edit this feedback."
+msgstr ""
+
+#: pp-feedback.php:261 pp-feedback.php:265
+msgid "Feedback Submitted."
+msgstr ""
+
+#: pp-feedback.php:330
+msgid "Feedback for %s from %s "
+msgstr ""
+
+#: pp-feedback.php:420
+msgid "Feedback for %1$s on Post %2$d"
+msgstr ""
+
+#: pp-feedback.php:423
+msgid "Feedback Given by %s"
+msgstr ""
+
+#: pp-feedback.php:426
+msgid "Feedback Received by %s"
+msgstr ""
+
+#: pp-feedback.php:431
+msgid "Feedback on Post "
+msgstr ""
+
+#: pp-feedback.php:434
+msgid "Feedback You've Given"
+msgstr ""
+
+#: pp-feedback.php:437 pp-core/core-widgets.php:51
+msgid "Your Feedback"
+msgstr ""
+
+#: pp-feedback.php:452
+msgid ""
+"Allowing feedback to be amended helps to make it more accurate. Mistakes "
+"happen and circumstances change."
+msgstr ""
+
+#: pp-feedback.php:456
+msgid "Allow feedback to be revised."
+msgstr ""
+
+#: pp-bids/pp-auction-system.class.php:22
+#: pp-bids/pp-auction-system.class.php:24
+msgid "Auctions"
+msgstr ""
+
+#: pp-bids/pp-auction-system.class.php:25
+msgid "Auction"
+msgstr ""
+
+#: pp-bids/pp-auction-system.class.php:26
+msgid "Bid!"
+msgstr ""
+
+#: pp-bids/pp-auction-system.class.php:64
+#: pp-bids/pp-auction-system.class.php:370
+msgid "Starting Price: "
+msgstr ""
+
+#: pp-bids/pp-auction-system.class.php:66
+msgid "Number of Bids: "
+msgstr ""
+
+#: pp-bids/pp-auction-system.class.php:67
+msgid "Winning Bidder: "
+msgstr ""
+
+#: pp-bids/pp-auction-system.class.php:68
+msgid "Current Bid: "
+msgstr ""
+
+#: pp-bids/pp-auction-system.class.php:71
+msgid "Enter max bid: "
+msgstr ""
+
+#: pp-bids/pp-auction-system.class.php:352
+msgid "Bids have been made on your auction, you cannot change this price."
+msgstr ""
+
+#: pp-bids/pp-auction-system.class.php:359
+msgid ""
+"To offer buy now, you must <a href=\"%s\">setup PayPal</a> as a payment "
+"method."
+msgstr ""
+
+#: pp-bids/pp-auction-system.class.php:379
+msgid "Buy Now Price: "
+msgstr ""
+
+#: pp-bids/pp-auction-system.class.php:435
+msgid "Increase Bid"
+msgstr ""
+
+#: pp-bids/pp-auction-system.class.php:445
+msgid "Price: low to high"
+msgstr ""
+
+#: pp-bids/pp-auction-system.class.php:446
+msgid "Price: high to low"
+msgstr ""
+
+#: pp-bids/pp-auction-system.class.php:519
+msgid "Buy Now"
+msgstr ""
+
+#: pp-bids/pp-auction-system.class.php:523
+msgid "Price: %s"
+msgstr ""
+
+#: pp-bids/pp-auction-system.class.php:556
+msgid "Purchase Cancelled."
+msgstr ""
+
+#: pp-bids/pp-auction-system.class.php:558
+msgid ""
+"Purchase successful, congratulations. The seller has been notified & will be "
+"in contact shortly."
+msgstr ""
+
+#: pp-bids/bids-filter.php:8
+msgid "Filter %s by price."
+msgstr ""
+
+#: pp-bids/bids-filter.php:9
+msgid "Prospress Price Filter"
+msgstr ""
+
+#: pp-bids/bids-filter.php:34
+msgid "to"
+msgstr ""
+
+#: pp-bids/bids-filter.php:36
+msgid "Filter"
+msgstr ""
+
+#: pp-bids/bids-filter.php:48 pp-posts/pp-post.class.php:493
+msgid "Price:"
+msgstr ""
+
+#: pp-bids/bids-filter.php:50 pp-posts/qmt/query-multiple-taxonomies.php:313
+#: pp-posts/pp-post-widgets.php:53 pp-posts/pp-post-widgets.php:111
+#: pp-posts/pp-post-widgets.php:165 pp-posts/pp-post-sort.php:61
+#: pp-core/core-widgets.php:66 pp-feedback/pp-feedback-widgets.php:44
+#: pp-feedback/pp-feedback-widgets.php:97
+msgid "Title:"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:47
+#: pp-bids/pp-market-system.class.php:649
+msgid "Place Bid"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:48
+msgid "Your Listing"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:55
+msgid "Bid Now!"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:58 pp-posts/pp-taxonomy-auctions.php:25
+#: pp-posts/pp-index-auctions.php:23
+msgid "Price"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:59
+msgid "Winning Bidder"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:61
+msgid "Bid On"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:62
+#: pp-bids/pp-market-system.class.php:612
+msgid "Bidder"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:64
+msgid "Bid Amount"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:65
+msgid "Current Price"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:66
+msgid "Bid Date"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:67
+msgid "Post End Date"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:299
+#: pp-bids/pp-market-system.class.php:338
+#: pp-bids/pp-market-system.class.php:455
+msgid "No Bids"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:353
+msgid "No bids."
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:373
+msgid "You"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:428
+msgid "No Bids."
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:482
+msgid "Congratulations, you are the winning bidder."
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:485
+msgid "You have been outbid."
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:488
+msgid "You must bid more than the winning bid."
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:491
+msgid "Your maximum bid has been increased."
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:494
+msgid "You can not decrease your maximum bid."
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:497
+msgid "You have entered a bid equal to your current maximum bid."
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:500
+msgid "Invalid bid. Please enter a valid number. e.g. 11.23 or 58"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:503
+msgid "Invalid bid. Bid nonce did not validate."
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:506
+msgid "Invalid bid. Please enter a bid higher than the starting price."
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:509
+msgid "Bid submitted."
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:512
+msgid "You cannot bid on your own %s."
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:515
+msgid "This %s has finished, bids cannot be accepted."
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:518
+msgid "This %s can not be found."
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:521
+msgid "You cannot bid on a draft, scheduled or pending %s."
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:524
+msgid "Error: %d"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:574
+msgid "Your Bids"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:610
+msgid "Post Author"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:629
+#: pp-bids/pp-market-system.class.php:647
+msgid "%s Bids"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:648
+msgid "%s Bid"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:650
+msgid "Edit Bid"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:651
+msgid "New Bid"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:652
+msgid "View Bid"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:653
+msgid "Search Bids"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:654
+msgid "No Bids Found"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:655
+msgid "No Bids Found in Trash"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:656
+msgid "Bid on post:"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:665
+msgctxt "post status"
+msgid "Outbid"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:666
+msgid "Outbid <span class=\"count\">(%s)</span>"
+msgid_plural "Outbid <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#: pp-bids/pp-market-system.class.php:677
+msgid "Winning"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:678
+msgid "Winning <span class=\"count\">(%s)</span>"
+msgid_plural "Winning <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#: pp-bids/pp-market-system.class.php:757
+msgid "g:ia d M Y"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:778 pp-posts/pp-taxonomy.class.php:274
+msgid "All %s"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:779
+msgid "Completed %s"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:780
+msgid "Published %s"
+msgstr ""
+
+#: pp-bids/pp-market-system.class.php:861
+msgid "%s Options"
+msgstr ""
+
+#: pp-core.php:48
+msgid "Prospress"
+msgstr ""
+
+#: pp-core.php:49 pp-core.php:86
+msgid "Prospress Settings"
+msgstr ""
+
+#: pp-core.php:49
+msgid "General Settings"
+msgstr ""
+
+#: pp-core.php:88
+msgid "Currency"
+msgstr ""
+
+#: pp-core.php:89
+msgid ""
+"Please choose a default currency for all transactions in your marketplace."
+msgstr ""
+
+#: pp-core.php:90
+msgid "Currency:"
+msgstr ""
+
+#: pp-core.php:131
+msgid "Australian Dollar"
+msgstr ""
+
+#: pp-core.php:132
+msgid "British Pound"
+msgstr ""
+
+#: pp-core.php:133
+msgid "Euro"
+msgstr ""
+
+#: pp-core.php:134
+msgid "United States Dollar"
+msgstr ""
+
+#: pp-core.php:212
+msgid "Congratulations."
+msgstr ""
+
+#: pp-core.php:213
+msgid ""
+"Your WordPress site is now prosperous. Go add your first <a href=\"%1$s"
+"\">auction</a>, "
+msgstr ""
+
+#: pp-core.php:214
+msgid "modify your auctions' <a href=\"%1$s\">index page</a> or "
+msgstr ""
+
+#: pp-core.php:215
+msgid "configure your marketplace <a href=\"%1$s\">settings</a>. "
+msgstr ""
+
+#: pp-core.php:216
+msgid "&nbsp;<a href=\"%1$s\">&laquo; Hide &raquo;</a>"
+msgstr ""
+
+#: pp-posts/pp-capabilities.php:69
 msgid "Capabilities"
 msgstr ""
 
-#: pp-posts/pp-capabilities.php:43
-#, php-format
+#: pp-posts/pp-capabilities.php:70
 msgid ""
-"All registered users can make bids, but you can control which users are able "
-"to publish and edit %s."
+"All registered users can make bids and only Administrators can edit and "
+"delete %s, but you can control which users are able to publish and edit %s."
 msgstr ""
 
-#: pp-posts/pp-capabilities.php:45
-#, php-format
+#: pp-posts/pp-capabilities.php:73
 msgid "Publish %s"
 msgstr ""
 
-#: pp-posts/pp-capabilities.php:54
-#, php-format
-msgid "Edit Own %s"
-msgstr ""
-
-#: pp-posts/pp-capabilities.php:63
-#, php-format
-msgid "Edit Others' %s"
-msgstr ""
-
-#: pp-posts/pp-capabilities.php:72
-#, php-format
+#: pp-posts/pp-capabilities.php:82
 msgid "View Private %s"
 msgstr ""
 
-#: pp-posts/pp-capabilities.php:81
+#: pp-posts/pp-capabilities.php:91
 msgid "Upload Media"
 msgstr ""
 
-#: pp-posts/pp-index-auctions.php:21 pp-posts/pp-taxonomy-auctions.php:26
+#: pp-posts/pp-post.class.php:216 pp-posts/pp-taxonomy.class.php:279
+msgid "Add New %s"
+msgstr ""
+
+#: pp-posts/pp-post.class.php:217 pp-posts/pp-taxonomy.class.php:277
+msgid "Edit %s"
+msgstr ""
+
+#: pp-posts/pp-post.class.php:218 pp-posts/pp-taxonomy.class.php:280
+msgid "New %s"
+msgstr ""
+
+#: pp-posts/pp-post.class.php:219
+msgid "View %s"
+msgstr ""
+
+#: pp-posts/pp-post.class.php:220
+msgid "Seach %s"
+msgstr ""
+
+#: pp-posts/pp-post.class.php:221
+msgid "No %s found"
+msgstr ""
+
+#: pp-posts/pp-post.class.php:222
+msgid "No %s found in Trash"
+msgstr ""
+
+#: pp-posts/pp-post.class.php:245
+msgid "%s Index Sidebar"
+msgstr ""
+
+#: pp-posts/pp-post.class.php:247
+msgid "The sidebar for the index of your %s."
+msgstr ""
+
+#: pp-posts/pp-post.class.php:257
+msgid "Single %s Sidebar"
+msgstr ""
+
+#: pp-posts/pp-post.class.php:259
+msgid "The sidebar for a single %s."
+msgstr ""
+
+#: pp-posts/pp-post.class.php:399 pp-posts/pp-post.class.php:404
+msgid "End Time"
+msgstr ""
+
+#: pp-posts/pp-post.class.php:400
+msgid "Action"
+msgstr ""
+
+#: pp-posts/pp-post.class.php:403
+msgid "Date Published"
+msgstr ""
+
+#: pp-posts/pp-post.class.php:426
+msgid "Not set."
+msgstr ""
+
+#: pp-posts/pp-post.class.php:438
+msgid "Take action:"
+msgstr ""
+
+#: pp-posts/pp-post.class.php:446
+msgid "No action can be taken."
+msgstr ""
+
+#: pp-posts/pp-post.class.php:473
+msgid "Sort by:"
+msgstr ""
+
+#: pp-posts/pp-post.class.php:524 pp-posts/pp-post-widgets.php:152
+#: pp-posts/pp-post-widgets.php:163
+msgid "Ending:"
+msgstr ""
+
+#: pp-posts/pp-post.class.php:537 pp-posts/pp-post-widgets.php:97
+#: pp-posts/pp-post-widgets.php:109
+msgid "Details:"
+msgstr ""
+
+#: pp-posts/pp-post.class.php:550 pp-feedback/pp-feedback-widgets.php:83
+#: pp-feedback/pp-feedback-widgets.php:95
+msgid "Latest Feedback:"
+msgstr ""
+
+#: pp-posts/qmt/query-multiple-taxonomies.php:264
+msgid "Filter %s by your custom taxonomies"
+msgstr ""
+
+#: pp-posts/qmt/query-multiple-taxonomies.php:267
+msgid "Prospress Taxonomy Filter"
+msgstr ""
+
+#: pp-posts/qmt/query-multiple-taxonomies.php:277
+msgid "No taxonomy selected."
+msgstr ""
+
+#: pp-posts/qmt/query-multiple-taxonomies.php:319
+#: pp-posts/pp-post-widgets.php:55
+msgid "Taxonomy:"
+msgstr ""
+
+#: pp-posts/qmt/query-multiple-taxonomies.php:357
+msgid "View all %s filed under %s"
+msgstr ""
+
+#: pp-posts/pp-taxonomy.class.php:27
+msgid "Custom %s Taxonomies"
+msgstr ""
+
+#: pp-posts/pp-taxonomy.class.php:28 pp-posts/pp-taxonomy.class.php:64
+msgid "%s Taxonomies"
+msgstr ""
+
+#: pp-posts/pp-taxonomy.class.php:64 pp-posts/pp-taxonomy.class.php:118
+msgid "Add New"
+msgstr ""
+
+#: pp-posts/pp-taxonomy.class.php:71 pp-posts/pp-taxonomy.class.php:79
+msgid "Name"
+msgstr ""
+
+#: pp-posts/pp-taxonomy.class.php:72 pp-posts/pp-taxonomy.class.php:80
+msgid "Label"
+msgstr ""
+
+#: pp-posts/pp-taxonomy.class.php:73 pp-posts/pp-taxonomy.class.php:81
+#: pp-posts/pp-taxonomy.class.php:178
+msgid "Singular Label"
+msgstr ""
+
+#: pp-posts/pp-taxonomy.class.php:74 pp-posts/pp-taxonomy.class.php:82
+msgid "Actions"
+msgstr ""
+
+#: pp-posts/pp-taxonomy.class.php:101
+msgid "Take Action:"
+msgstr ""
+
+#: pp-posts/pp-taxonomy.class.php:102 pp-posts/pp-taxonomy.class.php:128
+msgid "Edit Taxonomy"
+msgstr ""
+
+#: pp-posts/pp-taxonomy.class.php:103
+msgid "Delete Taxonomy"
+msgstr ""
+
+#: pp-posts/pp-taxonomy.class.php:104
+msgid "Add/Edit %s"
+msgstr ""
+
+#: pp-posts/pp-taxonomy.class.php:113
+msgid ""
+"Note: Deleting a taxonomy does not delete the %s or terms associated with it."
+msgstr ""
+
+#: pp-posts/pp-taxonomy.class.php:116
+msgid ""
+"Taxonomies provide a way to categorise items based on unique "
+"characteristics. Well thought out taxonomies make it easier for buyers to "
+"find an item matching specific criteria."
+msgstr ""
+
+#: pp-posts/pp-taxonomy.class.php:117
+msgid ""
+"For example, auctions of Dutch Masterpieces could use an <i>Artist</i> "
+"taxonomy, which includes <i>Vermeer</i>, <i>Rembrandt</i> and <i>Cuyp</i>."
+msgstr ""
+
+#: pp-posts/pp-taxonomy.class.php:135
+msgid "Create Taxonomy"
+msgstr ""
+
+#: pp-posts/pp-taxonomy.class.php:153
+msgid ""
+"Only a <strong>Taxonomy Name</strong> is required to create a custom "
+"taxonomy; however, label and singular labels are recommended."
+msgstr ""
+
+#: pp-posts/pp-taxonomy.class.php:162
+msgid "Taxonomy Name"
+msgstr ""
+
+#: pp-posts/pp-taxonomy.class.php:165
+msgid ""
+"A URL-friendly name. It should be all lowercase and contain only letters, "
+"numbers, and hyphens. e.g. artist"
+msgstr ""
+
+#: pp-posts/pp-taxonomy.class.php:170
+msgid "Plural Label"
+msgstr ""
+
+#: pp-posts/pp-taxonomy.class.php:173
+msgid "Used to refer to multiple items of this type. e.g. Artists"
+msgstr ""
+
+#: pp-posts/pp-taxonomy.class.php:181
+msgid "Used to refer to a single item of this type. e.g. Artist"
+msgstr ""
+
+#: pp-posts/pp-taxonomy.class.php:204
+msgid "Taxonomy name is required."
+msgstr ""
+
+#: pp-posts/pp-taxonomy.class.php:219
+msgid "Taxonomy created. You can add elements under the %s menu."
+msgstr ""
+
+#: pp-posts/pp-taxonomy.class.php:225
+msgid "Taxonomy updated."
+msgstr ""
+
+#: pp-posts/pp-taxonomy.class.php:250
+msgid "Taxonomy deleted."
+msgstr ""
+
+#: pp-posts/pp-taxonomy.class.php:272
+msgid "Search %s"
+msgstr ""
+
+#: pp-posts/pp-taxonomy.class.php:273
+msgid "Popular %s"
+msgstr ""
+
+#: pp-posts/pp-taxonomy.class.php:275
+msgid "Parent %s"
+msgstr ""
+
+#: pp-posts/pp-taxonomy.class.php:276
+msgid "Parent %s:"
+msgstr ""
+
+#: pp-posts/pp-taxonomy.class.php:278
+msgid "Update %s"
+msgstr ""
+
+#: pp-posts/pp-post-widgets.php:18
+msgid "The most used items of your Prospress taxonomy, in cloud form"
+msgstr ""
+
+#: pp-posts/pp-post-widgets.php:19
+msgid "Prospress Tag Cloud"
+msgstr ""
+
+#: pp-posts/pp-post-widgets.php:82
+msgid "List of taxonomy items that apply to a single %s"
+msgstr ""
+
+#: pp-posts/pp-post-widgets.php:83
+msgid "Prospress Taxonomy List"
+msgstr ""
+
+#: pp-posts/pp-post-widgets.php:138
+msgid "The time until the end of an %s"
+msgstr ""
+
+#: pp-posts/pp-post-widgets.php:139
+msgid "Prospress Countdown"
+msgstr ""
+
+#: pp-posts/pp-taxonomy-auctions.php:24 pp-posts/pp-index-auctions.php:22
 msgid "Ending"
 msgstr ""
 
-#: pp-posts/pp-index-auctions.php:42 pp-posts/pp-taxonomy-auctions.php:43
-#, php-format
+#: pp-posts/pp-taxonomy-auctions.php:50 pp-posts/pp-index-auctions.php:55
 msgid "View %s &raquo"
 msgstr ""
 
-#: pp-posts/pp-index-auctions.php:46 pp-posts/pp-taxonomy-auctions.php:47
+#: pp-posts/pp-taxonomy-auctions.php:54 pp-posts/pp-index-auctions.php:59
 msgid "Published: "
 msgstr ""
 
-#: pp-posts/pp-index-auctions.php:47 pp-posts/pp-taxonomy-auctions.php:48
+#: pp-posts/pp-taxonomy-auctions.php:55 pp-posts/pp-index-auctions.php:60
 msgid "by "
 msgstr ""
 
+#: pp-posts/pp-taxonomy-auctions.php:66 pp-posts/pp-index-auctions.php:71
+msgid "Previous Items"
+msgstr ""
+
+#: pp-posts/pp-taxonomy-auctions.php:67 pp-posts/pp-index-auctions.php:72
+msgid "Next Items"
+msgstr ""
+
+#: pp-posts/pp-posts-templatetags.php:96
+msgid "Now"
+msgstr ""
+
+#: pp-posts/pp-posts-templatetags.php:121
+msgid "%s year"
+msgid_plural "%s years"
+msgstr[0] ""
+msgstr[1] ""
+
+#: pp-posts/pp-posts-templatetags.php:122
+msgid "%s month"
+msgid_plural "%s months"
+msgstr[0] ""
+msgstr[1] ""
+
+#: pp-posts/pp-posts-templatetags.php:123
+msgid "%s week"
+msgid_plural "%s weeks"
+msgstr[0] ""
+msgstr[1] ""
+
+#: pp-posts/pp-posts-templatetags.php:124
+msgid "%s day"
+msgid_plural "%s days"
+msgstr[0] ""
+msgstr[1] ""
+
+#: pp-posts/pp-posts-templatetags.php:125
+msgid "%s hour"
+msgid_plural "%s hours"
+msgstr[0] ""
+msgstr[1] ""
+
+#: pp-posts/pp-posts-templatetags.php:126
+msgid "%s minute"
+msgid_plural "%s minutes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: pp-posts/pp-posts-templatetags.php:127
+msgid "%s second"
+msgid_plural "%s seconds"
+msgstr[0] ""
+msgstr[1] ""
+
+#: pp-posts/pp-single-auctions.php:36
+msgid "&larr; Return to %s Index"
+msgstr ""
+
 #: pp-posts/pp-post-sort.php:16
-#, php-format
 msgid "Sort %s in your marketplace."
 msgstr ""
 
@@ -1562,346 +1730,89 @@ msgstr ""
 msgid "Sort"
 msgstr ""
 
-#: pp-posts/pp-post-widgets.php:18
-msgid "The most used items of your Prospress taxonomy, in cloud form"
+#: pp-load.php:68
+msgid "Support"
 msgstr ""
 
-#: pp-posts/pp-post-widgets.php:19
-msgid "Prospress Tag Cloud"
+#: pp-core/core-widgets.php:18
+msgid "Links to signup, post auctions, view payments & bid history."
 msgstr ""
 
-#: pp-posts/pp-post-widgets.php:55 pp-posts/qmt/widget.php:46
-msgid "Taxonomy:"
+#: pp-core/core-widgets.php:19
+msgid "Prospress Admin Links"
 msgstr ""
 
-#: pp-posts/pp-post-widgets.php:83
-#, php-format
-msgid "List of taxonomy items that apply to a single %s"
+#: pp-core/core-widgets.php:30
+msgid "Your Prospress"
 msgstr ""
 
-#: pp-posts/pp-post-widgets.php:84
-msgid "Prospress Taxonomy List"
+#: pp-core/core-widgets.php:49
+msgid "Your Payments"
 msgstr ""
 
-#: pp-posts/pp-post-widgets.php:97 pp-posts/pp-post-widgets.php:109
-msgid "Details:"
-msgstr ""
-
-#: pp-posts/pp-post-widgets.php:139
-#, php-format
-msgid "The time until the end of an %s"
-msgstr ""
-
-#: pp-posts/pp-post-widgets.php:140
-msgid "Prospress Countdown"
-msgstr ""
-
-#: pp-posts/pp-post-widgets.php:153 pp-posts/pp-post-widgets.php:165
-msgid "Ending:"
-msgstr ""
-
-#: pp-posts/pp-post.class.php:63
-msgid "This is the index for your "
-msgstr ""
-
-#: pp-posts/pp-post.class.php:186
-#, php-format
-msgid "Add New %s"
-msgstr ""
-
-#: pp-posts/pp-post.class.php:187
-#, php-format
-msgid "Edit %s"
-msgstr ""
-
-#: pp-posts/pp-post.class.php:188
-#, php-format
-msgid "New %s"
-msgstr ""
-
-#: pp-posts/pp-post.class.php:189
-#, php-format
-msgid "View %s"
-msgstr ""
-
-#: pp-posts/pp-post.class.php:190
-#, php-format
-msgid "Seach %s"
-msgstr ""
-
-#: pp-posts/pp-post.class.php:191
-#, php-format
-msgid "No %s found"
-msgstr ""
-
-#: pp-posts/pp-post.class.php:192
-#, php-format
-msgid "No %s found in Trash"
-msgstr ""
-
-#: pp-posts/pp-post.class.php:211
-#, php-format
-msgid "%s Index Sidebar"
-msgstr ""
-
-#: pp-posts/pp-post.class.php:213
-#, php-format
-msgid "The sidebar for the index of your %s."
-msgstr ""
-
-#: pp-posts/pp-post.class.php:223
-#, php-format
-msgid "Single %s Sidebar"
-msgstr ""
-
-#: pp-posts/pp-post.class.php:225
-#, php-format
-msgid "The sidebar for a single %s."
-msgstr ""
-
-#: pp-posts/pp-post.class.php:256
-msgid "Sort by:"
-msgstr ""
-
-#: pp-posts/pp-post.class.php:415 pp-posts/pp-post.class.php:420
-msgid "End Time"
-msgstr ""
-
-#: pp-posts/pp-post.class.php:416
-msgid "Action"
-msgstr ""
-
-#: pp-posts/pp-post.class.php:419
-msgid "Date Published"
-msgstr ""
-
-#: pp-posts/pp-post.class.php:442
-msgid "Not set."
-msgstr ""
-
-#: pp-posts/pp-post.class.php:454
-msgid "Take action:"
-msgstr ""
-
-#: pp-posts/pp-post.class.php:462
-msgid "No action can be taken."
-msgstr ""
-
-#: pp-posts/pp-posts-templatetags.php:84
-msgid "Now"
-msgstr ""
-
-#: pp-posts/pp-posts-templatetags.php:109
-#, php-format
-msgid "%s year"
-msgid_plural "%s years"
-msgstr[0] ""
-msgstr[1] ""
-
-#: pp-posts/pp-posts-templatetags.php:110
-#, php-format
-msgid "%s month"
-msgid_plural "%s months"
-msgstr[0] ""
-msgstr[1] ""
-
-#: pp-posts/pp-posts-templatetags.php:111
-#, php-format
-msgid "%s week"
-msgid_plural "%s weeks"
-msgstr[0] ""
-msgstr[1] ""
-
-#: pp-posts/pp-posts-templatetags.php:112
-#, php-format
-msgid "%s day"
-msgid_plural "%s days"
-msgstr[0] ""
-msgstr[1] ""
-
-#: pp-posts/pp-posts-templatetags.php:113
-#, php-format
-msgid "%s hour"
-msgid_plural "%s hours"
-msgstr[0] ""
-msgstr[1] ""
-
-#: pp-posts/pp-posts-templatetags.php:114
-#, php-format
-msgid "%s minute"
-msgid_plural "%s minutes"
-msgstr[0] ""
-msgstr[1] ""
-
-#: pp-posts/pp-posts-templatetags.php:115
-#, php-format
-msgid "%s second"
-msgid_plural "%s seconds"
-msgstr[0] ""
-msgstr[1] ""
-
-#: pp-posts/pp-single-auctions.php:28
-#, php-format
-msgid "&larr; Return to %s Index"
-msgstr ""
-
-#: pp-posts/pp-taxonomy.class.php:27
-#, php-format
-msgid "Custom %s Taxonomies"
-msgstr ""
-
-#: pp-posts/pp-taxonomy.class.php:28 pp-posts/pp-taxonomy.class.php:64
-#, php-format
-msgid "%s Taxonomies"
-msgstr ""
-
-#: pp-posts/pp-taxonomy.class.php:71 pp-posts/pp-taxonomy.class.php:79
-msgid "Name"
-msgstr ""
-
-#: pp-posts/pp-taxonomy.class.php:72 pp-posts/pp-taxonomy.class.php:80
-msgid "Label"
-msgstr ""
-
-#: pp-posts/pp-taxonomy.class.php:73 pp-posts/pp-taxonomy.class.php:81
-#: pp-posts/pp-taxonomy.class.php:180
-msgid "Singular Label"
-msgstr ""
-
-#: pp-posts/pp-taxonomy.class.php:74 pp-posts/pp-taxonomy.class.php:82
-msgid "Actions"
-msgstr ""
-
-#: pp-posts/pp-taxonomy.class.php:101
-msgid "Take Action:"
-msgstr ""
-
-#: pp-posts/pp-taxonomy.class.php:102 pp-posts/pp-taxonomy.class.php:129
-msgid "Edit Taxonomy"
-msgstr ""
-
-#: pp-posts/pp-taxonomy.class.php:103
-msgid "Delete Taxonomy"
-msgstr ""
-
-#: pp-posts/pp-taxonomy.class.php:104
-#, php-format
-msgid "Add/Edit %s"
-msgstr ""
-
-#: pp-posts/pp-taxonomy.class.php:113
-#, php-format
+#: pp-core/core-widgets.php:65
 msgid ""
-"Note: Deleting a taxonomy does not delete the %s and taxonomy types "
-"associated with it."
+"Make it easy for traders to add a new auction and view their payments, bids "
+"& feedback."
 msgstr ""
 
-#: pp-posts/pp-taxonomy.class.php:116
-msgid ""
-"Taxonomies provide a way to categorise items based on unique "
-"characteristics. Well thought out taxonomies make it easier for buyers to "
-"find an item matching specific criteria."
+#: pp-feedback/pp-feedback-templatetags.php:21
+msgid "positive"
 msgstr ""
 
-#: pp-posts/pp-taxonomy.class.php:117
-msgid ""
-"For example, auctions of Dutch Masterpieces could use an <i>Artist</i> "
-"taxonomy, which includes <i>Vermeer</i>, <i>Rembrandt</i> and <i>Cuyp</i>."
+#: pp-feedback/pp-feedback-templatetags.php:23
+msgid "neutral"
 msgstr ""
 
-#: pp-posts/pp-taxonomy.class.php:118
-msgid "Add New"
+#: pp-feedback/pp-feedback-templatetags.php:25
+msgid "negative"
 msgstr ""
 
-#: pp-posts/pp-taxonomy.class.php:136
-msgid "Create Taxonomy"
+#: pp-feedback/pp-feedback-templatetags.php:47
+msgid "From: %s"
 msgstr ""
 
-#: pp-posts/pp-taxonomy.class.php:155
-msgid ""
-"Only a <strong>Taxonomy Name</strong> is required to create a custom "
-"taxonomy; however, label and singular labels are recommended."
+#: pp-feedback/pp-feedback-templatetags.php:51
+msgid "You have not yet received any feedback."
 msgstr ""
 
-#: pp-posts/pp-taxonomy.class.php:164
-msgid "Taxonomy Name"
+#: pp-feedback/pp-feedback-templatetags.php:53
+msgid "%s has not yet received any feedback."
 msgstr ""
 
-#: pp-posts/pp-taxonomy.class.php:167
-msgid "Used to define the taxonomy. Make it short and sweet. e.g. artist"
+#: pp-feedback/pp-feedback-widgets.php:13
+msgid "Displays an author's feedback"
 msgstr ""
 
-#: pp-posts/pp-taxonomy.class.php:172
-msgid "Plural Label"
+#: pp-feedback/pp-feedback-widgets.php:19
+msgid "Prospress Feedback"
 msgstr ""
 
-#: pp-posts/pp-taxonomy.class.php:175
-msgid "Used to refer to multiple items of this type. e.g. Artists"
+#: pp-feedback/pp-feedback-widgets.php:32
+#: pp-feedback/pp-feedback-widgets.php:42
+msgid "Feedback Score:"
 msgstr ""
 
-#: pp-posts/pp-taxonomy.class.php:183
-msgid "Used to refer to a single item of this type. e.g. Artist"
+#: pp-feedback/pp-feedback-widgets.php:64
+msgid "The most recent feedback for a post author"
 msgstr ""
 
-#: pp-posts/pp-taxonomy.class.php:206
-msgid "Taxonomy name is required."
+#: pp-feedback/pp-feedback-widgets.php:70
+msgid "Prospress Latest Feedback"
 msgstr ""
 
-#: pp-posts/pp-taxonomy.class.php:221
-#, php-format
-msgid "Taxonomy created. You can add elements under the %s menu."
+#: pp-feedback/pp-feedback-form-view.php:48
+msgid "Rating"
 msgstr ""
 
-#: pp-posts/pp-taxonomy.class.php:224
-msgid "Taxonomy updated."
+#: pp-feedback/pp-feedback-form-view.php:70
+msgid "Submit Feedback"
 msgstr ""
 
-#: pp-posts/pp-taxonomy.class.php:246
-msgid "Taxonomy deleted."
+#: pp-feedback/pp-feedback-table-view.php:38
+msgid "Received (%s)"
 msgstr ""
 
-#: pp-posts/pp-taxonomy.class.php:268
-msgid "Search "
-msgstr ""
-
-#: pp-posts/pp-taxonomy.class.php:269
-msgid "Popular "
-msgstr ""
-
-#: pp-posts/pp-taxonomy.class.php:270
-msgid "All "
-msgstr ""
-
-#: pp-posts/pp-taxonomy.class.php:271 pp-posts/pp-taxonomy.class.php:272
-msgid "Parent "
-msgstr ""
-
-#: pp-posts/pp-taxonomy.class.php:273
-msgid "Edit "
-msgstr ""
-
-#: pp-posts/pp-taxonomy.class.php:274
-msgid "Update "
-msgstr ""
-
-#: pp-posts/pp-taxonomy.class.php:275
-msgid "Add New "
-msgstr ""
-
-#: pp-posts/pp-taxonomy.class.php:276
-msgid "New "
-msgstr ""
-
-#: pp-posts/qmt/widget.php:14
-#, php-format
-msgid "Filter %s by your custom taxonomies"
-msgstr ""
-
-#: pp-posts/qmt/widget.php:57
-msgid "No taxonomy selected."
-msgstr ""
-
-#: pp-posts/qmt/widget.php:122
-#, php-format
-msgid "View all %s filed under %s"
+#: pp-feedback/pp-feedback-table-view.php:39
+msgid "Given (%s)"
 msgstr ""

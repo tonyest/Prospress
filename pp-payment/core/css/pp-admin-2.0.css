@@ -181,12 +181,9 @@ dl.payee_details
 	z-index:100;
 }
 
-.pp_invoice_email_templates textarea {height: 150px;  }
-
-
+.pp_invoice_email_templates textarea {height: 280px;  }
 
 .pp_invoice_explanation{background: #F1F1F1;}
-
 
 .pp_invoice_tabbed_content li { list-style:none; float:left; margin-bottom:0;}
 .pp_invoice_tabbed_content ul a {
@@ -231,9 +228,6 @@ border-width:1px;
 border-color:#DFDFDF;
 padding-bottom: 15px;
 }
-
-.pp_invoice_tabbed_content ul a:hover {
-  }
 
 .pp_invoice_tabbed_content ul a.selected {
 	background-color:#FFFFFF;
