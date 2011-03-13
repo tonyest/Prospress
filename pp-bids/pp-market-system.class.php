@@ -166,7 +166,7 @@ abstract class PP_Market_System {
 	// The function that brings all the bid form elements together.
 	public function bid_form( $post_id = NULL ) {
 		global $post, $user_ID;
-
+				
 		$post_id = ( $post_id === NULL ) ? $post->ID : $post_id;
 		$the_post = ( empty ( $post ) ) ? get_post( $post_id) : $post;
 
@@ -194,6 +194,8 @@ abstract class PP_Market_System {
 	}
 	
 	public function the_bid_form( $post_id = NULL ) {
+		if ( post_password_required( $post_id) )
+			return null;
 		echo '<div class="bid-container">';
 		do_action( 'pre_bid_form', $post_id );
 		do_action( 'pre-' . $this->name . '-bid_form', $post_id );

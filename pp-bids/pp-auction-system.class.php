@@ -67,13 +67,10 @@ class PP_Auction_Bid_System extends PP_Market_System {
 			$bid_bid_form_fields .= '<div id="winning_bidder">' . __("Winning Bidder: ", 'prospress' ) . $this->the_winning_bidder( $post_id, $dont_echo ) . '</div>';
 			$bid_bid_form_fields .= '<div id="current_bid_val">' . __("Current Bid: ", 'prospress' ) . $this->the_winning_bid_value( $post_id, $dont_echo ) . '</div>';
 		}
-
-		if (  $post->post_author == $user_ID || $post->post_status == 'private' )
-			$disabled = "disabled";
-
-		$bid_bid_form_fields .= '<label for="bid_value" class="bid-label" '.$disabled.'>' . __( 'Enter max bid: ', 'prospress' ) . $currency_symbol . ' </label>';
-		$bid_bid_form_fields .= '<input type="text" aria-required="true" tabindex="1" size="8" value="" id="bid_value" name="bid_value" '.$disabled.' />';
-		$bid_bid_form_fields .= '<input name="bid_submit" type="submit" id="bid_submit" value="' . $this->labels[ 'bid_button' ] .'" '.$disabled.' />';
+		
+		$bid_bid_form_fields .= '<label for="bid_value" class="bid-label">' . __( 'Enter max bid: ', 'prospress' ) . $currency_symbol . ' </label>';
+		$bid_bid_form_fields .= '<input type="text" aria-required="true" tabindex="1" size="8" value="" id="bid_value" name="bid_value" />';
+		$bid_bid_form_fields .= '<input name="bid_submit" type="submit" id="bid_submit" value="' . $this->labels[ 'bid_button' ] .'" />';
 
 		return $bid_bid_form_fields;
 	}
