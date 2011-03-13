@@ -112,7 +112,6 @@ class PP_Sort_Query {
 		add_filter( 'posts_orderby', array(__CLASS__, 'posts_orderby' ) );
 	}
 	
-
 	static function posts_orderby( $sql ) {
 		remove_filter( current_filter(), array( __CLASS__, __FUNCTION__ ) );
 

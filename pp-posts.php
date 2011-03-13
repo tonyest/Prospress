@@ -194,7 +194,7 @@ function pp_clean_old_caps() {
 function pp_post_save_postdata( $post_id, $post ) {
 
 	if( wp_is_post_revision( $post_id ) )
-		$post_id = wp_is_post_revision( $post_id );
+		return; //update loop runs on latest revision and original post. Meta needs only be updated once, guaranteed on genesis post.
 
 	if ( empty( $_POST ) || 'page' == @$_POST['post_type'] ) {
 		return $post_id;
@@ -283,10 +283,10 @@ function pp_end_post( $post_id ) {
 		$post_id = wp_is_post_revision( $post_id );
 
 	$post = get_post( $post_id );
-	$post_status = apply_filters( 'post_end_status', 'completed' );
+	$post_status = apply_filters( 'post_end_status', __( 'completed', 'prospress' ) );
 	//wp_transition_post_status( $post_status, $post->post_status, $post ); // must be dont manually
 	$wpdb->update( $wpdb->posts, array( 'post_status' => $post_status ), array( 'ID' => $post_id ) );
-	
+
 	do_action( 'post_completed', $post_id );
 }
 add_action( 'schedule_end_post', 'pp_end_post', 10, 1 );
