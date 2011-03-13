@@ -1,8 +1,8 @@
 === Prospress ===
 Contributors: Prospress, thenbrent, tonyest
 Tags: marketplace, prospress, auction, ecommerce, e-commerce
-Requires at least: 3.0
-Tested up to: 3.0.1
+Requires at least: 3.0.5
+Tested up to: 3.1
 Stable tag: 1.1
 
 Add an auction marketplace to your WordPress site.
@@ -120,18 +120,17 @@ Nope. There are a few surprises but you'll have to download & explore Prospress 
 == Changelog ==
 
 = 1.1 =
-* Bids are now a custom post type
 * PayPal Buy Now option available
 * Live countdown in final 24 hours.
 * Hooks added in preparation for Cubepoints and other plugins to interface.
 * Changed the way prospress redirects the index template to fix problems with pre-existing pages with the same slug.
 * Simplified Prospress capabilities.
 * Taxonomies are now enabled by default.
-* Added Hello-world auction item on first install.
+* Added Hello World Auction on first install.
 * Fixed bug in sorting taxonomies.
 * Fixed link-tree for Taxonomies so as not to display empty Taxonomies.
-* Changed Prospress settings to use Wordpress standard register_settings() format. New method is simpler and more extensible.
-* Other minor bug fixes.
+* Changed Prospress settings to use WordPress standard register_settings() format. New method is simpler and more extensible.
+* Assorted bug fixes.
 
 = 1.0.2 =
 * Fixed bug causing Price & Winning Bidder columns to display on the admin page for all custom post type
@@ -164,6 +163,9 @@ Nope. There are a few surprises but you'll have to download & explore Prospress 
 
 
 == Upgrade Notice ==
+
+= 1.1 =
+New version with buy now, bug fixes and 
 
 = 1.0.2 =
 Upgrade to fix bug displaying Price & Winning Bidder columns on the admin page for all custom post types.
