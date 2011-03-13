@@ -1,3 +1,7 @@
+<?php
+	$paypal_invoice_id = str_split( get_bloginfo( 'blogname' ), 25 );
+ 	$paypal_invoice_id = urlencode( $paypal_invoice_id[0] ) . '-invoice-' . $invoice->id;
+?>
 <form <?php if( isset( $id ) ) echo 'id="' . $id . '"'; ?> action="https://www<?php if( $invoice->payee_class->pp_invoice_settings[ 'paypal_sandbox' ] == 'true' ) echo ".sandbox"; ?>.paypal.com/cgi-bin/webscr" method="post" class="clearfix <?php if( isset( $class ) ) echo $class ?>">
 	<input type="hidden" name="cmd" value="_xclick">
  	<input type="hidden" name="business" value="<?php echo $invoice->payee_class->pp_invoice_settings[ 'paypal_address' ]; ?>">
@@ -16,7 +20,7 @@
 	<input type="hidden" name="rm" value="2">
 	<input type="hidden" name="amount"  value="<?php echo round( $invoice->amount, 2 ); ?>">
 	<input type="hidden" name="cbt"  value="<?php printf ( __( 'Return to %s', 'prospress' ), get_bloginfo( 'name' ) ); ?>&nbsp;&raquo">
-	<input type="hidden" name="invoice" id="id"  value="<?php echo $invoice->id; ?>">
+	<input type="hidden" name="invoice" id="id"  value="<?php echo $paypal_invoice_id ?>">
 	<?php if( isset( $form_extras ) ) echo $form_extras; ?>
 	<div id="major-publishing-actions" class="major-publishing-actions">
 		<img alt="" style="display: none;" id="ajax-loading" src="<?php echo admin_url('images/wpspin_light.gif');?>">

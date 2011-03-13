@@ -32,7 +32,7 @@ function the_users_feedback_items( $user_id = '' ){
  * @param $user_id optionally specify if a feedback item has been place from a specified user. 
  */
 function the_most_recent_feedback( $user_id = '' ){
-	global $authordata;
+	global $authordata, $post;
 
 	if( $user_id == '' )
 		$user_id = $authordata->ID;
@@ -47,7 +47,10 @@ function the_most_recent_feedback( $user_id = '' ){
 		printf( __( 'From: %s', 'prospress' ), get_userdata( $latest->post_author )->display_name );
 		echo '</div>';
 	} else {
-		echo '<p>' . sprintf( __( '%s has not yet received any feedback.', 'prospress' ), get_userdata( $user_id )->display_name ) . '</p>';
+		if ( $post->post_author == $authordata->ID ) //publisher viewing own post
+			echo '<p>' . __( 'You have not yet received any feedback.', 'prospress' ) . '</p>';
+		else		
+			echo '<p>' . sprintf( __( '%s has not yet received any feedback.', 'prospress' ), get_userdata( $user_id )->display_name ) . '</p>';
 	}
 }
 

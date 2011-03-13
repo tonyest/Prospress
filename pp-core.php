@@ -25,6 +25,7 @@ include_once( PP_CORE_DIR . '/core-widgets.php' );
  */
 function pp_core_install(){
 	add_option( 'currency_type', 'USD' ); //default to the mighty green back
+	//add default pp_core_options here
 }
 add_action( 'pp_activation', 'pp_core_install' );
 
@@ -57,6 +58,7 @@ add_action( 'admin_menu', 'pp_add_core_admin_menu' );
  */
 function register_pp_core_options(){
 	register_setting( 'pp_core_options', 'currency_type' );
+	//register custom settings for use with pp_core_options here
 }
 add_action( 'admin_init', 'register_pp_core_options' );
 
@@ -82,23 +84,23 @@ function pp_settings_page(){
 			screen_icon( 'prospress' ); 
 			?>
 			<h2><?php _e( 'Prospress Settings', 'prospress' ) ?></h2>
-
+			
 			<h3><?php _e( 'Currency', 'prospress' )?></h3>
 			<p><?php _e( 'Please choose a default currency for all transactions in your marketplace.', 'prospress' ); ?></p>
-			<label for='currency_type'>
-				<?php _e('Currency:' , 'prospress' );?>
-				<select id='currency_type' name='currency_type'>
-				<?php foreach( $currencies as $code => $details ) { ?>
-					<option value='<?php echo $code; ?>' <?php selected( $currency, $code ); ?> >
-						<?php echo $details[ 'currency_name' ]; ?> (<?php echo $code . ', ' . $details[ 'symbol' ]; ?>)
-					</option>
-				<?php } ?>
-				</select>
-			</label>
+			<label for='currency_type'><?php _e('Currency:' , 'prospress' );?></label>
+			<select id='currency_type' name='currency_type'>
+			<?php foreach( $currencies as $code => $details ) { ?>
+				<option value='<?php echo $code; ?>' <?php selected( $currency, $code ); ?> >
+					<?php echo $details[ 'currency_name' ]; ?> (<?php echo $code . ', ' . $details[ 'symbol' ]; ?>)
+				</option>
+			<?php } ?>
+			</select>
+			
 		<?php do_action( 'pp_core_settings_page' ); ?>
-		<p class="submit">
+		
+		<div class="submit">
 			<input type="submit" value="Save" class="button-primary" name="submit">
-		</p>
+		</div>
 		</form>
 	</div>
 	<?php

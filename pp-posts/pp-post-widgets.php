@@ -84,8 +84,9 @@ class PP_Taxonomies_List_Widget extends WP_Widget {
 	}
 
 	function widget( $args, $instance ) {
-
-		if( !is_single() )
+		
+		$terms = pp_get_the_term_list( );
+		if( !is_single() || empty($terms) )
 			return;
 
 		extract( $args );
@@ -97,7 +98,7 @@ class PP_Taxonomies_List_Widget extends WP_Widget {
 		echo $after_title;
 
 		echo '<div class="textwidget">';
-		pp_get_the_term_list();
+		echo $terms;
 		echo '</div>';
 
 		echo $after_widget;
