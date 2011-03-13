@@ -25,7 +25,7 @@ function pp_invoice_metabox_invoice_details( $invoice ) { ?>
 		</tr>
 		<tr class="invoice_main">
 			<th><?php _e("Post Content", 'prospress') ?></th>
-			<td><?php echo $invoice->post_content; ?></td>	
+			<td><?php echo $invoice->email_payment_request; ?></td>	
 		</tr>
 		<tr class="invoice_main">
 			<th><?php _e("Total Amount", 'prospress') ?></th>
