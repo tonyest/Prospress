@@ -14,7 +14,6 @@ Template Name: Prospress Index
 <?php get_header(); ?>
 	<div id="container" class="prospress-container">
 		<div id="content" class="prospress-content">
-
 		<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 
 			<h1 class="prospress-title entry-title"><?php the_title(); ?></h1>
@@ -24,7 +23,7 @@ Template Name: Prospress Index
 
 		<?php endwhile; ?>
 
-		<?php $pp_loop = new WP_Query( array( 'post_type' => $market->name(), 'post_status' => 'publish' ) ); ?>
+		<?php $pp_loop = new WP_Query( array( 'post_type' => $market->name(), 'post_status' => 'publish') ); ?>
 
 		<?php if ( $pp_loop->have_posts() ) : while ( $pp_loop->have_posts() ) : $pp_loop->the_post(); ?>
 
