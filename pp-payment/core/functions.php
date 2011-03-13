@@ -293,17 +293,15 @@ function pp_update_invoice_meta( $invoice_id, $meta_key, $meta_value = '' ) {
 
 	if ( pp_invoice_meta( $invoice_id, $meta_key ) ) { //meta key exists
 
-		if( empty( $meta_value ) ) {
-			// Delete meta_key if no value is set
+		if( empty( $meta_value ) ) // Delete meta_key if no value is set
 			$wpdb->query( "DELETE FROM ".$wpdb->paymentsmeta." WHERE  invoice_id = '$invoice_id' AND meta_key = '$meta_key'" ); 
-		} else {
+		else
 			$wpdb->update( $wpdb->paymentsmeta, array( 'meta_value' => $meta_value ), array( 'invoice_id' => $invoice_id, 'meta_key' => $meta_key ) );
-		}
+		
 	} else { // meta key does not exist in paymentsmeta
 		$wpdb->insert( $wpdb->paymentsmeta, array( 'invoice_id' => $invoice_id, 'meta_key' => $meta_key, 'meta_value' => $meta_value ) );
 	}
 }
-
 
 function pp_delete_invoice_meta( $invoice_id, $meta_key = '' ) {
 	global $wpdb;
