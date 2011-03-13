@@ -1,11 +1,15 @@
 <?php global $currency; ?>
 <div class="wrap">
+	
+	<?php screen_icon( ); ?>
 	<h2><?php _e("Payment Settings", 'prospress') ?></h2>
+	
 	<?php if( isset( $updated_message ) ) { ?>
 		<div id='message' class='updated fade'>
 			<p><?php echo $updated_message; ?></p>
 		</div>
 	<?php } ?>
+	
 	<form method='POST' action=''>
 		<style>
 			<?php if( $user_settings[ 'paypal_allow' ] != 'true' ) : ?>
