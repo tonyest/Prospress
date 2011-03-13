@@ -82,7 +82,7 @@
 				<th><h3><?php _e( 'PayPal Settings', 'prospress' ); ?></h3></th>
 			</tr>
 			<tr class="paypal_settings">
-				<th><?php _e( 'PayPal Username:', 'prospress' ); ?></th>
+				<th><?php _e( 'PayPal Username (E-mail):', 'prospress' ); ?></th>
 				<td>
 					<?php echo pp_invoice_draw_inputfield('pp_invoice_user_settings[paypal_address]',$user_settings['paypal_address']); ?>
 					<?php if( current_user_can( 'manage_options' ) ) {?>
