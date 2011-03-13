@@ -99,10 +99,10 @@ class PP_Sort_Query {
 	}
 
 	static function add_filters( $obj ) {
-		global $market_systems;
+		global $market_systems, $wp_query;
 
 		// Don't touch the main query or queries for non-Prospress posts
-		if ( $GLOBALS[ 'wp_query' ] == $obj || !array_key_exists( $obj->query_vars['post_type'], $market_systems ) )
+		if ( $wp_query === $obj || !array_key_exists( $obj->query_vars['post_type'], $market_systems ) )
 			return;
 		// Fix YARPP incompatibility
 		else if( is_array( $obj->query_vars[ 'post_type' ] ) )

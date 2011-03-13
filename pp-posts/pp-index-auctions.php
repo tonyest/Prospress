@@ -27,7 +27,7 @@ Template Name: Prospress Index
 		<?php global $wp_query,$paged; ?>
 		<?php $_query = $wp_query; //store current query ?>
 		<?php wp_reset_query(); //reset query to allow pagination and avoid possible conflicts ?>
-		<?php $pp_loop = new WP_Query( array( 'post_type' => $market->name(), 'post_status' => 'publish', 'paged' => $paged) ); ?>
+		<?php $pp_loop = new WP_Query( array( 'post_type' => $market->name(), 'post_status' => 'publish', 'paged' => $paged, 'pp_is_index' => true ) ); ?>
 		<?php $wp_query = $pp_loop; //substitute prospress query ?>
 		<?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
 
