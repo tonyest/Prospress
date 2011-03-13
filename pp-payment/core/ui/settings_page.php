@@ -44,24 +44,6 @@
 				<th><?php _e("<b>Invoice Notification</b> Content", 'prospress') ?></th>
 				<td><?php echo pp_invoice_draw_textarea('pp_invoice_email_send_invoice_content', get_option('pp_invoice_email_send_invoice_content')); ?></td>
 			</tr>
-			<tr><td colspan="2">&nbsp;</td></tr>
-			<tr>
-				<th><?php _e("<b>Reminder</b> Item", 'prospress') ?></th>
-				<td><?php echo pp_invoice_draw_inputfield('pp_invoice_email_send_reminder_subject', get_option('pp_invoice_email_send_reminder_subject')); ?></td>
-			</tr>
-				<tr>
-				<th><?php _e("<b>Reminder</b> Content", 'prospress') ?></th>
-				<td><?php echo pp_invoice_draw_textarea('pp_invoice_email_send_reminder_content', get_option('pp_invoice_email_send_reminder_content')); ?></td>
-			</tr>
-			<tr><td colspan="2">&nbsp;</td></tr>
-			<tr>
-				<th><?php _e("<b>Receipt</b> Item", 'prospress') ?></th>
-				<td><?php echo pp_invoice_draw_inputfield('pp_invoice_email_send_receipt_subject', get_option('pp_invoice_email_send_receipt_subject')); ?></td>
-			</tr>
-				<tr>
-				<th><?php _e("<b>Receipt</b> Content", 'prospress') ?></th>
-				<td><?php echo pp_invoice_draw_textarea('pp_invoice_email_send_receipt_content', get_option('pp_invoice_email_send_receipt_content')); ?></td>
-			</tr>
 		</table>
 	<div class="clear"></div>
 	<p class="submit">
