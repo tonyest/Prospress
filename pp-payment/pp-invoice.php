@@ -403,6 +403,15 @@ class PP_Invoice {
 		// Save settings
 		if( isset( $_POST[ 'pp_invoice_user_settings' ] ) ) {
 			$user_settings = wp_parse_args( $_POST[ 'pp_invoice_user_settings' ], $user_settings );
+			
+			if ( isset($user_settings[paypal_address]) && empty($user_settings[paypal_address]) ) {
+				$error_message = __( 'Paypal username is a required field.');
+				unset($user_settings[paypal_address]);
+				$user_settings[paypal_allow] = false;
+			} else {
+				$updated_message = __( 'Settings Updated.' );
+			}
+			
 			if( $user_settings[ 'cc_allow'] == 'true' ){
 				$user_settings[ 'default_payment_venue' ] = 'cc';
 			} elseif( $user_settings[ 'draft_allow'] == 'true' ){
@@ -412,17 +421,11 @@ class PP_Invoice {
 			} else {
 				$user_settings[ 'default_payment_venue' ] = '';
 			}
-			if ( isset($user_settings[paypal_address]) && empty($user_settings[paypal_address]) ) {
-				$error_message = __( 'Paypal username is a required field.');
-				unset($user_settings[paypal_address]);
-			} else {
-				$updated_message = __( 'Settings Updated.' );
-			}
+
 			update_user_meta( $user_ID, 'pp_invoice_settings', $user_settings );
-		} else {
-			if( !$user_settings ) {
+
+		} elseif( !$user_settings ) {
 				$user_settings = pp_invoice_load_default_user_settings( $user_ID );
-			}
 		}
 
 		include( PP_INVOICE_UI_PATH . 'user_settings_page.php' );
