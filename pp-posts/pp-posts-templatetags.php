@@ -89,7 +89,10 @@ function get_post_end_time( $post_id = '', $format = 'timestamp', $timezone = 'g
  * @return object Returns the row in the bids 
  */
 function the_post_end_time( $post_id = '', $units = 3, $separator = ' ' ) {
-
+	if ( !class_exists( 'PP_Market_System' ) ) {
+		error_log('PP_Market_System class undefined.');
+		return;
+	}
 	$post_end = get_post_end_time( $post_id, 'timestamp', 'gmt' );
 
 	if( $post_end == false )

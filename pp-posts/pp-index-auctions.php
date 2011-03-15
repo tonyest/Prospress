@@ -11,8 +11,10 @@ Template Name: Prospress Index
  * @subpackage Theme
  * @since 0.1
  */
+if( !class_exists( 'PP_Market_System') )
+	die("This index-auctions template has been improperly called before Prospress was able to activate.");
 ?>
-<?php get_header(); ?>
+<?php get_header();?>
 	<div id="container" class="prospress-container">
 		<div id="content" class="prospress-content">
 		<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
