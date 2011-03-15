@@ -99,17 +99,19 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		$bid = compact( "post_id", "bidder_id", "bid_value", "bid_date", "bid_date_gmt" );
 
 		do_action( 'get_auction_bid', $bid );
+		$bid[ 'message_id' ] = $this->message_id;
 
 		if( $this->is_post_valid( $post_id ) && $this->is_bid_valid( $post_id, $bid_value, $bidder_id ) ) {
+			$bid[ 'message_id' ] = $this->message_id;
 			$bid[ 'bid_status' ] = $this->bid_status; //set in is_valid call
 			$bid = apply_filters( 'bid_pre_db_insert', $bid );
+			$this->message_id = $bid[ 'message_id' ]; //reflect any filter changes in current object
+			$this->bid_status = $bid[ 'bid_status' ]; //reflect any filter changes in current object
 			$this->update_bid( $bid );
-			$bid[ 'bid_status' ] = $this->bid_status; //set in is_valid calls
+
 		} else {
 			$bid[ 'bid_status' ] = $this->bid_status;
 		}
-
-		$bid[ 'message_id' ] = $this->message_id;
 
 		return $bid;
 	}
@@ -309,6 +311,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 			$new_winning_bid_id = $this->get_winning_bid( $bid[ 'post_id' ] )->ID;
 			update_post_meta( $new_winning_bid_id, 'winning_bid_value', $new_winning_bid_value );
 			do_action( 'new_winning_bid', $bid );
+			error_log('new_winning_bid');
 		} else { // current winning bid is still winning bid, just need to update winning bid value
 			update_post_meta( $current_winning_bid_id, 'winning_bid_value', $new_winning_bid_value );
 			do_action( 'updating_winning_bid', $bid );

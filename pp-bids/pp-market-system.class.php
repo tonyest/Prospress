@@ -474,7 +474,6 @@ abstract class PP_Market_System {
 			$message_id = $_GET[ 'bid_msg' ];
 
 		$message = '';
-
 		if ( isset( $message_id ) ){
 			switch( $message_id ) {
 				case 0: //first bid
