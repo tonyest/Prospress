@@ -475,7 +475,7 @@ abstract class PP_Market_System {
 
 		$message = '';
 		if ( isset( $message_id ) ){
-			switch( $message_id ) {
+			switch( (int)$message_id ) {
 				case 0: //first bid
 				case 1:
 					$message = __( 'Congratulations, you are the winning bidder.', 'prospress' );
