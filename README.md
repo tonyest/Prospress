@@ -1,4 +1,4 @@
-# _Make a Marketplace, with WordPress_
+# _Make an Auction Marketplace, with WordPress_
 
 Prospress is a new WordPress plugin that can give your WordPress site its very own auction marketplace.
 
