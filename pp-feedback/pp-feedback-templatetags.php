@@ -26,13 +26,14 @@ function the_users_feedback_items( $user_id = '' ){
 	echo '</ul>';
 }
 
+
 /**
  * Prints the latest feedback comment a user received.
  * 
  * @param $user_id optionally specify if a feedback item has been place from a specified user. 
  */
 function the_most_recent_feedback( $user_id = '' ){
-	global $authordata, $post,$current_user;
+	global $authordata, $post, $current_user;
 
 	if( $user_id == '' )
 		$user_id = $authordata->ID;
@@ -53,6 +54,7 @@ function the_most_recent_feedback( $user_id = '' ){
 			echo '<p>' . sprintf( __( '%s has not yet received any feedback.', 'prospress' ), get_userdata( $user_id )->display_name ) . '</p>';
 	}
 }
+
 
 /**
  * Creates an anchor tag linking to the user's feedback table, optionally prints.

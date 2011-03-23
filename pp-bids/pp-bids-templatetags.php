@@ -21,10 +21,7 @@ function the_bid_form( $post_id = '' ) {
  **/
 function the_winning_bid_value( $post_id = '' ) {
 	global $post, $market_systems;
-	if ( !class_exists( 'PP_Market_System' ) ) {
-		error_log('PP_Market_System class undefined.');
-		return;
-	}
+
 	if ( empty( $post_id ) )
 		$post_id = $post->ID;
 

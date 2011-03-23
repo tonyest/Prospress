@@ -404,10 +404,10 @@ class PP_Invoice {
 		if( isset( $_POST[ 'pp_invoice_user_settings' ] ) ) {
 			$user_settings = wp_parse_args( $_POST[ 'pp_invoice_user_settings' ], $user_settings );
 
-			if ( 'true' == $user_settings[paypal_allow] && !is_email( $user_settings[paypal_address] ) ) {			
-				$error_message = __( 'Paypal username is a required field. Enter a valid Paypal registered e-mail to complete setup.', 'prospress');
-				unset($user_settings[paypal_address]);
-				$user_settings[paypal_allow] = 'false';
+			if ( 'true' == $user_settings[ 'paypal_allow' ] && !is_email( $user_settings[ 'paypal_address' ] ) ) {			
+				$error_message = __( 'Paypal username is a required field. Please enter a registered PayPal e-mail address to complete setup.', 'prospress');
+				unset($user_settings[ 'paypal_address' ]);
+				$user_settings[ 'paypal_allow' ] = 'false';
 			} else {
 				$updated_message = __( 'Settings Updated.', 'prospress' );
 			}
