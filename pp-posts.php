@@ -151,6 +151,8 @@ function pp_add_default_caps(){
 		$role->add_cap( 'read_private_prospress_posts' );
 	}
 }
+
+
 /** 
  * Clean up capabilities now deprecated in 1.1
  * 

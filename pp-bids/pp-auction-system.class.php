@@ -59,7 +59,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		$bid_bid_form_fields = '';
 		$dont_echo = false;
 		$disabled = "";
-		
+
 		if( $bid_count == 0 ){
 			$bid_bid_form_fields .= '<div id="current_bid_val">' . __("Starting Price: ", 'prospress' ) . pp_money_format( get_post_meta( $post_id, 'start_price', true ) ) . '</div>';
 		} else {

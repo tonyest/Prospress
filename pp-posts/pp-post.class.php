@@ -24,10 +24,6 @@ class PP_Post {
 
 		add_action( 'init', array( &$this, 'register_post_type' ) );
 
-		add_action( 'init', array( &$this, 'register_sidebars' ) );
-
-		add_action( 'template_redirect', array( &$this, 'template_redirects' ) );
-
 		add_action( 'pp_deactivation', array( &$this, 'deactivate' ) );
 
 		add_action( 'pp_uninstall', array( &$this, 'uninstall' ) );
@@ -37,6 +33,12 @@ class PP_Post {
 		add_filter( 'manage_' . $this->name . '_posts_columns', array( &$this, 'post_columns' ) );
 
 		add_action( 'manage_posts_custom_column', array( &$this, 'post_custom_columns' ), 10, 2 );
+
+		// If current theme doesn't support this market type, use default templates & add default widgets
+		if( !current_theme_supports( $this->name ) ){
+			add_action( 'template_redirect', array( &$this, 'template_redirects' ) );
+			add_action( 'init', array( &$this, 'register_sidebars' ) );
+		}
 	}
 
 
@@ -61,7 +63,6 @@ class PP_Post {
 			//make sure page is published as it get's trashed on plugin deactivation
 			$index_page[ 'post_status' ] = 'publish';
 			wp_update_post( $index_page );
-
 		} else {
 			// search for index page in prospress 1.0 method
 			$index_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '". $this->name. "'" );
@@ -90,11 +91,13 @@ class PP_Post {
 			}
 		}
 
-		$this->add_sidebars_widgets();
-		$this->add_single_sidebars_widgets();
+		if( !current_theme_supports( $this->name ) ){
+			$this->add_sidebars_widgets();
+			$this->add_single_sidebars_widgets();
+		}
 
-		// Update rewrites to account for this post type
 		$this->register_post_type();
+		// Update rewrites to account for this post type
 		flush_rewrite_rules();
 	}
 
@@ -119,6 +122,7 @@ class PP_Post {
 		global $post, $market_systems, $wp_query, $paged;
 
 		$market = $market_systems[ $this->name ];
+		
 		if ( is_pp_multitax() ) {
 			
 			$taxonomy = esc_attr( get_query_var( 'taxonomy' ) );
@@ -240,29 +244,25 @@ class PP_Post {
 	 */
 	public function register_sidebars(){
 
-		if ( !file_exists( TEMPLATEPATH . '/index-' . $this->name . '.php' ) ){
-			register_sidebar( array (
-				'name' => sprintf( __( '%s Index Sidebar', 'prospress' ), $this->labels[ 'name' ] ),
-				'id' => $this->name . '-index-sidebar',
-				'description' => sprintf( __( "The sidebar for the index of your %s.", 'prospress' ), $this->labels[ 'name' ] ),
-				'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
-				'after_widget' => "</li>",
-				'before_title' => '<h3 class="widget-title">',
-				'after_title' => '</h3>'
-			) );
-		}
+		register_sidebar( array (
+			'name' => sprintf( __( '%s Index Sidebar', 'prospress' ), $this->labels[ 'name' ] ),
+			'id' => $this->name . '-index-sidebar',
+			'description' => sprintf( __( "The sidebar for the index of your %s.", 'prospress' ), $this->labels[ 'name' ] ),
+			'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
+			'after_widget' => "</li>",
+			'before_title' => '<h3 class="widget-title">',
+			'after_title' => '</h3>'
+		) );
 
-		if ( !file_exists( TEMPLATEPATH . '/single-' . $this->name . '.php' ) ){
-			register_sidebar( array (
-				'name' => sprintf( __( 'Single %s Sidebar', 'prospress' ), $this->labels[ 'singular_name' ] ),
-				'id' => $this->name . '-single-sidebar',
-				'description' => sprintf( __( "The sidebar for a single %s.", 'prospress' ), $this->labels[ 'singular_name' ] ),
-				'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
-				'after_widget' => "</li>",
-				'before_title' => '<h3 class="widget-title">',
-				'after_title' => '</h3>'
-			) );
-		}			
+		register_sidebar( array (
+			'name' => sprintf( __( 'Single %s Sidebar', 'prospress' ), $this->labels[ 'singular_name' ] ),
+			'id' => $this->name . '-single-sidebar',
+			'description' => sprintf( __( "The sidebar for a single %s.", 'prospress' ), $this->labels[ 'singular_name' ] ),
+			'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
+			'after_widget' => "</li>",
+			'before_title' => '<h3 class="widget-title">',
+			'after_title' => '</h3>'
+		) );
 	}
 
 
