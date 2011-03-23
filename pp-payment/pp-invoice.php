@@ -376,14 +376,17 @@ class PP_Invoice {
 		}
 
 		if( isset( $_REQUEST[ 'action' ] ) && $_REQUEST[ 'action' ] == 'post_save_and_preview' ) {
+
 			$invoice_id = $_REQUEST[ 'invoice_id' ];
  			if( $_REQUEST[ 'pp_invoice_action' ] == 'Email to Client' ) {
 				pp_update_invoice_meta( $invoice_id, 'email_payment_request', $_REQUEST[ 'pp_invoice_payment_request' ][ 'email_message_content' ]);
+				pp_update_invoice_meta( $invoice_id, 'draft_payment_request', null );	//delete saved draft if exists
 				$message = pp_send_single_invoice( $invoice_id);
 			}			
 
-			if( $_REQUEST[ 'pp_invoice_action' ] == 'Save for Later' ) {			
-				// Do nothing, invoice was already saved by visiting the save_and_preview page
+			if( $_REQUEST[ 'pp_invoice_action' ] == 'Save for Later' ) {
+				//store current draft in meta
+				pp_update_invoice_meta( $invoice_id, 'draft_payment_request', $_REQUEST[ 'pp_invoice_payment_request' ][ 'email_message_content' ]);
 			}
 		}
 
@@ -400,6 +403,15 @@ class PP_Invoice {
 		// Save settings
 		if( isset( $_POST[ 'pp_invoice_user_settings' ] ) ) {
 			$user_settings = wp_parse_args( $_POST[ 'pp_invoice_user_settings' ], $user_settings );
+
+			if ( 'true' == $user_settings[paypal_allow] && !is_email( $user_settings[paypal_address] ) ) {			
+				$error_message = __( 'Paypal username is a required field. Enter a valid Paypal registered e-mail to complete setup.', 'prospress');
+				unset($user_settings[paypal_address]);
+				$user_settings[paypal_allow] = 'false';
+			} else {
+				$updated_message = __( 'Settings Updated.', 'prospress' );
+			}
+			
 			if( $user_settings[ 'cc_allow'] == 'true' ){
 				$user_settings[ 'default_payment_venue' ] = 'cc';
 			} elseif( $user_settings[ 'draft_allow'] == 'true' ){
@@ -411,10 +423,9 @@ class PP_Invoice {
 			}
 
 			update_user_meta( $user_ID, 'pp_invoice_settings', $user_settings );
-		} else {
-			if( !$user_settings ) {
+
+		} elseif( !$user_settings ) {
 				$user_settings = pp_invoice_load_default_user_settings( $user_ID );
-			}
 		}
 
 		include( PP_INVOICE_UI_PATH . 'user_settings_page.php' );

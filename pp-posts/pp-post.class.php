@@ -91,6 +91,7 @@ class PP_Post {
 		}
 
 		$this->add_sidebars_widgets();
+		$this->add_single_sidebars_widgets();
 
 		// Update rewrites to account for this post type
 		$this->register_post_type();
@@ -119,7 +120,7 @@ class PP_Post {
 
 		$market = $market_systems[ $this->name ];
 		if ( is_pp_multitax() ) {
-
+			
 			$taxonomy = esc_attr( get_query_var( 'taxonomy' ) );
 			$tax = get_taxonomy( $taxonomy );
 			$term = esc_attr( get_query_var( 'term' ) );
@@ -127,7 +128,9 @@ class PP_Post {
 			$term_description = term_description( $term->term_id, $taxonomy );
 			$term = $term->name;
 			$tax_title = sprintf( '%s &raquo; %s', $tax->labels->name, $term );
-
+			
+			wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
+			
 			do_action( 'pp_taxonomy_template_redirect' );
 
 				if( file_exists( TEMPLATEPATH . '/taxonomy-' . $this->name . '.php' ) )
@@ -259,7 +262,7 @@ class PP_Post {
 				'before_title' => '<h3 class="widget-title">',
 				'after_title' => '</h3>'
 			) );
-		}
+		}			
 	}
 
 
@@ -498,6 +501,61 @@ class PP_Post {
 		wp_set_sidebars_widgets( $sidebars_widgets );
 	}
 
+	/** 
+	 * Add the Taxonomy Widgets to single-auctions.This function is called on 
+	 * Prospress' activation to help get everything working with one-click.
+	 * 
+	 * @package Prospress
+	 * @subpackage Posts
+	 * @since 1.1
+	 **/
+	public function add_single_sidebars_widgets(){
+
+		$sidebars_widgets = wp_get_sidebars_widgets();
+
+		if( !isset( $sidebars_widgets[ $this->name . '-single-sidebar' ] ) )
+			$sidebars_widgets[ $this->name . '-single-sidebar' ] = array();
+
+		$widget = get_option( 'widget_pp_countdown' );
+		if( empty( $widget ) ){ //countdown widget not added to any sidebars yet
+
+			$widget['_multiwidget'] = 1;
+
+			$widget[] = array( 'title' => __( 'Ending:', 'prospress' ) );
+
+			$widget_id = end( array_keys( $widget ) );
+
+			update_option( 'widget_pp_countdown', $widget );
+			array_push( $sidebars_widgets[ $this->name . '-single-sidebar' ], 'pp_countdown-' . $widget_id );
+		}
+		
+		$widget = get_option( 'widget_pp_single_tax' );
+		if( empty( $widget ) ){ //taxonomy lists widget not added to any sidebars yet
+
+			$widget['_multiwidget'] = 1;
+
+			$widget[] = array( 'title' => __( 'Details:', 'prospress' ) );
+
+			$widget_id = end( array_keys( $widget ) );
+
+			update_option( 'widget_pp_single_tax', $widget );
+			array_push( $sidebars_widgets[ $this->name . '-single-sidebar' ], 'pp_single_tax-' . $widget_id );
+		}
+
+		$widget = get_option( 'widget_pp-feedback-latest' );
+		if( empty( $widget ) ){ //latest feedback widget not added to any sidebars yet
+
+			$widget['_multiwidget'] = 1;
+
+			$widget[] = array( 'title' => __( 'Latest Feedback:', 'prospress' ) );
+
+			$widget_id = end( array_keys( $widget ) );
+
+			update_option( 'widget_pp-feedback-latest', $widget );
+			array_push( $sidebars_widgets[ $this->name . '-single-sidebar' ], 'pp-feedback-latest-' . $widget_id );
+		}
+		wp_set_sidebars_widgets( $sidebars_widgets );
+	}
 
 	/** 
 	 * Clean up anything added on activation, including the index page. 

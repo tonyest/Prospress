@@ -83,15 +83,12 @@ function pp_invoice_metabox_publish( $ic ) { ?>
 <?php }
 
 function pp_invoice_metabox_invoice_details( $ic ) { ?>
+
 	<table class="form-table" id="pp_invoice_main_info">
 
 	<tr class="invoice_main">
-		<th><?php _e("Post Title", 'prospress') ?></th>
+		<th><?php _e("Title", 'prospress') ?></th>
 		<td><?php echo $ic->post_title; ?></td>
-	</tr>
-	<tr class="invoice_main">
-		<th><?php _e("Post Content", 'prospress') ?></th>
-		<td><?php echo $ic->post_content; ?></td>	
 	</tr>
 	<tr class="invoice_main">
 		<th><?php _e("Total Amount", 'prospress') ?></th>

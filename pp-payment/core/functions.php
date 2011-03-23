@@ -284,18 +284,24 @@ function pp_invoice_update_status( $invoice_id, $status ) {
 	$wpdb->query( "UPDATE ".$wpdb->payments." SET status = '$status' WHERE  id = '$invoice_id'" );
 }
 
-
+/*
+ * Updates payments meta for specified key & invoice id OR if key does not exist inserts new entry
+ *
+*/
 function pp_update_invoice_meta( $invoice_id, $meta_key, $meta_value = '' ) {
 	global $wpdb;
 
-	if( empty( $meta_value ) ) {
-		// Delete meta_key if no value is set
-		$wpdb->query( "DELETE FROM ".$wpdb->paymentsmeta." WHERE  invoice_id = '$invoice_id' AND meta_key = '$meta_key'" ); 
-	} else {
-		$wpdb->update( $wpdb->paymentsmeta, array( 'meta_key' => $meta_value ), array( 'invoice_id' => $invoice_id, 'meta_key' => $meta_key ) );
+	if ( pp_invoice_meta( $invoice_id, $meta_key ) ) { //meta key exists
+
+		if( empty( $meta_value ) ) // Delete meta_key if no value is set
+			$wpdb->query( "DELETE FROM ".$wpdb->paymentsmeta." WHERE  invoice_id = '$invoice_id' AND meta_key = '$meta_key'" ); 
+		else
+			$wpdb->update( $wpdb->paymentsmeta, array( 'meta_value' => $meta_value ), array( 'invoice_id' => $invoice_id, 'meta_key' => $meta_key ) );
+		
+	} else { // meta key does not exist in paymentsmeta
+		$wpdb->insert( $wpdb->paymentsmeta, array( 'invoice_id' => $invoice_id, 'meta_key' => $meta_key, 'meta_value' => $meta_value ) );
 	}
 }
-
 
 function pp_delete_invoice_meta( $invoice_id, $meta_key = '' ) {
 	global $wpdb;
@@ -1016,7 +1022,6 @@ function pp_invoice_add_email_template_content() {
 
 %subject%
 
-%description%
 
 You may pay, view and print the invoice online by visiting the following link: 
 %link%
@@ -1032,8 +1037,6 @@ Best regards,
 %business_name% has sent you a reminder for the invoice in the amount of %amount% for:
 
 %subject%
-
-%description%
 
 You may pay, view and print the invoice online by visiting the following link: 
 %link%.

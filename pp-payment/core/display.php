@@ -194,9 +194,10 @@ function pp_invoice_show_email($invoice_id, $force_original = false) {
 
 	$pp_invoice_email_variables = pp_invoice_email_variables($invoice_id);
 
-	if(!$force_original && pp_invoice_meta($invoice_id, 'pp_invoice_email_message_content') != "") return str_replace("<br />", "\n",pp_invoice_meta($invoice_id, 'pp_invoice_email_message_content') );
+	if( !$force_original && pp_invoice_meta($invoice_id, 'draft_payment_request') != "" )
+		return str_replace("<br />", "\n",pp_invoice_meta($invoice_id, 'draft_payment_request') );
+	else
 		return str_replace("<br />", "\n",preg_replace_callback('/(%([a-z_]+)%)/',  'pp_invoice_email_apply_variables', get_option('pp_invoice_email_send_invoice_content')));
-
 }
 
 function pp_invoice_show_reminder_email($invoice_id) {
