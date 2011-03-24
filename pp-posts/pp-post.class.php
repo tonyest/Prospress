@@ -244,7 +244,8 @@ class PP_Post {
 	 */
 	public function register_sidebars(){
 
-		register_sidebar( array (
+		if ( !file_exists( TEMPLATEPATH . '/index-' . $this->name . '.php' ) ){
+			register_sidebar( array (
 			'name' => sprintf( __( '%s Index Sidebar', 'prospress' ), $this->labels[ 'name' ] ),
 			'id' => $this->name . '-index-sidebar',
 			'description' => sprintf( __( "The sidebar for the index of your %s.", 'prospress' ), $this->labels[ 'name' ] ),
@@ -263,6 +264,7 @@ class PP_Post {
 			'before_title' => '<h3 class="widget-title">',
 			'after_title' => '</h3>'
 		) );
+		}
 	}
 
 
