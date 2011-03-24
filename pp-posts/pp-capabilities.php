@@ -136,6 +136,7 @@ function pp_capabilities_roleset( $pp_capabilities ) {
 		} else {
 			$wp_roles->remove_cap( $role , 'read_private_prospress_posts' );
 		}
+
 		//Upload Media
 		if ( isset( $pp_capabilities['media'][$role] ) ) {
 			$wp_roles->add_cap( $role , 'upload_files' );

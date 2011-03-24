@@ -198,9 +198,9 @@ function pp_post_save_postdata( $post_id, $post ) {
 	if( wp_is_post_revision( $post_id ) )
 		return; //update loop runs on latest revision and original post. Meta needs only be updated once, guaranteed on genesis post.
 
-	if ( empty( $_POST ) || 'page' == @$_POST['post_type'] ) {
+	if( empty( $_POST ) || 'page' == @$_POST['post_type'] ) {
 		return $post_id;
-	} else if ( !current_user_can( 'edit_post', $post_id )) {
+	} else if ( !current_user_can( 'edit_prospress_post' ) ) {
 		return $post_id;
 	} else if ( !isset( $_POST['yye'] ) ){ // Make sure an end date is submitted (not submitted with quick edits etc.)
 		return $post_id;
