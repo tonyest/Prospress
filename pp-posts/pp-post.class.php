@@ -119,7 +119,7 @@ class PP_Post {
 	 * @since 0.1
 	 */
 	public function template_redirects() {
-		global $post, $market_systems, $wp_query, $paged;
+		global $post, $market_systems;
 
 		$market = $market_systems[ $this->name ];
 		
