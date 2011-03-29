@@ -120,6 +120,9 @@ Nope. There are a few surprises but you'll have to download & explore Prospress 
 
 == Changelog ==
 
+= 1.1.1 =
+* Fixed end time bug in WordPress 3.1
+
 = 1.1 =
 * PayPal Buy Now option available
 * Live countdown in final 24 hours.
@@ -164,6 +167,9 @@ Nope. There are a few surprises but you'll have to download & explore Prospress 
 
 
 == Upgrade Notice ==
+
+= 1.1.1 =
+Important upgrade to fix end time bug in WordPress 3.1
 
 = 1.1 =
 New version with buy now, bug fixes and 
