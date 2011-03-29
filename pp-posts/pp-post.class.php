@@ -137,30 +137,26 @@ class PP_Post {
 			
 			do_action( 'pp_taxonomy_template_redirect' );
 
-				if( file_exists( TEMPLATEPATH . '/taxonomy-' . $this->name . '.php' ) )
-					include( TEMPLATEPATH . '/taxonomy-' . $this->name . '.php' );
-				elseif( file_exists( STYLESHEETPATH . '/taxonomy-' . $this->name . '.php' ) ) // Child Theme supports Prospress
+				if( file_exists( STYLESHEETPATH . '/taxonomy-' . $this->name . '.php' ) ) // Theme supports Prospress
 					include( STYLESHEETPATH . '/taxonomy-' . $this->name . '.php' );
-				elseif( file_exists( TEMPLATEPATH . '/pp-taxonomy-' . $this->name . '.php' ) )
-					include( TEMPLATEPATH . '/pp-taxonomy-' . $this->name . '.php' );
+				elseif( file_exists( STYLESHEETPATH . '/pp-taxonomy-' . $this->name . '.php' ) )
+					include( STYLESHEETPATH . '/pp-taxonomy-' . $this->name . '.php' );
 				elseif( file_exists( PP_POSTS_DIR . '/pp-taxonomy-' . $this->name . '.php' ) )
 					include( PP_POSTS_DIR . '/pp-taxonomy-' . $this->name . '.php' );
 				else
 					return;
 				exit;
 
-			} elseif( $this->is_index() && TEMPLATEPATH . '/page.php' == get_page_template() ){ // No template set for default Prospress index
+			} elseif( $this->is_index() && STYLESHEETPATH . '/page.php' == get_page_template() ){ // No template set for default Prospress index
 
 				wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 
 				do_action( 'pp_index_template_redirect' );
 
-				if( file_exists( TEMPLATEPATH . '/index-' . $this->name . '.php' ) ) // Theme supports Prospress
-					include( TEMPLATEPATH . '/index-' . $this->name . '.php' );
-				elseif( file_exists( STYLESHEETPATH . '/index-' . $this->name . '.php' ) ) // Child Theme supports Prospress
+				if( file_exists( STYLESHEETPATH . '/index-' . $this->name . '.php' ) ) // Theme supports Prospress
 					include( STYLESHEETPATH . '/index-' . $this->name . '.php' );
-				elseif( file_exists( TEMPLATEPATH . '/pp-index-' . $this->name . '.php' ) )	// Copied the default template to the theme directory before customising?
-					include( TEMPLATEPATH . '/pp-index-' . $this->name . '.php' );
+				elseif( file_exists( STYLESHEETPATH . '/pp-index-' . $this->name . '.php' ) )	// Copied the default template to the theme directory before customising?
+					include( STYLESHEETPATH . '/pp-index-' . $this->name . '.php' );
 				elseif( file_exists( PP_POSTS_DIR . '/pp-index-' . $this->name . '.php' ) )// Default template
 					include( PP_POSTS_DIR . '/pp-index-' . $this->name . '.php' );
 				else
@@ -173,12 +169,10 @@ class PP_Post {
 
 				do_action( 'pp_single_template_redirect' );
 
-				if( file_exists( TEMPLATEPATH . '/single-' . $this->name . '.php' ) )
-					include( TEMPLATEPATH . '/single-' . $this->name . '.php' );
-				elseif( file_exists( STYLESHEETPATH . '/single-' . $this->name . '.php' ) ) // Child Theme supports Prospress
+				if( file_exists( STYLESHEETPATH . '/single-' . $this->name . '.php' ) ) // Child Theme supports Prospress
 					include( STYLESHEETPATH . '/single-' . $this->name . '.php' );
-				elseif( file_exists( TEMPLATEPATH . '/pp-single-' . $this->name . '.php' ) )
-					include( TEMPLATEPATH . '/pp-single-' . $this->name . '.php' );
+				elseif( file_exists( STYLESHEETPATH . '/pp-single-' . $this->name . '.php' ) )
+					include( STYLESHEETPATH . '/pp-single-' . $this->name . '.php' );
 				elseif( file_exists( PP_POSTS_DIR . '/pp-single-' . $this->name . '.php' ) )
 					include( PP_POSTS_DIR . '/pp-single-' . $this->name . '.php' );
 				else
@@ -244,7 +238,7 @@ class PP_Post {
 	 */
 	public function register_sidebars(){
 
-		if ( !file_exists( TEMPLATEPATH . '/index-' . $this->name . '.php' ) ){
+		if ( !file_exists( STYLESHEETPATH . '/index-' . $this->name . '.php' ) ){
 			register_sidebar( array (
 			'name' => sprintf( __( '%s Index Sidebar', 'prospress' ), $this->labels[ 'name' ] ),
 			'id' => $this->name . '-index-sidebar',
