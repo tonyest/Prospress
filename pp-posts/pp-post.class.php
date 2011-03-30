@@ -147,7 +147,7 @@ class PP_Post {
 					return;
 				exit;
 
-			} elseif( $this->is_index() && STYLESHEETPATH . '/page.php' == get_page_template() ){ // No template set for default Prospress index
+			} elseif( $this->is_index() ){ // No template set for default Prospress index
 
 				wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 
