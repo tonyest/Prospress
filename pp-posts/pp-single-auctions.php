@@ -44,38 +44,16 @@ Template Name: Single Prospress Post
 	<div id="sidebar" class="prospress-sidebar">
 		<ul class="xoxo">
 			<!-- Add default countdown widget if no widgets currently registered in single auctions sidebar -->
-			<?php if (!function_exists('dynamic_sidebar') || !dynamic_sidebar( $market->name(). '-single-sidebar' ) ) : // begin primary sidebar widgets
-			
-			 	$args = array(
-				'before_widget' => '<li id="pp_countdown_widget-default" class="widget-container widget-pp-countdown">',
-				'after_widget'  => '</li>',
-				'before_title'  => '<h3 class="widget-title">',
-				'after_title'   => '</h3>' );
-				$instance = array(
-					'title' => 'Ending:'
-				);
-			the_widget('PP_Countdown_Widget', $instance ,$args);
-			
-			 	$args = array(
-				'before_widget' => '<li id="pp_feedback_score_widget-default" class="widget-container pp-feedback-score">',
-				'after_widget'  => '</li>',
-				'before_title'  => '<h3 class="widget-title">',
-				'after_title'   => '</h3>' );
-				$instance = array(
-					'title' => 'Feedback Score'
-				);
-			the_widget('PP_Feedback_Score_Widget', $instance ,$args);
-			
-			 	$args = array(
-				'before_widget' => '<li id="pp_admin_widget-default" class="widget-container widget-pp-admin">',
-				'after_widget'  => '</li>',
-				'before_title'  => '<h3 class="widget-title">',
-				'after_title'   => '</h3>' );
-				$instance = array(
-					'title' => 'Your Prospress'
-				);
-			the_widget('PP_Admin_Widget', $instance ,$args);
-			
+			<?php if (!function_exists('dynamic_sidebar') || !dynamic_sidebar( $market->name(). '-single-sidebar' ) ) : // begin primary sidebar widgets			
+				the_widget('PP_Countdown_Widget', array(
+					'title' => __('Ending:','prospress')
+				) );
+				the_widget('PP_Feedback_Score_Widget', array(
+					'title' => __('Feedback Score','prospress')
+				) );
+				the_widget('PP_Admin_Widget', array(
+					'title' => __('Your Prospress','prospress')
+				) );
 			endif;?>
 		</ul>
 	</div>
