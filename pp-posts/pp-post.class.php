@@ -134,8 +134,9 @@ class PP_Post {
 	}
 	
 	/** 
-	 * Checks standard parent and child-theme locations for template as well as prospress plugin directory
-	 * Can search optional template names along with Wordpress & Prospress defaults
+	 * Checks standard parent and child-theme locations for template as well as prospress plugin directory.
+	 * Can search optional template names along with Wordpress & Prospress defaults.
+	 * When theme does not support prospress but has prospress templates this will find them and use them.
 	 * 
 	 * @package Prospress
 	 * @subpackage Posts

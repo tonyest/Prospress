@@ -9,20 +9,21 @@ Template Name: Auctions Taxonomy Index
  * @subpackage Theme
  * @since 0.1
  */
-$taxonomy = esc_attr( get_query_var( 'taxonomy' ) );
-$tax = get_taxonomy( $taxonomy );
-$term = esc_attr( get_query_var( 'term' ) );
-$term = get_term_by( 'slug', $term, $taxonomy );
-$term_description = term_description( $term->term_id, $taxonomy );
-$term = $term->name;
-$tax_title = sprintf( '%s &raquo; %s', $tax->labels->name, $term );
+
+	//get taxonomy breadcrumb tags
+	$taxonomy = esc_attr( get_query_var( 'taxonomy' ) );
+	$tax_obj = get_taxonomy( $taxonomy );
+	$term_obj = get_term_by( 'slug', esc_attr( get_query_var( 'term' ) ), $taxonomy );
+	$term_description = term_description( $term_obj->term_id, $taxonomy );
+
 ?>
+
 <?php get_header(); ?>
 	<div id="container" class="prospress-container">
 		<div id="content" class="prospress-content">
 
 			<h1 class="prospress-title entry-title">
-				<?php echo $tax_title; ?>
+				<?php printf( '%s &raquo; %s', $tax_obj->labels->name, $term_obj->name ); ?>
 			</h1>
 			<?php 
 			if ( !empty( $term_description ) )
