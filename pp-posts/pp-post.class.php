@@ -34,12 +34,8 @@ class PP_Post {
 
 		add_action( 'manage_posts_custom_column', array( &$this, 'post_custom_columns' ), 10, 2 );
 
-		// If current theme doesn't support this market type, use default templates & add default widgets
-		if( !current_theme_supports( $this->name ) ) {
-
-			add_action( 'template_redirect', array( &$this, 'template_redirects' ) );
-			add_action( 'init', array( &$this, 'register_sidebars' ) );
-		}
+		add_action( 'template_redirect', array( &$this, 'template_redirects' ) );
+		add_action( 'init', array( &$this, 'register_sidebars' ) );
 	}
 
 
@@ -118,18 +114,20 @@ class PP_Post {
 	 * @since 0.1
 	 */
 	public function template_redirects() {
-		
-		if ( is_pp_multitax() ) {
+		// If current theme doesn't support this market type, use default templates & add default widgets
+		if( !current_theme_supports( $this->name ) ) {
+			if ( is_pp_multitax() ) {
 
-			$this->pp_get_query_template("taxonomy");
+				$this->pp_get_query_template("taxonomy");
 
-		} elseif( $this->is_index() ) { // No template set for default Prospress index
+			} elseif( $this->is_index() ) { // No template set for default Prospress index
 
-			$this->pp_get_query_template("index");
+				$this->pp_get_query_template("index");
 			
-		} elseif ( $this->is_single() && is_single() && !isset( $_GET[ 's' ] ) ) {
+			} elseif ( $this->is_single() && is_single() && !isset( $_GET[ 's' ] ) ) {
 
-			$this->pp_get_query_template("single");
+				$this->pp_get_query_template("single");
+			}
 		}
 	}
 	
@@ -219,26 +217,28 @@ class PP_Post {
 	 * @since 0.1
 	 */
 	public function register_sidebars(){
+		// If current theme doesn't support this market type, use default templates & add default widgets
+		if( !current_theme_supports( $this->name ) ) {
+			register_sidebar( array (
+				'name' => sprintf( __( '%s Index Sidebar', 'prospress' ), $this->labels[ 'name' ] ),
+				'id' => $this->name . '-index-sidebar',
+				'description' => sprintf( __( "The sidebar for the index of your %s.", 'prospress' ), $this->labels[ 'name' ] ),
+				'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
+				'after_widget' => "</li>",
+				'before_title' => '<h3 class="widget-title">',
+				'after_title' => '</h3>'
+			) );
 
 			register_sidebar( array (
-			'name' => sprintf( __( '%s Index Sidebar', 'prospress' ), $this->labels[ 'name' ] ),
-			'id' => $this->name . '-index-sidebar',
-			'description' => sprintf( __( "The sidebar for the index of your %s.", 'prospress' ), $this->labels[ 'name' ] ),
-			'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
-			'after_widget' => "</li>",
-			'before_title' => '<h3 class="widget-title">',
-			'after_title' => '</h3>'
-		) );
-
-		register_sidebar( array (
-			'name' => sprintf( __( 'Single %s Sidebar', 'prospress' ), $this->labels[ 'singular_name' ] ),
-			'id' => $this->name . '-single-sidebar',
-			'description' => sprintf( __( "The sidebar for a single %s.", 'prospress' ), $this->labels[ 'singular_name' ] ),
-			'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
-			'after_widget' => "</li>",
-			'before_title' => '<h3 class="widget-title">',
-			'after_title' => '</h3>'
-		) );
+				'name' => sprintf( __( 'Single %s Sidebar', 'prospress' ), $this->labels[ 'singular_name' ] ),
+				'id' => $this->name . '-single-sidebar',
+				'description' => sprintf( __( "The sidebar for a single %s.", 'prospress' ), $this->labels[ 'singular_name' ] ),
+				'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
+				'after_widget' => "</li>",
+				'before_title' => '<h3 class="widget-title">',
+				'after_title' => '</h3>'
+			) );
+		}
 	}
 
 
