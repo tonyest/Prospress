@@ -9,6 +9,13 @@ Template Name: Auctions Taxonomy Index
  * @subpackage Theme
  * @since 0.1
  */
+$taxonomy = esc_attr( get_query_var( 'taxonomy' ) );
+$tax = get_taxonomy( $taxonomy );
+$term = esc_attr( get_query_var( 'term' ) );
+$term = get_term_by( 'slug', $term, $taxonomy );
+$term_description = term_description( $term->term_id, $taxonomy );
+$term = $term->name;
+$tax_title = sprintf( '%s &raquo; %s', $tax->labels->name, $term );
 ?>
 <?php get_header(); ?>
 	<div id="container" class="prospress-container">
