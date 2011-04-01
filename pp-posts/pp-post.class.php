@@ -35,7 +35,8 @@ class PP_Post {
 		add_action( 'manage_posts_custom_column', array( &$this, 'post_custom_columns' ), 10, 2 );
 
 		// If current theme doesn't support this market type, use default templates & add default widgets
-		if( !current_theme_supports( $this->name ) ){
+		if( !current_theme_supports( $this->name ) ) {
+
 			add_action( 'template_redirect', array( &$this, 'template_redirects' ) );
 			add_action( 'init', array( &$this, 'register_sidebars' ) );
 		}
@@ -68,10 +69,10 @@ class PP_Post {
 			$index_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_name = '". $this->name. "'" );
 
 			if ( isset( $meta_index_id ) && !isset($index_id) ) // meta exists without page
-				delete_post_meta( $meta_index_id, 'pp_'. $this->name. '_index' ); // clean up old meta
+				delete_post_meta( $meta_index_id, '_pp_'. $this->name. '_index' ); // clean up old meta
 
 			if ( !isset($index_page) && !empty($index_id) ) { // page exists without prospress _index meta
-				add_post_meta( $index_id, 'pp_'. $this->name. '_index', 'is_index' , true ); // add meta to existing page
+				add_post_meta( $index_id, '_pp_'. $this->name. '_index', 'is_index' , true ); // add meta to existing page
 				$index_page = get_post( $index_id, ARRAY_A ); // get $post array from wp_posts
 				$index_page[ 'post_status' ] = 'publish';
 				wp_update_post( $index_page );	
@@ -87,14 +88,12 @@ class PP_Post {
 				$index_page['post_content']	=	__( 'This is the index for your '. $this->labels[ 'name' ]. '. Your '. $this->labels[ 'name' ]. ' will automatically show up here, but you change this text to provide an introduction or instructions.', 'prospress' );
 
 				$index_id = wp_insert_post( $index_page );
-				add_post_meta( $index_id, 'pp_'. $this->name. '_index', 'is_index', true );	
+				add_post_meta( $index_id, '_pp_'. $this->name. '_index', 'is_index', true );	
 			}
 		}
-
-		if( !current_theme_supports( $this->name ) ){
-			$this->add_sidebars_widgets();
+			//add sample prospress sidebar widgets
+			$this->add_index_sidebars_widgets();
 			$this->add_single_sidebars_widgets();
-		}
 
 		$this->register_post_type();
 		// Update rewrites to account for this post type
@@ -119,68 +118,50 @@ class PP_Post {
 	 * @since 0.1
 	 */
 	public function template_redirects() {
-		global $post, $market_systems;
-
-		$market = $market_systems[ $this->name ];
 		
 		if ( is_pp_multitax() ) {
+
+			$this->pp_get_query_template("taxonomy");
+
+		} elseif( $this->is_index() ) { // No template set for default Prospress index
+
+			$this->pp_get_query_template("index");
 			
-			$taxonomy = esc_attr( get_query_var( 'taxonomy' ) );
-			$tax = get_taxonomy( $taxonomy );
-			$term = esc_attr( get_query_var( 'term' ) );
-			$term = get_term_by( 'slug', $term, $taxonomy );
-			$term_description = term_description( $term->term_id, $taxonomy );
-			$term = $term->name;
-			$tax_title = sprintf( '%s &raquo; %s', $tax->labels->name, $term );
-			
-			wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
-			
-			do_action( 'pp_taxonomy_template_redirect' );
+		} elseif ( $this->is_single() && is_single() && !isset( $_GET[ 's' ] ) ) {
 
-				if( file_exists( STYLESHEETPATH . '/taxonomy-' . $this->name . '.php' ) ) // Theme supports Prospress
-					include( STYLESHEETPATH . '/taxonomy-' . $this->name . '.php' );
-				elseif( file_exists( STYLESHEETPATH . '/pp-taxonomy-' . $this->name . '.php' ) )
-					include( STYLESHEETPATH . '/pp-taxonomy-' . $this->name . '.php' );
-				elseif( file_exists( PP_POSTS_DIR . '/pp-taxonomy-' . $this->name . '.php' ) )
-					include( PP_POSTS_DIR . '/pp-taxonomy-' . $this->name . '.php' );
-				else
-					return;
-				exit;
-
-			} elseif( $this->is_index() ){ // No template set for default Prospress index
-
-				wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
-
-				do_action( 'pp_index_template_redirect' );
-
-				if( file_exists( STYLESHEETPATH . '/index-' . $this->name . '.php' ) ) // Theme supports Prospress
-					include( STYLESHEETPATH . '/index-' . $this->name . '.php' );
-				elseif( file_exists( STYLESHEETPATH . '/pp-index-' . $this->name . '.php' ) )	// Copied the default template to the theme directory before customising?
-					include( STYLESHEETPATH . '/pp-index-' . $this->name . '.php' );
-				elseif( file_exists( PP_POSTS_DIR . '/pp-index-' . $this->name . '.php' ) )// Default template
-					include( PP_POSTS_DIR . '/pp-index-' . $this->name . '.php' );
-				else
-					return;
-				exit;
-
-			} elseif ( $this->is_single() && is_single() && !isset( $_GET[ 's' ] ) ) {
-
-				wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
-
-				do_action( 'pp_single_template_redirect' );
-
-				if( file_exists( STYLESHEETPATH . '/single-' . $this->name . '.php' ) ) // Child Theme supports Prospress
-					include( STYLESHEETPATH . '/single-' . $this->name . '.php' );
-				elseif( file_exists( STYLESHEETPATH . '/pp-single-' . $this->name . '.php' ) )
-					include( STYLESHEETPATH . '/pp-single-' . $this->name . '.php' );
-				elseif( file_exists( PP_POSTS_DIR . '/pp-single-' . $this->name . '.php' ) )
-					include( PP_POSTS_DIR . '/pp-single-' . $this->name . '.php' );
-				else
-					return;
-				exit;
+			$this->pp_get_query_template("single");
 		}
 	}
+	
+	/** 
+	 * Checks standard parent and child-theme locations for template as well as prospress plugin directory
+	 * Can search optional template names along with Wordpress & Prospress defaults
+	 * 
+	 * @package Prospress
+	 * @subpackage Posts
+	 * @since 1.1.1
+	 * @uses get_query_template
+	 */
+	public function pp_get_query_template( $template, $options = array() ) {
 
+		global $market_systems;
+		$market = $market_systems[ $this->name ];
+
+		array_splice( $options, count($options), 0, array(
+			$template."-auctions.php",
+			"pp-".$template."-auctions.php",
+			"template-".$template.".php" ) );
+			
+		$path = get_query_template( "", $options )? 
+				get_query_template( "", $options ): 
+				PP_POSTS_DIR . "/pp-" . $template . "-" . $this->name . ".php";
+
+		do_action( 'pp_index_template_redirect' );
+
+		wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
+
+		include_once($path); exit; //exit to avoid wordpress loading natural single template page.
+	}
 
 	/** 
 	 * A custom post type especially for this market system's posts.
@@ -238,7 +219,7 @@ class PP_Post {
 	 */
 	public function register_sidebars(){
 
-		if ( !file_exists( STYLESHEETPATH . '/index-' . $this->name . '.php' ) ){
+		// if ( get_query_template( "" , array("index-auctions.php","pp-index-auctions.php") ) ) {
 			register_sidebar( array (
 			'name' => sprintf( __( '%s Index Sidebar', 'prospress' ), $this->labels[ 'name' ] ),
 			'id' => $this->name . '-index-sidebar',
@@ -258,7 +239,7 @@ class PP_Post {
 			'before_title' => '<h3 class="widget-title">',
 			'after_title' => '</h3>'
 		) );
-		}
+		// }
 	}
 
 
@@ -309,7 +290,7 @@ class PP_Post {
 	public function is_index() {
 		global $post;
 
-		$pp_index_page = get_post_meta( $post->ID, 'pp_'. $this->name. '_index', true );
+		$pp_index_page = get_post_meta( $post->ID, '_pp_'. $this->name. '_index', true );
 
 		return ( $pp_index_page == "is_index" ) ? true : false;
 	}
@@ -333,7 +314,7 @@ class PP_Post {
 	public function get_index_id() {
 		global $wpdb;
 
-		$meta_key = 'pp_'. $this->name. '_index';
+		$meta_key = '_pp_'. $this->name. '_index';
 		$meta_value = "is_index";
 		$index_id = $wpdb->get_var($wpdb->prepare("SELECT post_id FROM $wpdb->postmeta WHERE meta_key = %s AND meta_value = %s", $meta_key, $meta_value ));
 
@@ -453,7 +434,7 @@ class PP_Post {
 	 * @subpackage Posts
 	 * @since 0.1
 	 **/
-	public function add_sidebars_widgets(){
+	public function add_index_sidebars_widgets(){
 
 		$sidebars_widgets = wp_get_sidebars_widgets();
 
