@@ -219,7 +219,6 @@ class PP_Post {
 	 */
 	public function register_sidebars(){
 
-		// if ( get_query_template( "" , array("index-auctions.php","pp-index-auctions.php") ) ) {
 			register_sidebar( array (
 			'name' => sprintf( __( '%s Index Sidebar', 'prospress' ), $this->labels[ 'name' ] ),
 			'id' => $this->name . '-index-sidebar',
@@ -239,7 +238,6 @@ class PP_Post {
 			'before_title' => '<h3 class="widget-title">',
 			'after_title' => '</h3>'
 		) );
-		// }
 	}
 
 
