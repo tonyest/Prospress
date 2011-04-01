@@ -19,7 +19,7 @@ class PP_QMT_Core {
 		//Hook function to change title of multitax search pages to include the taxonomies being queried
 		add_filter( 'wp_title', array( __CLASS__, 'set_title' ), 10, 3);
 
-		remove_action('template_redirect', 'redirect_canonical');	
+		remove_action('template_redirect', 'redirect_canonical');
 	}
 
 	function get_actual_query() {
