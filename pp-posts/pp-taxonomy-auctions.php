@@ -37,7 +37,7 @@ Template Name: Auctions Taxonomy Index
 							<?php the_title(); ?>
 						</a>
 					</h2>
-					<?php if ( has_post_thumbnail() ) : ?>
+					<?php if ( function_exists( 'has_post_thumbnail' ) && has_post_thumbnail() ) : ?>
 						<div class="pp-thumbnail">
 						   <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" >
 						   <?php the_post_thumbnail( array( 100,100 )); ?>

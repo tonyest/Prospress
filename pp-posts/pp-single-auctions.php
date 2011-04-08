@@ -17,7 +17,7 @@ Template Name: Single Prospress Post
 		<div id="content">
 		<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 			<h2 class="pp-title entry-title"><?php the_title();?></h2>
-			<?php if ( has_post_thumbnail() ) : ?>
+			<?php if ( function_exists( 'has_post_thumbnail' ) && has_post_thumbnail() ) : ?>
 				<div class="pp-thumbnail">
 				   <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" >
 				   <?php the_post_thumbnail(); ?>
