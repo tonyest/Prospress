@@ -35,9 +35,16 @@ class PP_Post {
 		add_action( 'manage_posts_custom_column', array( &$this, 'post_custom_columns' ), 10, 2 );
 
 		add_action( 'template_redirect', array( &$this, 'template_redirects' ) );
+		
 		add_action( 'init', array( &$this, 'register_sidebars' ) );
+		
+		// add_filter( 'wp_page_menu', array( &this, 'nav_auctions_pagex' ) );
 	}
-
+	public function nav_auctions_pagex($menu , $args) {
+		// $args['show_home'] = true;
+		error_log(print_r($menu,true));
+		return $args;
+	}
 
 	/**
 	 * Sets up Prospress environment with any settings required and/or shared across the 
@@ -101,7 +108,7 @@ class PP_Post {
 	 * be presented displayed. They also need to be sorted and filtered to make them easier to
 	 * browse and compare. 
 	 *
-	 * This function firstly checks the theme's directory for suitable templates, which must be 
+	 * This function firstly checks the theme's directory for suitable templates, which should be 
 	 * named single-auctions.php, for displaying a single auction, index-auctions.php, for displaying
 	 * the list of all auctions, and taxonomy-auctions.php, for displaying a list of items that
 	 * are of a certain taxonomy. 
@@ -120,8 +127,7 @@ class PP_Post {
 
 				$this->pp_get_query_template("taxonomy");
 
-			} elseif( $this->is_index() ) { // No template set for default Prospress index
-
+			} elseif( $this->is_index() && TEMPLATEPATH . '/page.php' == get_page_template() || STYLESHEETPATH . '/page.php' == get_page_template() ) {
 				$this->pp_get_query_template("index");
 			
 			} elseif ( $this->is_single() && is_single() && !isset( $_GET[ 's' ] ) ) {
@@ -147,12 +153,12 @@ class PP_Post {
 		$market = $market_systems[ $this->name ];
 
 		array_splice( $options, count($options), 0, array(
-			$template."-auctions.php",
-			"pp-".$template."-auctions.php",
+			$template."-".$this->name.".php",
+			"pp-".$template."-".$this->name.".php",
 			"template-".$template.".php" ) );
 			
-		$path = get_query_template( "", $options )? 
-				get_query_template( "", $options ): 
+		$path = get_query_template( "", $options )?
+				 get_query_template( "", $options ):
 				PP_POSTS_DIR . "/pp-" . $template . "-" . $this->name . ".php";
 
 		do_action( 'pp_index_template_redirect' );
@@ -218,7 +224,7 @@ class PP_Post {
 	 */
 	public function register_sidebars(){
 		// If current theme doesn't support this market type, use default templates & add default widgets
-		if( !current_theme_supports( $this->name ) ) {
+		if( !current_theme_supports( $this->name."-sidebar") ) {
 			register_sidebar( array (
 				'name' => sprintf( __( '%s Index Sidebar', 'prospress' ), $this->labels[ 'name' ] ),
 				'id' => $this->name . '-index-sidebar',
