@@ -67,6 +67,8 @@ With Prospress, registered users can post their own auctions, place bids on the 
 
 When a user returns from PayPal after having paid the buy now price for an auction, a user account is automatically created using their PayPal email address. This makes it super easy for anyone to buy and auction, while still creating an invoice and other records associated with the successful completion of an auction.
 
+This is for PayPal's Buy Now only, a user must be registered and logged in to place a bid. 
+
 = Do I need a special theme to use Prospress? =
 
 Prospress attempts to work with your existing theme. It's a primary goal of the Prospress project to support existing WordPress themes rather than require a new one.
@@ -172,7 +174,7 @@ Nope. There are a few surprises but you'll have to download & explore Prospress 
 Important upgrade to fix end time bug in WordPress 3.1
 
 = 1.1 =
-New version with buy now, bug fixes and 
+New version with buy now, bug fixes and more. 
 
 = 1.0.2 =
 Upgrade to fix bug displaying Price & Winning Bidder columns on the admin page for all custom post types.
