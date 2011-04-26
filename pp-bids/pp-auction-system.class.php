@@ -416,7 +416,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 
 		if( isset( $_POST[ 'buy_now_price' ] ) && ( $this->get_bid_count( $post_id ) == 0 || $old_buy_price >= $this->get_winning_bid_value( $post_id ) ) ) {
 			$buy_now_price = floatval( preg_replace( "/$ts|\s/", "", $_POST[ 'buy_now_price' ] ) );
-			$buy_now_price = ( $buy_now_price < $_POST[ 'start_price' ] ) ? $_POST[ 'start_price' ] : $buy_now_price;
+			$buy_now_price = ( $buy_now_price < $_POST[ 'start_price' ] && $_POST[ 'buy_now_price' ] != '0.00' ) ? $_POST[ 'start_price' ] : $buy_now_price;
 			update_post_meta( $post_id, 'buy_now_price', $buy_now_price );
 		}
 	}
@@ -560,7 +560,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 			$message = __( 'Purchase successful, congratulations. The seller has been notified & will be in contact shortly.', 'prospress' );
 		return $message;
 	}
-	
+
 	/**
 	 * When a user returns to the site from PayPal, if the IPN has fired already, 
 	 * the post will have completed and they will receive the message "Auction Finished". 
