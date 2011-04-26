@@ -35,7 +35,7 @@ if( !class_exists( 'PP_Market_System' ) )
 
 			<div class="pp-post">
 				<div class="pp-post-content"> 
-					<div class='pp-end' id="<?php echo get_post_end_time( $post_id, 'timestamp', 'gmt' ); ?>">
+					<div class='pp-end' id="<?php echo get_post_end_time( get_the_ID(), 'timestamp', 'gmt' ); ?>">
 						<?php the_post_end_time( '', 2, '<br/>' ); ?>
 					</div>
 					<div class="pp-price"><?php the_winning_bid_value(); ?></div>
