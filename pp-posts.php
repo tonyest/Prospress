@@ -237,7 +237,7 @@ function pp_post_save_postdata( $post_id, $post ) {
 	}
 
 	// Ending published post
-	if( $post_end_date_gmt <= $now_gmt && $_POST['save'] != 'Save Draft' ){
+	if( $post_end_date_gmt <= $now_gmt && ( isset( $_POST['save'] ) && $_POST['save'] != 'Save Draft' ) ){
 		wp_unschedule_event( strtotime( $original_post_end_date_gmt ), 'schedule_end_post', array( 'ID' => $post_id ) );
 		pp_end_post( $post_id );
 	} else {
