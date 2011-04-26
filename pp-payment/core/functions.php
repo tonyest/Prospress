@@ -62,7 +62,10 @@ function pp_invoice_user_settings( $what, $user_id = false ) {
 	// Load user settings
 	$user_settings = get_user_meta( $user_id, 'pp_invoice_settings' );
 	$default_settings[0] = pp_invoice_load_default_user_settings( $user_id );
-	$user_settings = wp_parse_args( $user_settings[0], $default_settings[0] );
+	if( empty( $user_settings ) )
+		$user_settings = $default_settings[0];
+	else
+		$user_settings = wp_parse_args( $user_settings[0], $default_settings[0] );
 
 	// Remove slashes from entire array
 	$user_settings = stripslashes_deep( $user_settings );
@@ -73,7 +76,7 @@ function pp_invoice_user_settings( $what, $user_id = false ) {
 		if( $setting_value == 'true' )
 			$user_settings[ $setting_name ] = true;
 
-		if( $setting_value == 'false' )
+		if( $setting_value == 'false' || empty( $setting_value ) )
 			$user_settings[ $setting_name ] = false;
 	}
 
@@ -916,6 +919,8 @@ function pp_invoice_md5_to_invoice( $md5) {
 
 
 function pp_invoice_user_accepted_payments( $payee_id ) {
+
+	$return = array();
 
 	if( pp_invoice_user_settings( 'paypal_allow', $payee_id ) == 'true' )
 		$return[ 'paypal_allow' ] = true;
