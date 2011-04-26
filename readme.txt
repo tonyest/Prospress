@@ -122,6 +122,9 @@ Nope. There are a few surprises but you'll have to download & explore Prospress 
 
 == Changelog ==
 
+= 1.1.2 =
+* Fixed bug affecting themes which do not support post thumbnails
+
 = 1.1.1 =
 * Fixed end time bug in WordPress 3.1
 
@@ -169,6 +172,9 @@ Nope. There are a few surprises but you'll have to download & explore Prospress 
 
 
 == Upgrade Notice ==
+
+= 1.1.2 =
+Important upgrade to fix bug with themes which do not support thumbnails.
 
 = 1.1.1 =
 Important upgrade to fix end time bug in WordPress 3.1
