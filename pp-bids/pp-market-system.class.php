@@ -718,7 +718,7 @@ abstract class PP_Market_System {
 
 	public function add_bid_column_content( $column_name, $post_id ) {
 
-		if( $_GET[ 'post_type' ] != $this->bid_object_name )
+		if( isset( $_GET[ 'post_type' ] ) && $_GET[ 'post_type' ] != $this->bid_object_name )
 			return;
 
 		$bid = get_post( $post_id );
