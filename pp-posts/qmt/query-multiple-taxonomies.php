@@ -182,12 +182,12 @@ class PP_QMT_Core {
 	}
 
 	function get_terms( $tax ) {
-		global $market_systems;
+		global $market_systems, $wpdb;
+
 		$market = $market_systems['auctions'];
 		$post_type = $market->name();
 		$post_type = esc_sql($post_type);
 
-		global $wpdb;
 		// get published posts to ensure only-listing of taxonomies without active items
 		$publish = implode( ',', $wpdb->get_col(
 			"SELECT ID FROM $wpdb->posts 
@@ -205,15 +205,15 @@ class PP_QMT_Core {
 		$query = $wpdb->prepare(
 			"SELECT term_taxonomy_id FROM (
 						SELECT DISTINCT term_taxonomy_id
-						FROM wp_term_relationships
-						JOIN wp_term_taxonomy USING (term_taxonomy_id)
+						FROM $wpdb->term_relationships
+						JOIN $wpdb->term_taxonomy USING (term_taxonomy_id)
 						WHERE taxonomy = %s
 						AND object_id IN ( ".$not_published." )
 						) AS tbl1
 			WHERE term_taxonomy_id NOT IN (
 						SELECT DISTINCT term_taxonomy_id
-						FROM wp_term_relationships
-						JOIN wp_term_taxonomy USING (term_taxonomy_id)
+						FROM $wpdb->term_relationships
+						JOIN $wpdb->term_taxonomy USING (term_taxonomy_id)
 						WHERE taxonomy = %s
 						AND object_id IN ( ".$publish." )
 						)", $tax, $tax );
