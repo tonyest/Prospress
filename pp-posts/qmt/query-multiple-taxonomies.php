@@ -105,6 +105,7 @@ class PP_QMT_Core {
 
 		// Prepending marketplace index to url don't actually want to return it
 		unset($wp_query->query['pagename']);
+		error_log('wp_query = ' . print_r( $wp_query, true ) );
 		$wp_query->set('pagename', '');
 
 		if ( ! self::find_posts($query, $post_type ) ){
