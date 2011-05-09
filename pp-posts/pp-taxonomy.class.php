@@ -193,12 +193,15 @@ class PP_Taxonomy {
 		<?php 
 	}
 
+	/**
+	 * Save a taxonomy when the add/edit taxonomy page is submitted. 
+	 **/
 	public function edit_taxonomies() {
 		global $wpdb;
 
 		check_admin_referer( 'pp_custom_taxonomy' );
 
-		$tax_name = sanitize_title( $_POST[ 'pp_custom_tax' ] );
+		$tax_name = sanitize_title( strtolower( $_POST[ 'pp_custom_tax' ] ) );
 
 		if ( empty( $tax_name ) ) {
 			$this->edit_tax_page( __( 'Taxonomy name is required.', 'prospress' ), $_POST[ 'label' ], $_POST[ 'singular_label' ] );
@@ -250,6 +253,10 @@ class PP_Taxonomy {
 		$this->manage_taxonomies( __('Taxonomy deleted.', 'prospress' ) );
 	}
 
+
+	/**
+	 * Register with WordPress all the taxonomies that have been created. 
+	 */
 	public function register_taxonomies() {
 
 		$taxonomy_types = get_option( $this->name );
@@ -258,6 +265,7 @@ class PP_Taxonomy {
 			return;
 
 		foreach( $taxonomy_types as $tax_name => $tax_type ) {
+			$tax_name = strtolower( $tax_name ); // Force lowercase as WP borks with taxonomy names using uppercase
 			$object_type = $tax_type[ 'object_type' ];
 			unset( $tax_type[ 'object_type' ] );
 
