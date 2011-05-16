@@ -144,7 +144,7 @@ function pp_invoice_invoice_row($invoice, $page) {
 				$r .= "<td $attributes>{$invoice->id}</td>";
 				break;			
 			case 'user_email':
-				$r .= "<td $attributes><a href='mailto:{{$user_class->user_email}'>{$user_class->user_email}</a></td>";
+				$r .= "<td $attributes><a href='mailto:{$user_class->user_email}'>{$user_class->user_email}</a></td>";
 				break;			
 			case 'display_name':
 				$r .= "<td $attributes>{$user_class->display_name}</td>";
