@@ -126,7 +126,7 @@ class PP_Post {
 			if ( is_pp_multitax() ) {
 				$this->pp_get_query_template("taxonomy");
 //TEMPLATEPATH . '/page.php' == get_page_template() ||
-			} elseif( $this->is_index() && STYLESHEETPATH . '/page.php' == get_page_template() ) {
+			} elseif( TEMPLATEPATH . '/page.php' == get_page_template() || $this->is_index() && STYLESHEETPATH . '/page.php' == get_page_template() ) {
 				$this->pp_get_query_template("index");
 			
 			} elseif ( $this->is_single() && is_single() && !isset( $_GET[ 's' ] ) ) {
