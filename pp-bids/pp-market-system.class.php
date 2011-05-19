@@ -285,7 +285,7 @@ abstract class PP_Market_System {
 		if ( empty( $post_id ) )
 			$post_id = $post->ID;
 
-		$max_bid = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $wpdb->posts WHERE post_type = %s AND post_parent = %d AND post_content = (SELECT MAX( CAST(post_content as decimal) ) FROM $wpdb->posts WHERE post_parent = %d)", $this->bid_object_name, $post_id, $post_id ) );
+		$max_bid = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $wpdb->posts WHERE post_type = %s AND post_parent = %d AND post_content = (SELECT MAX( CAST(post_content AS DECIMAL(12,2)) ) FROM $wpdb->posts WHERE post_parent = %d)", $this->bid_object_name, $post_id, $post_id ) );
 
 		return $max_bid;
 	}
