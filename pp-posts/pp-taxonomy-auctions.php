@@ -9,13 +9,6 @@ Template Name: Auctions Taxonomy Index
  * @subpackage Theme
  * @since 0.1
  */
-
-	//get taxonomy breadcrumb tags
-	$taxonomy = esc_attr( get_query_var( 'taxonomy' ) );
-	$tax_obj = get_taxonomy( $taxonomy );
-	$term_obj = get_term_by( 'slug', esc_attr( get_query_var( 'term' ) ), $taxonomy );
-	$term_description = term_description( $term_obj->term_id, $taxonomy );
-
 ?>
 
 <?php get_header(); ?>
