@@ -16,14 +16,12 @@ Template Name: Auctions Taxonomy Index
 $taxonomy = esc_attr( get_query_var( 'taxonomy' ) );
 $tax_obj = get_taxonomy( $taxonomy );
 $term_obj = get_term_by( 'slug', esc_attr( get_query_var( 'term' ) ), $taxonomy );
-$term_description = term_description( $term_obj->term_id, $taxonomy );
+$term_description = term_descriptionerm_description( $term_obj->term_id, $taxonomy );
 ?>
 
 <?php get_header(); ?>
 	<div id="container" class="prospress-container">
 		<div id="content" class="prospress-content">
-			<?php error_log( 'tax_obj = ' . print_r( $tax_obj, true ) ); ?>
-			<?php error_log( 'term_obj = ' . print_r( $term_obj, true ) ); ?>
 			<h1 class="prospress-title entry-title">
 				<?php printf( '%s &raquo; %s', $tax_obj->labels->name, $term_obj->name ); ?>
 			</h1>
@@ -38,7 +36,7 @@ $term_description = term_description( $term_obj->term_id, $taxonomy );
 
 			<div class="pp-post">
 				<div class="pp-post-content"> 
-					<div class='pp-end' id="<?php echo get_post_end_time( $post_id, 'timestamp', 'gmt' ); ?>">
+					<div class='pp-end' id="<?php echo get_post_end_time( get_the_ID(), 'timestamp', 'gmt' ); ?>">
 						<?php the_post_end_time( '', 2, '<br/>' ); ?>
 					</div>
 					<div class="pp-price"><?php the_winning_bid_value(); ?></div>
