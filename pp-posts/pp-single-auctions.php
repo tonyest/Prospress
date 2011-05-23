@@ -13,8 +13,8 @@ Template Name: Single Prospress Post
  */
 ?>
 <?php get_header(); ?>
-	<div id="container">
-		<div id="content">
+	<div id="container" class="prospress-container">
+		<div id="content" class="prospress-content">
 		<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 			<h2 class="pp-title entry-title"><?php the_title();?></h2>
 			<?php if ( function_exists( 'has_post_thumbnail' ) && has_post_thumbnail() ) : ?>

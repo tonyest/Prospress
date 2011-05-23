@@ -4,9 +4,16 @@ LAYOUT: Two columns
 .prospress-container{
 	float: left;
 	width: 100%;
+	margin: 0 -26.4% 0 0;
 }
-.prospress-content{
-	/*margin:0 260px 0 10px;*/
+
+#content.prospress-content, .single-auctions #content {
+	margin-right: 34%;
+	width: 58.4%;
+}
+
+.singular .entry-content {
+	width: 100%;
 }
 
 /*
@@ -92,6 +99,7 @@ Index & Single Page Layouts
 	clear:left;
 	font-size:  0.8em;
 	line-height: 1.5em;
+	margin-bottom: 2em;
 	overflow: hidden;
 	color: #888;
 }
