@@ -34,16 +34,11 @@ class PP_Post {
 
 		add_action( 'manage_posts_custom_column', array( &$this, 'post_custom_columns' ), 10, 2 );
 
-		add_action( 'template_redirect', array( &$this, 'template_redirects' ) );
-		
-		add_action( 'init', array( &$this, 'register_sidebars' ) );
-		
-		// add_filter( 'wp_page_menu', array( &this, 'nav_auctions_pagex' ) );
-	}
-	public function nav_auctions_pagex($menu , $args) {
-		// $args['show_home'] = true;
-		error_log(print_r($menu,true));
-		return $args;
+		// If the current theme doesn't support this market type, use default templates & add default widgets
+		if( !current_theme_supports( $this->name ) ){
+			add_action( 'template_redirect', array( &$this, 'template_redirects' ) );
+			add_action( 'init', array( &$this, 'register_sidebars' ) );
+		}
 	}
 
 	/**
@@ -94,9 +89,11 @@ class PP_Post {
 				add_post_meta( $index_id, '_pp_'. $this->name. '_index', 'is_index', true );	
 			}
 		}
+		if( ! current_theme_supports( $this->name ) ){
 			//add sample prospress sidebar widgets
 			$this->add_index_sidebars_widgets();
 			$this->add_single_sidebars_widgets();
+		}
 
 		$this->register_post_type();
 		// Update rewrites to account for this post type
@@ -122,19 +119,18 @@ class PP_Post {
 	 */
 	public function template_redirects() {
 		// If current theme doesn't support this market type, use default templates & add default widgets
-		if( !current_theme_supports( $this->name ) ) {
+		if( ! current_theme_supports( $this->name ) ) {
 			if ( is_pp_multitax() ) {
 				//get taxonomy breadcrumb tags
 				$taxonomy = esc_attr( get_query_var( 'taxonomy' ) );
 				$tax_obj = get_taxonomy( $taxonomy );
 				$term_obj = get_term_by( 'slug', esc_attr( get_query_var( 'term' ) ), $taxonomy );
 				$term_description = term_description( $term_obj->term_id, $taxonomy );
-				$this->pp_get_query_template("taxonomy");
+				$this->pp_get_query_template( 'taxonomy' );
 			} elseif( TEMPLATEPATH . '/page.php' == get_page_template() || $this->is_index() && STYLESHEETPATH . '/page.php' == get_page_template() ) {
-				$this->pp_get_query_template("index");
-			
+				$this->pp_get_query_template( 'index' );
 			} elseif ( $this->is_single() && is_single() && !isset( $_GET[ 's' ] ) ) {
-				$this->pp_get_query_template("single");
+				$this->pp_get_query_template( 'single' );
 			}
 		}
 	}
@@ -150,24 +146,24 @@ class PP_Post {
 	 * @uses get_query_template
 	 */
 	public function pp_get_query_template( $template, $options = array() ) {
-
 		global $market_systems;
+
 		$market = $market_systems[ $this->name ];
 
 		array_splice( $options, count($options), 0, array(
 			$template."-".$this->name.".php",
 			"pp-".$template."-".$this->name.".php",
 			"template-".$template.".php" ) );
-			
-		$path = get_query_template( "", $options )?
-				 get_query_template( "", $options ):
-				PP_POSTS_DIR . "/pp-" . $template . "-" . $this->name . ".php";
 
-		do_action( 'pp_index_template_redirect' );
+		$path = get_query_template( '', $options ) ? get_query_template( '', $options ) : PP_POSTS_DIR . "/pp-" . $template . "-" . $this->name . ".php";
 
 		wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 
-		include_once($path); exit; //exit to avoid wordpress loading natural single template page.
+		do_action( 'pp_index_template_redirect' );
+
+		include_once( $path );
+
+		exit;
 	}
 
 	/** 
@@ -226,7 +222,7 @@ class PP_Post {
 	 */
 	public function register_sidebars(){
 		// If current theme doesn't support this market type, use default templates & add default widgets
-		if( !current_theme_supports( $this->name."-sidebar") ) {
+		if( ! current_theme_supports( $this->name."-sidebar") ) {
 			register_sidebar( array (
 				'name' => sprintf( __( '%s Index Sidebar', 'prospress' ), $this->labels[ 'name' ] ),
 				'id' => $this->name . '-index-sidebar',
