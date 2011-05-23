@@ -35,7 +35,7 @@ class PP_Post {
 		add_action( 'manage_posts_custom_column', array( &$this, 'post_custom_columns' ), 10, 2 );
 
 		// If the current theme doesn't support this market type, use default templates & add default widgets
-		if( !current_theme_supports( $this->name ) ){
+		if( ! current_theme_supports( $this->name ) ){
 			add_action( 'template_redirect', array( &$this, 'template_redirects' ) );
 			add_action( 'init', array( &$this, 'register_sidebars' ) );
 		}
@@ -127,7 +127,7 @@ class PP_Post {
 				$term_obj = get_term_by( 'slug', esc_attr( get_query_var( 'term' ) ), $taxonomy );
 				$term_description = term_description( $term_obj->term_id, $taxonomy );
 				$this->pp_get_query_template( 'taxonomy' );
-			} elseif( TEMPLATEPATH . '/page.php' == get_page_template() || $this->is_index() && STYLESHEETPATH . '/page.php' == get_page_template() ) {
+			} elseif( $this->is_index() && ( TEMPLATEPATH . '/page.php' == get_page_template() || STYLESHEETPATH . '/page.php' == get_page_template() ) ) {
 				$this->pp_get_query_template( 'index' );
 			} elseif ( $this->is_single() && is_single() && !isset( $_GET[ 's' ] ) ) {
 				$this->pp_get_query_template( 'single' );
@@ -137,7 +137,7 @@ class PP_Post {
 	
 	/** 
 	 * Checks standard parent and child-theme locations for template as well as prospress plugin directory.
-	 * Can search optional template names along with Wordpress & Prospress defaults.
+	 * Can search optional template names along with WordPress & Prospress defaults.
 	 * When theme does not support prospress but has prospress templates this will find them and use them.
 	 * 
 	 * @package Prospress
@@ -150,10 +150,10 @@ class PP_Post {
 
 		$market = $market_systems[ $this->name ];
 
-		array_splice( $options, count($options), 0, array(
+		array_splice( $options, count( $options ), 0, array(
 			$template."-".$this->name.".php",
 			"pp-".$template."-".$this->name.".php",
-			"template-".$template.".php" ) );
+			"template-".$this->name.".php" ) );
 
 		$path = get_query_template( '', $options ) ? get_query_template( '', $options ) : PP_POSTS_DIR . "/pp-" . $template . "-" . $this->name . ".php";
 
@@ -548,7 +548,7 @@ class PP_Post {
 
 		if ( !current_user_can( 'edit_plugins' ) || !function_exists( 'delete_site_option' ) )
 			return false;
-		
+
 		wp_delete_post( $this->get_index_id() );
 
 		flush_rewrite_rules();
