@@ -1,16 +1,16 @@
 === Prospress ===
 Contributors: Prospress, thenbrent, tonyest
 Tags: marketplace, prospress, auction, ecommerce, e-commerce
-Requires at least: 3.0.5
-Tested up to: 3.1
-Stable tag: 1.1.1
+Requires at least: 3.1
+Tested up to: 3.2
+Stable tag: 1.1.2
 License: GPLv2 or later
 
 Add an auction marketplace to your WordPress site.
 
 == Description ==
 
-Prospress is a new plugin that goes where no plugin has gone before.
+Prospress goes where no plugin has gone before.
 
 After its 30 second install, your WordPress site will have its very own auction marketplace. Registered users will be able to post auctions, place bids, provide feedback and make payments. Everything needed for a fully functioning marketplace.
 
@@ -36,13 +36,13 @@ As a major WordPress plugin, Prospress has code and contributions by a number of
 * [Scribu](http://profiles.wordpress.org/users/scribu/) for the filter and sort widgets and [Query Multiple Taxonomies](http://wordpress.org/extend/plugins/query-multiple-taxonomies/) plugin;
 * [Andy Potatin](http://profiles.wordpress.org/users/andypotanin/) for customizing his excellent [WP-Invoice](http://wordpress.org/extend/plugins/wp-invoice/) plugin.
 
+= Get Involved =
+
+Prospress is 100% open source, so you can [contribute](http://prospress.org/contribute/) to the project and help influence its development.
+
 = Want to know more? =
 
 Read the plugin's [FAQ](http://wordpress.org/extend/plugins/prospress/faq/) or visit the [Prospress Marketplace Plugin](http://prospress.org) website.
-
-= Get Involved =
-
-If you want to help give the world a free and open marketplace platform, you can also [contribute](http://prospress.org/contribute/) to the Prospress project.
 
 
 == Installation ==
@@ -95,9 +95,9 @@ In the Prospress [support forums](http://prospress.org/forums/ "Prospress Forums
 
 = Where can I find documentation? =
 
-Don't you hate it when you can't learn how to use new software? Same, which is why Prospress *will* have a codex. But at this stage, too many hours were consumed writing code, leaving too few for writing documentation.
+Introductory articles are available in the [Prospress Codex](http://codex.prospress.org// "Prospress Documentation").
 
-If have a knack for learning new software, and could improve this sentence, you can help document Prospress. [Contact us](http://prospress.org/contact/ "Prospress Contact Page") to get an early-stage author account for the upcoming Prospress Codex.
+If have a knack for learning new software, and could improve this sentence, you can help add to the documentation. [Contact us](http://prospress.org/contact/ "Prospress Contact Page") to get an author account for the Prospress Codex.
 
 = Where can I report a bug? =
 
@@ -107,7 +107,7 @@ Please report bugs in the Prospress [Bug Report](http://prospress.org/forums/for
 
 Prospress is hosted in a Git repository at [GitHub](http://github.com/Prospress/Prospress "Prospress GitHub Project"). GitHub is also the primary development site for the project.
 
-If your dreams occasionally contain curly braces, you can contribute to the Prospress code base on [GitHub](http://github.com/Prospress/Prospress "Prospress GitHub Project"). GitHub makes it easy to contribute and they provide great [documentation](http://help.github.com/) and [getting started guides](http://help.github.com/) to get you up and running.
+If your dreams contain curly braces, you can contribute to the Prospress code base on [GitHub](http://github.com/Prospress/Prospress "Prospress GitHub Project"). GitHub makes it easy to contribute and they provide great [documentation](http://help.github.com/) and [getting started guides](http://help.github.com/) to get you up and running.
 
 = Is that it? =
 
@@ -124,6 +124,9 @@ Nope. There are a few surprises but you'll have to download & explore Prospress 
 
 = 1.1.2 =
 * Fixed bug affecting themes which do not support post thumbnails
+* Fixed bug in bid logic for bids with decimals
+* Themes can now specify that they support Prospress to prevent Prospress performing any view related functions
+* Changing how templates are loaded
 
 = 1.1.1 =
 * Fixed end time bug in WordPress 3.1
