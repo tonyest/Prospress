@@ -11,10 +11,19 @@ Template Name: Auctions Taxonomy Index
  */
 ?>
 
+<?php
+//get taxonomy breadcrumb tags
+$taxonomy = esc_attr( get_query_var( 'taxonomy' ) );
+$tax_obj = get_taxonomy( $taxonomy );
+$term_obj = get_term_by( 'slug', esc_attr( get_query_var( 'term' ) ), $taxonomy );
+$term_description = term_description( $term_obj->term_id, $taxonomy );
+?>
+
 <?php get_header(); ?>
 	<div id="container" class="prospress-container">
 		<div id="content" class="prospress-content">
-
+			<?php error_log( 'tax_obj = ' . print_r( $tax_obj, true ) ); ?>
+			<?php error_log( 'term_obj = ' . print_r( $term_obj, true ) ); ?>
 			<h1 class="prospress-title entry-title">
 				<?php printf( '%s &raquo; %s', $tax_obj->labels->name, $term_obj->name ); ?>
 			</h1>

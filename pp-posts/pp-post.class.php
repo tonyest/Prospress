@@ -121,11 +121,6 @@ class PP_Post {
 		// If current theme doesn't support this market type, use default templates & add default widgets
 		if( ! current_theme_supports( $this->name ) ) {
 			if ( is_pp_multitax() ) {
-				//get taxonomy breadcrumb tags
-				$taxonomy = esc_attr( get_query_var( 'taxonomy' ) );
-				$tax_obj = get_taxonomy( $taxonomy );
-				$term_obj = get_term_by( 'slug', esc_attr( get_query_var( 'term' ) ), $taxonomy );
-				$term_description = term_description( $term_obj->term_id, $taxonomy );
 				$this->pp_get_query_template( 'taxonomy' );
 			} elseif( $this->is_index() && ( TEMPLATEPATH . '/page.php' == get_page_template() || STYLESHEETPATH . '/page.php' == get_page_template() ) ) {
 				$this->pp_get_query_template( 'index' );
