@@ -106,10 +106,10 @@ class PP_Sort_Query {
 		global $market_systems, $wp_query;
 
 		// Don't touch the main query or queries for non-Prospress posts
-		if ( $wp_query === $obj || !array_key_exists( $obj->query_vars['post_type'], $market_systems ) )
+		if ( $wp_query === $obj || ( isset( $obj->query_vars['post_type'] ) && ! array_key_exists( $obj->query_vars['post_type'], $market_systems ) ) )
 			return;
 		// Fix YARPP incompatibility
-		else if( is_array( $obj->query_vars[ 'post_type' ] ) )
+		else if( isset( $obj->query_vars['post_type'] ) && is_array( $obj->query_vars[ 'post_type' ] ) )
 			return;
 			
 		add_filter( 'posts_join_paged', array(__CLASS__, 'posts_join_paged' ) );
