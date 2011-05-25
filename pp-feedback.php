@@ -136,17 +136,17 @@ function pp_feedback_rows( $feedback ){
 		foreach ( $feedback as $feedback_item ) {
 		 	$user_of_interest = ( strpos( $_SERVER[ 'REQUEST_URI' ], 'given' ) == false ) ? $feedback_item->post_author : $feedback_item->feedback_recipient;
 			echo "<tr class='feedback $style' >";
-			echo "<td scope='row'>" . ( ( $user_ID == $user_of_interest ) ? 'You' : get_userdata( $user_of_interest )->display_name ) . pp_users_feedback_link( $user_of_interest ) . "</td>";
-			echo "<td>" . pp_get_users_role( $feedback_item->post_parent, $user_of_interest ) . "</td>";
-			echo "<td>" . (( $feedback_item->feedback_score == 2) ? __("Positive", 'prospress' ) : (( $feedback_item->feedback_score == 1) ? __("Neutral", 'prospress' ) : __("Negative", 'prospress' ))) . "</td>";
-			echo "<td>" . $feedback_item->post_content . "</td>";
-			echo "<td>" . mysql2date( __( 'd M Y', 'prospress' ), $feedback_item->post_date ) . "</td>";
-			echo "<td><a href='" . get_permalink( $feedback_item->post_parent ) . "' target='blank'>" . get_post( $feedback_item->post_parent )->post_title . "</a></td>";
-			echo "</tr>";
+			echo '<td scope="row">' . ( ( $user_ID == $user_of_interest ) ? 'You' : get_userdata( $user_of_interest )->display_name ) . pp_users_feedback_link( $user_of_interest ) . '</td>';
+			echo '<td>' . pp_get_users_role( $feedback_item->post_parent, $user_of_interest ) . '</td>';
+			echo '<td>' . (( $feedback_item->feedback_score == 2) ? __( 'Positive', 'prospress' ) : (( $feedback_item->feedback_score == 1) ? __( 'Neutral', 'prospress' ) : __( 'Negative', 'prospress' ))) . '</td>';
+			echo '<td>' . $feedback_item->post_content . '</td>';
+			echo '<td>' . mysql2date( __( 'd M Y', 'prospress' ), $feedback_item->post_date ) . '</td>';
+			echo '<td><a href="' . get_permalink( $feedback_item->post_parent ) . '" target="blank">' . get_post( $feedback_item->post_parent )->post_title . '</a></td>';
+			echo '</tr>';
 			$style = ( 'alternate' == $style ) ? '' : 'alternate';
 		}
 	} else {
-		echo '<tr><td colspan="5">You have no feedback.</td>';
+		echo '<tr><td colspan="6">' . __( 'You have no feedback.', 'prospress' ) . '</td>';
 	}
 }
 
