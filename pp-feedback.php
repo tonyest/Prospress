@@ -105,7 +105,7 @@ function pp_feedback_columns_admin(){
 
  	if( strpos( $_SERVER[ 'REQUEST_URI' ], 'given' ) !== false ) {
 		$feedback_columns[ 'feedback_recipient' ] = __( 'For', 'prospress' );
-		$feedback_columns[ 'role' ] = __( 'Receipient\'s Role', 'prospress' );
+		$feedback_columns[ 'role' ] = __( 'Recipient\'s Role', 'prospress' );
 	} else {
 		$feedback_columns[ 'feedback_author' ] = __( 'From', 'prospress' );
 		$feedback_columns[ 'role' ] = __( 'Your Role', 'prospress' );
