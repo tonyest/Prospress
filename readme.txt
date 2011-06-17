@@ -3,7 +3,7 @@ Contributors: Prospress, thenbrent, tonyest
 Tags: marketplace, prospress, auction, ecommerce, e-commerce
 Requires at least: 3.1
 Tested up to: 3.2
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 License: GPLv2 or later
 
 Add an auction marketplace to your WordPress site.
@@ -122,6 +122,10 @@ Nope. There are a few surprises but you'll have to download & explore Prospress 
 
 == Changelog ==
 
+= 1.1.3 =
+* Fixed bug in taxonomy template
+* Fixing typo in feedback column headers
+
 = 1.1.2 =
 * Fixed bug affecting themes which do not support post thumbnails
 * Fixed bug in bid logic for bids with decimals
@@ -175,6 +179,9 @@ Nope. There are a few surprises but you'll have to download & explore Prospress 
 
 
 == Upgrade Notice ==
+
+= 1.1.3 =
+Important upgrade to fix bug in taxonomy template.
 
 = 1.1.2 =
 Important upgrade to fix bid logic bug and a bug affecting themes which do not support thumbnails.
