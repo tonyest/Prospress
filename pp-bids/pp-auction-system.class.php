@@ -572,13 +572,4 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		if( $this->is_winning_bidder( '', $post_id ) || ( isset( $_POST[ 'payment_status' ] ) && isset( $_POST[ 'payment_status' ] ) != 'Completed' ) )
 			$this->message_id = 16;
 	}
-
-
-	public function enqueue_auction_scripts(){
-		if( is_admin() || ( !$this->is_index() && !$this->is_single() ) )
-			return;
-
-		wp_enqueue_script( 'final-countdown', PP_PLUGIN_URL . '/js/final-countdown.js', array( 'jquery' ) );
-		wp_localize_script( 'final-countdown', 'bidi18n', array( 'siteUrl' => get_bloginfo('wpurl') ) );
-	}	
 }
