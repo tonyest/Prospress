@@ -30,8 +30,6 @@ class PP_Auction_Bid_System extends PP_Market_System {
 
 		$args = apply_filters( 'auction_args', $args );
 
-		add_action( 'wp_print_scripts', array( &$this, 'enqueue_auction_scripts' ) );
-
 		add_action( 'auctions-controller', array( &$this, 'buy_now_return' ) );
 
 		add_action( 'post-auctions-bid_form', array( &$this, 'add_buy_now_form' ) );
