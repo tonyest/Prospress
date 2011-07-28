@@ -63,7 +63,7 @@ $term_description = term_description( $term_obj->term_id, $taxonomy );
 						<?php _e( 'by ', 'prospress'); the_author(); ?>
 					</div>
 				</div>
-			</div>
+			</div><!-- .pp-post -->
 
 			<?php endwhile; else: ?>
 
@@ -73,13 +73,13 @@ $term_description = term_description( $term_obj->term_id, $taxonomy );
 			<div class="navigation">
 				<div class="alignleft"><?php previous_posts_link('&laquo; '.__( 'Previous Items', 'prospress' )) ?></div>
 				<div class="alignright"><?php next_posts_link( __( 'Next Items', 'prospress' ).' &raquo;','') ?></div>
-			</div>
-		</div>
-	</div>
+			</div><!-- .navigation -->
+		</div><!-- #content -->
+	</div><!-- #container -->
 
 	<div id="sidebar" class="prospress-sidebar">
 		<ul class="xoxo">
 			<?php dynamic_sidebar( $market->name() . '-index-sidebar' ); ?>
 		</ul>
-	</div>
+	</div><!-- #sidebar -->
 <?php get_footer(); ?>

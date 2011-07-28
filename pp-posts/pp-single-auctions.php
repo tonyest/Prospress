@@ -39,8 +39,8 @@ Template Name: Single Prospress Post
 			<?php comments_template( '', true ); ?>
 
 		<?php endwhile; // end of the loop. ?>
-		</div>
-	</div>
+		</div><!-- #content -->
+	</div><!-- #container -->
 	<div id="sidebar" class="prospress-sidebar">
 		<ul class="xoxo">
 			<!-- Add default countdown widget if no widgets currently registered in single auctions sidebar -->
@@ -56,5 +56,5 @@ Template Name: Single Prospress Post
 				) );
 			endif;?>
 		</ul>
-	</div>
+	</div><!-- #sidebar -->
 <?php get_footer(); ?>
