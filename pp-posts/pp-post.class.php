@@ -288,6 +288,9 @@ class PP_Post {
 	public function is_index() {
 		global $post;
 
+		if( ! is_object( $post ) )
+			return false;
+
 		$pp_index_page = get_post_meta( $post->ID, '_pp_'. $this->name. '_index', true );
 
 		return ( $pp_index_page == "is_index" ) ? true : false;
