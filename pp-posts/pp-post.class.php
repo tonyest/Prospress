@@ -27,7 +27,7 @@ class PP_Post {
 		add_action( 'pp_deactivation', array( &$this, 'deactivate' ) );
 
 		add_action( 'pp_uninstall', array( &$this, 'uninstall' ) );
-		
+
 		add_filter( 'posts_search', array( &$this, 'remove_index' ) );
 
 		add_filter( 'manage_' . $this->name . '_posts_columns', array( &$this, 'post_columns' ) );
@@ -89,13 +89,11 @@ class PP_Post {
 				add_post_meta( $index_id, '_pp_'. $this->name. '_index', 'is_index', true );	
 			}
 		}
-<<<<<<< HEAD
-=======
 		if( ! current_theme_supports( $this->name ) ){
->>>>>>> 691da1deaa9529277d3bed81f2adc553b6b6730b
 			//add sample prospress sidebar widgets
 			$this->add_index_sidebars_widgets();
 			$this->add_single_sidebars_widgets();
+		}
 
 		$this->register_post_type();
 		// Update rewrites to account for this post type
@@ -121,52 +119,6 @@ class PP_Post {
 	 */
 	public function template_redirects() {
 		// If current theme doesn't support this market type, use default templates & add default widgets
-<<<<<<< HEAD
-		if( !current_theme_supports( $this->name ) ) {
-			if ( is_pp_multitax() ) {
-
-				$this->pp_get_query_template("taxonomy");
-
-			} elseif( $this->is_index() && TEMPLATEPATH . '/page.php' == get_page_template() || STYLESHEETPATH . '/page.php' == get_page_template() ) {
-				$this->pp_get_query_template("index");
-			
-			} elseif ( $this->is_single() && is_single() && !isset( $_GET[ 's' ] ) ) {
-
-				$this->pp_get_query_template("single");
-			}
-		}
-	}
-	
-	/** 
-	 * Checks standard parent and child-theme locations for template as well as prospress plugin directory.
-	 * Can search optional template names along with Wordpress & Prospress defaults.
-	 * When theme does not support prospress but has prospress templates this will find them and use them.
-	 * 
-	 * @package Prospress
-	 * @subpackage Posts
-	 * @since 1.1.1
-	 * @uses get_query_template
-	 */
-	public function pp_get_query_template( $template, $options = array() ) {
-
-		global $market_systems;
-		$market = $market_systems[ $this->name ];
-
-		array_splice( $options, count($options), 0, array(
-			$template."-".$this->name.".php",
-			"pp-".$template."-".$this->name.".php",
-			"template-".$template.".php" ) );
-			
-		$path = get_query_template( "", $options )?
-				 get_query_template( "", $options ):
-				PP_POSTS_DIR . "/pp-" . $template . "-" . $this->name . ".php";
-
-		do_action( 'pp_index_template_redirect' );
-
-		wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
-
-		include_once($path); exit; //exit to avoid wordpress loading natural single template page.
-=======
 		if( ! current_theme_supports( $this->name ) ) {
 			if ( is_pp_multitax() ) {
 				$this->pp_get_query_template( 'taxonomy' );
@@ -177,7 +129,7 @@ class PP_Post {
 			}
 		}
 	}
-	
+
 	/** 
 	 * Checks standard parent and child-theme locations for template as well as prospress plugin directory.
 	 * Can search optional template names along with WordPress & Prospress defaults.
@@ -207,7 +159,6 @@ class PP_Post {
 		include_once( $path );
 
 		exit;
->>>>>>> 691da1deaa9529277d3bed81f2adc553b6b6730b
 	}
 
 	/** 
@@ -266,11 +217,7 @@ class PP_Post {
 	 */
 	public function register_sidebars(){
 		// If current theme doesn't support this market type, use default templates & add default widgets
-<<<<<<< HEAD
-		if( !current_theme_supports( $this->name."-sidebar") ) {
-=======
 		if( ! current_theme_supports( $this->name."-sidebar") ) {
->>>>>>> 691da1deaa9529277d3bed81f2adc553b6b6730b
 			register_sidebar( array (
 				'name' => sprintf( __( '%s Index Sidebar', 'prospress' ), $this->labels[ 'name' ] ),
 				'id' => $this->name . '-index-sidebar',
@@ -341,12 +288,9 @@ class PP_Post {
 	public function is_index() {
 		global $post;
 
-<<<<<<< HEAD
-=======
 		if( ! is_object( $post ) )
 			return false;
 
->>>>>>> 691da1deaa9529277d3bed81f2adc553b6b6730b
 		$pp_index_page = get_post_meta( $post->ID, '_pp_'. $this->name. '_index', true );
 
 		return ( $pp_index_page == "is_index" ) ? true : false;
@@ -562,7 +506,7 @@ class PP_Post {
 			update_option( 'widget_pp_countdown', $widget );
 			array_push( $sidebars_widgets[ $this->name . '-single-sidebar' ], 'pp_countdown-' . $widget_id );
 		}
-		
+
 		$widget = get_option( 'widget_pp_single_tax' );
 		if( empty( $widget ) ){ //taxonomy lists widget not added to any sidebars yet
 
@@ -625,3 +569,4 @@ class PP_Post {
 		wp_delete_post( $this->get_index_id() );
 	}
 }
+?>
