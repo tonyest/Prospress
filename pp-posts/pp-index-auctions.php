@@ -35,7 +35,7 @@ if( !class_exists( 'PP_Market_System' ) )
 
 			<div class="pp-post">
 				<div class="pp-post-content"> 
-					<div class='pp-end' id="<?php echo get_post_end_time( $post_id, 'timestamp', 'gmt' ); ?>">
+					<div class='pp-end' id="<?php echo get_post_end_time( get_the_ID(), 'timestamp', 'gmt' ); ?>">
 						<?php the_post_end_time( '', 2, '<br/>' ); ?>
 					</div>
 					<div class="pp-price"><?php the_winning_bid_value(); ?></div>
@@ -44,7 +44,7 @@ if( !class_exists( 'PP_Market_System' ) )
 							<?php the_title(); ?>
 						</a>
 					</h2>
-					<?php if ( has_post_thumbnail() ) : ?>
+					<?php if ( function_exists( 'has_post_thumbnail' ) && has_post_thumbnail() ) : ?>
 						<div class="pp-thumbnail">
 						   <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" >
 						   <?php the_post_thumbnail( array( 100,100 )); ?>

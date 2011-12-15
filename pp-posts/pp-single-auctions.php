@@ -13,11 +13,11 @@ Template Name: Single Prospress Post
  */
 ?>
 <?php get_header(); ?>
-	<div id="container">
-		<div id="content">
+	<div id="container" class="prospress-container">
+		<div id="content" class="prospress-content">
 		<?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 			<h2 class="pp-title entry-title"><?php the_title();?></h2>
-			<?php if ( has_post_thumbnail() ) : ?>
+			<?php if ( function_exists( 'has_post_thumbnail' ) && has_post_thumbnail() ) : ?>
 				<div class="pp-thumbnail">
 				   <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" >
 				   <?php the_post_thumbnail(); ?>
@@ -39,8 +39,8 @@ Template Name: Single Prospress Post
 			<?php comments_template( '', true ); ?>
 
 		<?php endwhile; // end of the loop. ?>
-		</div>
-	</div>
+		</div><!-- #content -->
+	</div><!-- #container -->
 	<div id="sidebar" class="prospress-sidebar">
 		<ul class="xoxo">
 			<!-- Add default countdown widget if no widgets currently registered in single auctions sidebar -->
@@ -56,5 +56,5 @@ Template Name: Single Prospress Post
 				) );
 			endif;?>
 		</ul>
-	</div>
+	</div><!-- #sidebar -->
 <?php get_footer(); ?>

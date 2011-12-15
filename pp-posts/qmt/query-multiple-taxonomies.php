@@ -181,56 +181,56 @@ class PP_QMT_Core {
 	}
 
 	function get_terms( $tax ) {
-		global $market_systems;
+		global $market_systems, $wpdb;
+
 		$market = $market_systems['auctions'];
 		$post_type = $market->name();
 		$post_type = esc_sql($post_type);
 
-		global $wpdb;
-		// get published posts to ensure non-listing of taxonomies without active items
+		// get published posts to ensure only-listing of taxonomies without active items
 		$publish = implode( ',', $wpdb->get_col(
 			"SELECT ID FROM $wpdb->posts 
 			WHERE post_type = '$post_type'
 			AND post_status = 'publish'"
 		) );
 		$publish = ( empty($publish) )? '0' : $publish;
-		$completed = implode(',', $wpdb->get_col(
+		$not_published = implode(',', $wpdb->get_col(
 			"SELECT ID FROM $wpdb->posts 
 			WHERE post_type = '$post_type'
-			AND post_status = 'completed'"
+			AND post_status != 'publish'"
 		) );
-		$completed = ( empty($completed) )? '0' : $completed;
+		$not_published = ( empty( $not_published ) )? '0' : $not_published;
+
 		$query = $wpdb->prepare(
-			"SELECT term_id FROM (
-						SELECT DISTINCT term_id
-						FROM wp_term_relationships
-						JOIN wp_term_taxonomy USING (term_taxonomy_id)
+			"SELECT term_taxonomy_id FROM (
+						SELECT DISTINCT term_taxonomy_id
+						FROM $wpdb->term_relationships
+						JOIN $wpdb->term_taxonomy USING (term_taxonomy_id)
 						WHERE taxonomy = %s
-						AND object_id IN ( ".$completed." )
+						AND object_id IN ( ".$not_published." )
 						) AS tbl1
-			WHERE term_id NOT IN (
-						SELECT DISTINCT term_id
-						FROM wp_term_relationships
-						JOIN wp_term_taxonomy USING (term_taxonomy_id)
+			WHERE term_taxonomy_id NOT IN (
+						SELECT DISTINCT term_taxonomy_id
+						FROM $wpdb->term_relationships
+						JOIN $wpdb->term_taxonomy USING (term_taxonomy_id)
 						WHERE taxonomy = %s
 						AND object_id IN ( ".$publish." )
-						)",
-		$tax , $tax );
+						)", $tax, $tax );
 		$exclude_ids = $wpdb->get_col($query);
-		
+
 		if ( empty( self::$post_ids ) )
-			return get_terms($tax, array('exclude' => implode(',', $exclude_ids)));
+			return get_terms( $tax, array( 'exclude' => implode( ',', $exclude_ids ) ) );
 
 		$query = $wpdb->prepare(
 			"SELECT DISTINCT term_id
 			FROM $wpdb->term_relationships
 			JOIN $wpdb->term_taxonomy USING (term_taxonomy_id)
 			WHERE taxonomy = %s
-			AND object_id IN (".implode(',', self::$post_ids).")"
-		, $tax);
+			AND object_id IN (".implode( ',', self::$post_ids ).")",
+		$tax );
 
 		$term_ids = $wpdb->get_col($query);
-		return get_terms($tax, array('include' => implode(',', $term_ids)));
+		return get_terms($tax, array('include' => implode( ',', $term_ids ) ) );
 	}
 
 	public function get_url( $key, $value, $base = '' ) {

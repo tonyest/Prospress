@@ -39,7 +39,7 @@ class PP_Feedback_Score_Widget extends WP_Widget {
 
 	function form( $instance ) {
 
-		$title = ( $instance['title'] ) ? $instance['title'] : __( 'Feedback Score:', 'prospress' );
+		$title = ( isset( $instance['title'] ) ) ? $instance['title'] : __( 'Feedback Score:', 'prospress' );
 		?>
 		<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:', 'prospress' ); ?> <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" /></label></p>
 		<?php

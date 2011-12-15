@@ -75,9 +75,9 @@ class Bid_Filter_Query {
 		global $market_systems;
 
 		// Don't touch the main query or queries for non-Prospress posts
-		if ( $GLOBALS[ 'wp_query' ] == $obj || !array_key_exists( $obj->query_vars['post_type'], $market_systems ) )
+		if ( $GLOBALS[ 'wp_query' ] == $obj || ( isset( $obj->query_vars['post_type'] )  && ! array_key_exists( $obj->query_vars['post_type'], $market_systems ) ) )
 			return;
-		else if( is_array( $obj->query_vars[ 'post_type' ] ) ) // Fix YARPP incompatibility
+		else if( isset( $obj->query_vars['post_type'] )  && is_array( $obj->query_vars[ 'post_type' ] ) ) // Fix YARPP incompatibility
 			return;
 
 

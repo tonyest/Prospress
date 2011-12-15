@@ -34,16 +34,11 @@ class PP_Post {
 
 		add_action( 'manage_posts_custom_column', array( &$this, 'post_custom_columns' ), 10, 2 );
 
-		add_action( 'template_redirect', array( &$this, 'template_redirects' ) );
-		
-		add_action( 'init', array( &$this, 'register_sidebars' ) );
-		
-		// add_filter( 'wp_page_menu', array( &this, 'nav_auctions_pagex' ) );
-	}
-	public function nav_auctions_pagex($menu , $args) {
-		// $args['show_home'] = true;
-		error_log(print_r($menu,true));
-		return $args;
+		// If the current theme doesn't support this market type, use default templates & add default widgets
+		if( ! current_theme_supports( $this->name ) ){
+			add_action( 'template_redirect', array( &$this, 'template_redirects' ) );
+			add_action( 'init', array( &$this, 'register_sidebars' ) );
+		}
 	}
 
 	/**
@@ -94,6 +89,10 @@ class PP_Post {
 				add_post_meta( $index_id, '_pp_'. $this->name. '_index', 'is_index', true );	
 			}
 		}
+<<<<<<< HEAD
+=======
+		if( ! current_theme_supports( $this->name ) ){
+>>>>>>> 691da1deaa9529277d3bed81f2adc553b6b6730b
 			//add sample prospress sidebar widgets
 			$this->add_index_sidebars_widgets();
 			$this->add_single_sidebars_widgets();
@@ -122,6 +121,7 @@ class PP_Post {
 	 */
 	public function template_redirects() {
 		// If current theme doesn't support this market type, use default templates & add default widgets
+<<<<<<< HEAD
 		if( !current_theme_supports( $this->name ) ) {
 			if ( is_pp_multitax() ) {
 
@@ -166,6 +166,48 @@ class PP_Post {
 		wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
 
 		include_once($path); exit; //exit to avoid wordpress loading natural single template page.
+=======
+		if( ! current_theme_supports( $this->name ) ) {
+			if ( is_pp_multitax() ) {
+				$this->pp_get_query_template( 'taxonomy' );
+			} elseif( $this->is_index() && ( TEMPLATEPATH . '/page.php' == get_page_template() || STYLESHEETPATH . '/page.php' == get_page_template() ) ) {
+				$this->pp_get_query_template( 'index' );
+			} elseif ( $this->is_single() && is_single() && !isset( $_GET[ 's' ] ) ) {
+				$this->pp_get_query_template( 'single' );
+			}
+		}
+	}
+	
+	/** 
+	 * Checks standard parent and child-theme locations for template as well as prospress plugin directory.
+	 * Can search optional template names along with WordPress & Prospress defaults.
+	 * When theme does not support prospress but has prospress templates this will find them and use them.
+	 * 
+	 * @package Prospress
+	 * @subpackage Posts
+	 * @since 1.1.1
+	 * @uses get_query_template
+	 */
+	public function pp_get_query_template( $template, $options = array() ) {
+		global $market_systems;
+
+		$market = $market_systems[ $this->name ];
+
+		array_splice( $options, count( $options ), 0, array(
+			$template."-".$this->name.".php",
+			"pp-".$template."-".$this->name.".php",
+			"template-".$this->name.".php" ) );
+
+		$path = get_query_template( '', $options ) ? get_query_template( '', $options ) : PP_POSTS_DIR . "/pp-" . $template . "-" . $this->name . ".php";
+
+		wp_enqueue_style( 'prospress',  PP_CORE_URL . '/prospress.css' );
+
+		do_action( 'pp_index_template_redirect' );
+
+		include_once( $path );
+
+		exit;
+>>>>>>> 691da1deaa9529277d3bed81f2adc553b6b6730b
 	}
 
 	/** 
@@ -224,7 +266,11 @@ class PP_Post {
 	 */
 	public function register_sidebars(){
 		// If current theme doesn't support this market type, use default templates & add default widgets
+<<<<<<< HEAD
 		if( !current_theme_supports( $this->name."-sidebar") ) {
+=======
+		if( ! current_theme_supports( $this->name."-sidebar") ) {
+>>>>>>> 691da1deaa9529277d3bed81f2adc553b6b6730b
 			register_sidebar( array (
 				'name' => sprintf( __( '%s Index Sidebar', 'prospress' ), $this->labels[ 'name' ] ),
 				'id' => $this->name . '-index-sidebar',
@@ -295,6 +341,12 @@ class PP_Post {
 	public function is_index() {
 		global $post;
 
+<<<<<<< HEAD
+=======
+		if( ! is_object( $post ) )
+			return false;
+
+>>>>>>> 691da1deaa9529277d3bed81f2adc553b6b6730b
 		$pp_index_page = get_post_meta( $post->ID, '_pp_'. $this->name. '_index', true );
 
 		return ( $pp_index_page == "is_index" ) ? true : false;
@@ -550,7 +602,7 @@ class PP_Post {
 
 		if ( !current_user_can( 'edit_plugins' ) || !function_exists( 'delete_site_option' ) )
 			return false;
-		
+
 		wp_delete_post( $this->get_index_id() );
 
 		flush_rewrite_rules();

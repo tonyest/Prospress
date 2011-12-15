@@ -56,9 +56,13 @@ class PP_Sort_Widget extends WP_Widget {
 	function form( $instance ) {
 		global $pp_sort_options;
 
-		$title = ( $instance['title'] ) ? $instance['title'] : __( 'Sort By:', 'prospress' );
+		$defaults = array( 'title' =>  __( 'Sort By:', 'prospress' ) );
+		foreach( $pp_sort_options as $key => $label )
+		 	$defaults[$key] = 'on';
+
+		$instance = wp_parse_args( (array)$instance, $defaults );
 		?>
-		<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:', 'prospress' ); ?> <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" /></label></p>
+		<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:', 'prospress' ); ?> <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr( $instance['title']); ?>" /></label></p>
 		<p><?php _e( 'Sort By:', 'prospress' ) ?></p>
 		<?php
 		foreach( $pp_sort_options as $key => $label ){
@@ -102,10 +106,10 @@ class PP_Sort_Query {
 		global $market_systems, $wp_query;
 
 		// Don't touch the main query or queries for non-Prospress posts
-		if ( $wp_query === $obj || !array_key_exists( $obj->query_vars['post_type'], $market_systems ) )
+		if ( $wp_query === $obj || ( isset( $obj->query_vars['post_type'] ) && ! array_key_exists( $obj->query_vars['post_type'], $market_systems ) ) )
 			return;
 		// Fix YARPP incompatibility
-		else if( is_array( $obj->query_vars[ 'post_type' ] ) )
+		else if( isset( $obj->query_vars['post_type'] ) && is_array( $obj->query_vars[ 'post_type' ] ) )
 			return;
 			
 		add_filter( 'posts_join_paged', array(__CLASS__, 'posts_join_paged' ) );

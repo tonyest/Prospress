@@ -161,7 +161,8 @@ function pp_map_meta_cap( $caps, $cap, $user_id, $args ){
 
 		$author_data = get_userdata( $user_id );
 
-		$post = get_post( $args[0] );
+		$post = get_post( $args[0], OBJECT );
+		$post = (object)$post; // overcome bug in WP returning post as array even when OBJECT specified
 
 		$post_type = get_post_type_object( $post->post_type );
 

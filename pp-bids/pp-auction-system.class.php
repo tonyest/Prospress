@@ -30,8 +30,6 @@ class PP_Auction_Bid_System extends PP_Market_System {
 
 		$args = apply_filters( 'auction_args', $args );
 
-		add_action( 'wp_print_scripts', array( &$this, 'enqueue_auction_scripts' ) );
-
 		add_action( 'auctions-controller', array( &$this, 'buy_now_return' ) );
 
 		add_action( 'post-auctions-bid_form', array( &$this, 'add_buy_now_form' ) );
@@ -416,7 +414,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 
 		if( isset( $_POST[ 'buy_now_price' ] ) && ( $this->get_bid_count( $post_id ) == 0 || $old_buy_price >= $this->get_winning_bid_value( $post_id ) ) ) {
 			$buy_now_price = floatval( preg_replace( "/$ts|\s/", "", $_POST[ 'buy_now_price' ] ) );
-			$buy_now_price = ( $buy_now_price < $_POST[ 'start_price' ] ) ? $_POST[ 'start_price' ] : $buy_now_price;
+			$buy_now_price = ( $buy_now_price < $_POST[ 'start_price' ] && $_POST[ 'buy_now_price' ] != '0.00' ) ? $_POST[ 'start_price' ] : $buy_now_price;
 			update_post_meta( $post_id, 'buy_now_price', $buy_now_price );
 		}
 	}
@@ -560,7 +558,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 			$message = __( 'Purchase successful, congratulations. The seller has been notified & will be in contact shortly.', 'prospress' );
 		return $message;
 	}
-	
+
 	/**
 	 * When a user returns to the site from PayPal, if the IPN has fired already, 
 	 * the post will have completed and they will receive the message "Auction Finished". 
@@ -572,13 +570,4 @@ class PP_Auction_Bid_System extends PP_Market_System {
 		if( $this->is_winning_bidder( '', $post_id ) || ( isset( $_POST[ 'payment_status' ] ) && isset( $_POST[ 'payment_status' ] ) != 'Completed' ) )
 			$this->message_id = 16;
 	}
-
-
-	public function enqueue_auction_scripts(){
-		if( is_admin() || ( !$this->is_index() && !$this->is_single() ) )
-			return;
-
-		wp_enqueue_script( 'final-countdown', PP_PLUGIN_URL . '/js/final-countdown.js', array( 'jquery' ) );
-		wp_localize_script( 'final-countdown', 'bidi18n', array( 'siteUrl' => get_bloginfo('wpurl') ) );
-	}	
 }

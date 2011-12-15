@@ -210,7 +210,7 @@ function pp_welcome_notice(){
 	}
 
 	echo "<div id='prospress-welcome' class='updated fade'><p><strong>".__('Congratulations.', 'prospress')."</strong> ".
-	sprintf( __('Your WordPress site is now prosperous. Go add your first <a href="%1$s">auction</a>, '), "post-new.php?post_type=auctions").
+	sprintf( __('Your WordPress site is now prosperous. You can now publish an <a href="%1$s">auction</a>, '), "post-new.php?post_type=auctions").
 	sprintf( __('modify your auctions\' <a href="%1$s">index page</a> or '), "post.php?post=$index_id&action=edit").
 	sprintf( __('configure your marketplace <a href="%1$s">settings</a>. '), "admin.php?page=Prospress").
 	sprintf( __('&nbsp;<a href="%1$s">&laquo; Hide &raquo;</a>'), add_query_arg( 'pp_hide_wel', '1', $_SERVER['REQUEST_URI'] ))."</p></div>";
