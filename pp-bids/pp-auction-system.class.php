@@ -50,7 +50,7 @@ class PP_Auction_Bid_System extends PP_Market_System {
 	 * to be customised in market system with a filter. If viewer is publisher skips input elements
 	 **/
 	protected function bid_form_fields( $post_id = NULL ) { 
-		global $post_ID, $currency_symbol,$user_ID, $post;
+		global $post_ID, $currency_symbol, $post;
 
 		$post_id = ( $post_id === NULL ) ? $post_ID : $post_id;
 		$bid_count = $this->get_bid_count( $post_id );
@@ -65,8 +65,9 @@ class PP_Auction_Bid_System extends PP_Market_System {
 			$bid_bid_form_fields .= '<div id="winning_bidder">' . __("Winning Bidder: ", 'prospress' ) . $this->the_winning_bidder( $post_id, $dont_echo ) . '</div>';
 			$bid_bid_form_fields .= '<div id="current_bid_val">' . __("Current Bid: ", 'prospress' ) . $this->the_winning_bid_value( $post_id, $dont_echo ) . '</div>';
 		}
+		
 		//filter to bid form markup allowing insertion of custom elements before input box
-		$bid_bid_form_fields = add_filters( 'pre_input_bid_form', $bid_bid_form_fields, $post_id );
+		$bid_bid_form_fields = apply_filters( "bid_form_fields_pre_input", $bid_bid_form_fields, $post_id );
 		
 		$bid_bid_form_fields .= '<label for="bid_value" class="bid-label">' . __( 'Enter max bid: ', 'prospress' ) . $currency_symbol . ' </label>';
 		$bid_bid_form_fields .= '<input type="text" aria-required="true" tabindex="1" size="8" value="" id="bid_value" name="bid_value" />';

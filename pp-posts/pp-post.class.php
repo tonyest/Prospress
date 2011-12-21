@@ -27,7 +27,7 @@ class PP_Post {
 		add_action( 'pp_deactivation', array( &$this, 'deactivate' ) );
 
 		add_action( 'pp_uninstall', array( &$this, 'uninstall' ) );
-		
+
 		add_filter( 'posts_search', array( &$this, 'remove_index' ) );
 
 		add_filter( 'manage_' . $this->name . '_posts_columns', array( &$this, 'post_columns' ) );
@@ -129,7 +129,7 @@ class PP_Post {
 			}
 		}
 	}
-	
+
 	/** 
 	 * Checks standard parent and child-theme locations for template as well as prospress plugin directory.
 	 * Can search optional template names along with WordPress & Prospress defaults.
@@ -506,7 +506,7 @@ class PP_Post {
 			update_option( 'widget_pp_countdown', $widget );
 			array_push( $sidebars_widgets[ $this->name . '-single-sidebar' ], 'pp_countdown-' . $widget_id );
 		}
-		
+
 		$widget = get_option( 'widget_pp_single_tax' );
 		if( empty( $widget ) ){ //taxonomy lists widget not added to any sidebars yet
 
@@ -569,3 +569,4 @@ class PP_Post {
 		wp_delete_post( $this->get_index_id() );
 	}
 }
+?>
